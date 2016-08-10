@@ -1,0 +1,24 @@
+machine:
+  environment:
+    PYTHONPATH: "/home/ubuntu:$PYTHONPATH"
+  python:
+    version: 3.5.0
+dependencies:
+  pre:
+    # Scwrl
+    - wget https://www.dropbox.com/s/7qe06wsyu4lxufb/install_Scwrl4_Linux?dl=0 -O install_Scwrl4
+    - wget https://www.dropbox.com/s/etuhyqzajzbdfnl/scwrl_install.txt?dl=0 -O scwrl_install.txt
+    - chmod +x install_Scwrl4
+    - ./install_Scwrl4 < scwrl_install.txt
+    # Reduce
+    - wget http://kinemage.biochem.duke.edu/php/downlode-3.php?filename=/../downloads/software/reduce31/reduce.3.23.130521.linuxi386.gz -O reduce.3.23.130521.linuxi386.gz
+    - gunzip reduce.3.23.130521.linuxi386.gz
+    - chmod +x reduce.3.23.130521.linuxi386
+    # DSSP
+    - wget ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64
+    - chmod +x dssp-2.0.4-linux-amd64
+test:
+  override:
+    - cd /home/ubuntu/isambard
+    - python configure.py -C
+    - python -m unittest discover . -v

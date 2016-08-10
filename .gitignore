@@ -1,0 +1,12 @@
+__pycache__
+.hypothesis/
+*.py~
+*.pyc
+PyRosetta
+.DS_Store
+.idea/
+.ipynb_checkpoints/
+.py___jb_bak___
+DrewTools
+*.csv
+settings.json

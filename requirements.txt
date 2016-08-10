@@ -1,0 +1,11 @@
+Cython
+numpy
+requests
+SQLAlchemy
+networkx
+ipywidgets
+deap
+matplotlib
+hypothesis
+bs4
+parmed

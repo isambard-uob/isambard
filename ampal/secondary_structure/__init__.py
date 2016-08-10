@@ -1,0 +1,3 @@
+from ampal.secondary_structure.ta_polypeptide import TAPolypeptide
+from ampal.secondary_structure.helix import Helix, HelicalHelix
+from ampal.secondary_structure.nucleic_acid_strand import NucleicAcidStrand
