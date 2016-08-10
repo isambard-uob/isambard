@@ -7,6 +7,7 @@ _build
 *.class
 *.dll
 *.exe
+*.bat
 *.o
 *.so
 

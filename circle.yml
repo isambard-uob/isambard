@@ -2,7 +2,7 @@ machine:
   environment:
     PYTHONPATH: "/home/ubuntu:$PYTHONPATH"
   python:
-    version: 3.5.0
+    version: 3.5
 dependencies:
   pre:
     # Scwrl
@@ -19,6 +19,6 @@ dependencies:
     - chmod +x dssp-2.0.4-linux-amd64
 test:
   override:
-    - cd /home/ubuntu/isambard
+    - cd /home/ubuntu/isambard_dev
     - python configure.py -C
-    - python -m unittest discover . -v
+    - python -m unittest discover unit_tests/. -v
