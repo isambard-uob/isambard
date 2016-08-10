@@ -2,7 +2,7 @@ machine:
   environment:
     PYTHONPATH: "/home/ubuntu:$PYTHONPATH"
   python:
-    version: 3.5
+    version: 3.5.0
 dependencies:
   pre:
     # Scwrl
