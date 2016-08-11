@@ -101,16 +101,16 @@ class TestDNADuplex(unittest.TestCase):
         """Test straight duplex building using random DNA sequences."""
         if not sequence:
             with self.assertRaises(ValueError):
-                isambard.ampal.topology.DNADuplex.from_sequence(sequence)
+                isambard.ampal.specifications.DNADuplex.from_sequence(sequence)
         else:
-            dd = isambard.ampal.topology.DNADuplex.from_sequence(sequence)
+            dd = isambard.ampal.specifications.DNADuplex.from_sequence(sequence)
             self.assertEqual(len(dd), 2)
             self.assertEqual(len(dd[0]), len(sequence))
             self.assertEqual(len(dd[1]), len(sequence))
 
             ideal_bonds_s1 = count_bonds(sequence)
             ideal_bonds_s2 = count_bonds(
-                isambard.ampal.topology.nucleic_acid_duplex.generate_antisense_sequence(sequence))
+                isambard.ampal.specifications.nucleic_acid_duplex.generate_antisense_sequence(sequence))
             found_bonds_s1 = len(isambard.ampal.interactions.find_covalent_bonds(dd[0]))
             found_bonds_s2 = len(isambard.ampal.interactions.find_covalent_bonds(dd[1]))
             found_bonds_dd = len(isambard.ampal.interactions.find_covalent_bonds(dd))
@@ -126,9 +126,9 @@ class TestDNADuplex(unittest.TestCase):
         sequence = 'GAGATATACACA'
         if allclose(start, end):
             with self.assertRaises(ValueError):
-                isambard.ampal.topology.DNADuplex.from_start_and_end(start, end, sequence)
+                isambard.ampal.specifications.DNADuplex.from_start_and_end(start, end, sequence)
         else:
-            dd = isambard.ampal.topology.DNADuplex.from_start_and_end(start, end, sequence)
+            dd = isambard.ampal.specifications.DNADuplex.from_start_and_end(start, end, sequence)
             self.assertEqual(len(dd), 2)
             self.assertEqual(len(dd[0]), 12)
             self.assertEqual(len(dd[1]), 12)
@@ -141,9 +141,9 @@ class TestDNADuplex(unittest.TestCase):
         sequence = 'GAGATATACACA'
         if allclose(start, end):
             with self.assertRaises(ValueError):
-                isambard.ampal.topology.DNADuplex.from_start_and_end(start, end, sequence)
+                isambard.ampal.specifications.DNADuplex.from_start_and_end(start, end, sequence)
         else:
-            dd = isambard.ampal.topology.DNADuplex.from_start_and_end(start, end, sequence)
+            dd = isambard.ampal.specifications.DNADuplex.from_start_and_end(start, end, sequence)
             self.assertEqual(len(dd), 2)
             self.assertEqual(len(dd[0]), 12)
             self.assertEqual(len(dd[1]), 12)
@@ -156,16 +156,16 @@ class TestDNADuplex(unittest.TestCase):
         """Test SingleStrandHelix with random sequence, start and end."""
         if allclose(start, end) or not sequence:
             with self.assertRaises(ValueError):
-                isambard.ampal.topology.DNADuplex.from_start_and_end(start, end, sequence)
+                isambard.ampal.specifications.DNADuplex.from_start_and_end(start, end, sequence)
         else:
-            dd = isambard.ampal.topology.DNADuplex.from_start_and_end(start, end, sequence)
+            dd = isambard.ampal.specifications.DNADuplex.from_start_and_end(start, end, sequence)
             self.assertEqual(len(dd), 2)
             self.assertEqual(len(dd[0]), len(sequence))
             self.assertEqual(len(dd[1]), len(sequence))
 
             ideal_bonds_s1 = count_bonds(sequence)
             ideal_bonds_s2 = count_bonds(
-                isambard.ampal.topology.nucleic_acid_duplex.generate_antisense_sequence(sequence))
+                isambard.ampal.specifications.nucleic_acid_duplex.generate_antisense_sequence(sequence))
             found_bonds_s1 = len(isambard.ampal.interactions.find_covalent_bonds(dd[0]))
             found_bonds_s2 = len(isambard.ampal.interactions.find_covalent_bonds(dd[1]))
             found_bonds_dd = len(isambard.ampal.interactions.find_covalent_bonds(dd))
