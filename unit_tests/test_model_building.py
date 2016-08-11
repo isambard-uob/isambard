@@ -155,7 +155,7 @@ class HelicalHelixTestCase(unittest.TestCase):
 
 
 class CoiledCoilTestCase(unittest.TestCase):
-    """Tests for the CoiledCoil topology."""
+    """Tests for the CoiledCoil specifications."""
     def setUp(self):
         n = 25
         self.helical_helices = random_helical_helices(n=n)
@@ -163,7 +163,7 @@ class CoiledCoilTestCase(unittest.TestCase):
     def test_from_polymers(self):
         for _ in range(10):
             oligomer_state = random.choice(range(1, 5))
-            coiled_coil = test_module.ampal.topology.CoiledCoil.from_polymers(
+            coiled_coil = test_module.ampal.specifications.CoiledCoil.from_polymers(
                 random.sample(self.helical_helices, oligomer_state))
             tests = []
             ''.join(coiled_coil.major_handedness) == ''.join([x.major_handedness for x in coiled_coil._molecules])

@@ -22,13 +22,13 @@ class OptPSO:
 
     Parameters
     ----------
-    topology: topology class
-        topology to be minimized- needs an evaluate method.
+    specification: specification class
+        specification to be minimized- needs an evaluate method.
     output path: str
         path to save log and optimized model
     """
-    def __init__(self, topology, output_path, bude_mode='average'):
-        self.topology = topology
+    def __init__(self, specification, output_path, bude_mode='average'):
+        self.specification = specification
         self.output_path = output_path
         self.bude_mode = bude_mode
         self.toolbox = base.Toolbox()
@@ -64,7 +64,7 @@ class OptPSO:
         creator.create("Particle", list, fitness=creator.FitnessMin, speed=list, smin=None, smax=None, best=None)
 
     def parameters(self, sequence, value_means, value_ranges, arrangement):
-        """Relates the individual to be evolved to the full parameter string for building the topology object
+        """Relates the individual to be evolved to the full parameter string for building the specification object
         Notes
         -----
         Note that the internal working of the PSO is slightly different in that the particles in the algorithm are all
@@ -74,7 +74,7 @@ class OptPSO:
         Parameters
         ----------
         sequence: str
-            Full amino acid sequence for topology object to be optimized
+            Full amino acid sequence for specification object to be optimized
         value_means: list
             List containing mean values for parameters to be optimized
         value_ranges: list
@@ -131,7 +131,7 @@ class OptPSO:
         return part
 
     def parse_individual(self, individual):
-        """Converts an individual from the PSO into a full list of parameters for building the topology object.
+        """Converts an individual from the PSO into a full list of parameters for building the specification object.
         Parameters
         ----------
         individual: position elements from swarm particle
@@ -179,8 +179,8 @@ class OptPSO:
 
         Notes
         -----
-        Each particle is connected to the others in a cyclic topology, and is allowed to read a best value only from
-        neighbouring particles. This topology helps to prevent the swarm from becoming trapped in local minima.
+        Each particle is connected to the others in a cyclic specification, and is allowed to read a best value only from
+        neighbouring particles. This specification helps to prevent the swarm from becoming trapped in local minima.
 
         Parameters
         ----------
@@ -248,7 +248,7 @@ class OptPSO:
                 else:
                     valid_particles.append(part)
             self.modelcount += len(valid_particles)
-            topologies = [self.topology]*len(valid_particles)
+            topologies = [self.specification]*len(valid_particles)
             sequences = [self.sequence]*len(valid_particles)
             parameters = [self.parse_individual(part) for part in valid_particles]
             mode = [self.bude_mode] * len(valid_particles)
@@ -311,7 +311,7 @@ class OptPSO:
                     log_file.write("Warning! Parameter {0} is at or near minimum allowed value\n".format(i+1))
             log_file.write('Minimization history: \n{0}'.format(self.logbook))
         with open('{0}{1}_bestmodel.pdb'.format(self.output_path, self.run_id), 'w') as output_file:
-            model = self.topology(*params)
+            model = self.specification(*params)
             model.build()
             model.pack_new_sequences(self.sequence)
             output_file.write(model.pdb)
@@ -328,15 +328,15 @@ def px_eval(model_specifications):
     Parameters
     ----------
     model_specifications: list
-        Tuple containing the topology to be built, the sequence, and the parameters for model building.
+        Tuple containing the specification to be built, the sequence, and the parameters for model building.
 
     Returns
     -------
     model.bude_score: float
         BUDE score for model to be assigned to particle fitness value.
     """
-    topology, sequence, parsed_ind, mode = model_specifications
-    model = topology(*parsed_ind)
+    specification, sequence, parsed_ind, mode = model_specifications
+    model = specification(*parsed_ind)
     model.build()
     model.pack_new_sequences(sequence)
     if mode == 'average':

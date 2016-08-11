@@ -434,7 +434,7 @@ class AxisTestCase(unittest.TestCase):
 
 
 class HelicalCurveTestCase(unittest.TestCase):
-    """Tests for isambard.ampal.topology.primitive_paths.HelicalCurve"""
+    """Tests for isambard.ampal.specifications.primitive_paths.HelicalCurve"""
     def setUp(self):
         n = 100
         self.alphas = random_angles(n=n, min_val=0, max_val=90)
