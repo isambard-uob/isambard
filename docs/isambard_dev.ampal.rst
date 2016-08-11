@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
 
     isambard_dev.ampal.secondary_structure
-    isambard_dev.ampal.topology
+    isambard_dev.ampal.specifications
 
 Submodules
 ----------

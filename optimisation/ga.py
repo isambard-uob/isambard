@@ -19,22 +19,22 @@ class OptGA:
     A population of individuals is generated, and each individual is evaluated. Individuals are a list of parameters,
     with an addition ind.fitness.values property that is written when they are evaluated.
     This has been set up such that each individual can represent an evolving sequence of parameters that are parsed
-    to give a full set of parameters for a topology object, allowing for invariant parameters in the topology object, or
+    to give a full set of parameters for a specification object, allowing for invariant parameters in the specification object, or
     e.g. one parameter from the evolving individual to be used to specify two (identical but variable) parameters in the
-    topology object.
-    On instantiation it needs a topology to evaluate and an output path.
+    specification object.
+    On instantiation it needs a specification to evaluate and an output path.
 
     Parameters
     ----------
-    topology: class
-        the specific topology to optimise
+    specification: class
+        the specific specification to optimise
     output path: str
         location to save output file
     """
 
-    def __init__(self, topology, output_path, bude_mode='average'):
+    def __init__(self, specification, output_path, bude_mode='average'):
         self.output_path = output_path
-        self.topology = topology
+        self.specification = specification
         self.bude_mode = bude_mode
         self.sequence = None
         self.value_ranges = None
@@ -64,12 +64,12 @@ class OptGA:
         self.toolbox = base.Toolbox()
 
     def parameters(self, sequence, value_means, value_ranges, arrangement):
-        """Relates the individual to be evolved to the full parameter string for building the topology object
+        """Relates the individual to be evolved to the full parameter string for building the specification object
 
         Parameters
         ----------
         sequence: str
-            Full amino acid sequence for topology object to be optimized. Must be equal to the number of residues in the
+            Full amino acid sequence for specification object to be optimized. Must be equal to the number of residues in the
             model.
         value_means: list
             List containing mean values for parameters to be optimized.
@@ -123,7 +123,7 @@ class OptGA:
         return pars
 
     def parse_individual(self, individual):
-        """converts an individual from the GA into a full list of parameters for building the topology object.
+        """converts an individual from the GA into a full list of parameters for building the specification object.
         Parameters
         ----------
         individual: DEAP individual
@@ -131,7 +131,7 @@ class OptGA:
         Returns
         -------
         fullpars: list
-            Full parameter list to define the topology object.
+            Full parameter list to define the specification object.
         """
         scaled_ind = []
         for i in range(len(self.value_means)):
@@ -144,7 +144,7 @@ class OptGA:
         return fullpars
 
     # def evalmodel(self, individual):
-    #     """For a given individual builds the topology object and assesses the bude score
+    #     """For a given individual builds the specification object and assesses the bude score
     #
     #     Parameters
     #     ----------
@@ -157,7 +157,7 @@ class OptGA:
     #         The BUDE score for the evaluated model.
     #     """
     #     params = self.parse_individual(individual)
-    #     model = self.topology(*params)
+    #     model = self.specification(*params)
     #     model.build()
     #     model.pack_new_sequences(self.sequence)
     #     return model.bude_score
@@ -219,7 +219,7 @@ class OptGA:
         self.pop = self.toolbox.population(n=self.gensize * 2)  # initial population is double normal size
 
         print ('Starting minimisation ({:%Y-%m-%d %H:%M:%S})'.format(self.start_time))
-        px_parameters = zip([self.topology] * len(self.pop), [self.sequence] * len(self.pop),
+        px_parameters = zip([self.specification] * len(self.pop), [self.sequence] * len(self.pop),
                             [self.parse_individual(x) for x in self.pop], [self.bude_mode]*len(self.pop))
         with futures.ProcessPoolExecutor(max_workers=procs) as executor:
             fitnesses = executor.map(px_eval, px_parameters)
@@ -274,7 +274,7 @@ class OptGA:
 
             # Evaluate the valid individuals
             self.modelcount += len(valid_individuals)
-            topologies = [self.topology]*len(valid_individuals)
+            topologies = [self.specification]*len(valid_individuals)
             sequences = [self.sequence]*len(valid_individuals)
             parameters = [self.parse_individual(x) for x in valid_individuals]
             mode = [self.bude_mode]*len(valid_individuals)
@@ -336,7 +336,7 @@ class OptGA:
                     log_file.write("Warning! Parameter {0} is at or near minimum allowed value\n".format(i+1))
             log_file.write('Minimization history: \n{0}'.format(self.logbook))
         with open('{0}{1}_bestmodel.pdb'.format(self.output_path, self.run_id), 'w') as output_file:
-            model = self.topology(*params)
+            model = self.specification(*params)
             model.build()
             model.pack_new_sequences(self.sequence)
             output_file.write(model.pdb)
@@ -353,15 +353,15 @@ def px_eval(model_specifications):
     Parameters
     ----------
     model_specifications: list
-        Tuple containing the topology to be built, the sequence, and the parameters for model building.
+        Tuple containing the specification to be built, the sequence, and the parameters for model building.
 
     Returns
     -------
     model.bude_score: float
         BUDE score for model to be assigned to particle fitness value.
     """
-    topology, sequence, parsed_ind, mode = model_specifications
-    model = topology(*parsed_ind)
+    specification, sequence, parsed_ind, mode = model_specifications
+    model = specification(*parsed_ind)
     model.build()
     model.pack_new_sequences(sequence)
     if mode == 'average':

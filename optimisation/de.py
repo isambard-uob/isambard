@@ -14,7 +14,7 @@ class ParentDE:
 
     Parameters
     ----------
-    topology: Isambard topology
+    specification: Isambard specification
         Tells the optimizer what kind of structure it is building
     output_path: str
         Specifies the location to save files if logging is enabled
@@ -28,12 +28,12 @@ class ParentDE:
         self.toolbox = base.Toolbox()
 
     def parameters(self, sequence, value_means, value_ranges, arrangement):
-        """Relates the individual to be evolved to the full parameter string for building the topology object
+        """Relates the individual to be evolved to the full parameter string for building the specification object
 
         Parameters
         ----------
         sequence: str
-            Full amino acid sequence for topology object to be optimized. Must be equal to the number of residues in the
+            Full amino acid sequence for specification object to be optimized. Must be equal to the number of residues in the
             model.
         value_means: list
             List containing mean values for parameters to be optimized.
@@ -72,7 +72,7 @@ class ParentDE:
         return ind
 
     def parse_individual(self, individual):
-        """Converts an individual from the PSO into a full list of parameters for building the topology object.
+        """Converts an individual from the PSO into a full list of parameters for building the specification object.
         Parameters
         ----------
         individual: position elements from swarm particle
@@ -239,19 +239,19 @@ class ParentDE:
             log_file.write('Minimization history: \n{0}'.format(self.logbook))
         with open('{0}{1}_bestmodel.pdb'.format(self._de_params['output_path'], self._de_params['run_id']),
                   'w') as output_file:
-            model = self._de_params['topology'](*params)
+            model = self._de_params['specification'](*params)
             model.build()
             model.pack_new_sequences(self._de_params['sequence'])
             output_file.write(model.pdb)
 
 
 class OptDE(ParentDE):
-    def __init__(self, topology, output_path=None, mode='buff'):
+    def __init__(self, specification, output_path=None, mode='buff'):
         super(OptDE, self).__init__()
         self._de_params = locals()
 
     def assign_fitness(self, targets):
-        px_parameters = zip([self._de_params['topology']] * len(targets),
+        px_parameters = zip([self._de_params['specification']] * len(targets),
                             [self._de_params['sequence']] * len(targets),
                             [self.parse_individual(x) for x in targets])
         with futures.ProcessPoolExecutor(max_workers=self._de_params['procs']) as executor:
@@ -261,12 +261,12 @@ class OptDE(ParentDE):
 
 
 class OptDE_rmsd(ParentDE):
-    def __init__(self, topology, ref_pdb, output_path=None, mode='buff', cmd_file_path=None):
+    def __init__(self, specification, ref_pdb, output_path=None, mode='buff', cmd_file_path=None):
         super(OptDE_rmsd, self).__init__()
         self._de_params = locals()
 
     def assign_fitness(self, targets):
-        px_parameters = zip([self._de_params['topology']] * len(targets),
+        px_parameters = zip([self._de_params['specification']] * len(targets),
                             [self._de_params['sequence']] * len(targets),
                             [self.parse_individual(x) for x in targets],
                             [self._de_params['ref_pdb']] * len(targets),
@@ -302,12 +302,12 @@ class OptDE_comparator(ParentDE):
             ind.fitness.values = (fit - (self._de_params['ref1'] + self._de_params['ref2']),)
 
     def parameters(self, value_means, value_ranges, arrangement):
-        """Relates the individual to be evolved to the full parameter string for building the topology object
+        """Relates the individual to be evolved to the full parameter string for building the specification object
 
         Parameters
         ----------
         sequence: str
-            Full amino acid sequence for topology object to be optimized. Must be equal to the number of residues in the
+            Full amino acid sequence for specification object to be optimized. Must be equal to the number of residues in the
             model.
         value_means: list
             List containing mean values for parameters to be optimized.
@@ -344,15 +344,15 @@ def buff_eval(params):
     Parameters
     ----------
     params: list
-        Tuple containing the topology to be built, the sequence, and the parameters for model building.
+        Tuple containing the specification to be built, the sequence, and the parameters for model building.
 
     Returns
     -------
     model.bude_score: float
         BUFF score for model to be assigned to particle fitness value.
     """
-    topology, sequence, parsed_ind = params
-    model = topology(*parsed_ind)
+    specification, sequence, parsed_ind = params
+    model = specification(*parsed_ind)
     model.build()
     model.pack_new_sequences(sequence)
     return model.buff_interaction_energy.total_energy
@@ -371,8 +371,8 @@ def rmsd_eval(rmsd_params):
     rmsd: float
         rmsd against reference model as calculated by profit.
     """
-    topology, sequence, parsed_ind, reference_pdb, cmd_file_path = rmsd_params
-    model = topology(*parsed_ind)
+    specification, sequence, parsed_ind, reference_pdb, cmd_file_path = rmsd_params
+    model = specification(*parsed_ind)
     model.pack_new_sequences(sequence)
     try:
         ca, bb, aa = run_profit(reference_pdb, model.pdb, path1=False, path2=False, path_to_cmd_file=cmd_file_path)
