@@ -13,14 +13,14 @@ class OptCMAES:
 
     Parameters
     ----------
-    topology: Isambard topology
+    specification: Isambard specification
         Tells the optimizer what kind of structure it is building
     output_path: str
         Specifies the location to save files if logging is enabled
     bude_mode: 'average' or 'additive'
         Specifies whether the score should be the average per chain or total cumulative score.
     """
-    def __init__(self, topology, output_path, bude_mode='average'):
+    def __init__(self, specification, output_path, bude_mode='average'):
         self.output_path = output_path
         self.bude_mode = bude_mode
         self.sequence = None
@@ -29,7 +29,7 @@ class OptCMAES:
         self.value_ranges = None
         self.value_means = None
         self.arrangement = None
-        self.topology = topology
+        self.specification = specification
         self.keys = None
         self.log = None
         self.modelcount = None
@@ -51,12 +51,12 @@ class OptCMAES:
         self.toolbox.register("evaluate", px_eval)
 
     def parameters(self, sequence, value_means, value_ranges, arrangement):
-        """Relates the individual to be evolved to the full parameter string for building the topology object
+        """Relates the individual to be evolved to the full parameter string for building the specification object
 
         Parameters
         ----------
         sequence: str
-            Full amino acid sequence for topology object to be optimized. Must be equal to the number of residues in the
+            Full amino acid sequence for specification object to be optimized. Must be equal to the number of residues in the
             model.
         value_means: list
             List containing mean values for parameters to be optimized.
@@ -159,7 +159,7 @@ class OptCMAES:
 
             # Evaluate the valid individuals
             self.modelcount += len(valid_individuals)
-            topologies = [self.topology]*len(valid_individuals)
+            topologies = [self.specification]*len(valid_individuals)
             sequences = [self.sequence]*len(valid_individuals)
             parameters = [self.parse_individual(x) for x in valid_individuals]
             mode = [self.bude_mode]*len(valid_individuals)
@@ -200,7 +200,7 @@ class OptCMAES:
             plt.ylabel('Score', fontsize=20)
 
     def parse_individual(self, individual):
-        """Converts an individual from the CMA ES into a full list of parameters for building the topology object.
+        """Converts an individual from the CMA ES into a full list of parameters for building the specification object.
         Parameters
         ----------
         individual: position elements from swarm particle
@@ -221,10 +221,10 @@ class OptCMAES:
         return fullpars
 
     def evalmodel(self, individual):
-        """For a given individual builds the topology object and assesses the bude score
+        """For a given individual builds the specification object and assesses the bude score
         """
         params = self.parse_individual(individual)
-        model = self.topology(*params)
+        model = self.specification(*params)
         model.evaluate(self.sequence)
         return model.bude_score
 
@@ -246,7 +246,7 @@ class OptCMAES:
                     log_file.write("Warning! Parameter {0} is at or near minimum allowed value\n".format(i+1))
             log_file.write('Minimization history: \n{0}'.format(self.logbook))
         with open('{0}{1}_bestmodel.pdb'.format(self.output_path, self.run_id), 'w') as output_file:
-            model = self.topology(*params)
+            model = self.specification(*params)
             model.build()
             model.pack_new_sequences(self.sequence)
             output_file.write(model.pdb)
@@ -426,11 +426,11 @@ def px_eval(model_specifications):
     Parameters
     ----------
     model_specifications: list
-        Provided by the run_cma_es_px method, contains reference to the topology, the sequence, and the parameters for
+        Provided by the run_cma_es_px method, contains reference to the specification, the sequence, and the parameters for
         the model, and the bude mode to specify average versus cumulative score.
     """
-    topology, sequence, parsed_ind, mode = model_specifications
-    model = topology(*parsed_ind)
+    specification, sequence, parsed_ind, mode = model_specifications
+    model = specification(*parsed_ind)
     model.build()
     model.pack_new_sequences(sequence)
     if mode == 'average':
