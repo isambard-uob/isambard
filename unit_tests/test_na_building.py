@@ -4,7 +4,7 @@ from hypothesis import given, settings
 from hypothesis.strategies import integers, floats, tuples, text
 from numpy import allclose
 
-import isambard_dev as isambard
+import isambard
 
 
 def count_bonds(sequence, phos=False):

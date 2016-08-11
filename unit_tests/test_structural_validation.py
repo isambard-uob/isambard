@@ -4,7 +4,7 @@ import os
 import random
 import numpy
 
-import isambard_dev as isambard
+import isambard
 from ampal import convert_pdb_to_ampal
 from ampal.protein import Polypeptide
 from ampal.analyse_protein import measure_torsion_angles

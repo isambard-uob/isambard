@@ -2,7 +2,7 @@ from collections import Counter
 import os
 import unittest
 
-import isambard_dev as isambard
+import isambard
 from ampal.pdb_parser import convert_pdb_to_ampal
 
 
