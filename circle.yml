@@ -15,8 +15,8 @@ dependencies:
     - gunzip reduce.3.23.130521.linuxi386.gz
     - chmod +x reduce.3.23.130521.linuxi386
     # DSSP
-    - wget ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64
-    - chmod +x dssp-2.0.4-linux-amd64
+    - wget https://www.dropbox.com/s/1l9b6snhgnoe8he/dssp-2.0.4?dl=0 -O dssp-2.0.4
+    - chmod +x dssp-2.0.4
 test:
   override:
     - cd /home/ubuntu/isambard_dev
