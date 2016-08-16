@@ -1,7 +1,7 @@
 import random
 import numpy
 
-import isambard_dev as isambard
+import isambard
 
 
 def random_angles(n=1, min_val=0, max_val=180, radians=False):

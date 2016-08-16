@@ -5,7 +5,7 @@ import numpy
 from hypothesis import given, settings
 from hypothesis.strategies import floats, tuples, lists
 
-import isambard_dev as isambard
+import isambard
 
 from unit_tests.random_isambard_objects import random_vectors, random_floats
 from unit_tests.random_isambard_objects import random_angles

@@ -2,7 +2,7 @@ import os
 import random
 import unittest
 
-import isambard_dev as isambard
+import isambard
 
 
 class ForceFieldTestCase(unittest.TestCase):
