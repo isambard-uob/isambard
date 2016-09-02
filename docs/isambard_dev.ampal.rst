@@ -6,19 +6,11 @@ Subpackages
 
 .. toctree::
 
-    isambard_dev.ampal.secondary_structure
-    isambard_dev.ampal.specifications
+    Polymer specifications <isambard_dev.ampal.secondary_structure>
+    Assembly specifications <isambard_dev.ampal.specifications>
 
 Submodules
 ----------
-
-isambard_dev.ampal.ampal_databases module
------------------------------------------
-
-.. automodule:: isambard_dev.ampal.ampal_databases
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 isambard_dev.ampal.analyse_protein module
 -----------------------------------------
