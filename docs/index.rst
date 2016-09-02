@@ -16,6 +16,7 @@ ISAMBARD documentation
    Overview <overview>
    Tutorial <tutorial/tutorial>
    API Reference <api_reference>
+   Style Guide <style_guide>
 
 
 Indices and tables
