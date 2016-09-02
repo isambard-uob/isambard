@@ -14,7 +14,7 @@ ISAMBARD documentation
    :maxdepth: 2
 
    Overview <overview>
-   Tutorial <tutorial>
+   Tutorial <tutorial/tutorial>
    API Reference <api_reference>
 
 
