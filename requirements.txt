@@ -9,3 +9,4 @@ matplotlib
 hypothesis
 bs4
 parmed
+recommonmark
