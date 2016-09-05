@@ -6,7 +6,7 @@ ISAMBARD (Intelligent System for Analysis, Model Building And Rational Design), 
 structural analysis and rational design of biomolecules. It is developed and maintained by members of the
 `Woolfson group <http://www.chm.bris.ac.uk/org/woolfson/index.html>`_, University of Bristol.
 
-The ISAMBARD API provides a suite of tools for biomolecular stucture analysis, protein design,model building and 
+The ISAMBARD API provides a suite of tools for biomolecular stucture analysis, protein design, model building and 
 evaluation.
 
 Goals
