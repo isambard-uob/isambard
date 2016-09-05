@@ -3,14 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ISAMBARD's documentation!
-====================================
+ISAMBARD documentation
+======================
 
-Contents:
+.. only:: html
+   :Release: version
+   :Date: today
 
 .. toctree::
    :maxdepth: 2
 
+   Overview <overview>
+   Tutorial <tutorial/tutorial>
+   Getting Started <getting_started>
+   API Reference <api_reference>
+   Developer Guide <developer_guide>
+   Citing ISAMBARD <citing_isambard>
 
 
 Indices and tables
