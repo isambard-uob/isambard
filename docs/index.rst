@@ -15,9 +15,8 @@ ISAMBARD documentation
 
    Overview <overview>
    Tutorial <tutorial/tutorial>
-   API Reference <api_reference>
-   Style Guide <style_guide>
    Getting Started <getting_started>
+   API Reference <api_reference>
    Developer Guide <developer_guide>
    Citing ISAMBARD <citing_isambard>
 
