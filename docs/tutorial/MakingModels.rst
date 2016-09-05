@@ -2,11 +2,11 @@
 Making Models With Isambard
 ===========================
 
-Introduction
-------------
+1. Introduction
+---------------
 
 Topologies available
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 A number of topologies are currently available through Isambard. These
 include: alpha-helices, coiled-coil assemblies of different flavours,
@@ -179,8 +179,8 @@ returned by the ``my_cc.bude_score`` method for this case.). You can get
 the same value as ``my_cc.bude_score`` by calling the
 ``run_bude_additive`` method.
 
-Measuring geometric parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2. Measuring geometric parameters
+---------------------------------
 
 In order to measure radius, pitch and Phi-C\ :math:`\alpha` of the
 assembly, we need to define a ***reference axis***, that is the line
@@ -345,8 +345,8 @@ helices is also required. For model building we take a mean value.
 
 
 
-Building a model
-~~~~~~~~~~~~~~~~
+3. Building a model
+-------------------
 
 We now know all the parameters we need to rebuild this structure, and it
 can be done by generating a topology object from the CoiledCoil class.
@@ -556,8 +556,8 @@ helix (or both)? Try varying the radius. Each time, score your model
 using BUDE and make a note of the RMSD to the original structure, and
 have a look at the models you produce on PyMOL.
 
-Going antiparallel
-~~~~~~~~~~~~~~~~~~
+4. Going antiparallel
+---------------------
 
 We are going to remake the coiled-coil dimer as an antiparallel
 structure. To do this, we need to modify the
@@ -633,8 +633,8 @@ Score the model using BUDE:
 
 
 
-Making it better - an introduction to optimisation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+5. Making it better - an introduction to optimisation
+-----------------------------------------------------
 
 It's not a good score :-) (obviously?) We could improve this score by
 'minimizing' the structure, i.e. trying to find new parameter for the
@@ -749,8 +749,8 @@ What has the optimiser done to the model?
 There are different optimization methods available which will be
 explained in further tutorials.
 
-Making bigger things
-~~~~~~~~~~~~~~~~~~~~
+6. Making bigger things
+-----------------------
 
 Now you know how to subclass the CoiledCoil AMPAL topology object, see
 if you can make an alpha-helical barrel by increasing the value of

@@ -791,15 +791,12 @@ lot of the same functionality:
 
 
 
-Summary
-=======
+8. Summary and activities
+-------------------------
 
 With these simple methods you can load in a PDB file and select various
 different parts of the protein. Please try playing around with the
 example code and try to select different parts of the protein.
-
-Activities
-----------
 
 1. Try loading in a PDB file of your own and select various parts of the
    protein and ligands.

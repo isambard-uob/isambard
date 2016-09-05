@@ -668,7 +668,7 @@ We can get all the residues using a for loop or a list comprehension:
 It looks like the zinc is coordinated by two cysteines, an aspartate and
 a histidine residue.
 
-4. Is Within
+5. Is Within
 ------------
 
 This kind of operation is very common when analysing proteins. So we
@@ -807,7 +807,7 @@ particular ``Residue`` or ``Ligand``.
 
 
 
-5. Geometry in ISAMBARD
+6. Geometry in ISAMBARD
 -----------------------
 
 There are a range of tools in ISAMBARD for performing geometric
@@ -897,15 +897,12 @@ angles:
 Our simple analysis shows that the leucine residue is in the
 gauche-/trans conformation.
 
-Summary
-=======
+7. Summary and activities
+-------------------------
 
 There are lots of tools for making complex selections in ISAMBARD.
 Combined with the tools for geometry, detailed analysis can be performed
 on these selections.
-
-Activities
-==========
 
 1. Find all the residues that are:
 

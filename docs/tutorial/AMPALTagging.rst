@@ -8,26 +8,14 @@ Tagging in the AMPAL framework
 Tagging allows us to store information related to AMPAL objects and
 retrieve it easily later.
 
-| All AMPAL objects have a ``tags`` attribute.
-| This is a dictionary: a 'useful place to put stuff'.
-| When we add items to the ``tags`` dictionary, we refer to it as
-  'tagging' the AMPAL object.
+All AMPAL objects have a ``tags`` attribute, which is a dictionary: a
+'useful place to put stuff'. When we add items to the ``tags``
+dictionary, we refer to it as 'tagging' the AMPAL object. Any python
+object can be stored in ``tags``.
 
-| \*\* You could tag ...\*\*
-| - A ``Residue`` as being catalytic, or helical. - A ``Chain`` (or a
-  ``Protein``) with its bude or scrwl score. - A coiled coil ``Protein``
-  with a description of its assembly (e.g. 'parallel trimer') - A
-  ``Chain`` with a comment (e.g. 'looks hard to synthesise'). - An
-  ``Atom`` with its b-factor. - A ``Protein`` with a
-  ``networkx.MultiDiGraph`` that describes a coiled coil structure using
-  graph theory. (Some people *actually* do this).
-
-It doesn't matter if you don't know what a ``networkx.MultiDiGraph`` is.
-The point is that any python object can be stored in ``tags``.
-
-| \*\* You've already done some tagging. \*\*
-| The ``tags`` attribute is also used to store information internally so
-  that certain values only need to be calculated once.
+You've already done some tagging. The ``tags`` attribute is also used to
+store information internally so that certain values only need to be
+calculated once.
 
 It may not have been pointed out at the time, but you have already been
 using ``tags`` in previous tutorial notebooks, when you used properties
@@ -37,10 +25,9 @@ When you use ``convert_pdb_to_assembly``, you tag the ``Atoms`` of your
 ``Protein`` with information from the pdb file. We'll look at that
 shortly.
 
-| \*\* In-built functions \*\*
-| ``isambard.ampal.base_ampal`` has some in-built 'tagging functions'
-  that calculate things and add the results to the ``tags`` of the
-  appropriate AMPAL object.
+| In-built functions: ``isambard.ampal.base_ampal`` has some in-built
+  'tagging functions' that calculate things and add the results to the
+  ``tags`` of the appropriate AMPAL object.
 | In this notebook, we'll look at some of these and (hopefully!)
   demonstrate their utility.
 
@@ -656,8 +643,8 @@ object in the appropriate place. - Here, the appropriate place is the
   is this new ``Protein`` object that is returned by the ``helices``
   method.
 
-5. Further work: Other tagging functions
-----------------------------------------
+5. Other tagging functions
+--------------------------
 
 Other tagging functions in ``ismabard`` follow the pattern of
 ``tag_torsion_angles`` and ``tag_secondary_structure``. You call them on
@@ -674,8 +661,8 @@ of which we have already explored. We'll cover two more of these very
 briefly here, but feel free to look at / play around with the remaining
 tagging functions.
 
-5.1 tag\_ca\_geometry
-~~~~~~~~~~~~~~~~~~~~~
+tag\_ca\_geometry
+~~~~~~~~~~~~~~~~~
 
 Running the ``tag_ca_geometry`` function tags each ``Residue`` of the
 ``Protein`` with values for 'rise\_per\_residue',
@@ -716,8 +703,8 @@ see for something in an :math:`\alpha`-helix.
 
 
 
-5.2 tag\_socket
-~~~~~~~~~~~~~~~
+tag\_socket
+~~~~~~~~~~~
 
 The ``tag_socket`` method runs socket to find knob-into-hole iteractions
 within a protein structure. It then tags any knob residues with
