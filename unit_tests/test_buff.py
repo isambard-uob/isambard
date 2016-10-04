@@ -38,7 +38,7 @@ class ForceFieldTestCase(unittest.TestCase):
 
     def test_parameterisation_pdb(self):
         """Checks that all atoms that can be parameterised are parameterised."""
-        self.pdb.assign_force_field(self.ff, haff=True)
+        self.pdb.assign_force_field(self.ff, mol2=True)
         for atom in self.pdb.get_atoms(inc_alt_states=True):
             if atom.element != 'H':
                 if atom.ampal_parent.mol_code != 'HOH':

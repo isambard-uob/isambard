@@ -134,7 +134,7 @@ class BaseAmpal(object):
     def make_pdb(self):
         raise NotImplementedError
 
-    def assign_force_field(self, ff, haff=False):
+    def assign_force_field(self, ff, mol2=False):
         if hasattr(self, 'ligands'):
             atoms = self.get_atoms(ligands=True, inc_alt_states=True)
         else:
@@ -147,10 +147,10 @@ class BaseAmpal(object):
                     a_ff = ff['WLD'][atom.res_label]
                 else:
                     a_ff = ff[atom.ampal_parent.mol_code][atom.res_label]
-            elif haff and (atom.ampal_parent.mol_code.capitalize() in ff['HAFF']):
-                a_ff = ff['HAFF'][atom.res_label.capitalize()]
+            elif mol2 and (atom.ampal_parent.mol_code.capitalize() in ff['MOL2']):
+                a_ff = ff['MOL2'][atom.res_label.capitalize()]
             else:
-                if not haff:
+                if not mol2:
                     w_str = '{} ({}) atom is not parameterised in the selected residue force field. ' \
                             'Try activating the heavy atom force field (haff).'.format(atom.element, atom.res_label)
                 else:
@@ -167,7 +167,7 @@ class BaseAmpal(object):
             ff = BuffForceField(force_field='standard')
         if assign_ff:
             if ('assigned_ff' not in self.tags) or force_ff_assign:
-                self.assign_force_field(ff, haff=haff)
+                self.assign_force_field(ff, mol2=haff)
         return score_ampal(self, ff, threshold=threshold, internal=True)
 
     buff_internal_energy = property(get_internal_energy)
