@@ -15,6 +15,8 @@ class ForceFieldParameterError(Exception):
 
 
 class BuffForceField(dict):
+    _parameter_struct_dict = None
+
     def __init__(self, force_field='standard'):
         with open(force_fields[force_field], 'r') as inf:
             in_d = json.loads(inf.read())
@@ -44,6 +46,12 @@ class BuffForceField(dict):
                     if max_npnp < ff_params[4]:
                         max_npnp = ff_params[4]
         return max_rad, max_npnp
+
+    @property
+    def parameter_struct_dict(self):
+        if self._parameter_struct_dict is None:
+            self._parameter_struct_dict = self._make_ff_params_dict()
+        return self._parameter_struct_dict
 
     def _make_ff_params_dict(self):
         from buff import PyAtomData
