@@ -10,6 +10,10 @@ for ff in os.listdir(os.path.join(global_settings['package_path'], 'buff', 'forc
         force_fields[ffs[0]] = os.path.join(global_settings['package_path'], 'buff', 'force_fields', ff)
 
 
+class ForceFieldParameterError(Exception):
+    pass
+
+
 class BuffForceField(dict):
     def __init__(self, force_field='standard'):
         with open(force_fields[force_field], 'r') as inf:
@@ -40,6 +44,23 @@ class BuffForceField(dict):
                     if max_npnp < ff_params[4]:
                         max_npnp = ff_params[4]
         return max_rad, max_npnp
+
+    def _make_ff_params_dict(self):
+        from buff import PyAtomData
+
+        try:
+            ff_params_struct_dict = {}
+            for res in self.keys():
+                if res == 'KEY':
+                    continue
+                if res not in ff_params_struct_dict:
+                    ff_params_struct_dict[res] = {}
+                for atom, params in self[res].items():
+                    ff_params_struct_dict[res][atom] = PyAtomData(
+                        atom.encode(), params[0].encode(), *params[1:])
+        except TypeError:
+            raise ForceFieldParameterError('Badly formatted force field parameters: {}'.format(params))
+        return ff_params_struct_dict
 
 global_settings[u'buff'][u'force_field'] = BuffForceField(
     force_field=global_settings[u'buff'][u'default_force_field'])
