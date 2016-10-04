@@ -5,7 +5,7 @@ from ampal.base_ampal import BaseAmpal, Polymer, find_atoms_within_distance
 from ampal.ligands import LigandGroup, Ligand
 from ampal.analyse_protein import sequence_molecular_weight, sequence_molar_extinction_280, \
     sequence_isoelectric_point
-from buff import BuffForceField, score_ampal
+from buff import score_ampal
 from external_programs.scwrl import pack_sidechains
 from external_programs.naccess import run_naccess,extract_residue_accessibility
 from settings import global_settings
@@ -390,12 +390,12 @@ class Assembly(BaseAmpal):
                     fasta_str += '{0}\n'.format(seq_part)
         return fasta_str
 
-    def get_interaction_energy(self, assign_ff=True, ff=None, haff=False, force_ff_assign=False, threshold=1.1):
+    def get_interaction_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
         if not ff:
-            ff = BuffForceField(force_field='standard')
+            ff = global_settings['buff']['force_field']
         if assign_ff:
             if ('assigned_ff' not in self.tags) or force_ff_assign:
-                self.assign_force_field(ff, haff=haff)
+                self.assign_force_field(ff, mol2=mol2)
         return score_ampal(self, ff, threshold=threshold)
 
     buff_interaction_energy = property(get_interaction_energy)
