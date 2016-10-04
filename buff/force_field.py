@@ -16,12 +16,14 @@ class ForceFieldParameterError(Exception):
 
 class BuffForceField(dict):
     _parameter_struct_dict = None
+    _old_hash = None
 
-    def __init__(self, force_field='standard'):
+    def __init__(self, force_field='standard', auto_update_params=False):
         with open(force_fields[force_field], 'r') as inf:
             in_d = json.loads(inf.read())
         super().__init__(in_d)
         self.force_field = force_field
+        self.auto_update_f_params = auto_update_params
 
     def __repr__(self):
         return "<BUFF Force Field Object: {}>".format(self.force_field)
@@ -51,6 +53,11 @@ class BuffForceField(dict):
     def parameter_struct_dict(self):
         if self._parameter_struct_dict is None:
             self._parameter_struct_dict = self._make_ff_params_dict()
+        elif self.auto_update_f_params:
+            new_hash = hash(tuple([tuple(item) for sublist in self.values() for item in sublist.values()]))
+            if self._old_hash != new_hash:
+                self._parameter_struct_dict = self._make_ff_params_dict()
+                self._old_hash = new_hash
         return self._parameter_struct_dict
 
     def _make_ff_params_dict(self):
