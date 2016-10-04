@@ -4,7 +4,7 @@ import warnings
 
 import numpy
 
-from buff import PyAtomData, BuffForceField, score_ampal
+from buff import PyAtomData, score_ampal
 from ampal.ampal_databases import element_data
 from tools.isambard_warnings import NotParameterisedWarning
 from tools.geometry import distance, Quaternion, centre_of_mass, rmsd
@@ -164,7 +164,7 @@ class BaseAmpal(object):
 
     def get_internal_energy(self, assign_ff=True, ff=None, haff=False, force_ff_assign=False, threshold=1.1):
         if not ff:
-            ff = BuffForceField(force_field='standard')
+            ff = global_settings['buff']['force_field']
         if assign_ff:
             if ('assigned_ff' not in self.tags) or force_ff_assign:
                 self.assign_force_field(ff, mol2=haff)
