@@ -15,10 +15,23 @@ class ForceFieldParameterError(Exception):
 
 
 class BuffForceField(dict):
+    """A wrapper around a BUFF force field.
+
+    Properties
+    ----------
+    max_radius_and_npnp: (float, float)
+        The maximum radius and npnp distance included in the force field.
+    distance_cutoff: float
+        Find the distance of the longest possible interaction.
+    parameter_struct_dict: dict
+        Dictionary containing PyAtomData structs for the force field
+        parameters for each atom in the force field.
+    """
     _parameter_struct_dict = None
     _old_hash = None
 
     def __init__(self, force_field='standard', auto_update_params=False):
+
         with open(force_fields[force_field], 'r') as inf:
             in_d = json.loads(inf.read())
         super().__init__(in_d)
@@ -38,6 +51,13 @@ class BuffForceField(dict):
         return (rad * 2) + npnp
 
     def find_max_rad_npnp(self):
+        """Finds the maximum radius and npnp in the force field.
+
+        Returns
+        -------
+        (max_rad, max_npnp): (float, float)
+            Maximum radius and npnp distance in the loaded force field.
+        """
         max_rad = 0
         max_npnp = 0
         for res, atoms in self.items():
@@ -61,6 +81,14 @@ class BuffForceField(dict):
         return self._parameter_struct_dict
 
     def _make_ff_params_dict(self):
+        """Makes a dictionary containing PyAtomData structs for each element in the force field.
+
+        Returns
+        -------
+        ff_params_struct_dict: dict
+            Dictionary containing PyAtomData structs for the force field
+            parameters for each atom in the force field.
+        """
         from buff import PyAtomData
 
         try:
