@@ -80,6 +80,20 @@ class BuffForceField(dict):
                 self._old_hash = new_hash
         return self._parameter_struct_dict
 
+    @property
+    def _flattened_parameters(self):
+        fp_list = []
+        for (res, atom_dict) in sorted(self.parameter_struct_dict.items()):
+            for (atom, struct) in sorted(atom_dict.items()):
+                fp_list.append(((res, atom), struct))
+        return fp_list
+
+    @property
+    def parameter_key(self):
+        fp_list = self._flattened_parameters
+        parameter_key = {k: v for v, k in enumerate([x[0] for x in fp_list])}
+        return parameter_key
+
     def _make_ff_params_dict(self):
         """Makes a dictionary containing PyAtomData structs for each element in the force field.
 
