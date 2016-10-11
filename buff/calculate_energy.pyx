@@ -66,8 +66,8 @@ cpdef find_buff_interactions(ampal, ff, internal=False):
         else:
             m_dist = distance(ref_atom_a, ref_atom_b)
         if m_dist <= ffco:
-            a_atoms = [atom for atom in monomer_a.atoms.values() if atom._ff_index is not None]
-            b_atoms = [atom for atom in monomer_b.atoms.values() if atom._ff_index is not None]
+            a_atoms = [atom for atom in monomer_a.atoms.values() if atom._ff_id is not None]
+            b_atoms = [atom for atom in monomer_b.atoms.values() if atom._ff_id is not None]
             if not internal:
                 interactions.extend(itertools.product(a_atoms, b_atoms))
             else:
@@ -109,8 +109,8 @@ cpdef score_interactions(interactions, ff, threshold = 1.1):
     ffco = ff.distance_cutoff
     ffpsd = ff.parameter_struct_dict
     for a, b in interactions:
-        a_params = ffpsd[a._ff_index[0]][a._ff_index[1]]
-        b_params = ffpsd[b._ff_index[0]][b._ff_index[1]]
+        a_params = ffpsd[a._ff_id[0]][a._ff_id[1]]
+        b_params = ffpsd[b._ff_id[0]][b._ff_id[1]]
         dist = distance(a._vector, b._vector)
         if dist <= ffco:
             scores.append(calculatePairEnergy(a_params.thisptr, b_params.thisptr, dist))
