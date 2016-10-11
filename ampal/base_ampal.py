@@ -135,6 +135,15 @@ class BaseAmpal(object):
         raise NotImplementedError
 
     def assign_force_field(self, ff, mol2=False):
+        """Assigns force field parameters to Atoms in the AMPAL object.
+
+        Parameters
+        ----------
+        ff: BuffForceField
+            The force field to be used for scoring.
+        mol2: bool
+            If true, mol2 style labels will also be used.
+        """
         if hasattr(self, 'ligands'):
             atoms = self.get_atoms(ligands=True, inc_alt_states=True)
         else:
