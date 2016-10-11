@@ -135,6 +135,15 @@ class BaseAmpal(object):
         raise NotImplementedError
 
     def assign_force_field(self, ff, mol2=False):
+        """Assigns force field parameters to Atoms in the AMPAL object.
+
+        Parameters
+        ----------
+        ff: BuffForceField
+            The force field to be used for scoring.
+        mol2: bool
+            If true, mol2 style labels will also be used.
+        """
         if hasattr(self, 'ligands'):
             atoms = self.get_atoms(ligands=True, inc_alt_states=True)
         else:
@@ -143,12 +152,11 @@ class BaseAmpal(object):
             if atom.element == 'H':
                 continue
             elif atom.ampal_parent.mol_code in ff:
-                if atom.res_label in ff['WLD']:
-                    a_ff = ff['WLD'][atom.res_label]
-                else:
-                    a_ff = ff[atom.ampal_parent.mol_code][atom.res_label]
+                a_ff_id = (atom.ampal_parent.mol_code, atom.res_label)
+            elif atom.res_label in ff['WLD']:
+                a_ff_id = ('WLD', atom.res_label)
             elif mol2 and (atom.ampal_parent.mol_code.capitalize() in ff['MOL2']):
-                a_ff = ff['MOL2'][atom.res_label.capitalize()]
+                a_ff_id = ('MOL2', atom.res_label.capitalize())
             else:
                 if not mol2:
                     w_str = '{} ({}) atom is not parameterised in the selected residue force field. ' \
@@ -158,7 +166,7 @@ class BaseAmpal(object):
                                                                                                  atom.res_label)
                 warnings.warn(w_str, NotParameterisedWarning)
                 continue
-            atom.tags['ff_params'] = PyAtomData(atom.res_label.encode(), a_ff[0].encode(), *a_ff[1:])
+            atom._ff_id = a_ff_id
         self.tags['assigned_ff'] = True
         return
 
@@ -485,6 +493,7 @@ class Atom(object):
             'charge': charge,
             'state': state
         }
+        self._ff_id = None
 
     def __repr__(self):
         return "<{} Atom{}. Coordinates: ({:.3f}, {:.3f}, {:.3f})>".format(

@@ -34,7 +34,7 @@ class ForceFieldTestCase(unittest.TestCase):
         self.topo.assign_force_field(self.ff)
         for atom in self.topo.get_atoms(inc_alt_states=True):
             if atom.element != 'H':
-                self.assertTrue('ff_params' in atom.tags)
+                self.assertTrue(atom._ff_id is not None)
 
     def test_parameterisation_pdb(self):
         """Checks that all atoms that can be parameterised are parameterised."""
@@ -42,7 +42,7 @@ class ForceFieldTestCase(unittest.TestCase):
         for atom in self.pdb.get_atoms(inc_alt_states=True):
             if atom.element != 'H':
                 if atom.ampal_parent.mol_code != 'HOH':
-                    self.assertTrue('ff_params' in atom.tags)
+                    self.assertTrue(atom._ff_id is not None)
 
 
 class InteractionsTestCase(unittest.TestCase):

@@ -66,8 +66,8 @@ cpdef find_buff_interactions(ampal, ff, internal=False):
         else:
             m_dist = distance(ref_atom_a, ref_atom_b)
         if m_dist <= ffco:
-            a_atoms = [atom for atom in monomer_a.atoms.values() if 'ff_params' in atom.tags]
-            b_atoms = [atom for atom in monomer_b.atoms.values() if 'ff_params' in atom.tags]
+            a_atoms = [atom for atom in monomer_a.atoms.values() if atom._ff_id is not None]
+            b_atoms = [atom for atom in monomer_b.atoms.values() if atom._ff_id is not None]
             if not internal:
                 interactions.extend(itertools.product(a_atoms, b_atoms))
             else:
@@ -92,6 +92,8 @@ cpdef score_interactions(interactions, ff, threshold = 1.1):
         An interaction is defined as a pair of Atoms that have had force field
         parameters assigned to them. This means that they should have a
         'ff_params' tag in their tags.
+    ff: BuffForceField
+        The force field used for scoring.
     threshold: float
         Cutoff distance for assigning interactions that are covalent bonds.
 
@@ -105,10 +107,11 @@ cpdef score_interactions(interactions, ff, threshold = 1.1):
     cdef double dist, ffco
     scores = []
     ffco = ff.distance_cutoff
+    ffpsd = ff.parameter_struct_dict
     for a, b in interactions:
-        a_params = a.tags['ff_params']
-        b_params = b.tags['ff_params']
-        dist = distance(a, b)
+        a_params = ffpsd[a._ff_id[0]][a._ff_id[1]]
+        b_params = ffpsd[b._ff_id[0]][b._ff_id[1]]
+        dist = distance(a._vector, b._vector)
         if dist <= ffco:
             scores.append(calculatePairEnergy(a_params.thisptr, b_params.thisptr, dist))
     buff_score = BuffScore(interactions, scores)
