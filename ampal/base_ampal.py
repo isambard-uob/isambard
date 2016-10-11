@@ -135,7 +135,6 @@ class BaseAmpal(object):
         raise NotImplementedError
 
     def assign_force_field(self, ff, mol2=False):
-        parameter_key = ff.parameter_key
         if hasattr(self, 'ligands'):
             atoms = self.get_atoms(ligands=True, inc_alt_states=True)
         else:
@@ -144,11 +143,11 @@ class BaseAmpal(object):
             if atom.element == 'H':
                 continue
             elif atom.ampal_parent.mol_code in ff:
-                a_ff_index = parameter_key[(atom.ampal_parent.mol_code, atom.res_label)]
+                a_ff_index = (atom.ampal_parent.mol_code, atom.res_label)
             elif atom.res_label in ff['WLD']:
-                a_ff_index = parameter_key[('WLD', atom.res_label)]
+                a_ff_index = ('WLD', atom.res_label)
             elif mol2 and (atom.ampal_parent.mol_code.capitalize() in ff['MOL2']):
-                a_ff_index = parameter_key[('MOL2', atom.res_label.capitalize())]
+                a_ff_index = ('MOL2', atom.res_label.capitalize())
             else:
                 if not mol2:
                     w_str = '{} ({}) atom is not parameterised in the selected residue force field. ' \
