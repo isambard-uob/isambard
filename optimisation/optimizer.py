@@ -1,11 +1,14 @@
-import numpy
-import random
-import matplotlib.pylab as plt
+from concurrent import futures
 import datetime
 import operator
+import random
+import sys
+
 from deap import base, creator, tools
+import numpy
+import matplotlib.pylab as plt
+
 from external_programs.profit import run_profit
-from concurrent import futures
 
 
 class BaseOptimizer:
@@ -174,8 +177,11 @@ class BaseScore(BaseOptimizer):
         px_parameters = zip([self._params['topology']] * len(targets),
                             [self._params['sequence']] * len(targets),
                             [self.parse_individual(x) for x in targets])
-        with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
-            fitnesses = executor.map(buff_eval, px_parameters)
+        if (self._params['processors'] == 1) or (sys.platform == 'win32'):
+            fitnesses = map(buff_eval, px_parameters)
+        else:
+            with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
+                fitnesses = executor.map(buff_eval, px_parameters)
         for ind, fit in zip(targets, fitnesses):
             ind.fitness.values = (fit,)
 
@@ -193,8 +199,11 @@ class BaseRMSD(BaseOptimizer):
                             [self._params['sequence']] * len(targets),
                             [self.parse_individual(x) for x in targets],
                             [self._params['ref_pdb']] * len(targets))
-        with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
-            fitnesses = executor.map(rmsd_eval, px_parameters)
+        if (self._params['processors'] == 1) or (sys.platform == 'win32'):
+            fitnesses = map(rmsd_eval, px_parameters)
+        else:
+            with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
+                fitnesses = executor.map(rmsd_eval, px_parameters)
         for ind, fit in zip(targets, fitnesses):
             ind.fitness.values = (fit,)
 
@@ -217,8 +226,11 @@ class BaseComparator(BaseOptimizer):
                             [self._params['seq1']] * len(targets),
                             [self._params['seq2']] * len(targets),
                             [self.parse_individual(x) for x in targets])
-        with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
-            fitnesses = executor.map(comparator_eval, px_parameters)
+        if (self._params['processors'] == 1) or (sys.platform == 'win32'):
+            fitnesses = map(comparator_eval, px_parameters)
+        else:
+            with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
+                fitnesses = executor.map(comparator_eval, px_parameters)
         for ind, fit in zip(targets, fitnesses):
             ind.fitness.values = (fit - (self._params['ref1'] + self._params['ref2']),)
 
