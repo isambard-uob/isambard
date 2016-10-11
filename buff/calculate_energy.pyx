@@ -107,10 +107,11 @@ cpdef score_interactions(interactions, ff, threshold = 1.1):
     cdef double dist, ffco
     scores = []
     ffco = ff.distance_cutoff
+    ffpsd = ff.parameter_struct_dict
     for a, b in interactions:
-        a_params = ff.parameter_struct_dict[a.ampal_parent.mol_code][a.res_label]
-        b_params = ff.parameter_struct_dict[b.ampal_parent.mol_code][b.res_label]
-        dist = distance(a, b)
+        a_params = ffpsd[a._ff_index[0]][a._ff_index[1]]
+        b_params = ffpsd[b._ff_index[0]][b._ff_index[1]]
+        dist = distance(a._vector, b._vector)
         if dist <= ffco:
             scores.append(calculatePairEnergy(a_params.thisptr, b_params.thisptr, dist))
     buff_score = BuffScore(interactions, scores)
