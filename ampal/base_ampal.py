@@ -149,10 +149,17 @@ class BaseAmpal(object):
         else:
             atoms = self.get_atoms(inc_alt_states=True)
         for atom in atoms:
+            w_str = None
             if atom.element == 'H':
                 continue
             elif atom.ampal_parent.mol_code in ff:
-                a_ff_id = (atom.ampal_parent.mol_code, atom.res_label)
+                if atom.res_label in ff[atom.ampal_parent.mol_code]:
+                    a_ff_id = (atom.ampal_parent.mol_code, atom.res_label)
+                elif atom.res_label in ff['WLD']:
+                    a_ff_id = ('WLD', atom.res_label)
+                else:
+                    w_str = '{} atom is not parameterised in the selected force field for {} residues,' \
+                            ' this will be ignored.'.format(atom.res_label, atom.ampal_parent.mol_code)
             elif atom.res_label in ff['WLD']:
                 a_ff_id = ('WLD', atom.res_label)
             elif mol2 and (atom.ampal_parent.mol_code.capitalize() in ff['MOL2']):
@@ -164,8 +171,8 @@ class BaseAmpal(object):
                 else:
                     w_str = '{} ({}) atom is not parameterised in the selected force field.'.format(atom.element,
                                                                                                  atom.res_label)
+            if w_str:
                 warnings.warn(w_str, NotParameterisedWarning)
-                continue
             atom._ff_id = a_ff_id
         self.tags['assigned_ff'] = True
         return
@@ -173,9 +180,16 @@ class BaseAmpal(object):
     def get_internal_energy(self, assign_ff=True, ff=None, haff=False, force_ff_assign=False, threshold=1.1):
         if not ff:
             ff = global_settings['buff']['force_field']
+        aff = False
         if assign_ff:
-            if ('assigned_ff' not in self.tags) or force_ff_assign:
-                self.assign_force_field(ff, mol2=haff)
+            if force_ff_assign:
+                aff = True
+            elif 'assigned_ff' not in self.tags:
+                aff = True
+            elif not self.tags['assigned_ff']:
+                aff = True
+        if aff:
+            self.assign_force_field(ff, mol2=haff)
         return score_ampal(self, ff, threshold=threshold, internal=True)
 
     buff_internal_energy = property(get_internal_energy)
