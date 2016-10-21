@@ -177,7 +177,7 @@ class BaseAmpal(object):
         self.tags['assigned_ff'] = True
         return
 
-    def get_internal_energy(self, assign_ff=True, ff=None, haff=False, force_ff_assign=False, threshold=1.1):
+    def get_internal_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
         if not ff:
             ff = global_settings['buff']['force_field']
         aff = False
@@ -189,7 +189,7 @@ class BaseAmpal(object):
             elif not self.tags['assigned_ff']:
                 aff = True
         if aff:
-            self.assign_force_field(ff, mol2=haff)
+            self.assign_force_field(ff, mol2=mol2)
         return score_ampal(self, ff, threshold=threshold, internal=True)
 
     buff_internal_energy = property(get_internal_energy)

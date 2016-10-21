@@ -393,9 +393,16 @@ class Assembly(BaseAmpal):
     def get_interaction_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
         if not ff:
             ff = global_settings['buff']['force_field']
+        aff = False
         if assign_ff:
-            if ('assigned_ff' not in self.tags) or force_ff_assign:
-                self.assign_force_field(ff, mol2=mol2)
+            if force_ff_assign:
+                aff = True
+            elif 'assigned_ff' not in self.tags:
+                aff = True
+            elif not self.tags['assigned_ff']:
+                aff = True
+        if aff:
+            self.assign_force_field(ff, mol2=mol2)
         return score_ampal(self, ff, threshold=threshold)
 
     buff_interaction_energy = property(get_interaction_energy)
