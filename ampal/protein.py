@@ -790,6 +790,7 @@ class Polypeptide(Polymer):
             else:
                 acetate.rotate(ref_angle-start_angle, axis=acetate['C']._vector-acetate['CA']._vector,
                            point=acetate['C']._vector)
+            acetate['OXT'].ampal_parent = self._monomers[-1]
             self._monomers[-1].atoms['OXT'] = acetate['OXT']
             diff = acetate['O']._vector - self._monomers[-1]['O']._vector
             self._monomers[-1]['O']._vector += diff
