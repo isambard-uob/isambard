@@ -178,6 +178,21 @@ class BaseAmpal(object):
         return
 
     def update_ff(self, ff, mol2=False, force_ff_assign=False):
+        """Manages assigning the force field parameters.
+
+        The aim of this method is to avoid unnecessary assignment of the
+        force field.
+
+        Parameters
+        ----------
+        ff: BuffForceField
+            The force field to be used for scoring.
+        mol2: bool
+            If true, mol2 style labels will also be used.
+        force_ff_assign: bool
+            If true, the force field will be completely reassigned, ignoring the
+            cached parameters.
+        """
         aff = False
         if force_ff_assign:
             aff = True
@@ -190,6 +205,31 @@ class BaseAmpal(object):
         return
 
     def get_internal_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
+        """Calculates the internal energy of the AMPAL object.
+
+        This method is assigned to the buff_internal_energy property,
+        using the default arguments.
+
+        Parameters
+        ----------
+        assign_ff: bool
+            If true the force field will be updated if required.
+        ff: BuffForceField
+            The force field to be used for scoring.
+        mol2: bool
+            If true, mol2 style labels will also be used.
+        force_ff_assign: bool
+            If true, the force field will be completely reassigned, ignoring the
+            cached parameters.
+        threshold: float
+            Cutoff distance for assigning interactions that are covalent bonds.
+
+        Returns
+        -------
+        BUFF_score: BUFFScore
+            A BUFFScore object with information about each of the interactions and
+            the atoms involved.
+        """
         if not ff:
             ff = global_settings['buff']['force_field']
         if assign_ff:

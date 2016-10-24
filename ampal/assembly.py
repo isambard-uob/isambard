@@ -390,30 +390,84 @@ class Assembly(BaseAmpal):
                     fasta_str += '{0}\n'.format(seq_part)
         return fasta_str
 
-    def get_interaction_energy(self, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
+    def get_interaction_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
+        """Calculates the interaction energy of the AMPAL object.
+
+        This method is assigned to the buff_interaction_energy property,
+        using the default arguments.
+
+        Parameters
+        ----------
+        assign_ff: bool
+            If true the force field will be updated if required.
+        ff: BuffForceField
+            The force field to be used for scoring.
+        mol2: bool
+            If true, mol2 style labels will also be used.
+        force_ff_assign: bool
+            If true, the force field will be completely reassigned, ignoring the
+            cached parameters.
+        threshold: float
+            Cutoff distance for assigning interactions that are covalent bonds.
+
+        Returns
+        -------
+        BUFF_score: BUFFScore
+            A BUFFScore object with information about each of the interactions and
+            the atoms involved.
+        """
         if not ff:
             ff = global_settings['buff']['force_field']
-        for molecule in self._molecules:
-            if hasattr(molecule, 'update_ff'):
-                molecule.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
-            else:
-                raise AttributeError(
-                    'The following molecule does not have a update_ff method:\n{}\n'
-                    'If this is a custom molecule type it should inherit from BaseAmpal:'.format(molecule))
+        if assign_ff:
+            for molecule in self._molecules:
+                if hasattr(molecule, 'update_ff'):
+                    molecule.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
+                else:
+                    raise AttributeError(
+                        'The following molecule does not have a update_ff method:\n{}\n'
+                        'If this is a custom molecule type it should inherit from BaseAmpal:'.format(molecule))
         return score_ampal(self, ff, threshold=threshold)
 
     buff_interaction_energy = property(get_interaction_energy)
 
     def get_internal_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
+        """Calculates the internal energy of the AMPAL object.
+
+        THIS METHOD REIMPLEMENTS THE BaseAmpal VERSION. This is so that
+        the force field is updated if any of its molecules need updating.
+        This method is assigned to the buff_internal_energy property,
+        using the default arguments.
+
+        Parameters
+        ----------
+        assign_ff: bool
+            If true the force field will be updated if required.
+        ff: BuffForceField
+            The force field to be used for scoring.
+        mol2: bool
+            If true, mol2 style labels will also be used.
+        force_ff_assign: bool
+            If true, the force field will be completely reassigned, ignoring the
+            cached parameters.
+        threshold: float
+            Cutoff distance for assigning interactions that are covalent bonds.
+
+        Returns
+        -------
+        BUFF_score: BUFFScore
+            A BUFFScore object with information about each of the interactions and
+            the atoms involved.
+        """
         if not ff:
             ff = global_settings['buff']['force_field']
-        for molecule in self._molecules:
-            if hasattr(molecule, 'update_ff'):
-                molecule.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
-            else:
-                raise AttributeError(
-                    'The following molecule does not have a update_ff method:\n{}\n'
-                    'If this is a custom molecule type it should inherit from BaseAmpal:'.format(molecule))
+        if assign_ff:
+            for molecule in self._molecules:
+                if hasattr(molecule, 'update_ff'):
+                    molecule.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
+                else:
+                    raise AttributeError(
+                        'The following molecule does not have a update_ff method:\n{}\n'
+                        'If this is a custom molecule type it should inherit from BaseAmpal:'.format(molecule))
         return score_ampal(self, ff, threshold=threshold, internal=True)
 
     buff_internal_energy = property(get_internal_energy)
