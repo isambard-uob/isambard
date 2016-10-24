@@ -390,22 +390,33 @@ class Assembly(BaseAmpal):
                     fasta_str += '{0}\n'.format(seq_part)
         return fasta_str
 
-    def get_interaction_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
+    def get_interaction_energy(self, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
         if not ff:
             ff = global_settings['buff']['force_field']
-        aff = False
-        if assign_ff:
-            if force_ff_assign:
-                aff = True
-            elif 'assigned_ff' not in self.tags:
-                aff = True
-            elif not self.tags['assigned_ff']:
-                aff = True
-        if aff:
-            self.assign_force_field(ff, mol2=mol2)
+        for molecule in self._molecules:
+            if hasattr(molecule, 'update_ff'):
+                molecule.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
+            else:
+                raise AttributeError(
+                    'The following molecule does not have a update_ff method:\n{}\n'
+                    'If this is a custom molecule type it should inherit from BaseAmpal:'.format(molecule))
         return score_ampal(self, ff, threshold=threshold)
 
     buff_interaction_energy = property(get_interaction_energy)
+
+    def get_internal_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
+        if not ff:
+            ff = global_settings['buff']['force_field']
+        for molecule in self._molecules:
+            if hasattr(molecule, 'update_ff'):
+                molecule.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
+            else:
+                raise AttributeError(
+                    'The following molecule does not have a update_ff method:\n{}\n'
+                    'If this is a custom molecule type it should inherit from BaseAmpal:'.format(molecule))
+        return score_ampal(self, ff, threshold=threshold, internal=True)
+
+    buff_internal_energy = property(get_internal_energy)
 
     def pack_new_sequences(self, sequences):
         """Packs a new sequence onto each Polymer in the Assembly using SCWRL4.
