@@ -3,7 +3,7 @@ import unittest
 import numpy
 import os
 
-import isambard_dev as test_module
+import isambard_dev as isambard
 
 from unit_tests.random_isambard_objects import random_vectors, random_angles, random_floats,\
     random_helical_helices, random_integer_vectors
@@ -17,7 +17,7 @@ def check_dihedrals(polypeptide, phi=-65.0, omega=-178.0, psi=-41.0, atol=1):
     Default values are the ideal dihedral values for the alpha helix.
 
     """
-    omegas, phis, psis = zip(*test_module.analyse_protein.measure_torsion_angles(polypeptide))
+    omegas, phis, psis = zip(*isambard.analyse_protein.measure_torsion_angles(polypeptide))
     omega_check = numpy.allclose(omegas[1:], [omega] * (len(polypeptide) - 1), atol=atol)
     phi_check = numpy.allclose(phis[1:], [phi] * (len(polypeptide) - 1), atol=atol)
     psi_check = numpy.allclose(psis[:-1], [psi] * (len(polypeptide) - 1), atol=atol)
@@ -40,14 +40,14 @@ class HelixTestCase(unittest.TestCase):
         self.backbone_angle_tolerance = 5
 
     def test_alpha_simple(self):
-        test_helix = test_module.ampal.secondary_structure.Helix(aa=10)
+        test_helix = isambard.specifications.Helix(aa=10)
         self.assertEqual(len(test_helix), 10)
         self.assertTrue(test_helix.valid_backbone_bond_lengths())
         self.assertTrue(test_helix.valid_backbone_bond_angles())
         self.assertTrue(check_dihedrals(test_helix))
 
     def test_alpha_off_z(self):
-        test_helix = test_module.ampal.secondary_structure.Helix.from_start_and_end(
+        test_helix = isambard.specifications.Helix.from_start_and_end(
             (12.3, -1.12, 8.2), (-1.1, 20.2, -12.2), aa=30)
         self.assertEqual(len(test_helix), 30)
         self.assertTrue(test_helix.valid_backbone_bond_lengths())
@@ -58,8 +58,8 @@ class HelixTestCase(unittest.TestCase):
         """Build a helix of a random length in a random direction from the origin."""
         for i, v in enumerate(self.v1s):
             h_len = self.helix_lengths[i]
-            test_helix = test_module.ampal.secondary_structure.Helix.from_start_and_end((0, 0, 0), v, aa=h_len)
-            reverse_test_helix = test_module.ampal.secondary_structure.Helix.from_start_and_end(v, (0, 0, 0), aa=h_len)
+            test_helix = isambard.specifications.Helix.from_start_and_end((0, 0, 0), v, aa=h_len)
+            reverse_test_helix = isambard.specifications.Helix.from_start_and_end(v, (0, 0, 0), aa=h_len)
             self.assertEqual(len(test_helix), h_len)
             self.assertTrue(test_helix.valid_backbone_bond_lengths())
             self.assertTrue(test_helix.valid_backbone_bond_angles(atol=self.backbone_angle_tolerance))
@@ -75,7 +75,7 @@ class HelixTestCase(unittest.TestCase):
             h_len = self.helix_lengths[i]
             v1 = self.int_v1s[i]
             v2 = self.int_v2s[i]
-            test_helix = test_module.ampal.secondary_structure.Helix.from_start_and_end(v1, v2, aa=h_len)
+            test_helix = isambard.specifications.Helix.from_start_and_end(v1, v2, aa=h_len)
             self.assertEqual(len(test_helix), h_len)
             self.assertTrue(test_helix.valid_backbone_bond_lengths())
             self.assertTrue(test_helix.valid_backbone_bond_angles(atol=self.backbone_angle_tolerance))
@@ -87,14 +87,14 @@ class HelixTestCase(unittest.TestCase):
             h_len = self.helix_lengths[i]
             v1 = self.v1s[i]
             v2 = self.v2s[i]
-            test_helix = test_module.ampal.secondary_structure.Helix.from_start_and_end(v1, v2, aa=h_len)
+            test_helix = isambard.specifications.Helix.from_start_and_end(v1, v2, aa=h_len)
             self.assertEqual(len(test_helix), h_len)
             self.assertTrue(test_helix.valid_backbone_bond_lengths())
             self.assertTrue(test_helix.valid_backbone_bond_angles(atol=self.backbone_angle_tolerance))
             self.assertTrue(check_dihedrals(test_helix))
 
     def test_alpha_trans(self):
-        test_helix = test_module.ampal.secondary_structure.Helix(aa=30)
+        test_helix = isambard.specifications.Helix(aa=30)
         self.assertEqual(len(test_helix), 30)
         for i in range(self.num_tests):
             test_helix.translate(test_helix.axis.unit_tangent * self.translations[0][i])
@@ -111,7 +111,7 @@ class HelixTestCase(unittest.TestCase):
             self.assertTrue(check_dihedrals(test_helix))
 
     def test_alpha_rot(self):
-        test_helix = test_module.ampal.secondary_structure.Helix(aa=30)
+        test_helix = isambard.specifications.Helix(aa=30)
         for i in range(self.num_tests):
             test_helix.rotate(angle=self.rotations[0][i],
                               axis=test_helix.axis.unit_tangent,
@@ -133,7 +133,7 @@ class HelixTestCase(unittest.TestCase):
             self.assertTrue(check_dihedrals(test_helix))
 
     def test_pi_simple(self):
-        test_helix = test_module.ampal.secondary_structure.Helix(aa=30, helix_type='pi')
+        test_helix = isambard.specifications.Helix(aa=30, helix_type='pi')
         self.assertEqual(len(test_helix), 30)
         self.assertTrue(test_helix.valid_backbone_bond_lengths())
         self.assertTrue(test_helix.valid_backbone_bond_angles(atol=self.backbone_angle_tolerance))
@@ -163,7 +163,7 @@ class CoiledCoilTestCase(unittest.TestCase):
     def test_from_polymers(self):
         for _ in range(10):
             oligomer_state = random.choice(range(1, 5))
-            coiled_coil = test_module.ampal.specifications.CoiledCoil.from_polymers(
+            coiled_coil = isambard.ampal.specifications.CoiledCoil.from_polymers(
                 random.sample(self.helical_helices, oligomer_state))
             tests = []
             ''.join(coiled_coil.major_handedness) == ''.join([x.major_handedness for x in coiled_coil._molecules])
@@ -176,17 +176,17 @@ class TABTestCase(unittest.TestCase):
 
     def setUp(self):
         self.cis_tas = [[-179, 120, -40], [0, -60, 20]]
-        self.cis_dipeptide = test_module.ampal.secondary_structure.TAPolypeptide(self.cis_tas)
+        self.cis_dipeptide = isambard.specifications.TAPolypeptide(self.cis_tas)
         self.trans_tas = [[0, -60, 20], [-179, 120, -40]]
-        self.trans_dipeptide = test_module.ampal.secondary_structure.TAPolypeptide(self.trans_tas)
-        test_file = os.path.join(os.path.dirname(test_module.__file__), 'unit_tests', 'testing_files', '1ek9.pdb')
-        test_structure = test_module.ampal.convert_pdb_to_ampal(test_file)
-        self.test_polypeptides = [p for p in test_structure if isinstance(p, test_module.ampal.Polypeptide)]
+        self.trans_dipeptide = isambard.specifications.TAPolypeptide(self.trans_tas)
+        test_file = os.path.join(os.path.dirname(isambard.__file__), 'unit_tests', 'testing_files', '1ek9.pdb')
+        test_structure = isambard.ampal.convert_pdb_to_ampal(test_file)
+        self.test_polypeptides = [p for p in test_structure if isinstance(p, isambard.ampal.Polypeptide)]
 
     def test_tapolypeptide(self):
         """Testing the build accuracy for TAPolypeptide."""
         torsion_angles = [(-178, -65.0, -41.0)] * 10
-        test_pp = test_module.ampal.secondary_structure.TAPolypeptide(torsion_angles)
+        test_pp = isambard.specifications.TAPolypeptide(torsion_angles)
         self.assertEqual(len(torsion_angles), len(test_pp))
         self.assertTrue(test_pp.valid_backbone_bond_lengths(atol=0.01))
         self.assertTrue(test_pp.valid_backbone_bond_angles(atol=5))
@@ -197,7 +197,7 @@ class TABTestCase(unittest.TestCase):
             (random.choice(range(-180, 180)),
              random.choice(range(-180, 180)),
              random.choice(range(-180, 180))) for _ in range(100)]
-        test_pp = test_module.ampal.secondary_structure.TAPolypeptide(torsion_angles)
+        test_pp = isambard.specifications.TAPolypeptide(torsion_angles)
         self.assertEqual(len(torsion_angles), len(test_pp))
         self.assertTrue(test_pp.valid_backbone_bond_lengths(atol=0.01))
         self.assertTrue(test_pp.valid_backbone_bond_angles(atol=5))
@@ -224,7 +224,7 @@ class TABTestCase(unittest.TestCase):
 
     def test_from_polypeptide_angles_and_lengths(self):
         for p in self.test_polypeptides:
-            tap = test_module.ampal.secondary_structure.TAPolypeptide.from_polypeptide(p)
+            tap = isambard.specifications.TAPolypeptide.from_polypeptide(p)
             for k, v in p.backbone_bond_angles.items():
                 self.assertTrue(numpy.allclose(tap.backbone_bond_angles[k], v))
             for k, v in p.backbone_bond_lengths.items():
@@ -232,10 +232,10 @@ class TABTestCase(unittest.TestCase):
 
     def test_from_polypeptide_rmsd(self):
         for p in self.test_polypeptides:
-            tap = test_module.ampal.secondary_structure.TAPolypeptide.from_polypeptide(p)
+            tap = isambard.specifications.TAPolypeptide.from_polypeptide(p)
             p_coords = [x._vector for x in p.backbone.get_atoms()]
             tap_coords = [x._vector for x in tap.get_atoms()]
-            self.assertTrue(numpy.isclose(test_module.geometry.rmsd(p_coords, tap_coords), 0.0, atol=0.001))
+            self.assertTrue(numpy.isclose(isambard.geometry.rmsd(p_coords, tap_coords), 0.0, atol=0.001))
 
 
 __author__ = 'Christopher W. Wood, Jack W. Heal'

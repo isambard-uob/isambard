@@ -38,7 +38,7 @@ def random_helical_helices(n=1, min_residues=10, max_residues=20):
         minor_repeats[i] = None
     minor_helix_types = [random.choice(['alpha', 'pi', 'PPII', 'collagen']) for _ in range(n)]
     major_handedness = [random.choice(['l', 'r']) for _ in range(n)]
-    hhs = [isambard.ampal.secondary_structure.HelicalHelix(aa=aas[i], major_pitch=major_pitches[i],
+    hhs = [isambard.ampal.specifications.polymer_specs.helix.HelicalHelix(aa=aas[i], major_pitch=major_pitches[i],
                         major_radius=major_radii[i], major_handedness=major_handedness[i],
                         minor_helix_type=minor_helix_types[i], orientation=orientations[i],
                         phi_c_alpha=phi_c_alphas[i], minor_repeat=minor_repeats[i])

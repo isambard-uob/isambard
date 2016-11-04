@@ -11,8 +11,7 @@ _os.chdir(_cmd_folder)
 try:
     from settings import global_settings
     import ampal
-    from ampal import secondary_structure
-    from ampal import specifications
+    import ampal.specifications as specifications
     from ampal import analyse_protein
     from ampal import interactions
     import buff

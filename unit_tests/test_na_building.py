@@ -28,9 +28,9 @@ class TestSingleStrandHelix(unittest.TestCase):
         """Test straight building using random DNA sequences."""
         if not sequence:
             with self.assertRaises(ValueError):
-                isambard.ampal.secondary_structure.NucleicAcidStrand(sequence)
+                isambard.specifications.NucleicAcidStrand(sequence)
         else:
-            ssnh = isambard.ampal.secondary_structure.NucleicAcidStrand(sequence)
+            ssnh = isambard.specifications.NucleicAcidStrand(sequence)
             self.assertEqual(len(ssnh), len(sequence))
 
             ideal_bonds = count_bonds(sequence)
@@ -42,10 +42,10 @@ class TestSingleStrandHelix(unittest.TestCase):
     def test_hna_bond_numbers_w_phos(self, sequence):
         if not sequence:
             with self.assertRaises(ValueError):
-                isambard.ampal.secondary_structure.NucleicAcidStrand(sequence)
+                isambard.specifications.NucleicAcidStrand(sequence)
         else:
             ideal_bonds = count_bonds(sequence, phos=True)
-            ssnh = isambard.ampal.secondary_structure.NucleicAcidStrand(sequence, phos_3_prime=True)
+            ssnh = isambard.specifications.NucleicAcidStrand(sequence, phos_3_prime=True)
             found_bonds = len(isambard.ampal.interactions.find_covalent_bonds(ssnh))
             self.assertEqual(ideal_bonds, found_bonds)
 
@@ -57,9 +57,9 @@ class TestSingleStrandHelix(unittest.TestCase):
         sequence = 'GAGATATACACA'
         if start == end:
             with self.assertRaises(ValueError):
-                isambard.ampal.secondary_structure.NucleicAcidStrand.from_start_and_end(start, end, sequence)
+                isambard.specifications.NucleicAcidStrand.from_start_and_end(start, end, sequence)
         else:
-            ssnh = isambard.ampal.secondary_structure.NucleicAcidStrand.from_start_and_end(start, end, sequence)
+            ssnh = isambard.specifications.NucleicAcidStrand.from_start_and_end(start, end, sequence)
             self.assertEqual(len(ssnh), 12)
 
     @given(tuples(*[floats(min_value=-10000, max_value=10000) for _ in range(3)]),
@@ -70,9 +70,9 @@ class TestSingleStrandHelix(unittest.TestCase):
         sequence = 'GAGATATACACA'
         if allclose(start, end):
             with self.assertRaises(ValueError):
-                isambard.ampal.secondary_structure.NucleicAcidStrand.from_start_and_end(start, end, sequence)
+                isambard.specifications.NucleicAcidStrand.from_start_and_end(start, end, sequence)
         else:
-            ssnh = isambard.ampal.secondary_structure.NucleicAcidStrand.from_start_and_end(start, end, sequence)
+            ssnh = isambard.specifications.NucleicAcidStrand.from_start_and_end(start, end, sequence)
             self.assertEqual(len(ssnh), 12)
 
     @given(text('ATGC'),
@@ -83,9 +83,9 @@ class TestSingleStrandHelix(unittest.TestCase):
         """Test SingleStrandHelix with random sequence, start and end."""
         if allclose(start, end) or not sequence:
             with self.assertRaises(ValueError):
-                isambard.ampal.secondary_structure.NucleicAcidStrand.from_start_and_end(start, end, sequence)
+                isambard.specifications.NucleicAcidStrand.from_start_and_end(start, end, sequence)
         else:
-            ssnh = isambard.ampal.secondary_structure.NucleicAcidStrand.from_start_and_end(start, end, sequence)
+            ssnh = isambard.specifications.NucleicAcidStrand.from_start_and_end(start, end, sequence)
             self.assertEqual(len(ssnh), len(sequence))
 
             ideal_bonds = count_bonds(sequence)
@@ -110,7 +110,7 @@ class TestDNADuplex(unittest.TestCase):
 
             ideal_bonds_s1 = count_bonds(sequence)
             ideal_bonds_s2 = count_bonds(
-                isambard.ampal.specifications.nucleic_acid_duplex.generate_antisense_sequence(sequence))
+                isambard.ampal.specifications.assembly_specs.nucleic_acid_duplex.generate_antisense_sequence(sequence))
             found_bonds_s1 = len(isambard.ampal.interactions.find_covalent_bonds(dd[0]))
             found_bonds_s2 = len(isambard.ampal.interactions.find_covalent_bonds(dd[1]))
             found_bonds_dd = len(isambard.ampal.interactions.find_covalent_bonds(dd))
@@ -165,7 +165,7 @@ class TestDNADuplex(unittest.TestCase):
 
             ideal_bonds_s1 = count_bonds(sequence)
             ideal_bonds_s2 = count_bonds(
-                isambard.ampal.specifications.nucleic_acid_duplex.generate_antisense_sequence(sequence))
+                isambard.ampal.specifications.assembly_specs.nucleic_acid_duplex.generate_antisense_sequence(sequence))
             found_bonds_s1 = len(isambard.ampal.interactions.find_covalent_bonds(dd[0]))
             found_bonds_s2 = len(isambard.ampal.interactions.find_covalent_bonds(dd[1]))
             found_bonds_dd = len(isambard.ampal.interactions.find_covalent_bonds(dd))

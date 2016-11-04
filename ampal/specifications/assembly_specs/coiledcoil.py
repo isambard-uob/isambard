@@ -1,6 +1,6 @@
 import numpy
 
-from ampal.secondary_structure.helix import HelicalHelix, _helix_parameters
+from ampal.specifications.polymer_specs.helix import HelicalHelix, _helix_parameters
 from ampal.protein import Assembly
 
 basis_set_parameters = {
