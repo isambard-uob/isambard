@@ -54,7 +54,10 @@ def planar_residue(n_ca=1.47, ca_c=1.53, c_o=1.24, n_ca_c=110.0, ca_c_o=121.0):
     c = Atom([0.0, cy, cz], element='C', res_label='C')
     o = Atom(numpy.array([0.0, oy, oz]), element='O', res_label='O')
     atoms = OrderedDict([('N', n), ('CA', ca), ('C', c), ('O', o)])
-    return Residue(atoms=atoms, mol_code='GLY')
+    res = Residue(atoms=atoms, mol_code='GLY')
+    for atom in res.get_atoms():
+        atom.ampal_parent = res
+    return res
 
 
 class TAPolypeptide(Polypeptide):
@@ -176,6 +179,8 @@ class TAPolypeptide(Polypeptide):
                      c_n_length=self.c_n_bonds[i], relabel=False)
         r.relabel_all()
         self._monomers = r._monomers
+        for monomer in self._monomers:
+            monomer.ampal_parent = self
         return
 
 

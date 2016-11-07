@@ -1,29 +1,29 @@
-isambard_dev.ampal.secondary_structure package
+isambard_dev.ampal.specifications.polymer_specs package
 ==============================================
 
 Submodules
 ----------
 
-isambard_dev.ampal.secondary_structure.helix module
+isambard_dev.ampal.specifications.polymer_specs.helix module
 ---------------------------------------------------
 
-.. automodule:: isambard_dev.ampal.secondary_structure.helix
+.. automodule:: isambard_dev.ampal.specifications.polymer_specs.helix
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.secondary_structure.nucleic_acid_strand module
+isambard_dev.ampal.specifications.polymer_specs.nucleic_acid_strand module
 -----------------------------------------------------------------
 
-.. automodule:: isambard_dev.ampal.secondary_structure.nucleic_acid_strand
+.. automodule:: isambard_dev.ampal.specifications.polymer_specs.nucleic_acid_strand
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.secondary_structure.ta_polypeptide module
+isambard_dev.ampal.specifications.polymer_specs.ta_polypeptide module
 ------------------------------------------------------------
 
-.. automodule:: isambard_dev.ampal.secondary_structure.ta_polypeptide
+.. automodule:: isambard_dev.ampal.specifications.polymer_specs.ta_polypeptide
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,7 +32,7 @@ isambard_dev.ampal.secondary_structure.ta_polypeptide module
 Module contents
 ---------------
 
-.. automodule:: isambard_dev.ampal.secondary_structure
+.. automodule:: isambard_dev.ampal.specifications.polymer_specs
     :members:
     :undoc-members:
     :show-inheritance:

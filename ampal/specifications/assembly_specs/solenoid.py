@@ -3,10 +3,7 @@ import copy
 import numpy
 
 from ampal.assembly import Assembly
-from ampal.secondary_structure import Helix
-from tools.geometry import Quaternion
-from tools.geometry import angle_between_vectors, unit_vector, find_foot, Quaternion, dihedral,\
-    find_transformations, cylindrical_to_cartesian, cartesian_to_cylindrical, Axis, HelicalCurve
+from ampal.specifications.polymer_specs.helix import Helix
 
 
 class HelixPair(Assembly):

@@ -1,7 +1,7 @@
 """Contains code for generating nucleic acid duplexes."""
 
 from ampal.assembly import Assembly
-from ampal.secondary_structure.nucleic_acid_strand import NucleicAcidStrand
+from ampal.specifications.polymer_specs.nucleic_acid_strand import NucleicAcidStrand
 from tools.geometry import dihedral
 
 
