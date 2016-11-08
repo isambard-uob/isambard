@@ -153,6 +153,10 @@ def get_user_path(input_messege, required=True):
             good_path = True
         except FileNotFoundError:
             print('{WARNING}Path does not exist.{END_C}'.format(**text_colours))
+            force_continue = get_user_option('Use this path anyway?', ['Yes', 'No'])
+            if force_continue:
+                path = ui_path
+                good_path = True
     print('Path set to "{}"'.format(str(path)))
     return path
 
