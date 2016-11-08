@@ -9,7 +9,7 @@ from tools.isambard_warnings import DependencyNotFoundWarning
 
 scwrl_available = False
 try:
-    subprocess.check_output([global_settings['scwrl']['path']])
+    subprocess.check_output([global_settings['scwrl']['path']], stderr=subprocess.DEVNULL)
 except subprocess.CalledProcessError:
     scwrl_available = True
 except FileNotFoundError:
@@ -119,7 +119,7 @@ def parse_scwrl_out(scwrl_std_out, scwrl_pdb):
 def pack_sidechains(pdb, sequence, path=False):
     """Packs sidechains onto a given PDB file or string."""
     if not scwrl_available:
-        warning_string = ('SCWRL not found.\n'
+        warning_string = ('Scwrl not found, side chains have not been packed.\n'
                           'Check that the path to the Scwrl binary in `settings.json` is correct.\n'
                           'You might want to try rerunning `configure.py`')
         warnings.warn(warning_string, DependencyNotFoundWarning)

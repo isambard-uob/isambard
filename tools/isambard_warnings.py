@@ -1,3 +1,6 @@
+import warnings
+
+
 class NoncanonicalWarning(RuntimeWarning):
     pass
 
@@ -12,3 +15,5 @@ class MalformedPDBWarning(RuntimeWarning):
 
 class DependencyNotFoundWarning(RuntimeWarning):
     pass
+
+warnings.simplefilter('always', DependencyNotFoundWarning)
