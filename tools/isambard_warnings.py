@@ -1,6 +1,7 @@
 class NoncanonicalWarning(RuntimeWarning):
     pass
 
+
 class NotParameterisedWarning(RuntimeWarning):
     pass
 
@@ -8,3 +9,6 @@ class NotParameterisedWarning(RuntimeWarning):
 class MalformedPDBWarning(RuntimeWarning):
     pass
 
+
+class DependencyNotFoundWarning(RuntimeWarning):
+    pass
