@@ -278,7 +278,11 @@ class Polypeptide(Polymer):
         if len(sequence) != len(polymer_bb):
             raise ValueError('Sequence length ({}) does not match Polymer length ({}).'.format(
                 len(sequence), len(polymer_bb)))
-        packed_structure, scwrl_score = pack_sidechains(self.backbone.pdb, sequence)
+        scwrl_out = pack_sidechains(self.backbone.pdb, sequence)
+        if scwrl_out is None:
+            return
+        else:
+            packed_structure, scwrl_score = scwrl_out
         new_assembly = convert_pdb_to_ampal(packed_structure, path=False)
         self._monomers = new_assembly[0]._monomers[:]
         self.tags['scwrl_score'] = scwrl_score
