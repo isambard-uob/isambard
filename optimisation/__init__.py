@@ -1,4 +1,2 @@
-from optimisation.pso import OptPSO
-from optimisation.de import OptDE, OptDE_rmsd, OptDE_comparator
-from optimisation.ga import OptGA
-from optimisation.cma_es import OptCMAES
+from optimisation.optimizer import GA_Opt, GA_Comparator, GA_RMSD, DE_Opt, DE_Comparator, DE_RMSD, CMAES_Opt,\
+    CMAES_Comparator, CMAES_RMSD, PSO_Opt, PSO_Comparator, PSO_RMSD
