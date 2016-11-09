@@ -6,19 +6,25 @@ import warnings
 from settings import global_settings
 from tools.isambard_warnings import DependencyNotFoundWarning
 
-dssp_available = False
-if os.path.isfile(global_settings['dssp']['path']):
-    try:
-        subprocess.check_output([global_settings['dssp']['path']], stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        dssp_available = True
-else:
-    warning_string = ('\n\nDSSP not found and so cannot be used. Check that the path to the DSSP binary'
-                      ' in `settings.json` is correct.\n'
-                      'Suggestion:\n'
-                      'You might want to try running isambard.configure() after importing ISAMBARD in a\n'
-                      'Python interpreter or running `configure.py` in the module folder.')
-    warnings.warn(warning_string, DependencyNotFoundWarning)
+
+def check_dssp_avail():
+    is_dssp_available = False
+    if os.path.isfile(global_settings['dssp']['path']):
+        try:
+            subprocess.check_output([global_settings['dssp']['path']], stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            is_dssp_available = True
+    else:
+        warning_string = ('\n\nDSSP not found and so cannot be used. Check that the path to the DSSP binary'
+                          ' in `settings.json` is correct.\n'
+                          'Suggestion:\n'
+                          'You might want to try running isambard.settings.configure() after importing ISAMBARD in a\n'
+                          'Python interpreter or running `configure.py` in the module folder.')
+        warnings.warn(warning_string, DependencyNotFoundWarning)
+    return is_dssp_available
+
+
+global_settings['dssp']['available'] = check_dssp_avail()
 
 
 # TODO: make the format closer to SCWRL and BUDE
@@ -40,7 +46,9 @@ def run_dssp(pdb, path=True, outfile=None):
     dssp_out : str
         Std out from DSSP.
     """
-    if not dssp_available:
+    if global_settings['dssp']['available'] is None:
+        global_settings['dssp']['available'] = check_dssp_avail()
+    if not global_settings['dssp']['available']:
         warning_string = ('DSSP not found, secondary structure has not been tagged.\n'
                           'Check that the path to the DSSP binary in `settings.json` is correct.\n'
                           'You might want to try rerunning `configure.py`')
