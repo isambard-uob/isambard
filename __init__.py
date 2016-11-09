@@ -9,6 +9,12 @@ _starting_dir = _os.getcwd()
 _cmd_folder = _os.path.realpath(_os.path.abspath(_os.path.split(_inspect.getfile(_inspect.currentframe()))[0]))
 _os.chdir(_cmd_folder)
 
+
+def configure():
+    _subprocess.call(['python', _cmd_folder + '/configure.py', '-o'])
+    return
+
+
 try:
     if 'settings.json' not in _os.listdir(_cmd_folder):
         print('No configuration file (settings.json) found in {}.\nRunning configure.py...\n'.format(_cmd_folder))
