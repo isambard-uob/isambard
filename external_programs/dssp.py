@@ -7,12 +7,18 @@ from settings import global_settings
 from tools.isambard_warnings import DependencyNotFoundWarning
 
 dssp_available = False
-try:
-    subprocess.check_output([global_settings['dssp']['path']], stderr=subprocess.DEVNULL)
-except subprocess.CalledProcessError:
-    dssp_available = True
-except FileNotFoundError:
-    dssp_available = False
+if os.path.isfile(global_settings['dssp']['path']):
+    try:
+        subprocess.check_output([global_settings['dssp']['path']], stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        dssp_available = True
+else:
+    warning_string = ('\n\nDSSP not found and so cannot be used. Check that the path to the DSSP binary'
+                      ' in `settings.json` is correct.\n'
+                      'Suggestion:\n'
+                      'You might want to try running isambard.configure() after importing ISAMBARD in a\n'
+                      'Python interpreter or running `configure.py` in the module folder.')
+    warnings.warn(warning_string, DependencyNotFoundWarning)
 
 
 # TODO: make the format closer to SCWRL and BUDE
@@ -38,7 +44,7 @@ def run_dssp(pdb, path=True, outfile=None):
         warning_string = ('DSSP not found, secondary structure has not been tagged.\n'
                           'Check that the path to the DSSP binary in `settings.json` is correct.\n'
                           'You might want to try rerunning `configure.py`')
-        warnings.warn(warning_string, DependencyNotFoundWarning, )
+        warnings.warn(warning_string, DependencyNotFoundWarning)
         return
     if not path:
         # if statement added to be sure that encode is only called on string type.
