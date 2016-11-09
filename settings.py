@@ -7,11 +7,43 @@ overwritten with another systems paths. When the isambard is imported a isambard
 contains the user chosen settings, but it can be explicitly loaded by an internal module to get these values too.
 """
 
-import json as _json
-import os as _os
+import json
+import os
+import subprocess
 
-with open(_os.path.dirname(_os.path.abspath(__file__)) + '/settings.json', 'r') as _settings_f:
-    global_settings = _json.loads(_settings_f.read())
-global_settings[u'package_path'] = _os.path.dirname(_os.path.abspath(__file__), )
+global_settings = None
+package_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+def configure():
+    subprocess.call(['python',
+                     os.path.join(package_dir, 'configure.py'),
+                     '-o'])
+    load_global_settings()
+    return
+
+
+def load_global_settings():
+    with open(os.path.join(package_dir, 'settings.json'), 'r') as settings_f:
+        global global_settings
+        settings_json = json.loads(settings_f.read())
+        if global_settings is None:
+            global_settings = settings_json
+            global_settings[u'package_path'] = package_dir
+        else:
+            for k, v in settings_json.items():
+                if type(v) == dict:
+                    global_settings[k].update(v)
+                else:
+                    global_settings[k] = v
+    global_settings['scwrl']['available'] = None
+    global_settings['dssp']['available'] = None
+
+if 'settings.json' not in os.listdir(package_dir):
+    print('No configuration file (settings.json) found in {}.\nRunning configure.py...\n'.format(package_dir))
+    configure()
+else:
+    load_global_settings()
+
 
 __author__ = 'Christopher W. Wood'
