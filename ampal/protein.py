@@ -39,6 +39,8 @@ def find_ss_regions_polymer(polymer, ss):
         ss = [ss[:]]
     tag_key = 'secondary_structure'
     monomers = [x for x in polymer if tag_key in x.tags.keys()]
+    if len(monomers) == 0:
+        return Assembly()
     if (len(ss) == 1) and (all([m.tags[tag_key] == ss[0] for m in monomers])):
         return Assembly(polymer)
     previous_monomer = None
@@ -278,7 +280,11 @@ class Polypeptide(Polymer):
         if len(sequence) != len(polymer_bb):
             raise ValueError('Sequence length ({}) does not match Polymer length ({}).'.format(
                 len(sequence), len(polymer_bb)))
-        packed_structure, scwrl_score = pack_sidechains(self.backbone.pdb, sequence)
+        scwrl_out = pack_sidechains(self.backbone.pdb, sequence)
+        if scwrl_out is None:
+            return
+        else:
+            packed_structure, scwrl_score = scwrl_out
         new_assembly = convert_pdb_to_ampal(packed_structure, path=False)
         self._monomers = new_assembly[0]._monomers[:]
         self.tags['scwrl_score'] = scwrl_score
@@ -552,7 +558,10 @@ class Polypeptide(Polymer):
         """
         tagged = ['secondary_structure' in x.tags.keys() for x in self._monomers]
         if (not all(tagged)) or force:
-            dssp_ss_list = extract_all_ss_dssp(run_dssp(self.pdb, path=False), path=False)
+            dssp_out = run_dssp(self.pdb, path=False)
+            if dssp_out is None:
+                return
+            dssp_ss_list = extract_all_ss_dssp(dssp_out, path=False)
             for monomer, dssp_ss in zip(self._monomers, dssp_ss_list):
                 monomer.tags['secondary_structure'] = dssp_ss[1]
         return
@@ -597,7 +606,6 @@ class Polypeptide(Polymer):
             if tag_total:
                 self.tags['total_polymer_accessibility'] = total
 
-
     def tag_dssp_solvent_accessibility(self, force=False):
         """Tags each Monomer of the Polymer with its solvent accessibility as assigned by DSSP.
 
@@ -617,7 +625,10 @@ class Polypeptide(Polymer):
         """
         tagged = ['dssp_acc' in x.tags.keys() for x in self._monomers]
         if (not all(tagged)) or force:
-            dssp_acc_list = extract_solvent_accessibility_dssp(run_dssp(self.pdb, path=False), path=False)
+            dssp_out = run_dssp(self.pdb, path=False)
+            if dssp_out is None:
+                return
+            dssp_acc_list = extract_solvent_accessibility_dssp(dssp_out, path=False)
             for monomer, dssp_acc in zip(self._monomers, dssp_acc_list):
                 monomer.tags['dssp_acc'] = dssp_acc[-1]
         return

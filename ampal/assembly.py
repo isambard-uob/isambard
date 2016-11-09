@@ -493,7 +493,11 @@ class Assembly(BaseAmpal):
         if total_seq_len != total_aa_len:
             raise ValueError('Total sequence length ({}) does not match total Polymer length ({}).'.format(
                 total_seq_len, total_aa_len))
-        packed_structure, scwrl_score = pack_sidechains(self.backbone.pdb, ''.join(sequences))
+        scwrl_out = pack_sidechains(self.backbone.pdb, ''.join(sequences))
+        if scwrl_out is None:
+            return
+        else:
+            packed_structure, scwrl_score = scwrl_out
         new_assembly = convert_pdb_to_ampal(packed_structure, path=False)
         self._molecules = new_assembly._molecules[:]
         self.assign_force_field(global_settings[u'buff'][u'force_field'])
