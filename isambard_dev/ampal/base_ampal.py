@@ -8,7 +8,7 @@ from buff import PyAtomData, score_ampal
 from ampal.ampal_databases import element_data
 from tools.isambard_warnings import NotParameterisedWarning
 from tools.geometry import distance, Quaternion, centre_of_mass, rmsd
-from isambard_dev.settings import global_settings
+from settings import global_settings
 
 
 def cap(v, l):

@@ -2,7 +2,7 @@ import subprocess
 import tempfile
 import os
 
-from isambard_dev.settings import global_settings
+from settings import global_settings
 
 
 def run_naccess(pdb, mode, path=True, include_hetatms=False, outfile=None):

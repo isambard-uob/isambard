@@ -2,7 +2,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from isambard_dev.settings import global_settings
+from settings import global_settings
 
 
 def run_reduce(input_file, path=True):

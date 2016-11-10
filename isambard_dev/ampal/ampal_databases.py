@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from isambard_dev.settings import global_settings
+from settings import global_settings
 
 
 ce_path = os.path.join(global_settings['package_path'], 'ampal', 'chemical_elements.json')

@@ -2,7 +2,7 @@ import json
 import requests
 import os
 
-from isambard_dev.settings import global_settings
+from settings import global_settings
 
 _amino_acids_json_path = os.path.join(global_settings['package_path'], 'tools', 'amino_acids.json')
 with open(_amino_acids_json_path, 'r') as inf:

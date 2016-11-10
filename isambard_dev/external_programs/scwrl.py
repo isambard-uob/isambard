@@ -4,7 +4,7 @@ import tempfile
 import re
 import warnings
 
-from isambard_dev.settings import global_settings
+from settings import global_settings
 from tools.isambard_warnings import DependencyNotFoundWarning
 
 

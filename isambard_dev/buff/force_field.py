@@ -1,7 +1,7 @@
 import json
 import os
 
-from isambard_dev.settings import global_settings
+from settings import global_settings
 
 force_fields = {}
 for ff in os.listdir(os.path.join(global_settings['package_path'], 'buff', 'force_fields')):
