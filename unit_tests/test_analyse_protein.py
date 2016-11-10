@@ -3,7 +3,7 @@ import os
 
 import isambard_dev as isambard
 
-_test_file = os.path.join(isambard.global_settings['package_path'], 'unit_tests', 'testing_files', '2ebo_1.mmol')
+_test_file = os.path.join('unit_tests', 'testing_files', '2ebo_1.mmol')
 _test_polypeptide = isambard.ampal.convert_pdb_to_ampal(_test_file)[0]
 
 

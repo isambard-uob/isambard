@@ -3,7 +3,7 @@ import re
 import subprocess
 import tempfile
 
-from settings import global_settings
+from isambard_dev.settings import global_settings
 
 
 def run_profit(pdb1, pdb2, path1=False, path2=False, path_to_cmd_file=None,return_pdb_string=False,align_type=None):

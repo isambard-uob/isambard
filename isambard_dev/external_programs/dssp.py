@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 import warnings
 
-from settings import global_settings
+from isambard_dev.settings import global_settings
 from tools.isambard_warnings import DependencyNotFoundWarning
 
 

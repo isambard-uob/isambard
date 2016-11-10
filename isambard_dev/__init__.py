@@ -9,8 +9,8 @@ _os.chdir(_cmd_folder)
 
 
 try:
-    from settings import global_settings
-    import settings
+    from isambard_dev.settings import global_settings
+    from isambard_dev import settings
     import ampal
     import ampal.specifications as specifications
     from ampal import analyse_protein

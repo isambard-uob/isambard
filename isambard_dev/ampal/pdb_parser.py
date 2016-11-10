@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from settings import global_settings
+from isambard_dev.settings import global_settings
 from ampal.base_ampal import Atom
 from ampal.assembly import AmpalContainer, Assembly
 from ampal.protein import Polypeptide, Residue

@@ -12,7 +12,7 @@ from ampal.analyse_protein import make_primitive_extrapolate_ends, measure_torsi
 from external_programs.dssp import extract_all_ss_dssp, run_dssp, extract_solvent_accessibility_dssp
 from external_programs.naccess import run_naccess, extract_residue_accessibility
 from external_programs.scwrl import pack_sidechains
-from settings import global_settings
+from isambard_dev.settings import global_settings
 from tools.amino_acids import get_aa_code, get_aa_letter, ideal_backbone_bond_lengths, ideal_backbone_bond_angles
 from tools.geometry import Quaternion, unit_vector, dihedral, find_transformations, distance,\
     angle_between_vectors

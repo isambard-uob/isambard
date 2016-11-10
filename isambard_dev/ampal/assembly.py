@@ -8,7 +8,7 @@ from ampal.analyse_protein import sequence_molecular_weight, sequence_molar_exti
 from buff import score_ampal
 from external_programs.scwrl import pack_sidechains
 from external_programs.naccess import run_naccess,extract_residue_accessibility
-from settings import global_settings
+from isambard_dev.settings import global_settings
 
 
 class AmpalContainer(object):
