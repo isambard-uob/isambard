@@ -11,8 +11,7 @@ from unit_tests.random_isambard_objects import random_angles, random_floats
 class PolypeptideStructuralValidationTestCase(unittest.TestCase):
     """ Tests for the valid_backbone_distance method of Polypeptide class. """
     def setUp(self):
-        test_files = [os.path.join(os.path.dirname(isambard.__file__), 'unit_tests', 'testing_files', x)
-                      for x in ['1ek9.pdb', '2ht0.pdb', '3qy1.pdb']]
+        test_files = [os.path.join('unit_tests', 'testing_files', x) for x in ['1ek9.pdb', '2ht0.pdb', '3qy1.pdb']]
         test_structures = [isambard.ampal.convert_pdb_to_ampal(x) for x in test_files]
         self.test_polypeptides = [
             p for p in itertools.chain(*test_structures) if type(p) == isambard.ampal.Polypeptide]

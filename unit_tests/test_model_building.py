@@ -179,7 +179,7 @@ class TABTestCase(unittest.TestCase):
         self.cis_dipeptide = isambard.specifications.TAPolypeptide(self.cis_tas)
         self.trans_tas = [[0, -60, 20], [-179, 120, -40]]
         self.trans_dipeptide = isambard.specifications.TAPolypeptide(self.trans_tas)
-        test_file = os.path.join(os.path.dirname(isambard.__file__), 'unit_tests', 'testing_files', '1ek9.pdb')
+        test_file = os.path.join('unit_tests', 'testing_files', '1ek9.pdb')
         test_structure = isambard.ampal.convert_pdb_to_ampal(test_file)
         self.test_polypeptides = [p for p in test_structure if isinstance(p, isambard.ampal.Polypeptide)]
 
