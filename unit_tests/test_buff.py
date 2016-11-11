@@ -11,7 +11,7 @@ class ForceFieldTestCase(unittest.TestCase):
     def setUp(self):
         self.ff = isambard.buff.BuffForceField()
         self.topo = isambard.specifications.CoiledCoil(3)
-        pdb_path = os.path.join(os.path.dirname(isambard.__file__), 'unit_tests', 'testing_files', '3qy1.pdb')
+        pdb_path = os.path.join('unit_tests', 'testing_files', '3qy1.pdb')
         self.pdb = isambard.ampal.convert_pdb_to_ampal(pdb_path)
 
     def test_ff_json(self):
@@ -52,7 +52,7 @@ class InteractionsTestCase(unittest.TestCase):
         self.ff = isambard.buff.BuffForceField()  # Auto loads default
         self.topo = isambard.specifications.CoiledCoil(3)
         self.topo.assign_force_field(self.ff)
-        pdb_path = os.path.join(os.path.dirname(isambard.__file__), 'unit_tests', 'testing_files', '3qy1.pdb')
+        pdb_path = os.path.join('unit_tests', 'testing_files', '3qy1.pdb')
         self.pdb = isambard.ampal.convert_pdb_to_ampal(pdb_path)
         self.pdb.assign_force_field(self.ff)
 

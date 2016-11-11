@@ -1,7 +1,7 @@
 import shutil
 import os
 
-from isambard_dev.settings import global_settings
+from isambard.settings import global_settings
 
 
 def main(args):

@@ -48,15 +48,15 @@ class PdbParserTestCase(unittest.TestCase):
 
     def test_parse_1ek9(self):
         """Check that 3qy1 has been parsed correctly."""
-        test_path = os.path.join(os.path.dirname(isambard.__file__), 'unit_tests', 'testing_files', '1ek9.pdb')
+        test_path = os.path.join('unit_tests', 'testing_files', '1ek9.pdb')
         self.check_ampal_contents(test_path)
 
     def test_parse_2ht0(self):
         """Check that 3qy1 has been parsed correctly."""
-        test_path = os.path.join(os.path.dirname(isambard.__file__), 'unit_tests', 'testing_files', '2ht0.pdb')
+        test_path = os.path.join('unit_tests', 'testing_files', '2ht0.pdb')
         self.check_ampal_contents(test_path)
 
     def test_parse_3qy1(self):
         """Check that 3qy1 has been parsed correctly."""
-        test_path = os.path.join(os.path.dirname(isambard.__file__), 'unit_tests', 'testing_files', '3qy1.pdb')
+        test_path = os.path.join('unit_tests', 'testing_files', '3qy1.pdb')
         self.check_ampal_contents(test_path)

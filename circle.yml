@@ -20,5 +20,5 @@ dependencies:
 test:
   override:
     - cd /home/ubuntu/isambard
-    - python configure.py -C
+    - python isambard/configure.py -C
     - python -m unittest discover unit_tests/. -v
