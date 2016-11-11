@@ -1,4 +1,4 @@
-isambard_dev package
+isambard package
 ====================
 
 Subpackages
@@ -6,28 +6,28 @@ Subpackages
 
 .. toctree::
 
-    isambard_dev.ampal
-    isambard_dev.buff
-    isambard_dev.external_programs
-    isambard_dev.optimisation
-    isambard_dev.tools
-    isambard_dev.unit_tests
+    isambard.ampal
+    isambard.buff
+    isambard.external_programs
+    isambard.optimisation
+    isambard.tools
+    isambard.unit_tests
 
 Submodules
 ----------
 
-isambard_dev.configure module
+isambard.configure module
 -----------------------------
 
-.. automodule:: isambard_dev.configure
+.. automodule:: isambard.configure
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.settings module
+isambard.settings module
 ----------------------------
 
-.. automodule:: isambard_dev.settings
+.. automodule:: isambard.settings
     :members:
     :undoc-members:
     :show-inheritance:
@@ -36,7 +36,7 @@ isambard_dev.settings module
 Module contents
 ---------------
 
-.. automodule:: isambard_dev
+.. automodule:: isambard
     :members:
     :undoc-members:
     :show-inheritance:

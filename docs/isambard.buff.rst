@@ -1,21 +1,21 @@
-isambard_dev.buff package
+isambard.buff package
 =========================
 
 Submodules
 ----------
 
-isambard_dev.buff.calculate_energy module
+isambard.buff.calculate_energy module
 -----------------------------------------
 
-.. automodule:: isambard_dev.buff.calculate_energy
+.. automodule:: isambard.buff.calculate_energy
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.buff.force_field module
+isambard.buff.force_field module
 ------------------------------------
 
-.. automodule:: isambard_dev.buff.force_field
+.. automodule:: isambard.buff.force_field
     :members:
     :undoc-members:
     :show-inheritance:
@@ -24,7 +24,7 @@ isambard_dev.buff.force_field module
 Module contents
 ---------------
 
-.. automodule:: isambard_dev.buff
+.. automodule:: isambard.buff
     :members:
     :undoc-members:
     :show-inheritance:

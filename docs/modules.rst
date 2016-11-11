@@ -1,7 +1,7 @@
-isambard_dev
+isambard
 ============
 
 .. toctree::
    :maxdepth: 4
 
-   isambard_dev
+   isambard
