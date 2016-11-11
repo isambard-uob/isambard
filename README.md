@@ -6,20 +6,23 @@
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/woolfson-group/isambard/blob/master/LICENSE.md)
 
 ##Principal Investigator
-Derek N. Woolfson (d.n.woolfson@bristol.ac.uk)
+* Derek N. Woolfson (d.n.woolfson@bristol.ac.uk)
+
 ##Developers
 ###Core Dev Team
 ####Woolfson Group
-Gail J. Bartlett (g.bartlett@bristol.ac.uk)<br>
-Jack W. Heal (jack.heal@bristol.ac.uk)<br>
-Kieran L. Hudson (kieran.hudson@bristol.ac.uk)<br>
-Andrew R. Thomson (drew.thomson@bristol.ac.uk)<br>
-Christopher W. Wood (chris.wood@bristol.ac.uk)<br>
+* Gail J. Bartlett (g.bartlett@bristol.ac.uk)
+* Jack W. Heal (jack.heal@bristol.ac.uk)
+* Kieran L. Hudson (kieran.hudson@bristol.ac.uk)
+* Andrew R. Thomson (drew.thomson@bristol.ac.uk)
+* Christopher W. Wood (chris.wood@bristol.ac.uk)
+
 ###Contributors
 ####Woolfson Group
-Caitlin Edgell<br>
-Kathryn L. Porter Goff<br>
+* Caitlin Edgell
+* Kathryn L. Porter Goff
+
 ###BUDE Dev Team
 ####Sessions Group
-Amaurys À. Ibarra (amaurys.avilaibarra@bristol.ac.uk)<br>
-Richard B. Sessions (r.sessions@bristol.ac.uk)<br>
+* Amaurys À. Ibarra (amaurys.avilaibarra@bristol.ac.uk)
+* Richard B. Sessions (r.sessions@bristol.ac.uk)
