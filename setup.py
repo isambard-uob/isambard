@@ -8,16 +8,16 @@ except(IOError, ImportError):
 
 
 setuptools.setup(
-    name='isambard_dev',
+    name='isambard',
     packages=setuptools.find_packages(),
     include_package_data=True,
-    version='1.0.1',
+    version='2016.3',
     description='ISAMBARD: An open-source computational environment for biomolecular analysis, modelling and design',
     long_description=long_description,
     author='Woolfson Group, University of Bristol',
     author_email='isambardinfo@gmail.com',
-    url='https://github.com/woolfson-group/isambard_dev/',
-    download_url='https://github.com/woolfson-group/isambard_dev/tarball/1.0.1',
+    url='https://github.com/woolfson-group/isambard/',
+    download_url='https://github.com/woolfson-group/isambard/tarball/2016.3',
     keywords=['isambard', 'biomolecule', 'parametric', 'modelling', 'bristol', 'woolfson'],
     install_requires=[
         'Cython',

@@ -96,5 +96,5 @@ PyRosetta
 .py___jb_bak___
 DrewTools
 *.csv
-isambard_dev/settings.json
+isambard/settings.json
 hot.grp

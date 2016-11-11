@@ -1,2 +1,2 @@
-recursive-include isambard_dev *.db *.json *.md *.pyx *.pyxbld *.cpp *.hpp *.txt *.mmol *.pdb
-exclude isambard_dev/settings.json
+recursive-include isambard *.db *.json *.md *.pyx *.pyxbld *.cpp *.hpp *.txt *.mmol *.pdb
+exclude isambard/settings.json
