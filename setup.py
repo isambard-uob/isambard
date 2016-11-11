@@ -29,6 +29,7 @@ setuptools.setup(
         'deap',
         'matplotlib',
         'hypothesis',
+        'pyreadline',
         'bs4',
         'parmed',
         'recommonmark',
