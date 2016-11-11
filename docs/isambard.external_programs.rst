@@ -1,45 +1,45 @@
-isambard_dev.external_programs package
+isambard.external_programs package
 ======================================
 
 Submodules
 ----------
 
-isambard_dev.external_programs.dssp module
+isambard.external_programs.dssp module
 ------------------------------------------
 
-.. automodule:: isambard_dev.external_programs.dssp
+.. automodule:: isambard.external_programs.dssp
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.external_programs.naccess module
+isambard.external_programs.naccess module
 ---------------------------------------------
 
-.. automodule:: isambard_dev.external_programs.naccess
+.. automodule:: isambard.external_programs.naccess
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.external_programs.profit module
+isambard.external_programs.profit module
 --------------------------------------------
 
-.. automodule:: isambard_dev.external_programs.profit
+.. automodule:: isambard.external_programs.profit
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.external_programs.reduce module
+isambard.external_programs.reduce module
 --------------------------------------------
 
-.. automodule:: isambard_dev.external_programs.reduce
+.. automodule:: isambard.external_programs.reduce
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.external_programs.scwrl module
+isambard.external_programs.scwrl module
 -------------------------------------------
 
-.. automodule:: isambard_dev.external_programs.scwrl
+.. automodule:: isambard.external_programs.scwrl
     :members:
     :undoc-members:
     :show-inheritance:
@@ -48,7 +48,7 @@ isambard_dev.external_programs.scwrl module
 Module contents
 ---------------
 
-.. automodule:: isambard_dev.external_programs
+.. automodule:: isambard.external_programs
     :members:
     :undoc-members:
     :show-inheritance:

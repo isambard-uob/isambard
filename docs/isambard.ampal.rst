@@ -1,4 +1,4 @@
-isambard_dev.ampal package
+isambard.ampal package
 ==========================
 
 Subpackages
@@ -6,88 +6,88 @@ Subpackages
 
 .. toctree::
 
-    isambard_dev.ampal.specifications.polymer_specs
-    isambard_dev.ampal.topology
+    isambard.ampal.specifications.polymer_specs
+    isambard.ampal.topology
 
 Submodules
 ----------
 
-isambard_dev.ampal.ampal_databases module
+isambard.ampal.ampal_databases module
 -----------------------------------------
 
-.. automodule:: isambard_dev.ampal.ampal_databases
+.. automodule:: isambard.ampal.ampal_databases
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.analyse_protein module
+isambard.ampal.analyse_protein module
 -----------------------------------------
 
-.. automodule:: isambard_dev.ampal.analyse_protein
+.. automodule:: isambard.ampal.analyse_protein
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.assembly module
+isambard.ampal.assembly module
 ----------------------------------
 
-.. automodule:: isambard_dev.ampal.assembly
+.. automodule:: isambard.ampal.assembly
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.base_ampal module
+isambard.ampal.base_ampal module
 ------------------------------------
 
-.. automodule:: isambard_dev.ampal.base_ampal
+.. automodule:: isambard.ampal.base_ampal
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.interactions module
+isambard.ampal.interactions module
 --------------------------------------
 
-.. automodule:: isambard_dev.ampal.interactions
+.. automodule:: isambard.ampal.interactions
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.ligands module
+isambard.ampal.ligands module
 ---------------------------------
 
-.. automodule:: isambard_dev.ampal.ligands
+.. automodule:: isambard.ampal.ligands
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.nucleic_acid module
+isambard.ampal.nucleic_acid module
 --------------------------------------
 
-.. automodule:: isambard_dev.ampal.nucleic_acid
+.. automodule:: isambard.ampal.nucleic_acid
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.pdb_parser module
+isambard.ampal.pdb_parser module
 ------------------------------------
 
-.. automodule:: isambard_dev.ampal.pdb_parser
+.. automodule:: isambard.ampal.pdb_parser
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.protein module
+isambard.ampal.protein module
 ---------------------------------
 
-.. automodule:: isambard_dev.ampal.protein
+.. automodule:: isambard.ampal.protein
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.pseudo_atoms module
+isambard.ampal.pseudo_atoms module
 --------------------------------------
 
-.. automodule:: isambard_dev.ampal.pseudo_atoms
+.. automodule:: isambard.ampal.pseudo_atoms
     :members:
     :undoc-members:
     :show-inheritance:
@@ -96,7 +96,7 @@ isambard_dev.ampal.pseudo_atoms module
 Module contents
 ---------------
 
-.. automodule:: isambard_dev.ampal
+.. automodule:: isambard.ampal
     :members:
     :undoc-members:
     :show-inheritance:

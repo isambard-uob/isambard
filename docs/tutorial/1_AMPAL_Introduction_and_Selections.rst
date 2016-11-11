@@ -1,8 +1,4 @@
 
-.. code:: python
-
-    import isambard
-
 An Introduction to the AMPAL Framework
 ======================================
 
@@ -18,54 +14,56 @@ also load in crystal structures.
     **Q. So why aren't these objects just called Protein, Chain and
     Residue?**
 
-    Well, there are ``Protein``, ``Chain`` and ``Residue`` objects, but
-    they are just protein specific versions which are based on
-    ``Assembly``, ``Polymer`` and ``Monomer``. We wanted to keep the
-    base objects as generic as possible to allow other biomolecules
-    (like DNA or RNA), or even unnatural polymers (like
-    :math:`\beta`-amino acids) to be represented using this
-    architecture. While these features are not currently implemented in
-    ISAMBARD, this will lead to more scalable code with reduced
-    duplication in the future.
+    Well, there are ``Polypeptide``, and ``Residue`` objects, but they
+    are just protein-specific versions of ``Polymer`` and ``Monomer``.
+    We wanted to keep the base objects as generic as possible to allow
+    other biomolecules (like DNA or RNA), or even unnatural polymers
+    (like :math:`\beta`-amino acids) to be represented using this
+    architecture. While some these features are not currently
+    implemented in ISAMBARD, this will lead to more scalable code with
+    reduced duplication in the future.
 
 1. Converting PDB files to AMPAL Objects
 ----------------------------------------
 
+.. code:: python
+
+    import isambard
+
 Any PDB file can be parsed into an AMPAL object, which allows you to
 easily analyse the structure. The only function you need for this is
-``isambard.ampal.convert_pdb_to_assembly``. It takes a file path string
-as the input argument:
+``isambard.ampal.convert_pdb_to_ampal``. It takes a file path string as
+the input argument:
 
 .. code:: python
 
-    isambard.ampal.convert_pdb_to_assembly('3qy1.pdb')
+    isambard.ampal.convert_pdb_to_ampal('3qy1.pdb')
 
 
 
 
 .. parsed-literal::
 
-    <Protein containing 2 Chains>
+    <Assembly (3qy1) containing 2 Polypeptides, 449 Ligands>
 
 
 
-The object that is returned is of the type ``Protein``. This is a
-special type of the ``Assembly`` class, with extra protein centric
-functions. We can assign it to a variable and look inside it.
+The object that is returned is an ``Assembly``. We can assign it to a
+variable and look inside it.
 
 .. code:: python
 
-    my_protein = isambard.ampal.convert_pdb_to_assembly('3qy1.pdb')
+    my_protein = isambard.ampal.convert_pdb_to_ampal('3qy1.pdb')
 
 Remember if you are using the object in Jupyter Notebook once it's
-assign to a variable, you can have a look at its attributes and methods
-by typing ``my_protein.`` and then pressing tab.
+assigned to a variable, you can have a look at its attributes and
+methods by typing ``my_protein.`` and then pressing tab.
 
 2. Basic Analysis
 -----------------
 
-This protein is made of two chains, we can easily check their amino acid
-sequences:
+This ``Assembly`` contains two ``Polypeptides``, and 449 ``Ligands``. It
+is easy to check the amino acid sequences of the ``Polypeptides``:
 
 .. code:: python
 
@@ -81,8 +79,9 @@ sequences:
 
 
 
-``Protein.sequences`` returns a list of sequence strings, one for each
-chain. We can determine other basic properties of the protein:
+The ``.sequences`` attribute is a list of sequence strings, one for each
+``Polymer``. We can determine other basic properties of the
+``Assembly``:
 
 .. code:: python
 
@@ -93,7 +92,7 @@ chain. We can determine other basic properties of the protein:
 
 .. parsed-literal::
 
-    48508.931580000004
+    48508.93158
 
 
 
@@ -106,7 +105,7 @@ chain. We can determine other basic properties of the protein:
 
 .. parsed-literal::
 
-    84600
+    83640
 
 
 
@@ -139,8 +138,8 @@ chain. We can determine other basic properties of the protein:
 3. Selecting Chains
 -------------------
 
-Each ``Protein`` object is made from one or more ``Chain`` objects. You
-can access the ``Chains`` using square brackets:
+Items inside each ``Assembly`` object can be accessed analogously to
+accessing items in a standard Python list:
 
 .. code:: python
 
@@ -151,12 +150,12 @@ can access the ``Chains`` using square brackets:
 
 .. parsed-literal::
 
-    <Chain containing 215 Residues. Sequence: DIDTLISNNALW...>
+    <Polypeptide containing 215 Residues. Sequence: DIDTLISNNALW...>
 
 
 
-You can also select a ``Chain`` using a string of the chain id from the
-PDB file. In this case there are two chains 'A' and 'B'.
+You can also select a ``Polymer`` using a string of the chain id from
+the PDB file. In this case there are two chains 'A' and 'B'.
 
 .. code:: python
 
@@ -167,7 +166,7 @@ PDB file. In this case there are two chains 'A' and 'B'.
 
 .. parsed-literal::
 
-    <Chain containing 215 Residues. Sequence: DIDTLISNNALW...>
+    <Polypeptide containing 215 Residues. Sequence: DIDTLISNNALW...>
 
 
 
@@ -180,11 +179,12 @@ PDB file. In this case there are two chains 'A' and 'B'.
 
 .. parsed-literal::
 
-    <Chain containing 216 Residues. Sequence: KDIDTLISNNAL...>
+    <Polypeptide containing 216 Residues. Sequence: KDIDTLISNNAL...>
 
 
 
-The ``Chain`` object has a lot of the same functionality as the protein:
+The ``Polypeptide`` object has a lot of the same functionality as the
+``Assembly``:
 
 .. code:: python
 
@@ -212,7 +212,7 @@ The ``Chain`` object has a lot of the same functionality as the protein:
 
 .. parsed-literal::
 
-    42300
+    41820
 
 
 
@@ -245,8 +245,8 @@ The ``Chain`` object has a lot of the same functionality as the protein:
 4. Selecting Residues
 ---------------------
 
-Each ``Chain`` object is made from one or more ``Residue`` objects. You
-can access the ``Residues`` using square brackets:
+Each ``Polypeptide`` object is made from one or more ``Residue``
+objects. You can access the ``Residues`` using square brackets:
 
 .. code:: python
 
@@ -287,7 +287,7 @@ can access the ``Residues`` using square brackets:
 
 
 
-You can use a string of a residue id from the pdb file to select a
+You can use a string of a residue id from the PDB file to select a
 ``Residue``:
 
 .. code:: python
@@ -331,16 +331,16 @@ will be raised:
 
     KeyError                                  Traceback (most recent call last)
 
-    <ipython-input-23-e01d62d6ac3a> in <module>()
+    <ipython-input-22-e01d62d6ac3a> in <module>()
     ----> 1 my_chain_a['2']
     
 
-    /Users/ChrisWood/code/isambard/ampal/base_ampal.py in __getitem__(self, item)
-       1229         if isinstance(item, str):
-       1230             id_dict = {str(m.id): m for m in self._monomers}
-    -> 1231             return id_dict[item]
-       1232         elif isinstance(item, int):
-       1233             return self._monomers[item]
+    /Users/jackheal/Projects/isambard/isambard/ampal/protein.py in __getitem__(self, item)
+        169         if isinstance(item, str):
+        170             id_dict = {str(m.id): m for m in self._monomers}
+    --> 171             return id_dict[item]
+        172         elif isinstance(item, int):
+        173             return self._monomers[item]
 
 
     KeyError: '2'
@@ -364,13 +364,18 @@ identifiers and ``Atom`` objects all the atoms that make up the
 
 .. parsed-literal::
 
-    OrderedDict([('N', <Nitrogen Atom. Coordinates: (22.124, -4.140, -35.654)>),
-                 ('CA', <Carbon Atom. Coordinates: (22.664, -3.954, -34.292)>),
-                 ('C', <Carbon Atom. Coordinates: (21.911, -2.875, -33.515)>),
-                 ('O', <Oxygen Atom. Coordinates: (21.863, -2.926, -32.283)>),
-                 ('CB', <Carbon Atom. Coordinates: (24.120, -3.555, -34.534)>),
-                 ('CG', <Carbon Atom. Coordinates: (24.124, -2.964, -35.917)>),
-                 ('CD', <Carbon Atom. Coordinates: (23.118, -3.764, -36.681)>)])
+    OrderedDict([('N',
+                  <Nitrogen Atom (N). Coordinates: (22.124, -4.140, -35.654)>),
+                 ('CA',
+                  <Carbon Atom (CA). Coordinates: (22.664, -3.954, -34.292)>),
+                 ('C', <Carbon Atom (C). Coordinates: (21.911, -2.875, -33.515)>),
+                 ('O', <Oxygen Atom (O). Coordinates: (21.863, -2.926, -32.283)>),
+                 ('CB',
+                  <Carbon Atom (CB). Coordinates: (24.120, -3.555, -34.534)>),
+                 ('CG',
+                  <Carbon Atom (CG). Coordinates: (24.124, -2.964, -35.917)>),
+                 ('CD',
+                  <Carbon Atom (CD). Coordinates: (23.118, -3.764, -36.681)>)])
 
 
 
@@ -389,7 +394,7 @@ the C\ :math:`\alpha` atom of the residue can be selected like this:
 
 .. parsed-literal::
 
-    <Carbon Atom. Coordinates: (22.664, -3.954, -34.292)>
+    <Carbon Atom (CA). Coordinates: (22.664, -3.954, -34.292)>
 
 
 
@@ -402,7 +407,7 @@ the C\ :math:`\alpha` atom of the residue can be selected like this:
 
 .. parsed-literal::
 
-    <Carbon Atom. Coordinates: (24.124, -2.964, -35.917)>
+    <Carbon Atom (CG). Coordinates: (24.124, -2.964, -35.917)>
 
 
 
@@ -415,7 +420,7 @@ the C\ :math:`\alpha` atom of the residue can be selected like this:
 
 .. parsed-literal::
 
-    <Nitrogen Atom. Coordinates: (22.124, -4.140, -35.654)>
+    <Nitrogen Atom (N). Coordinates: (22.124, -4.140, -35.654)>
 
 
 
@@ -434,7 +439,7 @@ The individual coordinates can be selected using square brackets:
 
 .. parsed-literal::
 
-    22.664
+    22.664000000000001
 
 
 
@@ -447,7 +452,7 @@ The individual coordinates can be selected using square brackets:
 
 .. parsed-literal::
 
-    -34.292
+    -34.292000000000002
 
 
 
@@ -462,7 +467,7 @@ Or with the ``x``, ``y`` and ``z`` properties:
 
 .. parsed-literal::
 
-    22.664
+    22.664000000000001
 
 
 
@@ -475,7 +480,7 @@ Or with the ``x``, ``y`` and ``z`` properties:
 
 .. parsed-literal::
 
-    -3.954
+    -3.9540000000000002
 
 
 
@@ -488,7 +493,7 @@ Or with the ``x``, ``y`` and ``z`` properties:
 
 .. parsed-literal::
 
-    -34.292
+    -34.292000000000002
 
 
 
@@ -524,8 +529,8 @@ The ``Atom`` object contains some useful attributes:
 ----------------
 
 Hopefully you can see that it's easy to traverse down the AMPAL
-framework from ``Protein`` level to the ``Atom`` level, but it's just as
-easy to work your way back up. With any AMPAL object you can use the
+framework from ``Assembly`` level to the ``Atom`` level, but it's just
+as easy to work your way back up. With any AMPAL object you can use the
 ``ampal_parent`` attribute to find the AMPAL object that it is contained
 inside.
 
@@ -551,7 +556,7 @@ inside.
 
 .. parsed-literal::
 
-    <Chain containing 215 Residues. Sequence: DIDTLISNNALW...>
+    <Polypeptide containing 215 Residues. Sequence: DIDTLISNNALW...>
 
 
 
@@ -564,7 +569,7 @@ inside.
 
 .. parsed-literal::
 
-    <Protein containing 2 Chains>
+    <Assembly (3qy1) containing 2 Polypeptides, 449 Ligands>
 
 
 
@@ -607,7 +612,7 @@ access all its methods and functions, including its own
 
 .. parsed-literal::
 
-    <Chain containing 215 Residues. Sequence: DIDTLISNNALW...>
+    <Polypeptide containing 215 Residues. Sequence: DIDTLISNNALW...>
 
 
 
@@ -620,7 +625,7 @@ access all its methods and functions, including its own
 
 .. parsed-literal::
 
-    <Protein containing 2 Chains>
+    <Assembly (3qy1) containing 2 Polypeptides, 449 Ligands>
 
 
 
@@ -633,7 +638,7 @@ access all its methods and functions, including its own
 
 .. parsed-literal::
 
-    <Protein containing 2 Chains>
+    <Assembly (3qy1) containing 2 Polypeptides, 449 Ligands>
 
 
 
@@ -682,11 +687,11 @@ access all its methods and functions, including its own
 
 The last AMPAL objects to discuss are ``Ligand`` and ``Ligands``. These
 are intended to store non-protein elements from the PDB file. The
-ligands are contained in the protein object:
+ligands can be extracted from the ``Assembly``:
 
 .. code:: python
 
-    my_protein.ligands
+    my_protein.get_ligands()
 
 
 
@@ -697,14 +702,14 @@ ligands are contained in the protein object:
 
 
 
-``Ligands`` is a special ``Chain`` object, with none of the extra
-``Protein`` functionality. It contains one or ``Ligand`` objects which
-you can select in exactly the same way as selecting ``Residues`` from
-``Chains``:
+``Ligands`` is a special ``Polymer`` object, with none of the
+protein-specific ``Polypeptide`` functionality. It contains one or more
+``Ligand`` objects which you can select in exactly the same way as
+selecting ``Residues`` from ``Polypeptides``:
 
 .. code:: python
 
-    my_ligands = my_protein.ligands
+    my_ligands = my_protein.get_ligands()
 
 .. code:: python
 
@@ -732,7 +737,9 @@ you can select in exactly the same way as selecting ``Residues`` from
 
 
 
-The ``Ligand`` objects are just stripped down ``Residues`` and so have a
+The ``Ligand`` objects are ``Monomer`` objects, without the
+protein-specific functionality that is present for ``Residues``. Since
+``Ligand`` and ``Residue`` are both examples of ``Monomer``, they have a
 lot of the same functionality:
 
 .. code:: python
@@ -748,7 +755,8 @@ lot of the same functionality:
 
 .. parsed-literal::
 
-    OrderedDict([('ZN', <Zinc Atom. Coordinates: (-5.817, -20.172, -18.798)>)])
+    OrderedDict([('ZN',
+                  <Zinc Atom (ZN). Coordinates: (-5.817, -20.172, -18.798)>)])
 
 
 
@@ -761,9 +769,12 @@ lot of the same functionality:
 
 .. parsed-literal::
 
-    <Zinc Atom. Coordinates: (-5.817, -20.172, -18.798)>
+    <Zinc Atom (ZN). Coordinates: (-5.817, -20.172, -18.798)>
 
 
+
+This zinc atom is associated with one of the ``Polypeptide`` chains, and
+this is reflected in its ``ampal_parent``.
 
 .. code:: python
 
@@ -774,20 +785,7 @@ lot of the same functionality:
 
 .. parsed-literal::
 
-    <Ligands chain containing 449 Ligands>
-
-
-
-.. code:: python
-
-    my_ligands.ampal_parent
-
-
-
-
-.. parsed-literal::
-
-    <Protein containing 2 Chains>
+    <Polypeptide containing 215 Residues. Sequence: DIDTLISNNALW...>
 
 
 
@@ -802,7 +800,7 @@ example code and try to select different parts of the protein.
    protein and ligands.
 2. Find the other builtin functions either by:
 
-   1. Tabbing the object in IPython Notebook
+   1. Tabbing the object in Jupyter Notebook
    2. Looking at the documentation
    3. Finding the ``base_ampal`` code in the ISAMBARD folder and looking
       through it (tip: you can do this with the IPython file browser)

@@ -1,29 +1,29 @@
-isambard_dev.ampal.specifications package
+isambard.ampal.specifications package
 =========================================
 
 Submodules
 ----------
 
-isambard_dev.ampal.specifications.coiledcoil module
+isambard.ampal.specifications.coiledcoil module
 ---------------------------------------------------
 
-.. automodule:: isambard_dev.ampal.specifications.coiledcoil
+.. automodule:: isambard.ampal.specifications.coiledcoil
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.specifications.nucleic_acid_duplex module
+isambard.ampal.specifications.nucleic_acid_duplex module
 ------------------------------------------------------------
 
-.. automodule:: isambard_dev.ampal.specifications.nucleic_acid_duplex
+.. automodule:: isambard.ampal.specifications.nucleic_acid_duplex
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.ampal.specifications.solenoid module
+isambard.ampal.specifications.solenoid module
 -------------------------------------------------
 
-.. automodule:: isambard_dev.ampal.specifications.solenoid
+.. automodule:: isambard.ampal.specifications.solenoid
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,7 +32,7 @@ isambard_dev.ampal.specifications.solenoid module
 Module contents
 ---------------
 
-.. automodule:: isambard_dev.ampal.specifications
+.. automodule:: isambard.ampal.specifications
     :members:
     :undoc-members:
     :show-inheritance:

@@ -2,17 +2,17 @@
 Making Models With Isambard
 ===========================
 
-1. Introduction
----------------
+1. Specifications
+-----------------
 
-Topologies available
-~~~~~~~~~~~~~~~~~~~~
-
-A number of topologies are currently available through Isambard. These
-include: alpha-helices, coiled-coil assemblies of different flavours,
-deltaprots, pi-helices and poly-proline helices. To make a structure
-based on a topology, you need to know the parameters of that topology.
-We will demonstrate this with a simple alpha-helical coiled-coil dimer.
+A number of specifications (the term is borrowed from the field of
+architecture, where a specification is defined as "a detailed
+description of the design and materials used to make something") are
+currently available through ISAMBARD. These include: :math:`\alpha`
+helices, coiled-coil assemblies of different flavours, and simple DNA
+duplexes. To make a structure based on a specification, you need to know
+the parameters of that specification. We will demonstrate this with a
+simple :math:`\alpha`-helical coiled-coil dimer.
 
 Parameters required to make a coiled-coil dimer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,19 +29,16 @@ To make a coiled-coil dimer, you need to know
 3. the pitch of the assembly and
 4. the interface angle at which helices meet (Phi-C:math:`\alpha`)
 
-Reading in a structure and identifying parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2. Reading in a structure and identifying parameters
+----------------------------------------------------
 
 We will read a known coiled-coil dimer structure (CC-DI, PDB
 `4DZM.pdb <https://drive.google.com/open?id=0B2sZ5She4fA2QzdsUENNa2hmTE0>`__),
-into the AMPAL framework, and use tools within Isambard to calculate the
-parameters we need. The following code imports isambard so it is
-available to the ipython notebook, reads in the PDB file of interest and
-converts it into an AMPAL object. [N.B. This is a slightly modified form
-of 4DZM where we've converted iodo-phenylalanine to phenylalanine, and
-got rid of water molecules to make life a bit easier. We've put it in
-the tutorial directory for today, but you can get another copy from the
-link above.]
+into the AMPAL framework, and use tools within ISAMBARD to calculate the
+parameters we need. [N.B. This is a slightly modified form of 4DZM where
+we've converted iodo-phenylalanine to phenylalanine, and got rid of
+water molecules to make life a bit easier, so take the linked copy
+rather than downloading from another source.]
 
 .. code:: python
 
@@ -60,11 +57,10 @@ link above.]
 
 
 
-This has given us an Assembly object, which contains two Polypeptides in
-the AMPAL framework. We can access the sequences and each chain
-individually using the ``.sequences`` attribute. This returns a list,
-and you can access individual list elements as you would a regular
-python list.
+This has given us an ``Assembly`` object, which contains two
+``Polypeptides``. We can access the sequences of each chain individually
+using the ``.sequences`` attribute. This is a list - you can access
+individual list elements as you would a regular python list.
 
 .. code:: python
 
@@ -140,46 +136,39 @@ the chain object itself, or from the length of the sequence.
 
 
 Before we extract parameters from the structure, we might want to know
-how good BUDE thinks the structure is, so that when we build a structure
-*de novo* we have something to compare it to. There are two ways of
-doing this. The first is via a dedicated method for the Assembly, and
-returns the total interaction energy between all Polypeptides in the
-Assembly.
+how 'good' the BUDE forcefield [BUFF] thinks the structure is, so that
+when we build a structure *de novo* we have something to compare it to.
+BUFF provides two scores, one for the interaction between
+``Polypeptides`` in the ``Assembly``, and one for the internal energy of
+the ``Assembly``.
 
 .. code:: python
 
-    my_cc.bude_score
+    my_cc.buff_interaction_energy
 
 
 
 
 .. parsed-literal::
 
-    -580.8352
+    <BUFF Score -250.24: 50.73 St | -281.57 De | -19.39 Ch>
 
 
-
-You can also ask for the average bude score:
 
 .. code:: python
 
-    my_cc.average_bude_score
+    my_cc.buff_internal_energy
 
 
 
 
 .. parsed-literal::
 
-    -290.4176
+    <BUFF Score -938.07: 136.53 St | -790.27 De | -284.33 Ch>
 
 
 
-This returns the average interaction energy (i.e. half the value
-returned by the ``my_cc.bude_score`` method for this case.). You can get
-the same value as ``my_cc.bude_score`` by calling the
-``run_bude_additive`` method.
-
-2. Measuring geometric parameters
+3. Measuring geometric parameters
 ---------------------------------
 
 In order to measure radius, pitch and Phi-C\ :math:`\alpha` of the
@@ -188,8 +177,8 @@ that runs down the centre of the assembly. For a coiled-coil dimer, it
 runs between the two helices; for a barrel, this would be at the centre
 of the barrel, and is a list of points in 3D space. We will use this to
 calculate the other parameters. The reference axis is defined as a
-Primitive chain object populated with PseudoMonomers which represent the
-points in space of the axis.
+``Primitive`` chain object populated with ``PseudoMonomers`` which
+represent the points in space of the axis.
 
 .. code:: python
 
@@ -319,10 +308,11 @@ use for model building.
 Pitch
 ^^^^^
 
-Pitch is calculated on a per-helix basis using alpha angles, which
-measures the tilt of a helix in a coiled-coil assembly wtith respect to
-the central reference axis that we already calculated. The radius of the
-helices is also required. For model building we take a mean value.
+Pitch is calculated on a per-helix basis using :math:`\alpha` angles,
+which measures the tilt of a helix in a coiled-coil assembly wtith
+respect to the central reference axis that we already calculated. The
+radius of the helices is also required. For model building we take a
+mean value.
 
 .. code:: python
 
@@ -345,18 +335,18 @@ helices is also required. For model building we take a mean value.
 
 
 
-3. Building a model
+4. Building a model
 -------------------
 
 We now know all the parameters we need to rebuild this structure, and it
-can be done by generating a topology object from the CoiledCoil class.
-We will do this by 'subclassing', i.e. inheriting all the things we need
-from the general CoiledCoil class, and adding specific parameters for
-our case, into a class called ``SimpleDimer2Phi``.
+can be done by generating a specification object from the ``CoiledCoil``
+class. We will do this by 'subclassing', i.e. inheriting all the things
+we need from the general ``CoiledCoil`` class, and adding specific
+parameters for our case, into a class called ``SimpleDimer2Phi``.
 
 .. code:: python
 
-    class SimpleDimer2Phi(isambard.topology.CoiledCoil):
+    class SimpleDimer2Phi(isambard.specifications.CoiledCoil):
         def __init__(self, aa, r, p, phica1,phica2,n=2):
             super().__init__(n, auto_build=False)
             self.aas = [aa]*n
@@ -375,46 +365,9 @@ parameters in the cell below before pressing Ctrl+Enter to run it.
     my_model = SimpleDimer2Phi(len(my_cc.sequences[0]), radius, pitch, phica_a, phica_b)
     my_model.build()
 
-Viewing models
-~~~~~~~~~~~~~~
-
-We have built a visualizer for AMPAL objects into Isambard. It is very
-basic at the moment (written by Chris in a very short space of time this
-week!) First of all, you have to create a view using an AMPAL object,
-then call the ``.view()`` method on it to visualize it in your browser.
-Finally, the ``.control_panel()`` method allows you to change the
-colors, etc. We expect to make changes and improvements to this over the
-coming weeks. Execute the three cells below to view your model.
-
-.. code:: python
-
-    my_view = isambard.add_ons.AMPALViewer(my_model)
-
-
-
-.. parsed-literal::
-
-    <IPython.core.display.Javascript object>
-
-
-.. code:: python
-
-    my_view.view()
-
-.. code:: python
-
-    my_view.control_panel()
-
-
-
-
-.. parsed-literal::
-
-    <function ipywidgets.widgets.interaction.interact.<locals>.<lambda>>
-
-
-
-Now write out this model to a PDB file for later reference.
+Now write out this model to a PDB file that can be viewed using a
+standard protein strutcure viewer such as
+`PyMOL <https://www.pymol.org/>`__.
 
 .. code:: python
 
@@ -428,9 +381,10 @@ Now write out this model to a PDB file for later reference.
 
 Hopefully your model looks something like the picture above. It has made
 a poly-alanine version of a coiled-coil helical dimer. Now we can model
-the sidechains using SCWRL, output the PDB file for future reference,
-and view the structure in the browser. You should be able to see the
-sidechains.
+the sidechains using SCWRL4 (G. G. Krivov, M. V. Shapovalov, and R. L.
+Dunbrack, Jr. Improved prediction of protein side-chain conformations
+with SCWRL4. Proteins (2009)), output the PDB file for future reference.
+You should be able to see the sidechains as below.
 
 .. code:: python
 
@@ -438,20 +392,6 @@ sidechains.
     my_model.pack_new_sequences(sequences)
     with open('my_model_sc.pdb','w') as outf:
         outf.write(my_model.pdb)
-    
-    my_view = isambard.add_ons.AMPALViewer(my_model)
-    my_view.view()
-
-
-
-.. parsed-literal::
-
-    <IPython.core.display.Javascript object>
-
-
-.. code:: python
-
-    my_view.control_panel()
 
 .. figure:: https://cloud.githubusercontent.com/assets/16082702/12421307/85a3b2f6-beb9-11e5-848a-cd43b081f2be.png
    :alt: my\_model\_sc
@@ -459,28 +399,28 @@ sidechains.
    my\_model\_sc
 
 Your model should look something like the picture above. Now we can
-score this model using BUDE, and also we can calculate an RMSD from this
-model to the original structure.
+score this model using BUFF, and also we can calculate an RMSD from this
+model to the original structure using ProFit (Martin, A.C.R.,
+http://www.bioinf.org.uk/software/profit/).
 
 .. code:: python
 
-    my_model.bude_score
+    my_model.buff_interaction_energy
 
 
 
 
 .. parsed-literal::
 
-    -600.249
+    <BUFF Score -285.48: 16.99 St | -295.91 De | -6.56 Ch>
 
 
 
 .. code:: python
 
-    rmsds,overlay = isambard.external_programs.run_profit_output_pdbstr(my_cc.pdb, my_model.pdb)
+    rmsds,overlay = isambard.external_programs.run_profit(my_cc.pdb, my_model.pdb, return_pdb_string=True, align_type='all')
 
-``rmsds`` is a list of C-alpha, backbone and all-atom RMSDs calculated
-by ProFit.
+``rmsds`` is the all-atom RMSDs calculated by ProFit.
 
 .. code:: python
 
@@ -491,7 +431,7 @@ by ProFit.
 
 .. parsed-literal::
 
-    [0.913, 0.899, 2.173]
+    [2.173]
 
 
 
@@ -508,30 +448,11 @@ Write out the overlaid structure for future reference.
    my\_cc\_my\_model\_overlay
 
 The overlay is a simple PDB string returned from ProFit. We can convert
-this back to an AMPAL object, and combine it with our original structure
-AMPAL object, and view both overlaid. [NB This is a very experimental
-feature, only just implemented, so it may break!!]
+this back to an AMPAL object, write it out for viewing.
 
 .. code:: python
 
     overlay_ampal = isambard.ampal.convert_pdb_to_ampal(overlay,path=False) ## convert overlay to AMPAL object
-    both = my_cc + overlay_ampal ## combine AMPAL objects
-    both_view = isambard.add_ons.AMPALViewer(both) ## set up viewer
-
-
-
-.. parsed-literal::
-
-    <IPython.core.display.Javascript object>
-
-
-.. code:: python
-
-    both_view.view()
-
-.. code:: python
-
-    both_view.control_panel()
 
 If you have a look closely at the asparagine pair at the middle of the
 dimeric structure (shown below), you'll see that the rotamers that SCWRL
@@ -551,24 +472,24 @@ Tweaking the parameters
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Try rebuilding the model again, this time changing the parameters as you
-like. What happens if you change the phi-C\ :math:`\alpha` values of one
+like. What happens if you change the Phi-C\ :math:`\alpha` values of one
 helix (or both)? Try varying the radius. Each time, score your model
-using BUDE and make a note of the RMSD to the original structure, and
+using BUFF and make a note of the RMSD to the original structure, and
 have a look at the models you produce on PyMOL.
 
-4. Going antiparallel
----------------------
+Going antiparallel
+~~~~~~~~~~~~~~~~~~
 
 We are going to remake the coiled-coil dimer as an antiparallel
-structure. To do this, we need to modify the
-``isambard.topology.SimpleDimer2Phi`` class, two extra parameters to
-specify firstly that the orientation of the second helix is
-antiparallel, and secondly, the z-shift, how far the helices can slide
-past one another. We'll make this using another subclass of CoiledCoil:
+structure. To do this, we need to modify the ``SimpleDimer2Phi`` class,
+two extra parameters to specify firstly that the orientation of the
+second helix is antiparallel, and secondly, the z-shift, how far the
+helices can slide past one another. We'll make this using another
+subclass of CoiledCoil:
 
 .. code:: python
 
-    class SimpleDimer2PhiAP(isambard.topology.CoiledCoil):
+    class SimpleDimer2PhiAP(isambard.specifications.CoiledCoil):
         def __init__(self, aa, r, p, phica1,phica2,zshift,n=2):
             super().__init__(n=2, auto_build=False)
             self.aas = [aa]*n
@@ -585,7 +506,7 @@ past one another. We'll make this using another subclass of CoiledCoil:
     my_ap_cc.build()
     my_ap_cc.pack_new_sequences(my_cc.sequences)
 
-Write the model out to PDB for future reference and view in the viewer.
+Write the model out to PDB for future reference.
 
 .. code:: python
 
@@ -593,76 +514,54 @@ Write the model out to PDB for future reference and view in the viewer.
         
         outf.write(my_ap_cc.pdb)
 
-.. code:: python
-
-    my_ap_view = isambard.add_ons.AMPALViewer(my_ap_cc)
-    my_ap_view.view()
-
-
-
-.. parsed-literal::
-
-    <IPython.core.display.Javascript object>
-
+Score the model using BUFF:
 
 .. code:: python
 
-    my_ap_view.control_panel()
+    my_ap_cc.buff_interaction_energy
 
 
 
 
 .. parsed-literal::
 
-    <function ipywidgets.widgets.interaction.interact.<locals>.<lambda>>
-
-
-
-Score the model using BUDE:
-
-.. code:: python
-
-    my_ap_cc.bude_score
-
-
-
-
-.. parsed-literal::
-
-    -101.5608
+    <BUFF Score -48.11: 167.36 St | -215.94 De | 0.48 Ch>
 
 
 
 5. Making it better - an introduction to optimisation
 -----------------------------------------------------
 
-It's not a good score :-) (obviously?) We could improve this score by
-'minimizing' the structure, i.e. trying to find new parameter for the
-sequence that improve the BUDE score. This is, in real life, a very bad
-idea, because we know that this sequence comes from a crystal structure
-of a parallel coiled-coil dimer, and it is highly unlikely ever to go
-antiparallel, but we are going to pretend that we can make it so, as a
-good exercise in learning how an optimiser works, and also to give you
-the heads up that although you can get an improved BUDE score through
-this process, if you make an unrealistic assumption at the beginning,
-BUDE and the optimiser will not help you out.
+It's not such a good score :-) (obviously?) We could improve this score
+by 'minimizing' the structure, i.e. trying to find new parameters for
+the sequence that improve the BUDE score. This is, in real life, a very
+bad idea, because we know that this sequence comes from a crystal
+structure of a parallel coiled-coil dimer, and it is highly unlikely
+ever to go antiparallel. Here, we are going to pretend that we can make
+it so, as a good exercise in learning how an optimiser works. Hopefully
+this will also help to empahasise that although you can get an improved
+BUFF score through this process, if you make an unrealistic assumption
+at the beginning, BUFF and the optimiser will not help you out.
 
 We'll carry out this optimisation using an algorithm called
-**differential evolution**. This is a metaheuristic, which means it
-makes no assumptions about the optimisation (this means it knows nothing
-about your parameters), and is able to search large spaces of candidate
-solutions (i.e. a large parameter space). It optimizes the parameters by
-keeping a population of candidate solutions (sets of model parameters)
-and creates new solutions (sets of parameters) by combining existing
-ones and then keeping whichever candidate has the best score.
+`**differential
+evolution** <https://en.wikipedia.org/wiki/Differential_evolution>`__.
+This is a metaheuristic, which means it makes no assumptions about the
+optimisation (this means it knows nothing about your parameters), and is
+able to search large spaces of candidate solutions (i.e. a large
+parameter space). It optimizes the parameters by keeping a population of
+candidate solutions (sets of model parameters) and creates new solutions
+(sets of parameters) by combining existing ones and then keeping
+whichever candidate has the best score.
 
 The optimiser is actually quite easy to set up. You need to give it an
-isambard topology (in our case ``SimpleDimer2Phi``) and an output path
-(which can be your home directory for the moment)
+ISAMBARD specification (in our case ``SimpleDimer2PhiAP``) and an output
+path (which can be the current directory for the moment, as specified by
+'.')
 
 .. code:: python
 
-    optimiser = isambard.optimisation.OptDE(SimpleDimer2PhiAP,output_path='/Users/chgjb/')
+    optimiser = isambard.optimisation.DE_Opt(SimpleDimer2PhiAP, output_path='.', run_id='test_antiparallel')
 
 The next step is to give the optimiser the sequences to model, a set of
 parameter means and variances within which to sample. Again, you can see
@@ -670,7 +569,7 @@ what the optimiser is expecting by using SHIFT+TAB inside the brackets
 of ``optimiser.parameters``.
 
 The order of the parameters inside the value means and value ranges must
-match the order required by ``SimpleDimer2Phi``, which is
+match the order required by ``SimpleDimer2PhiAP``, which is
 ``radius, pitch, phica1, phica2``. We will allow the radius to vary by
 up to 1 :math:`\unicode{x212B}` either side of 5
 :math:`\unicode{x212B}`, the pitch by 100 :math:`^\circ` and the
@@ -689,55 +588,50 @@ generations.
 .. code:: python
 
     %matplotlib inline
-    optimiser.run_de(20,30,1,plot=True,log=True)
+    optimiser.run_opt(20,30,1,plot=True)
 
 
 .. parsed-literal::
 
-    Starting minimisation (2016-07-25 11:30:53)
-    gen	evals	avg     	std    	min     	max    
-    0  	20   	-70.3353	128.851	-163.287	448.254
-    1  	20   	-114.398	35.6882	-163.287	-48.2052
-    2  	20   	-135.619	26.2276	-174.117	-73.2537
-    3  	20   	-142.132	24.928 	-174.117	-73.2537
-    4  	20   	-149.806	26.282 	-204.855	-88.3584
-    5  	20   	-156.847	27.5945	-204.855	-88.3584
-    6  	20   	-168.784	24.0334	-212.613	-111.862
-    7  	20   	-169.648	24.1884	-212.613	-111.862
-    8  	20   	-178.925	22.9477	-235.511	-134.796
-    9  	20   	-183.644	20.0573	-235.511	-141.32 
-    10 	20   	-187.08 	18.3236	-235.511	-151.413
-    11 	20   	-192.341	18.1955	-235.511	-167.127
-    12 	20   	-195.731	17.0495	-235.511	-167.127
-    13 	20   	-200.526	14.8479	-235.511	-178.863
-    14 	20   	-204.964	15.9058	-238.203	-178.863
-    15 	20   	-206.692	15.4156	-238.203	-178.863
-    16 	20   	-207.442	15.151 	-238.203	-178.863
-    17 	20   	-207.442	15.151 	-238.203	-178.863
-    18 	20   	-210.471	14.6684	-238.203	-178.863
-    19 	20   	-211.328	14.4909	-238.203	-178.863
-    20 	20   	-212.308	12.8293	-238.203	-186.033
-    21 	20   	-213.954	12.6931	-238.203	-186.033
-    22 	20   	-217.335	14.6989	-249.95 	-186.033
-    23 	20   	-219.56 	12.7335	-249.95 	-201.021
-    24 	20   	-222.445	12.524 	-249.95 	-201.021
-    25 	20   	-225.887	10.6563	-249.95 	-207.1  
-    26 	20   	-230.533	11.6984	-251.719	-210.016
-    27 	20   	-232.563	11.8331	-251.719	-210.016
-    28 	20   	-233.251	12.9418	-260.737	-210.016
-    29 	20   	-235.425	14.4558	-260.737	-210.016
-    End of minimisation (2016-07-25 11:35:26)
-    Run ID is DE_model
-    Minimization time = 0:04:32.875241
-    Evaluated 620 models in total
-    Best score is -260.7365778820732
-    Best parameters are [31, 5.257943612728227, 82.14285642448519, 120.1487038846328, 285.68371939341034, 0]
-    Warning! Parameter 2 is at or near minimum allowed value
+    gen	evals	avg     	std    	min     	max     
+    0  	20   	-103.708	36.8511	-156.506	-21.8501
+    1  	20   	-118.403	33.0856	-180.937	-61.5667
+    2  	20   	-134.078	29.6034	-196.748	-86.8828
+    3  	20   	-143.757	26.298 	-196.748	-108.776
+    4  	20   	-150.678	25.4218	-196.748	-109.963
+    5  	20   	-158.192	22.3413	-196.748	-122.078
+    6  	20   	-163.653	19.9526	-196.748	-126.732
+    7  	20   	-170.98 	15.0293	-201.815	-148.964
+    8  	20   	-174.022	14.6422	-201.815	-148.964
+    9  	20   	-176.845	14.5718	-201.815	-148.964
+    10 	20   	-179.775	12.8957	-201.815	-148.964
+    11 	20   	-180.345	13.0091	-201.815	-148.964
+    12 	20   	-181.44 	12.878 	-201.815	-148.964
+    13 	20   	-185.048	13.5667	-203.227	-148.964
+    14 	20   	-186.853	14.8841	-220.695	-148.964
+    15 	20   	-187.556	14.6897	-220.695	-148.964
+    16 	20   	-188.825	13.6166	-220.695	-151.649
+    17 	20   	-189.149	13.538 	-220.695	-151.649
+    18 	20   	-189.877	12.4043	-220.695	-160.042
+    19 	20   	-191.594	11.982 	-220.695	-167.122
+    20 	20   	-191.829	11.8771	-220.695	-167.122
+    21 	20   	-193.433	11.1191	-225.598	-169.102
+    22 	20   	-197.64 	11.9067	-225.598	-180.937
+    23 	20   	-197.948	11.8677	-225.598	-180.937
+    24 	20   	-198.635	11.3247	-225.598	-180.937
+    25 	20   	-199.536	10.9473	-225.598	-184.778
+    26 	20   	-202.483	9.89183	-225.598	-189.472
+    27 	20   	-202.965	9.93346	-225.598	-189.472
+    28 	20   	-208.955	18.8063	-268.702	-189.472
+    29 	20   	-211.825	18.758 	-268.702	-189.472
+    Evaluated 600 models in total
+    Best fitness is (-268.70178162510257,)
+    Best parameters are [31, 5.332837258790041, 87.29356456739866, 160.66995437820316, 264.0269844540661, 0]
     ----Minimisation plot:
 
 
 
-.. image:: MakingModels_files/MakingModels_80_1.png
+.. image:: MakingModels_files/MakingModels_69_1.png
 
 
 The output above shows you the progress of the optimisation process,
@@ -746,19 +640,21 @@ output to be. Additionally the best model pdb file will be written to
 the same location. Open this up and have a look at the optimised model.
 What has the optimiser done to the model?
 
-There are different optimization methods available which will be
-explained in further tutorials.
+There are different optimization methods available; have a look inside
+the optimisation directory for these.
 
-6. Making bigger things
------------------------
+Making bigger things
+~~~~~~~~~~~~~~~~~~~~
 
-Now you know how to subclass the CoiledCoil AMPAL topology object, see
-if you can make an alpha-helical barrel by increasing the value of
-``n``. Don't worry about what sequence to use initially, make some
-models and get comfortable with the parameters - for example try a few
-different radii, pitch and phi-c\ :math:`\alpha` values. As an aide,
-here are some parameters for the coiled-coil barrels in Science paper.
-Score the models you make using BUDE.
+Now you know how to subclass the ``CoiledCoil`` AMPAL specification
+object, see if you can make an :math:`\alpha`-helical barrel by
+increasing the value of ``n``. Don't worry about what sequence to use
+initially, make some models and get comfortable with the parameters -
+for example try a few different radii, pitch and Phi-c\ :math:`\alpha`
+values. As an aide, here are some parameters for the coiled-coil barrels
+in <a
+href="http://www.sciencemag.org/cgi/rapidpdf/346/6208/485?ijkey=ysj8Y4h7WOYgo&keytype=ref&siteid=sci">Thomson
+et. al. (Science 2014). Score the models you make using BUFF.
 
 +-----------+---------+----------+---------+------------------------+-------------------+
 | Name      | Oligo   | Radius   | Pitch   | PhiC\ :math:`\alpha`   | Sequence (g->f)   |

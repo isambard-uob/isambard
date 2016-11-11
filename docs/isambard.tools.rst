@@ -1,37 +1,37 @@
-isambard_dev.tools package
+isambard.tools package
 ==========================
 
 Submodules
 ----------
 
-isambard_dev.tools.amino_acids module
+isambard.tools.amino_acids module
 -------------------------------------
 
-.. automodule:: isambard_dev.tools.amino_acids
+.. automodule:: isambard.tools.amino_acids
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.tools.file_parsing module
+isambard.tools.file_parsing module
 --------------------------------------
 
-.. automodule:: isambard_dev.tools.file_parsing
+.. automodule:: isambard.tools.file_parsing
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.tools.geometry module
+isambard.tools.geometry module
 ----------------------------------
 
-.. automodule:: isambard_dev.tools.geometry
+.. automodule:: isambard.tools.geometry
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.tools.isambard_warnings module
+isambard.tools.isambard_warnings module
 -------------------------------------------
 
-.. automodule:: isambard_dev.tools.isambard_warnings
+.. automodule:: isambard.tools.isambard_warnings
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ isambard_dev.tools.isambard_warnings module
 Module contents
 ---------------
 
-.. automodule:: isambard_dev.tools
+.. automodule:: isambard.tools
     :members:
     :undoc-members:
     :show-inheritance:

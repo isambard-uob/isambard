@@ -1,8 +1,4 @@
 
-.. code:: python
-
-    import isambard
-
 Advanced Selections and Analysis
 ================================
 
@@ -16,7 +12,8 @@ Let's load-up a PDB file:
 
 .. code:: python
 
-    my_protein_3qy1 = isambard.ampal.convert_pdb_to_assembly('3qy1.pdb')
+    import isambard
+    my_protein_3qy1 = isambard.ampal.convert_pdb_to_ampal('3qy1.pdb')
 
 You can select all the helices or strands simply by typing:
 
@@ -29,7 +26,7 @@ You can select all the helices or strands simply by typing:
 
 .. parsed-literal::
 
-    <Protein containing 20 Chains>
+    <Assembly (3qy1) containing 20 Polypeptides>
 
 
 
@@ -42,14 +39,14 @@ You can select all the helices or strands simply by typing:
 
 .. parsed-literal::
 
-    <Protein containing 10 Chains>
+    <Assembly (3qy1) containing 10 Polypeptides>
 
 
 
-These attributes return ``Protein`` objects, where each of the
-helices/strands are represented as a separate chain. All of the normal
-attributes and methods associated with ``Protein`` and ``Chain`` objects
-work just the same as before.
+These attributes return ``Assembly`` objects, where each of the
+helices/strands are represented as a separate ``Polypeptide``. All of
+the normal attributes and methods associated with ``Assembly`` and
+``Polypeptide`` objects work just the same as before.
 
 .. code:: python
 
@@ -96,7 +93,7 @@ work just the same as before.
 
 .. parsed-literal::
 
-    <Chain containing 18 Residues. Sequence: IDTLISNNALWS...>
+    <Polypeptide containing 18 Residues. Sequence: IDTLISNNALWS...>
 
 
 
@@ -122,7 +119,7 @@ work just the same as before.
 
 .. parsed-literal::
 
-    2076.3696800000002
+    2076.36968
 
 
 
@@ -148,18 +145,45 @@ work just the same as before.
 
 .. parsed-literal::
 
-    <Carbon Atom. Coordinates: (23.340, -8.324, -33.970)>
+    <Carbon Atom (CA). Coordinates: (23.340, -8.324, -33.970)>
 
 
 
-It is worth noting that the AMPAL parent does **not** change when you
-select the helices or strands, so ``ampal_parent`` returns the original
-``Protein`` that they came from not the selection. This means that you
-retain all the original information from the PDB file.
+It is worth noting that the ``ampal_parent`` attribute of the individual
+helix refers to the ``Polypeptide`` to which it belongs.
 
 .. code:: python
 
     my_helix = my_helices_3qy1[2]
+
+.. code:: python
+
+    my_helix.ampal_parent
+
+
+
+
+.. parsed-literal::
+
+    <Polypeptide containing 215 Residues. Sequence: DIDTLISNNALW...>
+
+
+
+To get back to the original ``Assembly``, therefore, we call
+``ampal_parent`` twice.
+
+.. code:: python
+
+    my_helix.ampal_parent.ampal_parent
+
+
+
+
+.. parsed-literal::
+
+    <Assembly (3qy1) containing 2 Polypeptides, 449 Ligands>
+
+
 
 .. code:: python
 
@@ -176,7 +200,7 @@ retain all the original information from the PDB file.
 
 .. code:: python
 
-    my_helix.ampal_parent == my_protein_3qy1
+    my_helix.ampal_parent.ampal_parent == my_protein_3qy1
 
 
 
@@ -187,24 +211,11 @@ retain all the original information from the PDB file.
 
 
 
-.. code:: python
-
-    my_helix.ampal_parent
-
-
-
-
-.. parsed-literal::
-
-    <Protein containing 2 Chains>
-
-
-
 2. Selecting All Residues or Atoms
 ----------------------------------
 
 Sometimes it's convinient to select all of the ``Residues`` or ``Atoms``
-in a ``Protein`` or ``Chain`` object:
+in an ``Assembly`` or ``Polypeptide`` object:
 
 .. code:: python
 
@@ -215,7 +226,7 @@ in a ``Protein`` or ``Chain`` object:
 
 .. parsed-literal::
 
-    <itertools.chain at 0x111af9128>
+    <itertools.chain at 0x10e7a1908>
 
 
 
@@ -228,7 +239,7 @@ in a ``Protein`` or ``Chain`` object:
 
 .. parsed-literal::
 
-    <itertools.chain at 0x111af7780>
+    <itertools.chain at 0x10e7a1860>
 
 
 
@@ -253,26 +264,26 @@ Generators <http://anandology.com/python-practice-book/iterators.html>`__.
 
 .. parsed-literal::
 
-    [<Nitrogen Atom. Coordinates: (14.714, -30.168, -26.423)>,
-     <Carbon Atom. Coordinates: (15.518, -30.153, -25.207)>,
-     <Carbon Atom. Coordinates: (16.111, -28.769, -24.931)>,
-     <Oxygen Atom. Coordinates: (15.960, -27.855, -25.734)>,
-     <Carbon Atom. Coordinates: (16.613, -31.220, -25.270)>,
-     <Carbon Atom. Coordinates: (16.067, -32.624, -25.153)>,
-     <Oxygen Atom. Coordinates: (14.899, -32.777, -24.743)>,
-     <Oxygen Atom. Coordinates: (16.807, -33.576, -25.474)>,
-     <Nitrogen Atom. Coordinates: (16.782, -28.637, -23.789)>,
-     <Carbon Atom. Coordinates: (17.360, -27.364, -23.339)>,
-     <Carbon Atom. Coordinates: (18.466, -26.876, -24.299)>,
-     <Oxygen Atom. Coordinates: (18.513, -25.674, -24.586)>,
-     <Carbon Atom. Coordinates: (17.842, -27.509, -21.862)>,
-     <Carbon Atom. Coordinates: (16.643, -27.442, -20.889)>,
-     <Carbon Atom. Coordinates: (18.956, -26.516, -21.456)>,
-     <Carbon Atom. Coordinates: (15.873, -26.033, -20.777)>,
-     <Nitrogen Atom. Coordinates: (19.310, -27.788, -24.836)>,
-     <Carbon Atom. Coordinates: (20.370, -27.411, -25.786)>,
-     <Carbon Atom. Coordinates: (19.801, -26.707, -27.030)>,
-     <Oxygen Atom. Coordinates: (20.438, -25.781, -27.539)>]
+    [<Nitrogen Atom (N). Coordinates: (14.714, -30.168, -26.423)>,
+     <Carbon Atom (CA). Coordinates: (15.518, -30.153, -25.207)>,
+     <Carbon Atom (C). Coordinates: (16.111, -28.769, -24.931)>,
+     <Oxygen Atom (O). Coordinates: (15.960, -27.855, -25.734)>,
+     <Carbon Atom (CB). Coordinates: (16.613, -31.220, -25.270)>,
+     <Carbon Atom (CG). Coordinates: (16.067, -32.624, -25.153)>,
+     <Oxygen Atom (OD1). Coordinates: (14.899, -32.777, -24.743)>,
+     <Oxygen Atom (OD2). Coordinates: (16.807, -33.576, -25.474)>,
+     <Nitrogen Atom (N). Coordinates: (16.782, -28.637, -23.789)>,
+     <Carbon Atom (CA). Coordinates: (17.360, -27.364, -23.339)>,
+     <Carbon Atom (C). Coordinates: (18.466, -26.876, -24.299)>,
+     <Oxygen Atom (O). Coordinates: (18.513, -25.674, -24.586)>,
+     <Carbon Atom (CB). Coordinates: (17.842, -27.509, -21.862)>,
+     <Carbon Atom (CG1). Coordinates: (16.643, -27.442, -20.889)>,
+     <Carbon Atom (CG2). Coordinates: (18.956, -26.516, -21.456)>,
+     <Carbon Atom (CD1). Coordinates: (15.873, -26.033, -20.777)>,
+     <Nitrogen Atom (N). Coordinates: (19.310, -27.788, -24.836)>,
+     <Carbon Atom (CA). Coordinates: (20.370, -27.411, -25.786)>,
+     <Carbon Atom (C). Coordinates: (19.801, -26.707, -27.030)>,
+     <Oxygen Atom (O). Coordinates: (20.438, -25.781, -27.539)>]
 
 
 
@@ -371,7 +382,7 @@ strings. Let's make a list of all the pdb molecule codes of the ligands:
 
 .. code:: python
 
-    my_ligands = my_protein_3qy1.ligands
+    my_ligands = my_protein_3qy1.get_ligands()
 
 .. code:: python
 
@@ -423,7 +434,7 @@ Comprehensions <https://docs.python.org/3.5/tutorial/datastructures.html>`__
 
 .. parsed-literal::
 
-    ['ZN', 'ZN', 'HOH', 'HOH', 'HOH']
+    ['ZN', 'HOH', 'HOH', 'HOH', 'HOH']
 
 
 
@@ -441,7 +452,7 @@ Comprehensions <https://docs.python.org/3.5/tutorial/datastructures.html>`__
 
 .. parsed-literal::
 
-    ['ZN', 'ZN', 'HOH', 'HOH', 'HOH']
+    ['ZN', 'HOH', 'HOH', 'HOH', 'HOH']
 
 
 
@@ -502,8 +513,9 @@ the residues that are close to the zinc ions.
 
 
 
-All ligands are residues, even if they only contain a single atom. So we
-use the zinc ``Atom`` itself when measuring distances:
+All ``Ligand`` objects are ``Monomers``, even if they only contain a
+single atom. So we use the zinc ``Atom`` itself when measuring
+distances:
 
 .. code:: python
 
@@ -514,7 +526,7 @@ use the zinc ``Atom`` itself when measuring distances:
 
 .. parsed-literal::
 
-    <Zinc Atom. Coordinates: (-5.817, -20.172, -18.798)>
+    <Zinc Atom (ZN). Coordinates: (-5.817, -20.172, -18.798)>
 
 
 
@@ -548,7 +560,7 @@ input, these can be in list form, tuples, or even ``Atom`` objects:
 
 .. parsed-literal::
 
-    <Carbon Atom. Coordinates: (15.518, -30.153, -25.207)>
+    <Carbon Atom (CA). Coordinates: (15.518, -30.153, -25.207)>
 
 
 
@@ -584,15 +596,43 @@ to the zinc. We can use the distance function in geometry to do this:
 
 .. parsed-literal::
 
-    [<Sulfur Atom. Coordinates: (-4.322, -18.933, -17.640)>,
-     <Oxygen Atom. Coordinates: (-4.771, -22.057, -19.213)>,
-     <Nitrogen Atom. Coordinates: (-6.209, -19.569, -20.787)>,
-     <Sulfur Atom. Coordinates: (-7.753, -20.619, -17.709)>]
+    [<Sulfur Atom (SG). Coordinates: (-4.322, -18.933, -17.640)>,
+     <Oxygen Atom (OD2). Coordinates: (-4.771, -22.057, -19.213)>,
+     <Nitrogen Atom (NE2). Coordinates: (-6.209, -19.569, -20.787)>,
+     <Sulfur Atom (SG). Coordinates: (-7.753, -20.619, -17.709)>,
+     <Zinc Atom (ZN). Coordinates: (-5.817, -20.172, -18.798)>]
 
 
 
-There are 4 atoms within 3 Å of the zinc, 2 sulphur atoms, an oxygen and
-a nitrogen. Let's find the residues that are coordinating the zinc:
+There are 5 atoms within 3 Å of the zinc, *including* the zinc atom
+itself. One way to get ignore this atom in the above block of code is to
+use the ``ligands=False`` flag in ``get_atoms()``:
+
+.. code:: python
+
+    atoms_close_to_zinc = []
+    for at in my_protein_3qy1.get_atoms(ligands=False):
+        if isambard.geometry.distance(zinc_1['ZN'], at) <= 3.0:
+            atoms_close_to_zinc.append(at)
+
+.. code:: python
+
+    atoms_close_to_zinc
+
+
+
+
+.. parsed-literal::
+
+    [<Sulfur Atom (SG). Coordinates: (-4.322, -18.933, -17.640)>,
+     <Oxygen Atom (OD2). Coordinates: (-4.771, -22.057, -19.213)>,
+     <Nitrogen Atom (NE2). Coordinates: (-6.209, -19.569, -20.787)>,
+     <Sulfur Atom (SG). Coordinates: (-7.753, -20.619, -17.709)>]
+
+
+
+Now there are 4 atoms within 3 Å of the zinc, 2 sulphur atoms, an oxygen
+and a nitrogen. Let's find the residues that are coordinating the zinc:
 
 .. code:: python
 
@@ -603,7 +643,7 @@ a nitrogen. Let's find the residues that are coordinating the zinc:
 
 .. parsed-literal::
 
-    <Sulfur Atom. Coordinates: (-4.322, -18.933, -17.640)>
+    <Sulfur Atom (SG). Coordinates: (-4.322, -18.933, -17.640)>
 
 
 
@@ -672,8 +712,8 @@ a histidine residue.
 ------------
 
 This kind of operation is very common when analysing proteins. So we
-have some built-in methods for handling this on ``Protein`` and
-``Chain`` objects:
+have some built-in methods for handling this on ``Assembly`` and
+``Polymer`` objects:
 
 .. code:: python
 
@@ -684,10 +724,11 @@ have some built-in methods for handling this on ``Protein`` and
 
 .. parsed-literal::
 
-    [<Sulfur Atom. Coordinates: (-4.322, -18.933, -17.640)>,
-     <Oxygen Atom. Coordinates: (-4.771, -22.057, -19.213)>,
-     <Nitrogen Atom. Coordinates: (-6.209, -19.569, -20.787)>,
-     <Sulfur Atom. Coordinates: (-7.753, -20.619, -17.709)>]
+    [<Sulfur Atom (SG). Coordinates: (-4.322, -18.933, -17.640)>,
+     <Oxygen Atom (OD2). Coordinates: (-4.771, -22.057, -19.213)>,
+     <Nitrogen Atom (NE2). Coordinates: (-6.209, -19.569, -20.787)>,
+     <Sulfur Atom (SG). Coordinates: (-7.753, -20.619, -17.709)>,
+     <Zinc Atom (ZN). Coordinates: (-5.817, -20.172, -18.798)>]
 
 
 
@@ -700,14 +741,14 @@ have some built-in methods for handling this on ``Protein`` and
 
 .. parsed-literal::
 
-    [<Nitrogen Atom. Coordinates: (-7.278, -11.112, -10.445)>,
-     <Carbon Atom. Coordinates: (-7.525, -10.089, -8.339)>,
-     <Oxygen Atom. Coordinates: (-8.676, -9.655, -8.177)>,
-     <Carbon Atom. Coordinates: (-11.364, -9.364, -12.255)>,
-     <Carbon Atom. Coordinates: (-10.337, -10.223, -12.972)>,
-     <Carbon Atom. Coordinates: (-10.752, -12.047, -11.188)>,
-     <Oxygen Atom. Coordinates: (-10.046, -11.618, -10.265)>,
-     <Nitrogen Atom. Coordinates: (-11.667, -9.798, -7.931)>]
+    [<Nitrogen Atom (N). Coordinates: (-7.278, -11.112, -10.445)>,
+     <Carbon Atom (C). Coordinates: (-7.525, -10.089, -8.339)>,
+     <Oxygen Atom (O). Coordinates: (-8.676, -9.655, -8.177)>,
+     <Carbon Atom (CA). Coordinates: (-11.364, -9.364, -12.255)>,
+     <Carbon Atom (CB). Coordinates: (-10.337, -10.223, -12.972)>,
+     <Carbon Atom (CD). Coordinates: (-10.752, -12.047, -11.188)>,
+     <Oxygen Atom (OE1). Coordinates: (-10.046, -11.618, -10.265)>,
+     <Nitrogen Atom (ND2). Coordinates: (-11.667, -9.798, -7.931)>]
 
 
 
@@ -720,10 +761,11 @@ have some built-in methods for handling this on ``Protein`` and
 
 .. parsed-literal::
 
-    [<Sulfur Atom. Coordinates: (-4.322, -18.933, -17.640)>,
-     <Oxygen Atom. Coordinates: (-4.771, -22.057, -19.213)>,
-     <Nitrogen Atom. Coordinates: (-6.209, -19.569, -20.787)>,
-     <Sulfur Atom. Coordinates: (-7.753, -20.619, -17.709)>]
+    [<Sulfur Atom (SG). Coordinates: (-4.322, -18.933, -17.640)>,
+     <Oxygen Atom (OD2). Coordinates: (-4.771, -22.057, -19.213)>,
+     <Nitrogen Atom (NE2). Coordinates: (-6.209, -19.569, -20.787)>,
+     <Sulfur Atom (SG). Coordinates: (-7.753, -20.619, -17.709)>,
+     <Zinc Atom (ZN). Coordinates: (-5.817, -20.172, -18.798)>]
 
 
 
@@ -741,16 +783,13 @@ have some built-in methods for handling this on ``Protein`` and
 
 
 
-There is a partner method to is ``is_within``, every monomer (this
-includes ``Residues`` and ``Ligands``) has an ``environment`` method.
-This returns all ``Residues`` within a given cutoff value. This means
-that you can either select all atoms within a distance of a point for a
-given ``Protein`` or ``Chain`` or find the residues that surround a
-particular ``Residue`` or ``Ligand``.
+There is a partner method to is ``is_within``, every ``Monomer`` (this
+includes ``Residues`` and ``Ligands``) has an ``close_monomers`` method.
+This returns all ``Monomers`` within a given cutoff value.
 
 .. code:: python
 
-    zinc_1.environment()
+    zinc_1.close_monomers(my_protein_3qy1) # default cutoff is 4.0 Å
 
 
 
@@ -760,13 +799,14 @@ particular ``Residue`` or ``Ligand``.
     [<Residue containing 6 Atoms. Residue code: CYS>,
      <Residue containing 8 Atoms. Residue code: ASP>,
      <Residue containing 10 Atoms. Residue code: HIS>,
-     <Residue containing 6 Atoms. Residue code: CYS>]
+     <Residue containing 6 Atoms. Residue code: CYS>,
+     <Ligand containing 1 Atom. Ligand code: ZN>]
 
 
 
 .. code:: python
 
-    zinc_1.environment(cutoff=6)
+    zinc_1.close_monomers(my_protein_3qy1, cutoff=6)
 
 
 
@@ -786,24 +826,25 @@ particular ``Residue`` or ``Ligand``.
      <Residue containing 6 Atoms. Residue code: CYS>,
      <Residue containing 4 Atoms. Residue code: GLY>,
      <Residue containing 4 Atoms. Residue code: GLY>,
-     <Residue containing 8 Atoms. Residue code: ILE>]
+     <Residue containing 8 Atoms. Residue code: ILE>,
+     <Ligand containing 1 Atom. Ligand code: ZN>,
+     <Ligand containing 1 Atom. Ligand code: HOH>,
+     <Ligand containing 1 Atom. Ligand code: HOH>,
+     <Ligand containing 1 Atom. Ligand code: HOH>,
+     <Ligand containing 1 Atom. Ligand code: HOH>]
 
 
 
 .. code:: python
 
-    zinc_1.environment(include_self=True)
+    zinc_1.close_monomers(my_helices_3qy1, cutoff=1) # Nothing is closer than 1 Å from the zinc
 
 
 
 
 .. parsed-literal::
 
-    [<Residue containing 6 Atoms. Residue code: CYS>,
-     <Residue containing 8 Atoms. Residue code: ASP>,
-     <Residue containing 10 Atoms. Residue code: HIS>,
-     <Residue containing 6 Atoms. Residue code: CYS>,
-     <Ligand containing 1 Atom. Ligand code: ZN>]
+    []
 
 
 
@@ -849,7 +890,7 @@ Tagging tutorial for the proper, low-effort method!
 
 .. parsed-literal::
 
-    -179.800200103 -64.1086116305 -45.8437396848
+    -179.8002001034783 -64.10861163046212 -45.84373968479124
 
 
 We can use it to calculate the :math:`\chi` torsion angles too. R2 is
@@ -865,14 +906,20 @@ angles:
 
 .. parsed-literal::
 
-    OrderedDict([('N', <Nitrogen Atom. Coordinates: (-5.186, -2.004, -31.807)>),
-                 ('CA', <Carbon Atom. Coordinates: (-4.911, -3.362, -31.310)>),
-                 ('C', <Carbon Atom. Coordinates: (-5.985, -4.346, -31.786)>),
-                 ('O', <Oxygen Atom. Coordinates: (-5.650, -5.434, -32.255)>),
-                 ('CB', <Carbon Atom. Coordinates: (-4.788, -3.418, -29.770)>),
-                 ('CG', <Carbon Atom. Coordinates: (-3.838, -2.437, -29.061)>),
-                 ('CD1', <Carbon Atom. Coordinates: (-3.653, -2.831, -27.613)>),
-                 ('CD2', <Carbon Atom. Coordinates: (-2.478, -2.359, -29.736)>)])
+    OrderedDict([('N',
+                  <Nitrogen Atom (N). Coordinates: (-5.186, -2.004, -31.807)>),
+                 ('CA',
+                  <Carbon Atom (CA). Coordinates: (-4.911, -3.362, -31.310)>),
+                 ('C', <Carbon Atom (C). Coordinates: (-5.985, -4.346, -31.786)>),
+                 ('O', <Oxygen Atom (O). Coordinates: (-5.650, -5.434, -32.255)>),
+                 ('CB',
+                  <Carbon Atom (CB). Coordinates: (-4.788, -3.418, -29.770)>),
+                 ('CG',
+                  <Carbon Atom (CG). Coordinates: (-3.838, -2.437, -29.061)>),
+                 ('CD1',
+                  <Carbon Atom (CD1). Coordinates: (-3.653, -2.831, -27.613)>),
+                 ('CD2',
+                  <Carbon Atom (CD2). Coordinates: (-2.478, -2.359, -29.736)>)])
 
 
 
@@ -891,7 +938,7 @@ angles:
 
 .. parsed-literal::
 
-    -51.3804036635 -168.700062066
+    -51.38040366349739 -168.70006206564494
 
 
 Our simple analysis shows that the leucine residue is in the

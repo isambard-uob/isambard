@@ -1,37 +1,37 @@
-isambard_dev.optimisation package
+isambard.optimisation package
 =================================
 
 Submodules
 ----------
 
-isambard_dev.optimisation.cma_es module
+isambard.optimisation.cma_es module
 ---------------------------------------
 
-.. automodule:: isambard_dev.optimisation.cma_es
+.. automodule:: isambard.optimisation.cma_es
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.optimisation.de module
+isambard.optimisation.de module
 -----------------------------------
 
-.. automodule:: isambard_dev.optimisation.de
+.. automodule:: isambard.optimisation.de
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.optimisation.ga module
+isambard.optimisation.ga module
 -----------------------------------
 
-.. automodule:: isambard_dev.optimisation.ga
+.. automodule:: isambard.optimisation.ga
     :members:
     :undoc-members:
     :show-inheritance:
 
-isambard_dev.optimisation.pso module
+isambard.optimisation.pso module
 ------------------------------------
 
-.. automodule:: isambard_dev.optimisation.pso
+.. automodule:: isambard.optimisation.pso
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ isambard_dev.optimisation.pso module
 Module contents
 ---------------
 
-.. automodule:: isambard_dev.optimisation
+.. automodule:: isambard.optimisation
     :members:
     :undoc-members:
     :show-inheritance:
