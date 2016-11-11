@@ -18,6 +18,8 @@ text_colours = {
 }
 
 isambard_path = pathlib.Path(os.path.dirname(os.path.realpath(__file__)))
+home_dir = pathlib.Path(os.path.expanduser('~'))
+settings_file_name = '.isambard_settings'
 
 settings = {}
 
@@ -28,7 +30,7 @@ def main(args):
     readline.parse_and_bind("tab: complete")
     readline.set_completer(complete)
 
-    settings_path = isambard_path / 'settings.json'
+    settings_path = home_dir / settings_file_name
     if args.circleci:
         install_for_circleci(settings_path)
         return
@@ -50,6 +52,7 @@ def install(settings_path, basic=False):
     if not basic:
         optional_install()
     with open(str(settings_path), 'w') as outf:
+        print("Writing settings file to '{}'".format(settings_path))
         outf.write(json.dumps(settings, sort_keys=True, indent=4, separators=(',', ':')))
     return
 
