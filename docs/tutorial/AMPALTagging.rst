@@ -10,43 +10,32 @@ retrieve it easily later.
 
 All AMPAL objects have a ``tags`` attribute, which is a dictionary: a
 'useful place to put stuff'. When we add items to the ``tags``
-dictionary, we refer to it as 'tagging' the AMPAL object. Any python
+dictionary, we refer to it as 'tagging' the AMPAL object. Any Python
 object can be stored in ``tags``.
 
-You've already done some tagging. The ``tags`` attribute is also used to
-store information internally so that certain values only need to be
-calculated once.
+The ``tags`` attribute is used to store information internally so that
+certain values only need to be calculated once.
 
-It may not have been pointed out at the time, but you have already been
-using ``tags`` in previous tutorial notebooks, when you used properties
-such as ``helices`` and ``bude_score``.
+Properties you may have already encountered, such as ``helices`` and
+``strands``, write to the ``tags`` attribute.
 
-When you use ``convert_pdb_to_assembly``, you tag the ``Atoms`` of your
-``Protein`` with information from the pdb file. We'll look at that
-shortly.
+When you use ``convert_pdb_to_ampal``, you tag the ``Atoms`` of your
+``Protein`` with information from the PDB file.
 
-| In-built functions: ``isambard.ampal.base_ampal`` has some in-built
-  'tagging functions' that calculate things and add the results to the
-  ``tags`` of the appropriate AMPAL object.
-| In this notebook, we'll look at some of these and (hopefully!)
-  demonstrate their utility.
+``BaseAmpal`` has some in-built 'tagging functions' that calculate
+things and add the results to the ``tags`` of the appropriate AMPAL
+object.
 
 2. Getting started
 ------------------
 
-First, let's import some functions from ``isambard`` for making a
-``Protein`` object.
-
-We'll use the function ``get_mmol`` from the ``filesystem`` module. If
-you've not met this yet, don't worry - it's introduced fully in the
-``IsmabardFileSystem`` tutorial. It's just a convenient way of
-downloading the contents of a pdb file without having to actually write
-any files.
+First, let's import some functions from ``isambard`` for making an
+``Assembly`` object.
 
 .. code:: python
 
-    from isambard.add_ons.filesystem import get_mmol
-    from isambard.ampal.base_ampal import convert_pdb_to_assembly
+    import isambard
+    from isambard.ampal import convert_pdb_to_ampal
 
 We'll use the structure
 `2ebo <http://www.ebi.ac.uk/pdbe/entry/pdb/2ebo>`__ for this. It's a
@@ -55,8 +44,7 @@ the membranes of the ebola virus and its host.
 
 .. code:: python
 
-    code = '2ebo'
-    a = convert_pdb_to_assembly(get_mmol(code), path=False, pdb_name=code)
+    a = convert_pdb_to_ampal('2ebo.pdb')
 
 Our new ``Protein`` object ``a`` contains 3 Chains, and its ``id``
 attribute is the pdb code we used to create it.
@@ -70,7 +58,7 @@ attribute is the pdb code we used to create it.
 
 .. parsed-literal::
 
-    <Protein containing 3 Chains>
+    <Assembly (2ebo) containing 3 Polypeptides, 215 Ligands>
 
 
 
@@ -102,18 +90,18 @@ It comes with a ``tags`` attribute, which is an empty dictionary.
 
 
 
-The 3 Chains in our Protein are also AMPAL objects ...
+The 3 ``Polypeptides`` in our ``Assembly`` are also AMPAL objects ...
 
 .. code:: python
 
-    a[0] # The first Chain of the Protein
+    a[0] # The first Polypeptide
 
 
 
 
 .. parsed-literal::
 
-    <Chain containing 74 Residues. Sequence: GLRQLANETTQA...>
+    <Polypeptide containing 74 Residues. Sequence: GLRQLANETTQA...>
 
 
 
@@ -132,8 +120,8 @@ The 3 Chains in our Protein are also AMPAL objects ...
 
 
 
-Similarly, all of the Residues in the Chain are AMPAL objects with empty
-``tags``.
+Similarly, all of the ``Residues`` in the ``Polypeptide`` are AMPAL
+objects with empty ``tags``.
 
 .. code:: python
 
@@ -161,11 +149,11 @@ Similarly, all of the Residues in the Chain are AMPAL objects with empty
 
 
 
-Each ``Residue`` in our ``Protein`` is made from ``Atoms``. Right down
+Each ``Residue`` in our ``Assembly`` is made from ``Atoms``. Right down
 to the ``Atoms``, AMPAL objects have ``tags``.
 
 Let's look at the ``tags`` of the backbone Nitrogen ``Atom`` of the
-first ``Residue`` of the first ``Chain`` of our ``Protein``.
+first ``Residue`` of the first ``Polypeptide`` of our ``Assembly``.
 
 .. code:: python
 
@@ -176,7 +164,7 @@ first ``Residue`` of the first ``Chain`` of our ``Protein``.
 
 .. parsed-literal::
 
-    <Nitrogen Atom. Coordinates: (-14.780, 25.698, -6.988)>
+    <Nitrogen Atom (N). Coordinates: (-14.780, 25.698, -6.988)>
 
 
 
@@ -189,7 +177,7 @@ first ``Residue`` of the first ``Chain`` of our ``Protein``.
 
 .. parsed-literal::
 
-    {'bfactor': 71.51, 'charge': '', 'occupancy': 1.0}
+    {'bfactor': 71.51, 'charge': '', 'occupancy': 1.0, 'state': 'A'}
 
 
 
@@ -205,7 +193,7 @@ first ``Residue`` of the first ``Chain`` of our ``Protein``.
 | Many of these are empty on instantiation so that the AMPAL objects
   don't carry unnecessary baggage and are lightweight to begin with.
 
-If you're familiar with adding items to python dictionaries, then you're
+If you're familiar with adding items to Python dictionaries, then you're
 already familiar with adding items to ``tags``.
 
 .. code:: python
@@ -228,7 +216,7 @@ its ``tags``.
 
 .. parsed-literal::
 
-    {'number_of_atoms': 1806,
+    {'number_of_atoms': 2021,
      'protein_description': 'viral membrane fusion protein'}
 
 
@@ -240,16 +228,18 @@ Exercises
    `PDB <http://www.rcsb.org/pdb/explore/explore.do?structureId=2ebo>`__
    or `PDBE <http://www.ebi.ac.uk/pdbe/entry/pdb/2ebo>`__. Find the
    resolution of the structure and add that to ``tags``.
-2. Add another tag to the ``Protein`` object storing its
+2. Add another tag to the ``Assembly`` object storing its
    '``number_of_residues``'.
    HINT: Use a similar expression to one used for ``number_of_atoms``.
-3. Tag each ``Chain`` in the ``Protein`` with a '``number_of_atoms``'
-   tag, like we did with the whole ``Protein`` earlier.
-4. Tag each ``Residue`` in Chain A with a '``number_of_atoms``' tag.
-5. Tag Chain B with a 'number\_of\_tryptophans' tag.
-   HINT: You may want to use the ``Counter`` class you met earlier in
-   order to do this. Use "``from collections import Counter``" to bring
-   this class into your namespace.
+3. Tag each ``Polypeptide`` in the ``Assembly`` with a
+   '``number_of_atoms``' tag, like we did with the whole ``Assembly``
+   earlier.
+4. Tag each ``Residue`` in the first ``Polypeptide`` with a
+   '``number_of_atoms``' tag.
+5. Tag the second ``Polypeptide`` with a 'number\_of\_tryptophans' tag.
+   HINT: You may want to use ``Counter`` for this. Use
+   "``from collections import Counter``" to bring this into your
+   namespace.
 
 After completing Exercise 1. and 2., you should have 4 items in your
 ``a.tags`` dictionary.
@@ -263,81 +253,31 @@ After completing Exercise 1. and 2., you should have 4 items in your
 
 .. parsed-literal::
 
-    {'number_of_atoms': 1806,
+    {'number_of_atoms': 2021,
      'protein_description': 'viral membrane fusion protein'}
-
-
-
-Let's add one more thing.
-
-In the MakingModels tutorial, you will have used the ``bude_score``
-attribute.
-
-.. code:: python
-
-    a.bude_score
-
-
-
-
-.. parsed-literal::
-
-    -3265.4395000000004
-
-
-
-The bude\_score method automatically adds the output to tags:
-
-.. code:: python
-
-    a.tags
-
-
-
-
-.. parsed-literal::
-
-    {'bude_score': -3265.4395000000004,
-     'number_of_atoms': 1806,
-     'protein_description': 'viral membrane fusion protein'}
-
-
-
-This makes it easy to retrieve later without re-running bude.
-
-.. code:: python
-
-    a.tags['bude_score']
-
-
-
-
-.. parsed-literal::
-
-    -3265.4395000000004
 
 
 
 3. Tagging torsion angles
 -------------------------
 
-In an earlier tutorial we used the ``isambard.tools.geometry.dihedral``
+In an earlier tutorial we used the ``isambard.geometry.dihedral``
 function to calculate the backbone torsion angles of a ``Residue`` in
 the AMPAL framework.
 
-| Suppose we wanted to calculate all of the torsion angles in a
-  ``Protein``.
-| We could loop over all of the ``Residues`` in the ``Protein`` using
-  the ``get_monomers()`` method, call the
-  ``isambard.tools.geometry.dihedral`` function at each stage of the
-  loop and store the results somewhere convenient.
+| Suppose we wanted to calculate all of the torsion angles in an
+  ``Assembly``.
+| We could loop over all of the ``Residues`` in the ``Assembly`` using
+  the ``get_monomers()`` method, call the ``isambard.geometry.dihedral``
+  function at each stage of the loop and store the results somewhere
+  convenient.
 
 | This would be perfectly valid.
 | However, we also have an in-built method for doing this.
 
 The ``tag_torsion_angles`` method calculates the torsion angles for each
-``Residue`` in a ``Protein`` (or ``Chain``) and adds them ``tags``
-dictionary of the ``Residue``.
+``Residue`` in an ``Assembly`` (or ``Polypeptide``) and adds them
+``tags`` dictionary of the ``Residue``.
 
 .. code:: python
 
@@ -346,9 +286,8 @@ dictionary of the ``Residue``.
 The ``.tags`` dictionary for the first Residue now contains values for
 its ``omega``, ``phi`` and ``psi`` angles.
 
-Since it's the first ``Residue`` of the ``Chain``, its ``omega`` and
-``phi`` torsion angles are not defined - hence the ``'nan'`` values
-(**n**\ ot **a** **n**\ umber).
+Since it's the first ``Residue`` of the ``Polypeptide``, its ``omega``
+and ``phi`` torsion angles are not defined and so are set to ``None``.
 
 .. code:: python
 
@@ -359,7 +298,10 @@ Since it's the first ``Residue`` of the ``Chain``, its ``omega`` and
 
 .. parsed-literal::
 
-    {'omega': 'nan', 'phi': 'nan', 'psi': -11.577463114977443}
+    {'omega': None,
+     'phi': None,
+     'psi': -11.577463114977444,
+     'tas': (None, None, -11.577463114977444)}
 
 
 
@@ -376,13 +318,14 @@ their values are now stored in its ``tags`` dictionary.
 .. parsed-literal::
 
     {'omega': 179.84483742099872,
-     'phi': -173.24724224577466,
-     'psi': 119.68790084554134}
+     'phi': -173.24724224577457,
+     'psi': 119.68790084554132,
+     'tas': (179.84483742099872, -173.24724224577457, 119.68790084554132)}
 
 
 
 If we look at a helical residue in the structure, we'll see the torsion
-angles of the :math:`\alpha`-helix with which we are familiar.
+angles of the :math:`\alpha` helix with which we are familiar.
 
 .. code:: python
 
@@ -394,23 +337,24 @@ angles of the :math:`\alpha`-helix with which we are familiar.
 .. parsed-literal::
 
     {'omega': 178.37366522259435,
-     'phi': -66.084563744420052,
-     'psi': -39.427916911184212}
+     'phi': -66.08456374442004,
+     'psi': -39.42791691118421,
+     'tas': (178.37366522259435, -66.08456374442004, -39.42791691118421)}
 
 
 
 Looking at these torsion angles gives us a decent guess that the 21st
-``Residue`` of the first ``Chain`` of our ``Protein`` (``a[0][20]``) is
-part of an :math:`\alpha`-helix.
+``Residue`` of the first ``Polypeptide`` of our ``Assembly``
+(``a[0][20]``) is part of an :math:`\alpha` helix.
 
-To confirm this, we could use the in-built tagging function
+To confirm this, we could use the built-in tagging function
 ``tag_secondary_structure``.
 
 4. Tagging secondary structure
 ------------------------------
 
 In an earlier tutorial, you will have been introduced to the ``helices``
-and ``strands`` attributes of ``Protein`` and ``Chain`` objects.
+and ``strands`` attributes of ``Assembly`` and ``Polypeptide`` objects.
 
 Underlying these attributes is the tagging function
 ``tag_secondary_structure``.
@@ -441,10 +385,11 @@ We know that this ``Residue`` is already tagged with its torsion angles.
 
 .. parsed-literal::
 
-    {'omega': 177.09798623768697,
-     'phi': -75.160017814375607,
-     'psi': -27.827696876562612,
-     'secondary_structure': 'H'}
+    {'omega': 177.09798623768685,
+     'phi': -75.1600178143756,
+     'psi': -27.827696876562598,
+     'secondary_structure': 'H',
+     'tas': (177.09798623768685, -75.1600178143756, -27.827696876562598)}
 
 
 
@@ -453,7 +398,7 @@ But there's an additional tag there too.
 | That's because the ``helices`` method calls the function
   ``tag_secondary_structure``.
 | You can see this by looking for the ``helices`` property within the
-  ``Chain`` class of ``isambard.amapl.base_ampal``.
+  ``Polypeptide`` class in ``isambard.ampal.protein``.
 
 When we run ``tag_secondary_structure``, each ``Residue`` is tagged with
 its secondary structure, as assigned by
@@ -556,15 +501,16 @@ structure assignment in addition to its torsion angles.
 
 .. parsed-literal::
 
-    {'omega': 'nan',
-     'phi': 'nan',
-     'psi': -11.577463114977443,
-     'secondary_structure': ' '}
+    {'omega': None,
+     'phi': None,
+     'psi': -11.577463114977444,
+     'secondary_structure': ' ',
+     'tas': (None, None, -11.577463114977444)}
 
 
 
 | No secondary stricture has been assigned to the first ``Residue``.
-| The 21st ``Residue`` of the ``Chain`` is :math:`\alpha`-helical
+| The 21st ``Residue`` of the ``Polypeptide`` is :math:`\alpha`-helical
   though:
 
 .. code:: python
@@ -577,17 +523,18 @@ structure assignment in addition to its torsion angles.
 .. parsed-literal::
 
     {'omega': 178.37366522259435,
-     'phi': -66.084563744420052,
-     'psi': -39.427916911184212,
-     'secondary_structure': 'H'}
+     'phi': -66.08456374442004,
+     'psi': -39.42791691118421,
+     'secondary_structure': 'H',
+     'tas': (178.37366522259435, -66.08456374442004, -39.42791691118421)}
 
 
 
 Exercises
 ~~~~~~~~~
 
-Recall the ``helices`` method, which returns a new ``Protein`` whose
-``Chains`` are the helices of the original ``Protein``.
+Recall the ``helices`` method, which returns a new ``Assembly`` whose
+``Polypeptides`` are the helices of the original ``Assembly``.
 
 .. code:: python
 
@@ -598,7 +545,7 @@ Recall the ``helices`` method, which returns a new ``Protein`` whose
 
 .. parsed-literal::
 
-    <Protein containing 9 Chains>
+    <Assembly (2ebo) containing 9 Polypeptides>
 
 
 
@@ -620,15 +567,15 @@ Read the code in the cell below before running it...
    (so that it reads "``for res in a.get_monomers():``"?) Why?
 
 3. Write a list comprehension that will give you a list of all the
-   helical residues in a ``Protein``.
+   helical residues in an ``Assembly``.
 
 4. Do the exercise above without using the ``helices`` method.
 
 Have a think about what is going on 'behind the scenes' when you run
 ``tag_secondary_structure``. - The program DSSP is run, using the
-``pdb`` attribute of the ``Protein`` object as its input. - The output
+``pdb`` attribute of the ``Assembly`` object as its input. - The output
 from DSSP is collected and parsed it for its secondary structure
-assignments. - These assignments are added back into the ``Protein``
+assignments. - These assignments are added back into the ``Assembly``
 object in the appropriate place. - Here, the appropriate place is the
 ``tags`` attributes of the ``Residue`` objects.
 
@@ -638,18 +585,18 @@ object in the appropriate place. - Here, the appropriate place is the
   above are carried out). - The ``seconadary_structure`` tag for each
   ``Residue`` is then looked at in turn. - Consecutive ``Residues`` with
   ``secondary_structure = 'H'`` are grouped together. - Each group of
-  ``Residues`` is used to instantiate a ``Chain`` object. - These
-  ``Chains`` are then used to instantiate a new ``Protein`` object. - It
-  is this new ``Protein`` object that is returned by the ``helices``
-  method.
+  ``Residues`` is used to instantiate a ``Polypeptide`` object. - These
+  ``Polypeptides`` are then used to instantiate a new ``Assembly``
+  object. - It is this new ``Assembly`` object that is returned by the
+  ``helices`` method.
 
 5. Other tagging functions
 --------------------------
 
-Other tagging functions in ``ismabard`` follow the pattern of
+Other tagging functions in ISAMBARD follow the pattern of
 ``tag_torsion_angles`` and ``tag_secondary_structure``. You call them on
-your ``Protein`` or ``Chain`` object, they run some calculations for
-you, and add the results to the ``tags`` atrribute of the relevent
+your ``Assembly`` or ``Polypeptide`` object, they run some calculations
+for you, and add the results to the ``tags`` atrribute of the relevant
 object(s) in the AMPAL framework.
 
 Try typing "``a.tag_``" into the code cell below, and then pressing the
@@ -668,13 +615,11 @@ Running the ``tag_ca_geometry`` function tags each ``Residue`` of the
 ``Protein`` with values for 'rise\_per\_residue',
 'radius\_of\_curvature' and 'residues\_per\_turn'.
 
-The concepts of 'rise\_per\_residue' and 'residues\_per\_turn' should be
-familiar from Dek's tutorials on :math:`\alpha`-helical geometry. Their
-definitions are generic and so these values can be calculated for any
-region of the protein structure. The 'radius\_of\_curvature' represents
-how bent or straight a part of the protein backbone is, with the largest
-values occurring at the straightest regions of the ``Protein``
-structure.
+The concepts of 'rise\_per\_residue' and 'residues\_per\_turn' can be
+calculated for any region of the protein structure. The
+'radius\_of\_curvature' represents how bent or straight a part of the
+protein backbone is, with the largest values occurring at the
+straightest regions of the structure.
 
 .. code:: python
 
@@ -682,7 +627,7 @@ structure.
 
 Let's look at the ``tags`` of a helical ``Residue``. The values for
 'residues\_per\_turn' and 'rise\_per\_residue' are what we'd expect to
-see for something in an :math:`\alpha`-helix.
+see for something in an :math:`\alpha` helix.
 
 .. code:: python
 
@@ -694,100 +639,13 @@ see for something in an :math:`\alpha`-helix.
 .. parsed-literal::
 
     {'omega': 178.37366522259435,
-     'phi': -66.084563744420052,
-     'psi': -39.427916911184212,
-     'radius_of_curvature': 49.216212356737174,
-     'residues_per_turn': 3.6318173774745457,
+     'phi': -66.08456374442004,
+     'psi': -39.42791691118421,
+     'radius_of_curvature': 49.216212356782755,
+     'residues_per_turn': 3.631817377474546,
      'rise_per_residue': 1.5240018755917517,
-     'secondary_structure': 'H'}
-
-
-
-tag\_socket
-~~~~~~~~~~~
-
-The ``tag_socket`` method runs socket to find knob-into-hole iteractions
-within a protein structure. It then tags any knob residues with
-information relating to the knob-into-hole interaction that they are
-involved in. This information is packaged up into a dictionary called
-'knob\_data'.
-
-.. code:: python
-
-    a.tag_socket()
-
-We can find the knob residues using a list comprehension or a ``for``
-loop and looking for the knob packages. :-)
-
-First, we'll use a ``for`` loop to get a list of knob residues, called
-``knobs``.
-
-.. code:: python
-
-    knobs = []
-    for res in a.get_monomers():
-        if 'knob_data' in res.tags.keys():
-            knobs.append(res)
-
-Let's have a look at the ``.tags`` of the first knob residue.
-
-.. code:: python
-
-    knobs[0].tags
-
-
-
-
-.. parsed-literal::
-
-    {'knob_data': {'h0': ('C', (' ', '622', ' ')),
-      'h1': ('C', (' ', '625', ' ')),
-      'h2': ('C', (' ', '626', ' ')),
-      'h3': ('C', (' ', '629', ' ')),
-      'helix': 0,
-      'hole_helix': 8,
-      'knob_type': 6,
-      'max_cv_dist': 5.717654938871355,
-      'packing_angle': 81.573},
-     'omega': 179.58180595410454,
-     'phi': -71.132872529577284,
-     'psi': -34.858956625353734,
-     'radius_of_curvature': 58.342097116582842,
-     'residues_per_turn': 3.6118407776154617,
-     'rise_per_residue': 1.5189562060319903,
-     'secondary_structure': 'H'}
-
-
-
-As stated above, the ``knob_data`` dictionary contains information about
-the knob-into-hole interaction for which this ``Residue`` is the knob.
-Don't worry if the things in ``knob_data`` are unfamiliar (that's not
-the point of this tutorial) - just have a look to get the idea of the
-things that can be stored in the ``tags`` dictionary.
-
-| \*\* A(nother) list comprehension example \*\*
-| Now, let's created the ``knobs`` list in a different way - using a
-  list comprehension. We'll call this list knobs\_2.
-
-.. code:: python
-
-    knobs_2 = [res for res in a.get_monomers() if 'knob_data' in res.tags.keys()]
-
-The ``==`` operator returns a value of ``True`` if the terms on either
-side of it evaluate to the same thing, and ``False`` otherwise.
-
-We can use it to show that ``knobs`` and ``knobs_2`` are equivalent.
-
-.. code:: python
-
-    knobs == knobs_2
-
-
-
-
-.. parsed-literal::
-
-    True
+     'secondary_structure': 'H',
+     'tas': (178.37366522259435, -66.08456374442004, -39.42791691118421)}
 
 
 
@@ -795,14 +653,11 @@ Exercise
 ~~~~~~~~
 
 -  Take some time to have a look at the source code for each of the
-   tagging functions that you saw in the pop-up. They are all located in
-   the ``ismabard.ampal.base_ampal`` module, and they in *both* the
-   ``Protein`` class and the ``Chain`` class.
+   tagging functions that you saw in the pop-up.
 
--  Is there a general difference between the tagging functions in
-   ``Protein`` and those in ``Chain``?
+-  Is there a general difference between the tagging functions at the
+   ``Assembly`` level and those at the ``Polymer`` level?
 
--  | Now look at the tagging functions within the ``Chain`` class.
+-  | Now look at the tagging functions within the ``Polypeptide`` class.
      Notice their similar structure.
    | This similarity is **not** coincidental!
-
