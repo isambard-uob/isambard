@@ -13,9 +13,12 @@ import subprocess
 
 global_settings = None
 package_dir = os.path.dirname(os.path.abspath(__file__))
+home_dir = os.path.expanduser('~')
+settings_path = os.path.join(home_dir, '.isambard_settings')
 
 
 def configure():
+    """Runs configure.py in the ISAMBARD directory, creates settings file."""
     subprocess.call(['python',
                      os.path.join(package_dir, 'configure.py'),
                      '-o'])
@@ -24,7 +27,8 @@ def configure():
 
 
 def load_global_settings():
-    with open(os.path.join(package_dir, 'settings.json'), 'r') as settings_f:
+    """Loads settings file containing paths to dependencies and other optional configuration elements."""
+    with open(settings_path, 'r') as settings_f:
         global global_settings
         settings_json = json.loads(settings_f.read())
         if global_settings is None:
@@ -39,8 +43,8 @@ def load_global_settings():
     global_settings['scwrl']['available'] = None
     global_settings['dssp']['available'] = None
 
-if 'settings.json' not in os.listdir(package_dir):
-    print('No configuration file (settings.json) found in {}.\nRunning configure.py...\n'.format(package_dir))
+if not os.path.isfile(settings_path):
+    print("No configuration file ('.isambard_settings') found in '{}'.\nRunning configure.py...\n".format(home_dir))
     configure()
 else:
     load_global_settings()
