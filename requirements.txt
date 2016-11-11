@@ -11,3 +11,4 @@ bs4
 parmed
 recommonmark
 numpydoc
+pypandoc
