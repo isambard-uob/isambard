@@ -1,11 +1,11 @@
 isambard.tools package
-==========================
+======================
 
 Submodules
 ----------
 
 isambard.tools.amino_acids module
--------------------------------------
+---------------------------------
 
 .. automodule:: isambard.tools.amino_acids
     :members:
@@ -13,7 +13,7 @@ isambard.tools.amino_acids module
     :show-inheritance:
 
 isambard.tools.file_parsing module
---------------------------------------
+----------------------------------
 
 .. automodule:: isambard.tools.file_parsing
     :members:
@@ -21,7 +21,7 @@ isambard.tools.file_parsing module
     :show-inheritance:
 
 isambard.tools.geometry module
-----------------------------------
+------------------------------
 
 .. automodule:: isambard.tools.geometry
     :members:
@@ -29,7 +29,7 @@ isambard.tools.geometry module
     :show-inheritance:
 
 isambard.tools.isambard_warnings module
--------------------------------------------
+---------------------------------------
 
 .. automodule:: isambard.tools.isambard_warnings
     :members:

@@ -1,11 +1,11 @@
 isambard.buff package
-=========================
+=====================
 
 Submodules
 ----------
 
 isambard.buff.calculate_energy module
------------------------------------------
+-------------------------------------
 
 .. automodule:: isambard.buff.calculate_energy
     :members:
@@ -13,7 +13,7 @@ isambard.buff.calculate_energy module
     :show-inheritance:
 
 isambard.buff.force_field module
-------------------------------------
+--------------------------------
 
 .. automodule:: isambard.buff.force_field
     :members:
