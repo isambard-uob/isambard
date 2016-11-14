@@ -34,7 +34,7 @@ from recommonmark.parser import CommonMarkParser
 # ones.
 
 import mock
-MOCk_MODULES = ['numpy', 'scipy', 'Cython', 'numpydoc']
+MOCk_MODULES = ['numpy', 'scipy', 'Cython']
 for mod_name in MOCk_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
@@ -168,7 +168,7 @@ html_static_path = ['_static']
 # If not None, a 'Last updated on:' timestamp is inserted at every page
 # bottom, using the given strftime format.
 # The empty string is equivalent to '%b %d, %Y'.
-#html_last_updated_fmt = None
+html_last_updated_fmt = '%B %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -309,5 +309,4 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}
-
 
