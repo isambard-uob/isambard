@@ -1,37 +1,13 @@
 isambard.optimisation package
-=================================
+=============================
 
 Submodules
 ----------
 
-isambard.optimisation.cma_es module
----------------------------------------
+isambard.optimisation.optimizer module
+--------------------------------------
 
-.. automodule:: isambard.optimisation.cma_es
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-isambard.optimisation.de module
------------------------------------
-
-.. automodule:: isambard.optimisation.de
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-isambard.optimisation.ga module
------------------------------------
-
-.. automodule:: isambard.optimisation.ga
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-isambard.optimisation.pso module
-------------------------------------
-
-.. automodule:: isambard.optimisation.pso
+.. automodule:: isambard.optimisation.optimizer
     :members:
     :undoc-members:
     :show-inheritance:

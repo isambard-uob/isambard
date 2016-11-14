@@ -1,11 +1,11 @@
 isambard.external_programs package
-======================================
+==================================
 
 Submodules
 ----------
 
 isambard.external_programs.dssp module
-------------------------------------------
+--------------------------------------
 
 .. automodule:: isambard.external_programs.dssp
     :members:
@@ -13,7 +13,7 @@ isambard.external_programs.dssp module
     :show-inheritance:
 
 isambard.external_programs.naccess module
----------------------------------------------
+-----------------------------------------
 
 .. automodule:: isambard.external_programs.naccess
     :members:
@@ -21,7 +21,7 @@ isambard.external_programs.naccess module
     :show-inheritance:
 
 isambard.external_programs.profit module
---------------------------------------------
+----------------------------------------
 
 .. automodule:: isambard.external_programs.profit
     :members:
@@ -29,7 +29,7 @@ isambard.external_programs.profit module
     :show-inheritance:
 
 isambard.external_programs.reduce module
---------------------------------------------
+----------------------------------------
 
 .. automodule:: isambard.external_programs.reduce
     :members:
@@ -37,7 +37,7 @@ isambard.external_programs.reduce module
     :show-inheritance:
 
 isambard.external_programs.scwrl module
--------------------------------------------
+---------------------------------------
 
 .. automodule:: isambard.external_programs.scwrl
     :members:

@@ -1,19 +1,18 @@
 isambard.ampal package
-==========================
+======================
 
 Subpackages
 -----------
 
 .. toctree::
 
-    isambard.ampal.specifications.polymer_specs
-    isambard.ampal.topology
+    isambard.ampal.specifications
 
 Submodules
 ----------
 
 isambard.ampal.ampal_databases module
------------------------------------------
+-------------------------------------
 
 .. automodule:: isambard.ampal.ampal_databases
     :members:
@@ -21,7 +20,7 @@ isambard.ampal.ampal_databases module
     :show-inheritance:
 
 isambard.ampal.analyse_protein module
------------------------------------------
+-------------------------------------
 
 .. automodule:: isambard.ampal.analyse_protein
     :members:
@@ -29,7 +28,7 @@ isambard.ampal.analyse_protein module
     :show-inheritance:
 
 isambard.ampal.assembly module
-----------------------------------
+------------------------------
 
 .. automodule:: isambard.ampal.assembly
     :members:
@@ -37,7 +36,7 @@ isambard.ampal.assembly module
     :show-inheritance:
 
 isambard.ampal.base_ampal module
-------------------------------------
+--------------------------------
 
 .. automodule:: isambard.ampal.base_ampal
     :members:
@@ -45,7 +44,7 @@ isambard.ampal.base_ampal module
     :show-inheritance:
 
 isambard.ampal.interactions module
---------------------------------------
+----------------------------------
 
 .. automodule:: isambard.ampal.interactions
     :members:
@@ -53,7 +52,7 @@ isambard.ampal.interactions module
     :show-inheritance:
 
 isambard.ampal.ligands module
----------------------------------
+-----------------------------
 
 .. automodule:: isambard.ampal.ligands
     :members:
@@ -61,7 +60,7 @@ isambard.ampal.ligands module
     :show-inheritance:
 
 isambard.ampal.nucleic_acid module
---------------------------------------
+----------------------------------
 
 .. automodule:: isambard.ampal.nucleic_acid
     :members:
@@ -69,7 +68,7 @@ isambard.ampal.nucleic_acid module
     :show-inheritance:
 
 isambard.ampal.pdb_parser module
-------------------------------------
+--------------------------------
 
 .. automodule:: isambard.ampal.pdb_parser
     :members:
@@ -77,7 +76,7 @@ isambard.ampal.pdb_parser module
     :show-inheritance:
 
 isambard.ampal.protein module
----------------------------------
+-----------------------------
 
 .. automodule:: isambard.ampal.protein
     :members:
@@ -85,7 +84,7 @@ isambard.ampal.protein module
     :show-inheritance:
 
 isambard.ampal.pseudo_atoms module
---------------------------------------
+----------------------------------
 
 .. automodule:: isambard.ampal.pseudo_atoms
     :members:

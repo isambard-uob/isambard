@@ -1,5 +1,5 @@
 isambard package
-====================
+================
 
 Subpackages
 -----------
@@ -11,13 +11,12 @@ Subpackages
     isambard.external_programs
     isambard.optimisation
     isambard.tools
-    isambard.unit_tests
 
 Submodules
 ----------
 
 isambard.configure module
------------------------------
+-------------------------
 
 .. automodule:: isambard.configure
     :members:
@@ -25,7 +24,7 @@ isambard.configure module
     :show-inheritance:
 
 isambard.settings module
-----------------------------
+------------------------
 
 .. automodule:: isambard.settings
     :members:
