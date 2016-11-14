@@ -33,10 +33,10 @@ from recommonmark.parser import CommonMarkParser
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-import mock
-MOCk_MODULES = ['numpy', 'scipy', 'Cython']
-for mod_name in MOCk_MODULES:
-    sys.modules[mod_name] = mock.Mock()
+#import mock
+#MOCK_MODULES = ['numpy', 'scipy', 'Cython', 'matplotlib']
+#for mod_name in MOCK_MODULES:
+#    sys.modules[mod_name] = mock.Mock()
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -44,6 +44,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+    'sphinx.ext.autosummary',
     'numpydoc',
 ]
 
@@ -59,6 +60,7 @@ source_parsers = {
 }
 source_suffix = ['.rst', '.md']
 
+numpydoc_show_class_members = False
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
 
