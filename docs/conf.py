@@ -32,6 +32,12 @@ from recommonmark.parser import CommonMarkParser
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+
+import mock
+MOCk_MODULES = ['numpy', 'scipy', 'Cython', 'numpydoc']
+for mod_name in MOCk_MODULES:
+    sys.modules[mod_name] = mock.Mock()
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
@@ -303,3 +309,5 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}
+
+
