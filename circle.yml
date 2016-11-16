@@ -25,4 +25,4 @@ test:
     - python isambard/configure.py -C
     - nosetests unit_tests/ --with-coverage  --cover-package=isambard
   post:
-    - coveralls --verbose
+    - bash <(curl -s https://codecov.io/bash)
