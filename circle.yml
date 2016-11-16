@@ -21,4 +21,6 @@ test:
   override:
     - cd /home/ubuntu/isambard
     - python isambard/configure.py -C
-    - python -m unittest discover unit_tests/. -v
+    - nosetests unit_tests/ --with-coverage  --cover-package=isambard
+  post:
+    - coveralls
