@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from hypothesis import given, settings
@@ -71,6 +72,15 @@ class TestScwrl4(unittest.TestCase):
 
 class TestDSSP(unittest.TestCase):
 
+    def check_dssp_tag(self, test_file_path):
+        ampal = isambard.ampal.convert_pdb_to_ampal(test_file_path)
+        ampal.tag_secondary_structure()
+        ss_log = []
+        for mon in ampal.get_monomers(ligands=False):
+            ss_log.append('secondary_structure' in mon.tags)
+        print(ss_log)
+        self.assertTrue(all(ss_log))
+
     @given(integers(min_value=6, max_value=100))
     @settings(max_examples=20)
     def test_helix_dssp(self, hel_len):
@@ -79,3 +89,8 @@ class TestDSSP(unittest.TestCase):
         helical = helix.helices
         self.assertEqual(len(helical), 1)
         self.assertEqual(len(list(helical.get_monomers())), hel_len - 2)
+
+    def test_tag_secondary_structure_3qyi(self):
+        """Test the SS tagging functionality."""
+        test_file_path = os.path.join('unit_tests', 'testing_files', '3qy1.pdb')
+        self.check_dssp_tag(test_file_path)
