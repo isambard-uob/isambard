@@ -127,9 +127,9 @@ def optional_install():
 def install_for_circleci(settings_path):
     cci_settings = {
         "buff": {"default_force_field": "standard"},
-        "dssp": {"path": "/home/ubuntu/isambard_dev/dssp-2.0.4"},
-        "reduce": {"folder": "/home/ubuntu/isambard_dev",
-                   "path": "/home/ubuntu/isambard_dev/reduce.3.23.130521.linuxi386"},
+        "dssp": {"path": "/home/ubuntu/isambard_dev/dependencies_for_isambard/dssp/dssp-2.0.4"},
+        "reduce": {"folder": "/home/ubuntu/isambard_dev/dependencies_for_isambard/reduce",
+                   "path": "/home/ubuntu/isambard_dev/dependencies_for_isambard/reduce/reduce.3.23.130521.linuxi386"},
         "scwrl": {"path": "/home/ubuntu/isambard_dev/Scwrl4",
                   "rigid_rotamer_model": True}
         }
