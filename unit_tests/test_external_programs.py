@@ -1,7 +1,7 @@
 import unittest
 
 from hypothesis import given, settings
-from hypothesis.strategies import text
+from hypothesis.strategies import integers, text
 
 import isambard_dev as isambard
 
@@ -67,3 +67,15 @@ class TestScwrl4(unittest.TestCase):
         cc_tet = isambard.specifications.CoiledCoil(4)
         cc_tet.pack_new_sequences(cc_tet.basis_set_sequences)
         self.assertEqual(cc_tet.sequences, cc_tet.basis_set_sequences)
+
+
+class TestDSSP(unittest.TestCase):
+
+    @given(integers(min_value=6, max_value=100))
+    @settings(max_examples=20)
+    def test_helix_dssp(self, hel_len):
+        """Test DSSP helix finding ability."""
+        helix = isambard.specifications.Helix(hel_len)
+        helical = helix.helices
+        self.assertEqual(len(helical), 1)
+        self.assertEqual(len(list(helical.get_monomers())), hel_len - 2)
