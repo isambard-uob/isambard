@@ -7,7 +7,6 @@ dependencies:
   pre:
     - git clone git@github.com:woolfson-group/dependencies_for_isambard.git
     # Scwrl
-    - 
     - chmod +x /home/ubuntu/isambard/dependencies_for_isambard/scwrl/install_Scwrl4
     - /home/ubuntu/isambard/dependencies_for_isambard/scwrl/install_Scwrl4 < /home/ubuntu/isambard/dependencies_for_isambard/scwrl/scwrl_install.txt
     # Reduce
