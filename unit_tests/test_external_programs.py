@@ -5,7 +5,7 @@ import warnings
 from hypothesis import given, settings
 from hypothesis.strategies import integers, text
 
-import isambard_dev as isambard
+import isambard
 
 warnings.filterwarnings("ignore")
 
