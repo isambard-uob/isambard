@@ -20,6 +20,11 @@ ISAMBARD can be installed straight from PYPI using pip:
 ```
 pip install isambard
 ```
+Or if you want to try an experimental build, download from GitHub either by downloading the zipped file or cloning, then navigate to the ISAMBARD folder and type:
+
+```
+pip install .
+```
 
 ISAMBARD has a few Python package requirements, just install them through pip if it asks for them. We recommend using the [Anaconda Python 3 distribution](https://www.continuum.io/downloads), it contains most of the dependencies. 
 
