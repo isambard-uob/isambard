@@ -58,11 +58,13 @@ cpdef find_buff_interactions(ampal, ff, internal=False):
     interactions = []
     ncaco = ['N', 'CA', 'C', 'O']
     for (monomer_a, ref_atom_a), (monomer_b, ref_atom_b) in itertools.combinations(cen_mons, 2):
+        #### Could do this with filters
         if not internal:
             if monomer_a.ampal_parent != monomer_b.ampal_parent:
                 m_dist = distance(ref_atom_a, ref_atom_b)
             else:
                 continue
+        ####
         else:
             m_dist = distance(ref_atom_a, ref_atom_b)
         if m_dist <= ffco:
@@ -82,6 +84,37 @@ cpdef find_buff_interactions(ampal, ff, internal=False):
                     else:
                         interactions.append(interaction)
     return interactions
+
+
+cpdef get_within_ff_cutoff(interaction_pairs, double force_field_cutoff):
+    """Finds BUFF interactions for a given ampal object and force field.
+
+    Parameters
+    ----------
+    interaction_pairs: [Monomer]
+        Any AMPAL object with a get_atoms method.
+    force_field_cutoff: float
+        Minimum interaction distance.
+
+    Returns
+    -------
+    interaction_set: [(Atom, Atom)]
+        All of the atom pairs in range of interacting in BUFF but not within
+        covalent bond distance.
+    """
+    cdef double m_dist
+    interactions = []
+    ncaco = ['N', 'CA', 'C', 'O']
+    for monomer_a, monomer_b in interaction_pairs:
+        ref_atom_a = monomer_a.atoms[monomer_a.reference_atom]
+        ref_atom_b = monomer_b.atoms[monomer_b.reference_atom]
+        m_dist = distance(ref_atom_a._vector, ref_atom_b._vector)
+        if m_dist <= force_field_cutoff:
+            a_atoms = [atom for atom in monomer_a.atoms.values() if atom._ff_id is not None]
+            b_atoms = [atom for atom in monomer_b.atoms.values() if atom._ff_id is not None]
+            interactions.extend(itertools.product(a_atoms, b_atoms))
+    return interactions
+
 
 cpdef score_interactions(interactions, ff, threshold = 1.1):
     """Scores a set of interactions.
@@ -141,6 +174,11 @@ def score_ampal(ampal, ff, threshold=1.1, internal=False):
     """
     interactions = find_buff_interactions(ampal, ff, internal=internal)
     return score_interactions(interactions, ff, threshold=threshold)
+
+
+def explicit_interaction_energy(ampal_a, ampal_b, ff, threshold=1.1):
+
+    return
 
 
 @total_ordering
