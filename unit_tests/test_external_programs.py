@@ -17,14 +17,28 @@ non_cannonical_labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 class TestScwrl4(unittest.TestCase):
 
     def test_check_scwrl_avail(self):
-        """Test if ISAMBARD can detect Scwrl"""
-        avail = isambard.external_programs.scwrl.check_scwrl_avail()
-        self.assertTrue(avail)
+        """Test if ISAMBARD can detect Scwrl, check its availability and behave accordingly."""
         old_path = isambard.settings.global_settings['scwrl']['path']
-        isambard.settings.global_settings['scwrl']['path'] = '/'
-        avail = isambard.external_programs.scwrl.check_scwrl_avail()
-        self.assertFalse(avail)
-        isambard.settings.global_settings['scwrl']['path'] = old_path
+        try:
+            avail = isambard.external_programs.scwrl.check_scwrl_avail()
+            self.assertTrue(avail)
+
+            helix = isambard.specifications.Helix(30)
+            scwrl_out = isambard.external_programs.scwrl.pack_sidechains(helix.pdb, 'V'*30, path=False)
+            self.assertEqual(type(scwrl_out[0]), str)
+            self.assertEqual(type(scwrl_out[1]), float)
+
+            isambard.settings.global_settings['scwrl']['path'] = ''
+            avail = isambard.external_programs.scwrl.check_scwrl_avail()
+            isambard.settings.global_settings['scwrl']['available'] = avail
+            self.assertFalse(avail)
+
+            scwrl_out = isambard.external_programs.scwrl.pack_sidechains(helix.pdb, 'V'*30, path=False)
+            self.assertIsNone(scwrl_out)
+        finally:
+            isambard.settings.global_settings['scwrl']['path'] = old_path
+            isambard.settings.global_settings[
+                'scwrl']['available'] = isambard.external_programs.scwrl.check_scwrl_avail()
 
     @given(text(cannonical_labels, min_size=5, max_size=5))
     @settings(max_examples=20)
@@ -95,14 +109,26 @@ class TestDSSP(unittest.TestCase):
         self.assertTrue(all(ss_log))
 
     def test_check_dssp_avail(self):
-        """Test if ISAMBARD can detect DSSP"""
-        avail = isambard.external_programs.dssp.check_dssp_avail()
-        self.assertTrue(avail)
+        """Test if ISAMBARD can detect DSSP, check its availability and behave accordingly."""
         old_path = isambard.settings.global_settings['dssp']['path']
-        isambard.settings.global_settings['dssp']['path'] = '/'
-        avail = isambard.external_programs.dssp.check_dssp_avail()
-        self.assertFalse(avail)
-        isambard.settings.global_settings['dssp']['path'] = old_path
+        try:
+            avail = isambard.external_programs.dssp.check_dssp_avail()
+            self.assertTrue(avail)
+            helix = isambard.specifications.Helix(30)
+
+            dssp_out_ampal = isambard.external_programs.dssp.run_dssp(helix.pdb, path=False)
+            self.assertEqual(type(dssp_out_ampal), str)
+
+            isambard.settings.global_settings['dssp']['path'] = ''
+            avail = isambard.external_programs.dssp.check_dssp_avail()
+            isambard.settings.global_settings['dssp']['available'] = avail
+            self.assertFalse(avail)
+
+            dssp_out_ampal = isambard.external_programs.dssp.run_dssp(helix.pdb, path=False)
+            self.assertIsNone(dssp_out_ampal)
+        finally:
+            isambard.settings.global_settings['dssp']['path'] = old_path
+            isambard.settings.global_settings['dssp']['available'] = isambard.external_programs.dssp.check_dssp_avail()
 
     @given(integers(min_value=6, max_value=100))
     @settings(max_examples=20)
