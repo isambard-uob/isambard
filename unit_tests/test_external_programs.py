@@ -1,10 +1,13 @@
 import os
 import unittest
+import warnings
 
 from hypothesis import given, settings
 from hypothesis.strategies import integers, text
 
 import isambard_dev as isambard
+
+warnings.filterwarnings("ignore")
 
 
 cannonical_labels = 'ACDEFGHIKLMNPQRSTVWY'
@@ -12,6 +15,16 @@ non_cannonical_labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 
 class TestScwrl4(unittest.TestCase):
+
+    def test_check_scwrl_avail(self):
+        """Test if ISAMBARD can detect Scwrl"""
+        avail = isambard.external_programs.scwrl.check_scwrl_avail()
+        self.assertTrue(avail)
+        old_path = isambard.settings.global_settings['scwrl']['path']
+        isambard.settings.global_settings['scwrl']['path'] = '/'
+        avail = isambard.external_programs.scwrl.check_scwrl_avail()
+        self.assertFalse(avail)
+        isambard.settings.global_settings['scwrl']['path'] = old_path
 
     @given(text(cannonical_labels, min_size=5, max_size=5))
     @settings(max_examples=20)
@@ -80,6 +93,16 @@ class TestDSSP(unittest.TestCase):
             ss_log.append('secondary_structure' in mon.tags)
         print(ss_log)
         self.assertTrue(all(ss_log))
+
+    def test_check_dssp_avail(self):
+        """Test if ISAMBARD can detect DSSP"""
+        avail = isambard.external_programs.dssp.check_dssp_avail()
+        self.assertTrue(avail)
+        old_path = isambard.settings.global_settings['dssp']['path']
+        isambard.settings.global_settings['dssp']['path'] = '/'
+        avail = isambard.external_programs.dssp.check_dssp_avail()
+        self.assertFalse(avail)
+        isambard.settings.global_settings['dssp']['path'] = old_path
 
     @given(integers(min_value=6, max_value=100))
     @settings(max_examples=20)
