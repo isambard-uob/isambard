@@ -1,8 +1,11 @@
 import os
 import random
 import unittest
+import warnings
 
 import isambard_dev as isambard
+
+warnings.filterwarnings("ignore")
 
 
 class ForceFieldTestCase(unittest.TestCase):
