@@ -85,59 +85,6 @@ cpdef find_buff_interactions(ampal, ff, internal=False):
                         interactions.append(interaction)
     return interactions
 
-cpdef new_find_buff_interactions(ampal, ff, internal=False):
-    """Finds BUFF interactions for a given ampal object and force field.
-
-    Parameters
-    ----------
-    ampal: AMPAL object
-        Any AMPAL object with a get_atoms method.
-    ff: BuffForceField
-        The force field is used to derive the minimum interaction distance.
-
-    Returns
-    -------
-    interaction_set: [(Atom, Atom)]
-        All of the atom pairs in range of interacting in BUFF but not within
-        covalent bond distance.
-    """
-    cdef double ffco, m_dist
-    ffco = ff.distance_cutoff
-    cen_mons = []
-    for monomer in ampal.get_monomers():
-        if hasattr(monomer, 'reference_atom'):
-            cen_mons.append((monomer, monomer.atoms[monomer.reference_atom]))
-        # TODO: Add centre of mass as an option here. Needs careful thought so not to miss interactions.
-    mon_pairs = []
-    interactions = []
-    ncaco = ['N', 'CA', 'C', 'O']
-    for (monomer_a, ref_atom_a), (monomer_b, ref_atom_b) in itertools.combinations(cen_mons, 2):
-        #### Could do this with filters
-        if not internal:
-            if monomer_a.ampal_parent != monomer_b.ampal_parent:
-                m_dist = distance(ref_atom_a, ref_atom_b)
-            else:
-                continue
-        ####
-        else:
-            m_dist = distance(ref_atom_a, ref_atom_b)
-        if m_dist <= ffco:
-            a_atoms = [atom for atom in monomer_a.atoms.values() if atom._ff_id is not None]
-            b_atoms = [atom for atom in monomer_b.atoms.values() if atom._ff_id is not None]
-            if not internal:
-                interactions.extend(itertools.product(a_atoms, b_atoms))
-            else:
-                for interaction in itertools.product(a_atoms, b_atoms):
-                    chain1, res1 = interaction[0].unique_id[:2]
-                    chain2, res2 = interaction[1].unique_id[:2]
-                    if (interaction[0].res_label in ncaco) and (interaction[1].res_label in ncaco):
-                        if (chain2, int(res2)) == (chain1, int(res1) + 1):
-                            pass
-                        else:
-                            interactions.append(interaction)
-                    else:
-                        interactions.append(interaction)
-    return interactions
 
 cpdef get_within_ff_cutoff(interaction_pairs, double force_field_cutoff):
     """Finds BUFF interactions for a given ampal object and force field.
@@ -224,6 +171,45 @@ def score_ampal(ampal, ff, threshold=1.1, internal=False):
     """
     interactions = find_buff_interactions(ampal, ff, internal=internal)
     return score_interactions(interactions, ff, threshold=threshold)
+
+
+def score_intra_ampal(ampal, ff, no_neighbour_backbone=True, backbone_atoms=('N', 'CA', 'C', 'O')):
+    """Finds interactions within an AMPAL object and returns the BUFF score.
+
+    Parameters
+    ----------
+    ampal: AMPAL object
+        Any AMPAL object that inherits from BaseAmpal.
+    ff: BuffForceField
+        Force field for BUFF.
+    no_neighbour_backbone: bool
+        Ignore interactions between neighbouring backbone atoms.
+    backbone_atoms: (str)
+        A tuple containing labels for the backbone atoms in the polymer/s.
+
+    Returns
+    -------
+    BUFF_score: BUFFScore
+        A BUFFScore object with information about each of the interactions and
+        the atoms involved.
+
+    """
+    grp = [mon[mon.reference_atom] for mon in ampal.get_monomers() if hasattr(mon, 'reference_atom')]
+    gross_interactions = itertools.combinations(grp, 2)
+    interactions = get_within_ff_cutoff(gross_interactions, ff.distance_cutoff)
+    if no_neighbour_backbone:
+        interactions = filter(lambda x: check_if_backbone_neighbours(x, backbone_atoms), interactions)
+    return score_interactions(interactions, ff)
+
+
+def check_if_backbone_neighbours(interaction, backbone_atoms):
+    atom_1, atom_2 = interaction
+    if (atom_1.res_label in backbone_atoms) and (atom_2.res_label in backbone_atoms):
+        chain1, res1 = atom_1.unique_id[:2]
+        chain2, res2 = atom_2.unique_id[:2]
+        if (chain2, int(res2)) == (chain1, int(res1) + 1):
+            return False
+    return True
 
 
 def score_inter_ampal(ampal_objects, ff):
