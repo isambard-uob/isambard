@@ -113,7 +113,7 @@ cpdef get_within_ff_cutoff(interaction_pairs, double force_field_cutoff):
     return interactions
 
 
-cpdef score_interactions(interactions, ff, threshold = 1.1):
+cpdef score_interactions(interactions, ff):
     """Scores a set of interactions.
 
     Parameters
@@ -124,8 +124,6 @@ cpdef score_interactions(interactions, ff, threshold = 1.1):
         'ff_params' tag in their tags.
     ff: BuffForceField
         The force field used for scoring.
-    threshold: float
-        Cutoff distance for assigning interactions that are covalent bonds.
 
     Returns
     -------
@@ -148,7 +146,7 @@ cpdef score_interactions(interactions, ff, threshold = 1.1):
     return buff_score
 
 
-def score_ampal(ampal, ff, threshold=1.1, internal=False):
+def score_ampal(ampal, ff, internal=False):
     """Finds interactions in an AMPAL object and returns the BUFF score.
 
     Parameters
@@ -157,8 +155,6 @@ def score_ampal(ampal, ff, threshold=1.1, internal=False):
         Any AMPAL object that inherits from BaseAmpal.
     ff: BuffForceField
         Force field for BUFF.
-    threshold: float
-        Cutoff distance for assigning interactions that are covalent bonds.
     internal: bool
         Measures internal energy if true.
 
@@ -170,7 +166,7 @@ def score_ampal(ampal, ff, threshold=1.1, internal=False):
 
     """
     interactions = find_buff_interactions(ampal, ff, internal=internal)
-    return score_interactions(interactions, ff, threshold=threshold)
+    return score_interactions(interactions, ff)
 
 
 def score_intra_ampal(ampal, ff, no_neighbour_backbone=True, backbone_atoms=('N', 'CA', 'C', 'O')):
