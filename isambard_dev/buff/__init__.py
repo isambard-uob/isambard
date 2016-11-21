@@ -1,3 +1,3 @@
 from buff.force_field import BuffForceField, force_fields
 from buff.calculate_energy import PyAtomData, find_buff_interactions, score_interactions, score_ampal, \
-    get_within_ff_cutoff, score_inter_ampal, score_intra_ampal
+    get_within_ff_cutoff, find_inter_ampal, find_intra_ampal
