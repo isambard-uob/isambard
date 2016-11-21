@@ -195,7 +195,7 @@ def find_intra_ampal(ampal, distance_cutoff,
     gross_interactions = itertools.combinations(grp, 2)
     interactions = get_within_ff_cutoff(gross_interactions, distance_cutoff)
     if no_neighbour_backbone:
-        interactions = filter(lambda x: check_if_backbone_neighbours(x, backbone_atoms), interactions)
+        interactions = list(filter(lambda x: check_if_backbone_neighbours(x, backbone_atoms), interactions))
     return interactions
 
 
