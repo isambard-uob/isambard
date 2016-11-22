@@ -5,7 +5,7 @@ from ampal.base_ampal import BaseAmpal, Polymer, find_atoms_within_distance
 from ampal.ligands import LigandGroup, Ligand
 from ampal.analyse_protein import sequence_molecular_weight, sequence_molar_extinction_280, \
     sequence_isoelectric_point
-from buff import score_ampal
+from buff import find_intra_ampal, find_inter_ampal, score_interactions
 from external_programs.scwrl import pack_sidechains
 from external_programs.naccess import run_naccess,extract_residue_accessibility
 from settings import global_settings
@@ -410,7 +410,7 @@ class Assembly(BaseAmpal):
 
         Returns
         -------
-        BUFF_score: BUFFScore
+        buff_score: BUFFScore
             A BUFFScore object with information about each of the interactions and
             the atoms involved.
         """
@@ -424,7 +424,9 @@ class Assembly(BaseAmpal):
                     raise AttributeError(
                         'The following molecule does not have a update_ff method:\n{}\n'
                         'If this is a custom molecule type it should inherit from BaseAmpal:'.format(molecule))
-        return score_ampal(self, ff)
+        interactions = find_inter_ampal(self, ff.distance_cutoff)
+        buff_score = score_interactions(interactions, ff)
+        return buff_score
 
     buff_interaction_energy = property(get_interaction_energy)
 
@@ -450,7 +452,7 @@ class Assembly(BaseAmpal):
 
         Returns
         -------
-        BUFF_score: BUFFScore
+        buff_score: BUFFScore
             A BUFFScore object with information about each of the interactions and
             the atoms involved.
         """
@@ -464,7 +466,9 @@ class Assembly(BaseAmpal):
                     raise AttributeError(
                         'The following molecule does not have a update_ff method:\n{}\n'
                         'If this is a custom molecule type it should inherit from BaseAmpal:'.format(molecule))
-        return score_ampal(self, ff, internal=True)
+        interactions = find_intra_ampal(self, ff.distance_cutoff)
+        buff_score = score_interactions(interactions, ff)
+        return buff_score
 
     buff_internal_energy = property(get_internal_energy)
 
