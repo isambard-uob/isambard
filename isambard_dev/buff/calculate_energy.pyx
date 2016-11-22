@@ -31,61 +31,6 @@ cdef class PyAtomData:
         del self.thisptr
 
 
-cpdef find_buff_interactions(ampal, ff, internal=False):
-    """Finds BUFF interactions for a given ampal object and force field.
-
-    Parameters
-    ----------
-    ampal: AMPAL object
-        Any AMPAL object with a get_atoms method.
-    ff: BuffForceField
-        The force field is used to derive the minimum interaction distance.
-
-    Returns
-    -------
-    interaction_set: [(Atom, Atom)]
-        All of the atom pairs in range of interacting in BUFF but not within
-        covalent bond distance.
-    """
-    cdef double ffco, m_dist
-    ffco = ff.distance_cutoff
-    cen_mons = []
-    for monomer in ampal.get_monomers():
-        if hasattr(monomer, 'reference_atom'):
-            cen_mons.append((monomer, monomer.atoms[monomer.reference_atom]))
-        # TODO: Add centre of mass as an option here. Needs careful thought so not to miss interactions.
-    mon_pairs = []
-    interactions = []
-    ncaco = ['N', 'CA', 'C', 'O']
-    for (monomer_a, ref_atom_a), (monomer_b, ref_atom_b) in itertools.combinations(cen_mons, 2):
-        #### Could do this with filters
-        if not internal:
-            if monomer_a.ampal_parent != monomer_b.ampal_parent:
-                m_dist = distance(ref_atom_a, ref_atom_b)
-            else:
-                continue
-        ####
-        else:
-            m_dist = distance(ref_atom_a, ref_atom_b)
-        if m_dist <= ffco:
-            a_atoms = [atom for atom in monomer_a.atoms.values() if atom._ff_id is not None]
-            b_atoms = [atom for atom in monomer_b.atoms.values() if atom._ff_id is not None]
-            if not internal:
-                interactions.extend(itertools.product(a_atoms, b_atoms))
-            else:
-                for interaction in itertools.product(a_atoms, b_atoms):
-                    chain1, res1 = interaction[0].unique_id[:2]
-                    chain2, res2 = interaction[1].unique_id[:2]
-                    if (interaction[0].res_label in ncaco) and (interaction[1].res_label in ncaco):
-                        if (chain2, int(res2)) == (chain1, int(res1) + 1):
-                            pass
-                        else:
-                            interactions.append(interaction)
-                    else:
-                        interactions.append(interaction)
-    return interactions
-
-
 cpdef get_within_ff_cutoff(interaction_pairs, double force_field_cutoff):
     """Finds BUFF interactions for a given ampal object and force field.
 
@@ -144,29 +89,6 @@ cpdef score_interactions(interactions, ff):
             scores.append(calculatePairEnergy(a_params.thisptr, b_params.thisptr, dist))
     buff_score = BuffScore(interactions, scores)
     return buff_score
-
-
-def score_ampal(ampal, ff, internal=False):
-    """Finds interactions in an AMPAL object and returns the BUFF score.
-
-    Parameters
-    ----------
-    ampal: AMPAL object
-        Any AMPAL object that inherits from BaseAmpal.
-    ff: BuffForceField
-        Force field for BUFF.
-    internal: bool
-        Measures internal energy if true.
-
-    Returns
-    -------
-    BUFF_score: BUFFScore
-        A BUFFScore object with information about each of the interactions and
-        the atoms involved.
-
-    """
-    interactions = find_buff_interactions(ampal, ff, internal=internal)
-    return score_interactions(interactions, ff)
 
 
 def find_intra_ampal(ampal, distance_cutoff,
