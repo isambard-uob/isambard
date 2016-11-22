@@ -4,6 +4,8 @@ import unittest
 import warnings
 
 import isambard_dev as isambard
+from hypothesis import given, settings
+from hypothesis.strategies import integers
 
 warnings.filterwarnings("ignore")
 
@@ -59,19 +61,53 @@ class InteractionsTestCase(unittest.TestCase):
         self.pdb = isambard.ampal.convert_pdb_to_ampal(pdb_path)
         self.pdb.assign_force_field(self.ff)
 
-    def test_basic_interaction(self):
+    def test_basic_intra_format(self):
         """Tests that the interaction tuples are correctly formatted."""
-        buff_interactions = isambard.buff.calculate_energy.find_buff_interactions(self.topo, self.ff)
+        buff_interactions = isambard.buff.find_intra_ampal(self.topo, self.ff.distance_cutoff)
         for _ in range(100):
             a, b = random.choice(buff_interactions)
             self.assertTrue(type(a) is isambard.ampal.Atom)
             self.assertTrue(type(b) is isambard.ampal.Atom)
             self.assertTrue(a != b)
 
-    def test_inter_count_pdb(self):
-        """Tests that the number of interactions found in a pdb file."""
-        buff_interactions = isambard.buff.calculate_energy.find_buff_interactions(self.pdb, self.ff)
-        self.assertEqual(len(buff_interactions), 66546)  # Original scoring function
+    def test_basic_inter_format(self):
+        """Tests that the interaction tuples are correctly formatted."""
+        buff_interactions = isambard.buff.find_inter_ampal(self.topo, self.ff.distance_cutoff)
+        for _ in range(100):
+            a, b = random.choice(buff_interactions)
+            self.assertTrue(type(a) is isambard.ampal.Atom)
+            self.assertTrue(type(b) is isambard.ampal.Atom)
+            self.assertTrue(a != b)
+
+    @given(integers(min_value=1, max_value=50))
+    @settings(max_examples=20)
+    def test_intra_num_helix(self, n):
+        """Tests that the number of interactions found in a Helix backbone."""
+        ia_scaling = lambda x: (((x - 2) * (x - 1)) / 2) * 16 if x > 0.0 else 0.0
+        helix = isambard.specifications.Helix(n)
+        helix.assign_force_field(self.ff)
+        buff_interactions = isambard.buff.find_intra_ampal(helix, 1.52*(n+1))
+        self.assertEqual(len(buff_interactions), ia_scaling(n))
+
+    @given(integers(min_value=1, max_value=30), integers(min_value=2, max_value=5))
+    @settings(max_examples=10)
+    def test_inter_num_cc(self, n, hels):
+        """Tests that the number of interactions found between helices in a coiled coil."""
+        ia_scaling = lambda x, y: (((x ** 2) * (y - 1) * y) / 2) * 16 if x > 0.0 else 0.0
+        cc = isambard.specifications.CoiledCoil.from_parameters(hels, n, 7.0, 180.0, 18.0)
+        cc.assign_force_field(self.ff)
+        buff_interactions = isambard.buff.find_inter_ampal(cc, 1000)
+        self.assertEqual(len(buff_interactions), ia_scaling(n, hels))
+
+    def test_interaction_energy(self):
+        """Tests that the interaction energy of a reference structure."""
+        buff_score = self.pdb.get_interaction_energy(ff=self.ff)
+        self.assertAlmostEqual(buff_score.total_energy, -1005.41, places=2)  # Original scoring function
+
+    def test_internal_energy(self):
+        """Tests that the internal energy of a reference structure."""
+        buff_score = self.pdb[0].get_internal_energy(ff=self.ff)
+        self.assertAlmostEqual(buff_score.total_energy, -3722.49, places=2)  # Original scoring function
 
 
 if __name__ == '__main__':

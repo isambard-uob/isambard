@@ -31,15 +31,15 @@ cdef class PyAtomData:
         del self.thisptr
 
 
-cpdef find_buff_interactions(ampal, ff, internal=False):
+cpdef get_within_ff_cutoff(interaction_pairs, double force_field_cutoff):
     """Finds BUFF interactions for a given ampal object and force field.
 
     Parameters
     ----------
-    ampal: AMPAL object
+    interaction_pairs: [Monomer]
         Any AMPAL object with a get_atoms method.
-    ff: BuffForceField
-        The force field is used to derive the minimum interaction distance.
+    force_field_cutoff: float
+        Minimum interaction distance.
 
     Returns
     -------
@@ -47,43 +47,18 @@ cpdef find_buff_interactions(ampal, ff, internal=False):
         All of the atom pairs in range of interacting in BUFF but not within
         covalent bond distance.
     """
-    cdef double ffco, m_dist
-    ffco = ff.distance_cutoff
-    cen_mons = []
-    for monomer in ampal.get_monomers():
-        if hasattr(monomer, 'reference_atom'):
-            cen_mons.append((monomer, monomer.atoms[monomer.reference_atom]))
-        # TODO: Add centre of mass as an option here. Needs careful thought so not to miss interactions.
-    mon_pairs = []
+    cdef double m_dist
     interactions = []
-    ncaco = ['N', 'CA', 'C', 'O']
-    for (monomer_a, ref_atom_a), (monomer_b, ref_atom_b) in itertools.combinations(cen_mons, 2):
-        if not internal:
-            if monomer_a.ampal_parent != monomer_b.ampal_parent:
-                m_dist = distance(ref_atom_a, ref_atom_b)
-            else:
-                continue
-        else:
-            m_dist = distance(ref_atom_a, ref_atom_b)
-        if m_dist <= ffco:
-            a_atoms = [atom for atom in monomer_a.atoms.values() if atom._ff_id is not None]
-            b_atoms = [atom for atom in monomer_b.atoms.values() if atom._ff_id is not None]
-            if not internal:
-                interactions.extend(itertools.product(a_atoms, b_atoms))
-            else:
-                for interaction in itertools.product(a_atoms, b_atoms):
-                    chain1, res1 = interaction[0].unique_id[:2]
-                    chain2, res2 = interaction[1].unique_id[:2]
-                    if (interaction[0].res_label in ncaco) and (interaction[1].res_label in ncaco):
-                        if (chain2, int(res2)) == (chain1, int(res1) + 1):
-                            pass
-                        else:
-                            interactions.append(interaction)
-                    else:
-                        interactions.append(interaction)
+    for ref_atom_a, ref_atom_b in interaction_pairs:
+        m_dist = distance(ref_atom_a._vector, ref_atom_b._vector)
+        if m_dist <= force_field_cutoff:
+            a_atoms = [atom for atom in ref_atom_a.ampal_parent.atoms.values() if atom._ff_id is not None]
+            b_atoms = [atom for atom in ref_atom_b.ampal_parent.atoms.values() if atom._ff_id is not None]
+            interactions.extend(itertools.product(a_atoms, b_atoms))
     return interactions
 
-cpdef score_interactions(interactions, ff, threshold = 1.1):
+
+cpdef score_interactions(interactions, ff):
     """Scores a set of interactions.
 
     Parameters
@@ -94,8 +69,6 @@ cpdef score_interactions(interactions, ff, threshold = 1.1):
         'ff_params' tag in their tags.
     ff: BuffForceField
         The force field used for scoring.
-    threshold: float
-        Cutoff distance for assigning interactions that are covalent bonds.
 
     Returns
     -------
@@ -118,29 +91,118 @@ cpdef score_interactions(interactions, ff, threshold = 1.1):
     return buff_score
 
 
-def score_ampal(ampal, ff, threshold=1.1, internal=False):
-    """Finds interactions in an AMPAL object and returns the BUFF score.
+def find_intra_ampal(ampal, distance_cutoff,
+                     no_neighbour_backbone=True, backbone_atoms=('N', 'CA', 'C', 'O')):
+    """Finds interactions within an AMPAL object and returns the BUFF score.
 
     Parameters
     ----------
     ampal: AMPAL object
         Any AMPAL object that inherits from BaseAmpal.
-    ff: BuffForceField
-        Force field for BUFF.
-    threshold: float
-        Cutoff distance for assigning interactions that are covalent bonds.
-    internal: bool
-        Measures internal energy if true.
+    distance_cutoff: float
+        Distance (Å) to find interactions.
+    no_neighbour_backbone: bool
+        Ignore interactions between neighbouring backbone atoms.
+    backbone_atoms: (str)
+        A tuple containing labels for the backbone atoms in the polymer/s.
 
     Returns
     -------
-    BUFF_score: BUFFScore
-        A BUFFScore object with information about each of the interactions and
-        the atoms involved.
+    interactions: [(Atom, Atom)]
+        All of the atom pairs in range of interacting in BUFF but not within
+        covalent bond distance.
 
     """
-    interactions = find_buff_interactions(ampal, ff, internal=internal)
-    return score_interactions(interactions, ff, threshold=threshold)
+    grp = [mon[mon.reference_atom] for mon in ampal.get_monomers() if hasattr(mon, 'reference_atom')]
+    gross_interactions = itertools.combinations(grp, 2)
+    interactions = get_within_ff_cutoff(gross_interactions, distance_cutoff)
+    if no_neighbour_backbone:
+        interactions = list(filter(lambda x: check_if_backbone_neighbours(x, backbone_atoms), interactions))
+    return interactions
+
+
+def check_if_backbone_neighbours(interaction, backbone_atoms):
+    atom_1, atom_2 = interaction
+    if (atom_1.res_label in backbone_atoms) and (atom_2.res_label in backbone_atoms):
+        chain1, res1 = atom_1.unique_id[:2]
+        chain2, res2 = atom_2.unique_id[:2]
+        if (chain2, int(res2)) == (chain1, int(res1) + 1):
+            return False
+    return True
+
+
+def score_intra_ampal(ampal, ff):
+    """Returns the BUFF score between all atoms in AMPAL object.
+
+    This is just a convenience function that calls find_intra_ampal
+    and score_interactions.
+
+    Parameters
+    ----------
+    ampal: AMPAL Object
+        Any AMPAL object that inherits from BaseAmpal.
+    ff: BuffForceField
+        The force field used for scoring.
+
+    Returns
+    -------
+    buff_score: BuffScore
+        A BuffScore object with information about each of the interactions and
+        the atoms involved.
+    """
+    interactions = find_intra_ampal(ampal, ff.distance_cutoff)
+    buff_score = score_interactions(interactions, ff)
+    return buff_score
+
+
+def find_inter_ampal(ampal_objects, distance_cutoff):
+    """Finds interactions between AMPAL objects and returns the BUFF score.
+
+    Parameters
+    ----------
+    ampal_objects: Assembly or [AMPAL objects]
+        Either an assembly or an iterable containing AMPAL objects that inherits from BaseAmpal.
+    distance_cutoff: float
+        Distance (Å) to find interactions.
+
+    Returns
+    -------
+    interactions: [(Atom, Atom)]
+        All of the atom pairs in range of interacting in BUFF but not within
+        covalent bond distance.
+
+    """
+    ref_atom_lists = map(
+        lambda ampal: [mon[mon.reference_atom] for mon in ampal.get_monomers() if hasattr(mon, 'reference_atom')],
+        ampal_objects)
+    ampal_pairs = itertools.combinations(ref_atom_lists, 2)
+    gross_interactions = itertools.chain(*(itertools.product(*ref_atom_lists) for ref_atom_lists in ampal_pairs))
+    interactions = get_within_ff_cutoff(gross_interactions, distance_cutoff)
+    return interactions
+
+
+def score_inter_ampal(ampal_objects, ff):
+    """Returns the BUFF score between all the AMPAL objects provided.
+
+    This is just a convenience function that calls find_inter_ampal
+    and score_interactions.
+
+    Parameters
+    ----------
+    ampal_objects: Assembly or [AMPAL objects]
+        Either an assembly or an iterable containing AMPAL objects that inherits from BaseAmpal.
+    ff: BuffForceField
+        The force field used for scoring.
+
+    Returns
+    -------
+    buff_score: BuffScore
+        A BuffScore object with information about each of the interactions and
+        the atoms involved.
+    """
+    interactions = find_inter_ampal(ampal_objects, ff.distance_cutoff)
+    buff_score = score_interactions(interactions, ff)
+    return buff_score
 
 
 @total_ordering
