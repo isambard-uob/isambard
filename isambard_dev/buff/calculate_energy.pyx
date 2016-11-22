@@ -131,6 +131,30 @@ def check_if_backbone_neighbours(interaction, backbone_atoms):
     return True
 
 
+def score_intra_ampal(ampal, ff):
+    """Returns the BUFF score between all atoms in AMPAL object.
+
+    This is just a convenience function that calls find_intra_ampal
+    and score_interactions.
+
+    Parameters
+    ----------
+    ampal: AMPAL Object
+        Any AMPAL object that inherits from BaseAmpal.
+    ff: BuffForceField
+        The force field used for scoring.
+
+    Returns
+    -------
+    buff_score: BuffScore
+        A BuffScore object with information about each of the interactions and
+        the atoms involved.
+    """
+    interactions = find_intra_ampal(ampal, ff.distance_cutoff)
+    buff_score = score_interactions(interactions, ff)
+    return buff_score
+
+
 def find_inter_ampal(ampal_objects, distance_cutoff):
     """Finds interactions between AMPAL objects and returns the BUFF score.
 
@@ -155,6 +179,30 @@ def find_inter_ampal(ampal_objects, distance_cutoff):
     gross_interactions = itertools.chain(*(itertools.product(*ref_atom_lists) for ref_atom_lists in ampal_pairs))
     interactions = get_within_ff_cutoff(gross_interactions, distance_cutoff)
     return interactions
+
+
+def score_inter_ampal(ampal_objects, ff):
+    """Returns the BUFF score between all the AMPAL objects provided.
+
+    This is just a convenience function that calls find_inter_ampal
+    and score_interactions.
+
+    Parameters
+    ----------
+    ampal_objects: Assembly or [AMPAL objects]
+        Either an assembly or an iterable containing AMPAL objects that inherits from BaseAmpal.
+    ff: BuffForceField
+        The force field used for scoring.
+
+    Returns
+    -------
+    buff_score: BuffScore
+        A BuffScore object with information about each of the interactions and
+        the atoms involved.
+    """
+    interactions = find_inter_ampal(ampal_objects, ff.distance_cutoff)
+    buff_score = score_interactions(interactions, ff)
+    return buff_score
 
 
 @total_ordering
