@@ -11,7 +11,7 @@ setuptools.setup(
     name='isambard',
     packages=setuptools.find_packages(),
     include_package_data=True,
-    version='2016.3',
+    version='2016.4',
     description='ISAMBARD: An open-source computational environment for biomolecular analysis, modelling and design',
     long_description=long_description,
     author='Woolfson Group, University of Bristol',

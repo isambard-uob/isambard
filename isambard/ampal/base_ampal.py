@@ -4,7 +4,7 @@ import warnings
 
 import numpy
 
-from buff import PyAtomData, score_ampal
+from buff import find_intra_ampal, score_interactions
 from ampal.ampal_databases import element_data
 from tools.isambard_warnings import NotParameterisedWarning
 from tools.geometry import distance, Quaternion, centre_of_mass, rmsd
@@ -204,7 +204,7 @@ class BaseAmpal(object):
             self.assign_force_field(ff, mol2=mol2)
         return
 
-    def get_internal_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False, threshold=1.1):
+    def get_internal_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False):
         """Calculates the internal energy of the AMPAL object.
 
         This method is assigned to the buff_internal_energy property,
@@ -221,8 +221,6 @@ class BaseAmpal(object):
         force_ff_assign: bool
             If true, the force field will be completely reassigned, ignoring the
             cached parameters.
-        threshold: float
-            Cutoff distance for assigning interactions that are covalent bonds.
 
         Returns
         -------
@@ -234,7 +232,9 @@ class BaseAmpal(object):
             ff = global_settings['buff']['force_field']
         if assign_ff:
             self.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
-        return score_ampal(self, ff, threshold=threshold, internal=True)
+        interactions = find_intra_ampal(self, ff.distance_cutoff)
+        buff_score = score_interactions(interactions, ff)
+        return buff_score
 
     buff_internal_energy = property(get_internal_energy)
 
