@@ -99,6 +99,16 @@ class InteractionsTestCase(unittest.TestCase):
         buff_interactions = isambard.buff.find_inter_ampal(cc, 1000)
         self.assertEqual(len(buff_interactions), ia_scaling(n, hels))
 
+    def test_interaction_energy(self):
+        """Tests that the interaction energy of a reference structure."""
+        buff_score = self.pdb.get_interaction_energy(ff=self.ff)
+        self.assertAlmostEqual(buff_score.total_energy, -1005.41, places=2)  # Original scoring function
+
+    def test_internal_energy(self):
+        """Tests that the internal energy of a reference structure."""
+        buff_score = self.pdb[0].get_internal_energy(ff=self.ff)
+        self.assertAlmostEqual(buff_score.total_energy, -3722.49, places=2)  # Original scoring function
+
 
 if __name__ == '__main__':
     unittest.main()
