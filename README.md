@@ -5,6 +5,7 @@
 [![CircleCI](https://circleci.com/gh/woolfson-group/isambard.svg?style=shield&circle-token=27387ac82a6d30c7bd6a72ce3214fa57677e9d87)](https://circleci.com/gh/woolfson-group/isambard)
 [![codecov](https://codecov.io/gh/woolfson-group/isambard/branch/master/graph/badge.svg)](https://codecov.io/gh/woolfson-group/isambard)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?maxAge=2592000)](https://gitter.im/woolfson-group/isambard?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
+[![PyPI version](https://badge.fury.io/py/isambard.svg)](https://badge.fury.io/py/isambard)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/woolfson-group/isambard/blob/master/LICENSE.md)
 
 ISAMBARD (Intelligent System for Analysis, Model Building And Rational Design), is a Python-based framework for 
