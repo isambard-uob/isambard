@@ -47,6 +47,12 @@ isambard.settings.configure()
 
 Chat with us on Gitter if you get stuck (link above), or raise an issue!
 
+### Once ISAMBARD is installed...
+
+You might want to take a look at the [https://github.com/woolfson-group/isambard/wiki](wiki), there are a range of tutorials that demonstrate various aspects of ISAMBARD. These are IPython notebooks, so please download them and run through them (modify/hack/break them) on your own machine.
+
+Wanting to delve a bit deeper? Take a look at the [https://readthedocs.org/projects/isambard/badge/?version=latest](docs) to find out more of the features in ISAMBARD, or just take a look through the code base and hack around. Remember, feel free to contact us on Gitter, email or through the issues if you get stuck.
+
 ##Principal Investigator
 * Derek N. Woolfson (d.n.woolfson@bristol.ac.uk)
 
