@@ -29,6 +29,7 @@ class BuffForceField(dict):
     """
     _parameter_struct_dict = None
     _old_hash = None
+    _defined_dist_cutoff = None
 
     def __init__(self, force_field='standard', auto_update_params=False):
 
@@ -47,6 +48,17 @@ class BuffForceField(dict):
 
     @property
     def distance_cutoff(self):
+        if self._defined_dist_cutoff is None:
+            return self._calc_distance_cutoff()
+        else:
+            return self._defined_dist_cutoff
+
+    @distance_cutoff.setter
+    def distance_cutoff(self, cutoff):
+        self._defined_dist_cutoff = cutoff
+        return
+
+    def _calc_distance_cutoff(self):
         rad, npnp = self.find_max_rad_npnp()
         return (rad * 2) + npnp
 
