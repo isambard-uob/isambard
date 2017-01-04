@@ -29,7 +29,10 @@ pip install .
 
 ISAMBARD has a few Python package requirements, just install them through pip if it asks for them. We recommend using the [Anaconda Python 3 distribution](https://www.continuum.io/downloads), it contains most of the dependencies. 
 
-**Windows People** - You'll need to download [Visual Studio with the Visual C++ tools](https://www.visualstudio.com/vs/cplusplus/), if you want to use ISAMBARD. This is because we use a package called Cython to make the code run fast, and it needs a C compiler. *You can also use MinGW, but it's more complicated to [set up with Cython](http://cython.readthedocs.io/en/latest/src/tutorial/appendix.html).*
+**Windows Users** - You'll need to download a C compiler, if you want to use ISAMBARD. This is because we use a package called Cython to make the code run fast. 
+The exact version of Microsoft Visual C++ compiler depends on the python version that you are using. Here are the [installation instructions](https://wiki.python.org/moin/WindowsCompilers).  
+
+*You can also use MinGW, but it's not currently supported. [Instructions here](http://cython.readthedocs.io/en/latest/src/tutorial/appendix.html).*
 
 ### External Programs
 
