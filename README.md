@@ -56,6 +56,11 @@ You might want to take a look at the [wiki](https://github.com/woolfson-group/is
 
 Wanting to delve a bit deeper? Take a look at the [docs](http://isambard.readthedocs.io/en/latest/) to find out more of the features in ISAMBARD, or just take a look through the code base and hack around. Remember, feel free to contact us on Gitter, email or through the issues if you get stuck.
 
+### Unit tests 
+To ensure that the package is correctly installed unit tests can be run by:
+
+`python -m unittest discover unit_tests/`
+
 ##Principal Investigator
 * Derek N. Woolfson
   * Email: d.n.woolfson@bristol.ac.uk
