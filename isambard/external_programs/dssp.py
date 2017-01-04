@@ -11,7 +11,7 @@ def check_dssp_avail():
     is_dssp_available = False
     if os.path.isfile(global_settings['dssp']['path']):
         try:
-            subprocess.check_output([global_settings['dssp']['path'],'--version'], stderr=subprocess.DEVNULL)
+            subprocess.check_output([global_settings['dssp']['path'], '--version'], stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
             is_dssp_available = True
     else:
