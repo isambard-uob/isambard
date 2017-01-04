@@ -3,7 +3,6 @@ numpy
 requests
 SQLAlchemy
 networkx
-ipywidgets
 deap
 matplotlib
 hypothesis
