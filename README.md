@@ -29,7 +29,10 @@ pip install .
 
 ISAMBARD has a few Python package requirements, just install them through pip if it asks for them. We recommend using the [Anaconda Python 3 distribution](https://www.continuum.io/downloads), it contains most of the dependencies. 
 
-**Windows People** - You'll need to download [Visual Studio with the Visual C++ tools](https://www.visualstudio.com/vs/cplusplus/), if you want to use ISAMBARD. This is because we use a package called Cython to make the code run fast, and it needs a C compiler. *You can also use MinGW, but it's more complicated to [set up with Cython](http://cython.readthedocs.io/en/latest/src/tutorial/appendix.html).*
+**Windows Users** - You'll need to download a C compiler, if you want to use ISAMBARD. This is because we use a package called Cython to make the code run fast. 
+The exact version of Microsoft Visual C++ compiler depends on the python version that you are using. Here are the [installation instructions](https://wiki.python.org/moin/WindowsCompilers).  
+
+*You can also use MinGW, but it's not currently supported. [Instructions here](http://cython.readthedocs.io/en/latest/src/tutorial/appendix.html).*
 
 ### External Programs
 
@@ -49,9 +52,14 @@ Chat with us on Gitter if you get stuck (link above), or raise an issue!
 
 ### Once ISAMBARD is installed...
 
-You might want to take a look at the [https://github.com/woolfson-group/isambard/wiki](wiki), there are a range of tutorials that demonstrate various aspects of ISAMBARD. These are IPython notebooks, so please download them and run through them (modify/hack/break them) on your own machine.
+You might want to take a look at the [wiki](https://github.com/woolfson-group/isambard/wiki), there are a range of tutorials that demonstrate various aspects of ISAMBARD. These are IPython notebooks, so please download them and run through them (modify/hack/break them) on your own machine.
 
-Wanting to delve a bit deeper? Take a look at the [https://readthedocs.org/projects/isambard/badge/?version=latest](docs) to find out more of the features in ISAMBARD, or just take a look through the code base and hack around. Remember, feel free to contact us on Gitter, email or through the issues if you get stuck.
+Wanting to delve a bit deeper? Take a look at the [docs](http://isambard.readthedocs.io/en/latest/) to find out more of the features in ISAMBARD, or just take a look through the code base and hack around. Remember, feel free to contact us on Gitter, email or through the issues if you get stuck.
+
+### Unit tests 
+To ensure that the package is correctly installed unit tests can be run by:
+
+`python -m unittest discover unit_tests/`
 
 ##Principal Investigator
 * Derek N. Woolfson
