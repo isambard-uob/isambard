@@ -12,8 +12,9 @@ def check_dssp_avail():
     if os.path.isfile(global_settings['dssp']['path']):
         try:
             subprocess.check_output([global_settings['dssp']['path'], '--version'], stderr=subprocess.DEVNULL)
-        except subprocess.CalledProcessError:
             is_dssp_available = True
+        except:
+            pass
     else:
         warning_string = ('\n\nDSSP not found and so cannot be used. Check that the path to the DSSP binary'
                           ' in `settings.json` is correct.\n'
