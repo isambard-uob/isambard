@@ -13,6 +13,7 @@ dependencies:
     - chmod +x /home/ubuntu/isambard_dev/dependencies_for_isambard/reduce/reduce.3.23.130521.linuxi386
     # DSSP
     - chmod +x /home/ubuntu/isambard_dev/dependencies_for_isambard/dssp/dssp-2.0.4
+    - pip install --upgrade pip
   override:
     - pip install -r requirements.txt
 test:
