@@ -12,3 +12,4 @@ parmed
 recommonmark
 numpydoc
 pypandoc
+coverage
