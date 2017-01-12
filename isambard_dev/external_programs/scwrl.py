@@ -17,7 +17,7 @@ def check_scwrl_avail():
             is_scwrl_available = True
     else:
         warning_string = ('\n\nScwrl4 not found and so cannot be used. Check that the path to the Scwrl4 binary'
-                          ' in `settings.json` is correct.\n'
+                          ' in `.isambard_settings` is correct.\n'
                           'Suggestion:\n'
                           'You might want to try running isambard.settings.configure() after importing ISAMBARD in a\n'
                           'Python interpreter or running `configure.py` in the module folder.')
