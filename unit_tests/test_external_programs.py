@@ -14,6 +14,7 @@ cannonical_labels = 'ACDEFGHIKLMNPQRSTVWY'
 non_cannonical_labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 
+@unittest.skipIf(not isambard.settings.global_settings['scwrl']['available'], "External program not detected.")
 class TestScwrl4(unittest.TestCase):
 
     def test_check_scwrl_avail(self):
@@ -97,6 +98,7 @@ class TestScwrl4(unittest.TestCase):
         self.assertEqual(cc_tet.sequences, cc_tet.basis_set_sequences)
 
 
+@unittest.skipIf(not isambard.settings.global_settings['scwrl']['available'], "External program not detected.")
 class TestDSSP(unittest.TestCase):
 
     def check_dssp_tag(self, test_file_path):
