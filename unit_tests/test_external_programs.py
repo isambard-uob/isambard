@@ -14,14 +14,14 @@ cannonical_labels = 'ACDEFGHIKLMNPQRSTVWY'
 non_cannonical_labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 
-@unittest.skipIf(not isambard.settings.global_settings['scwrl']['available'], "External program not detected.")
+@unittest.skipUnless('scwrl' in isambard.settings.global_settings, "External program not detected.")
 class TestScwrl4(unittest.TestCase):
 
-    def test_check_scwrl_avail(self):
+    def test_test_scwrl(self):
         """Test if ISAMBARD can detect Scwrl, check its availability and behave accordingly."""
         old_path = isambard.settings.global_settings['scwrl']['path']
         try:
-            avail = isambard.external_programs.scwrl.check_scwrl_avail()
+            avail = isambard.external_programs.scwrl.test_scwrl()
             self.assertTrue(avail)
 
             helix = isambard.specifications.Helix(30)
@@ -30,7 +30,7 @@ class TestScwrl4(unittest.TestCase):
             self.assertEqual(type(scwrl_out[1]), float)
 
             isambard.settings.global_settings['scwrl']['path'] = ''
-            avail = isambard.external_programs.scwrl.check_scwrl_avail()
+            avail = isambard.external_programs.scwrl.test_scwrl()
             isambard.settings.global_settings['scwrl']['available'] = avail
             self.assertFalse(avail)
 
@@ -39,7 +39,7 @@ class TestScwrl4(unittest.TestCase):
         finally:
             isambard.settings.global_settings['scwrl']['path'] = old_path
             isambard.settings.global_settings[
-                'scwrl']['available'] = isambard.external_programs.scwrl.check_scwrl_avail()
+                'scwrl']['available'] = isambard.external_programs.scwrl.test_scwrl()
 
     @given(text(cannonical_labels, min_size=5, max_size=5))
     @settings(max_examples=20)
@@ -98,7 +98,7 @@ class TestScwrl4(unittest.TestCase):
         self.assertEqual(cc_tet.sequences, cc_tet.basis_set_sequences)
 
 
-@unittest.skipIf(not isambard.settings.global_settings['scwrl']['available'], "External program not detected.")
+@unittest.skipUnless('dssp' in isambard.settings.global_settings, "External program not detected.")
 class TestDSSP(unittest.TestCase):
 
     def check_dssp_tag(self, test_file_path):
@@ -110,11 +110,11 @@ class TestDSSP(unittest.TestCase):
         print(ss_log)
         self.assertTrue(all(ss_log))
 
-    def test_check_dssp_avail(self):
+    def test_test_dssp(self):
         """Test if ISAMBARD can detect DSSP, check its availability and behave accordingly."""
         old_path = isambard.settings.global_settings['dssp']['path']
         try:
-            avail = isambard.external_programs.dssp.check_dssp_avail()
+            avail = isambard.external_programs.dssp.test_dssp()
             self.assertTrue(avail)
             helix = isambard.specifications.Helix(30)
 
@@ -122,7 +122,7 @@ class TestDSSP(unittest.TestCase):
             self.assertEqual(type(dssp_out_ampal), str)
 
             isambard.settings.global_settings['dssp']['path'] = ''
-            avail = isambard.external_programs.dssp.check_dssp_avail()
+            avail = isambard.external_programs.dssp.test_dssp()
             isambard.settings.global_settings['dssp']['available'] = avail
             self.assertFalse(avail)
 
@@ -130,7 +130,7 @@ class TestDSSP(unittest.TestCase):
             self.assertIsNone(dssp_out_ampal)
         finally:
             isambard.settings.global_settings['dssp']['path'] = old_path
-            isambard.settings.global_settings['dssp']['available'] = isambard.external_programs.dssp.check_dssp_avail()
+            isambard.settings.global_settings['dssp']['available'] = isambard.external_programs.dssp.test_dssp()
 
     @given(integers(min_value=6, max_value=100))
     @settings(max_examples=20)
