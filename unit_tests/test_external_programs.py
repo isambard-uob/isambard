@@ -110,11 +110,11 @@ class TestDSSP(unittest.TestCase):
         print(ss_log)
         self.assertTrue(all(ss_log))
 
-    def test_check_dssp_avail(self):
+    def test_test_dssp(self):
         """Test if ISAMBARD can detect DSSP, check its availability and behave accordingly."""
         old_path = isambard.settings.global_settings['dssp']['path']
         try:
-            avail = isambard.external_programs.dssp.check_dssp_avail()
+            avail = isambard.external_programs.dssp.test_dssp()
             self.assertTrue(avail)
             helix = isambard.specifications.Helix(30)
 
@@ -122,7 +122,7 @@ class TestDSSP(unittest.TestCase):
             self.assertEqual(type(dssp_out_ampal), str)
 
             isambard.settings.global_settings['dssp']['path'] = ''
-            avail = isambard.external_programs.dssp.check_dssp_avail()
+            avail = isambard.external_programs.dssp.test_dssp()
             isambard.settings.global_settings['dssp']['available'] = avail
             self.assertFalse(avail)
 
@@ -130,7 +130,7 @@ class TestDSSP(unittest.TestCase):
             self.assertIsNone(dssp_out_ampal)
         finally:
             isambard.settings.global_settings['dssp']['path'] = old_path
-            isambard.settings.global_settings['dssp']['available'] = isambard.external_programs.dssp.check_dssp_avail()
+            isambard.settings.global_settings['dssp']['available'] = isambard.external_programs.dssp.test_dssp()
 
     @given(integers(min_value=6, max_value=100))
     @settings(max_examples=20)
