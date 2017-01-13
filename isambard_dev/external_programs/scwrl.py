@@ -26,13 +26,6 @@ def run_scwrl(pdb, sequence, path=True):
         PDB string or a path to a PDB file.
     sequence : str
         Amino acid sequence for SCWRL to pack in single-letter code.
-    rrm : bool
-        If false Scwrl uses the Flexible Rotamer Model introduced in Scwrl4.
-        If set to true Scwrl uses the Rigid Rotamer model (the -v flag)
-        which is more similar to Scwrl3, this is around 5% less accurate but
-        ~500% faster. See "G. G. Krivov, M. V. Shapovalov, and
-        R. L. Dunbrack, Jr. Improved prediction of protein side-chain
-        conformations with SCWRL4. Proteins (2009)" for more details.
     path : bool
         True if pdb is a path.
 
