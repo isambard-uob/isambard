@@ -1,3 +1,3 @@
-from ampal.specifications.assembly_specs.solenoid import HelixPair, Solenoid
-from ampal.specifications.assembly_specs.coiledcoil import CoiledCoil
-from ampal.specifications.assembly_specs.nucleic_acid_duplex import DNADuplex
+from .solenoid import HelixPair, Solenoid
+from .coiledcoil import CoiledCoil
+from .nucleic_acid_duplex import DNADuplex
