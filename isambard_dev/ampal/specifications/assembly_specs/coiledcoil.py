@@ -4,17 +4,17 @@ from ampal.specifications.polymer_specs.helix import HelicalHelix, _helix_parame
 from ampal.protein import Assembly
 
 basis_set_parameters = {
-    2: {'name': 'CC-Di', 'pitch': 225.8, 'radius': 5.07, 'interface_angle': 26.42,
+    2: {'name': 'CC-Di', 'pitch': 225.8, 'radius': 5.07, 'interface_angle': 283.56,
         'sequence': 'EIAALKQEIAALKKENAALKWEIAALKQ'},
-    3: {'name': 'CC-Tri', 'pitch': 194.0, 'radius': 6.34, 'interface_angle': 19.98,
+    3: {'name': 'CC-Tri', 'pitch': 194.0, 'radius': 6.34, 'interface_angle': 277.12,
         'sequence': 'EIAAIKQEIAAIKKEIAAIKWEIAAIKQ'},
-    4: {'name': 'CC-Tet', 'pitch': 213.2, 'radius': 6.81, 'interface_angle': 22.06,
+    4: {'name': 'CC-Tet', 'pitch': 213.2, 'radius': 6.81, 'interface_angle': 279.20,
         'sequence': 'ELAAIKQELAAIKKELAAIKWELAAIKQ'},
-    5: {'name': 'CC-Pent', 'pitch': 182.8, 'radius': 8.62, 'interface_angle': 14.44,
+    5: {'name': 'CC-Pent', 'pitch': 182.8, 'radius': 8.62, 'interface_angle': 271.58,
         'sequence': 'KIEQILQKIEKILQKIEWILQKIEQILQ'},
-    6: {'name': 'CC-Hex', 'pitch': 228.4, 'radius': 9.13, 'interface_angle': 16.14,
+    6: {'name': 'CC-Hex', 'pitch': 228.4, 'radius': 9.13, 'interface_angle': 273.28,
         'sequence': 'ELKAIAQELKAIAKELKAIAWELKAIAQ'},
-    7: {'name': 'CC-Hept', 'pitch': 328.6, 'radius': 9.80, 'interface_angle': 15.10,
+    7: {'name': 'CC-Hept', 'pitch': 328.6, 'radius': 9.80, 'interface_angle': 272.24,
         'sequence': 'EIAQALKEIAKALKEIAWALKEIAQALK'},
 }
 
