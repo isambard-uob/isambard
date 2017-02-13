@@ -154,7 +154,8 @@ class Assembly(BaseAmpal):
         if 'pseudo_group' in mol_types:
             repr_strs.append('{} {}'.format(
                 mol_types['pseudo_group'], 'Pseudo Group' if len(self._molecules) == 1 else 'Pseudo Groups'))
-        return '<Assembly ({}) containing {}>'.format(self.id, ', '.join(repr_strs))
+        id_str = '' if not self.id else '({}) '.format(self.id)
+        return '<Assembly {}containing {}>'.format(id_str, ', '.join(repr_strs))
 
     def append(self, item):
         if isinstance(item, Polymer):
