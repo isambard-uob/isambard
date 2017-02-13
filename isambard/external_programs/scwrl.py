@@ -2,30 +2,19 @@ import os
 import subprocess
 import tempfile
 import re
-import warnings
 
 from settings import global_settings
-from tools.isambard_warnings import DependencyNotFoundWarning
+from tools.isambard_warnings import check_availability
 
 
-def check_scwrl_avail():
+def test_scwrl():
     is_scwrl_available = False
     if os.path.isfile(global_settings['scwrl']['path']):
         try:
             subprocess.check_output([global_settings['scwrl']['path']], stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
             is_scwrl_available = True
-    else:
-        warning_string = ('\n\nScwrl4 not found and so cannot be used. Check that the path to the Scwrl4 binary'
-                          ' in `settings.json` is correct.\n'
-                          'Suggestion:\n'
-                          'You might want to try running isambard.settings.configure() after importing ISAMBARD in a\n'
-                          'Python interpreter or running `configure.py` in the module folder.')
-        warnings.warn(warning_string, DependencyNotFoundWarning)
     return is_scwrl_available
-
-
-global_settings['scwrl']['available'] = check_scwrl_avail()
 
 
 def run_scwrl(pdb, sequence, path=True):
@@ -37,13 +26,6 @@ def run_scwrl(pdb, sequence, path=True):
         PDB string or a path to a PDB file.
     sequence : str
         Amino acid sequence for SCWRL to pack in single-letter code.
-    rrm : bool
-        If false Scwrl uses the Flexible Rotamer Model introduced in Scwrl4.
-        If set to true Scwrl uses the Rigid Rotamer model (the -v flag)
-        which is more similar to Scwrl3, this is around 5% less accurate but
-        ~500% faster. See "G. G. Krivov, M. V. Shapovalov, and
-        R. L. Dunbrack, Jr. Improved prediction of protein side-chain
-        conformations with SCWRL4. Proteins (2009)" for more details.
     path : bool
         True if pdb is a path.
 
@@ -65,7 +47,8 @@ def run_scwrl(pdb, sequence, path=True):
     pdb = pdb.encode()
     sequence = sequence.encode()
     try:
-        with tempfile.NamedTemporaryFile(delete=False) as scwrl_tmp, tempfile.NamedTemporaryFile(delete=False) as scwrl_seq,\
+        with tempfile.NamedTemporaryFile(delete=False) as scwrl_tmp,\
+                tempfile.NamedTemporaryFile(delete=False) as scwrl_seq,\
                 tempfile.NamedTemporaryFile(delete=False) as scwrl_out:
             scwrl_tmp.write(pdb)
             scwrl_tmp.seek(0)  # Resets the buffer back to the first line
@@ -128,16 +111,9 @@ def parse_scwrl_out(scwrl_std_out, scwrl_pdb):
     return fixed_scwrl_str, float(score)
 
 
+@check_availability('scwrl', test_scwrl, global_settings)
 def pack_sidechains(pdb, sequence, path=False):
     """Packs sidechains onto a given PDB file or string."""
-    if global_settings['scwrl']['available'] is None:
-        global_settings['scwrl']['available'] = check_scwrl_avail()
-    if not global_settings['scwrl']['available']:
-        warning_string = ('Scwrl not found, side chains have not been packed.\n'
-                          'Check that the path to the Scwrl binary in `settings.json` is correct.\n'
-                          'You might want to try rerunning `configure.py`')
-        warnings.warn(warning_string, DependencyNotFoundWarning)
-        return
     scwrl_std_out, scwrl_pdb = run_scwrl(pdb, sequence, path=path)
     return parse_scwrl_out(scwrl_std_out, scwrl_pdb)
 

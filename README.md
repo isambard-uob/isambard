@@ -1,6 +1,6 @@
 #ISAMBARD
 ###Intelligent System for Analysis, Model Building And Rational Design.
-#### Version 2016.4.1 (Nov 29, 2016), Woolfson Group, University of Bristol.
+#### Version 2017.0.1 (Feb 13, 2017), Woolfson Group, University of Bristol.
 [![Documentation Status](https://readthedocs.org/projects/isambard/badge/?version=latest)](http://isambard.readthedocs.io/en/latest/?badge=latest)
 [![CircleCI](https://circleci.com/gh/woolfson-group/isambard.svg?style=shield&circle-token=27387ac82a6d30c7bd6a72ce3214fa57677e9d87)](https://circleci.com/gh/woolfson-group/isambard)
 [![codecov](https://codecov.io/gh/woolfson-group/isambard/branch/master/graph/badge.svg)](https://codecov.io/gh/woolfson-group/isambard)
@@ -61,6 +61,12 @@ Wanting to delve a bit deeper? Take a look at the [docs](http://isambard.readthe
 To ensure that the package is correctly installed unit tests can be run by:
 
 `python -m unittest discover unit_tests/`
+
+## Releases
+
+### 2017.0.1
+
+The release contains a range of tweaks and bug fixes, including a major bug in the model building of anti-parallel helices in coiled coils.
 
 ##Principal Investigator
 * Derek N. Woolfson

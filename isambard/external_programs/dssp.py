@@ -1,13 +1,12 @@
 import os
 import subprocess
 import tempfile
-import warnings
 
 from settings import global_settings
-from tools.isambard_warnings import DependencyNotFoundWarning
+from tools.isambard_warnings import check_availability
 
 
-def check_dssp_avail():
+def test_dssp():
     is_dssp_available = False
     if os.path.isfile(global_settings['dssp']['path']):
         try:
@@ -15,21 +14,12 @@ def check_dssp_avail():
             is_dssp_available = True
         except:
             pass
-    else:
-        warning_string = ('\n\nDSSP not found and so cannot be used. Check that the path to the DSSP binary'
-                          ' in `settings.json` is correct.\n'
-                          'Suggestion:\n'
-                          'You might want to try running isambard.settings.configure() after importing ISAMBARD in a\n'
-                          'Python interpreter or running `configure.py` in the module folder.')
-        warnings.warn(warning_string, DependencyNotFoundWarning)
     return is_dssp_available
-
-
-global_settings['dssp']['available'] = check_dssp_avail()
 
 
 # TODO: make the format closer to SCWRL and BUDE
 # TODO: Update to APM format to remove split_pdb_lines
+@check_availability('dssp', test_dssp, global_settings)
 def run_dssp(pdb, path=True, outfile=None):
     """Uses DSSP to find helices and extracts helices from a pdb file or string.
 
@@ -47,14 +37,6 @@ def run_dssp(pdb, path=True, outfile=None):
     dssp_out : str
         Std out from DSSP.
     """
-    if global_settings['dssp']['available'] is None:
-        global_settings['dssp']['available'] = check_dssp_avail()
-    if not global_settings['dssp']['available']:
-        warning_string = ('DSSP not found, secondary structure has not been tagged.\n'
-                          'Check that the path to the DSSP binary in `settings.json` is correct.\n'
-                          'You might want to try rerunning `configure.py`')
-        warnings.warn(warning_string, DependencyNotFoundWarning)
-        return
     if not path:
         # if statement added to be sure that encode is only called on string type.
         if type(pdb) == str:

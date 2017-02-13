@@ -256,6 +256,8 @@ class HelicalHelix(Polypeptide):
         else:
             # precession angle in radians
             precession = self.curve.t_from_arc_length(minor_repeat * self.minor_rise_per_residue)
+            if self.orientation == -1:
+                precession = -precession
             if self.major_handedness != self.minor_handedness:
                 precession = -precession
             minor_rpt = ((minor_repeat * numpy.pi * 2) / ((2 * numpy.pi) + precession))
@@ -275,7 +277,15 @@ class HelicalHelix(Polypeptide):
         if self.minor_handedness == 'l':
             residues_per_turn *= -1
         # initial phi_c_alpha value calculated using the first Helix in helices.
-        initial_angle = dihedral(numpy.array([0,0,0]), primitive_coords[0], primitive_coords[1], helices[0][0]['CA'])
+        if self.orientation != -1:
+            initial_angle = dihedral(numpy.array([0, 0, 0]), primitive_coords[0], primitive_coords[1],
+                                     helices[0][0]['CA'])
+        else:
+            initial_angle = dihedral(
+                numpy.array([0, 0, primitive_coords[0][2]]),
+                primitive_coords[0],
+                numpy.array([primitive_coords[0][0], primitive_coords[0][1], primitive_coords[1][2]]),
+                helices[0][0]['CA'])
         # angle required to achieve desired phi_c_alpha value of self.phi_c_alpha.
         addition_angle = self.phi_c_alpha - initial_angle
         for i, h in enumerate(helices):

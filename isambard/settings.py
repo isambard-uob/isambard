@@ -40,8 +40,6 @@ def load_global_settings():
                     global_settings[k].update(v)
                 else:
                     global_settings[k] = v
-    global_settings['scwrl']['available'] = None
-    global_settings['dssp']['available'] = None
 
 if not os.path.isfile(settings_path):
     print("No configuration file ('.isambard_settings') found in '{}'.\nRunning configure.py...\n".format(home_dir))
