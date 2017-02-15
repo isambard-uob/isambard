@@ -809,12 +809,12 @@ class Polypeptide(Polymer):
             self._monomers[-1]['O']._vector += diff
 
         elif cap == 'amide':
-            acetamide = Ligand(atoms=None, mol_code='UNK', is_hetero=True, ampal_parent=Polypeptide)
+            acetamide = Ligand(atoms=None, mol_code='UNK', is_hetero=True)
             atoms = OrderedDict()
-            atoms['CA'] = Atom([-0.4040, 0.0000, 1.4030], 'C', res_label='CA', ampal_parent=Ligand)
-            atoms['C'] = Atom([0.0580, 0.0000, -0.0300], 'C', res_label='C', ampal_parent=Ligand)
-            atoms['O'] = Atom([1.2440, 0.0000, -0.2840], 'O', res_label='O', ampal_parent=Ligand)
-            atoms['NH2'] = Atom([-0.8450, 0.0000, -1.0300], 'N', res_label='NH2', ampal_parent=Ligand)
+            atoms['CA'] = Atom([-0.4040, 0.0000, 1.4030], 'C', res_label='CA')
+            atoms['C'] = Atom([0.0580, 0.0000, -0.0300], 'C', res_label='C')
+            atoms['O'] = Atom([1.2440, 0.0000, -0.2840], 'O', res_label='O')
+            atoms['NH2'] = Atom([-0.8450, 0.0000, -1.0300], 'N', res_label='NH2')
             acetamide.atoms = atoms
             s1, e1, s2, e2 = [x._vector for x in [acetamide['CA'], acetamide['C'], self._monomers[-1]['CA'],
                                                   self._monomers[-1]['C']]]
@@ -826,14 +826,18 @@ class Polypeptide(Polymer):
             ref_angle = dihedral(self._monomers[-1]['N'], self._monomers[-1]['CA'], self._monomers[-1]['C'],
                                  self._monomers[-1]['O'])
             if cap_dihedral is not False:
-                acetamide.rotate(ref_angle-start_angle+cap_dihedral, axis=acetamide['C']._vector-acetamide['CA']._vector,
-                           point=acetamide['C']._vector)
+                acetamide.rotate(ref_angle-start_angle+cap_dihedral,
+                                 axis=acetamide['C']._vector-acetamide['CA']._vector, point=acetamide['C']._vector)
             else:
                 acetamide.rotate(ref_angle-start_angle, axis=acetamide['C']._vector-acetamide['CA']._vector,
                            point=acetamide['C']._vector)
             if self.ligands is None:
-                self.ligands = LigandGroup()
-            self.ligands.append(Ligand(atoms=OrderedDict([('NH2', acetamide['NH2'])]), mol_code='NH2'))
+                self.ligands = LigandGroup(ampal_parent=self)
+            amide = Ligand(mol_code='NH2', ampal_parent=self.ligands)
+            amide_atoms = OrderedDict([('NH2', acetamide['NH2'])])
+            amide_atoms['NH2'].ampal_parent = amide
+            amide.atoms = amide_atoms
+            self.ligands.append(amide)
         else:
             pass
         self.tags['assigned_ff'] = False
@@ -847,13 +851,13 @@ class Polypeptide(Polymer):
         Currently only acetyl cap is supported, but this structure should work for other caps.
         """
         if n_cap == 'acetyl':
-            methylacetamide = Ligand(atoms=None,mol_code='UNK', is_hetero=True, ampal_parent=Polypeptide)
+            methylacetamide = Ligand(atoms=None, mol_code='UNK', is_hetero=True)
             atoms = OrderedDict()
-            atoms['C'] = Atom([0.9500, -0.2290, 0.5090], 'C', res_label='C', ampal_parent=Ligand)
-            atoms['CA'] = Atom([0.7450, -0.9430, 1.8040], 'C', res_label='CA', ampal_parent=Ligand)
-            atoms['O'] = Atom([0.1660, -2.0230, 1.8130], 'O', res_label='O', ampal_parent=Ligand)
-            atoms['N'] = Atom([1.2540, -0.2750, 2.9010], 'N', res_label='N', ampal_parent=Ligand)
-            atoms['CME'] = Atom([1.1630, -0.7870, 4.2500],'C', res_label='CME', ampal_parent=Ligand)
+            atoms['C'] = Atom([0.9500, -0.2290, 0.5090], 'C', res_label='C')
+            atoms['CA'] = Atom([0.7450, -0.9430, 1.8040], 'C', res_label='CA')
+            atoms['O'] = Atom([0.1660, -2.0230, 1.8130], 'O', res_label='O')
+            atoms['N'] = Atom([1.2540, -0.2750, 2.9010], 'N', res_label='N')
+            atoms['CME'] = Atom([1.1630, -0.7870, 4.2500], 'C', res_label='CME')
             # these coordinates seem ok, but could review and use a different fragment if necessary
             methylacetamide.atoms = atoms
             s1, e1, s2, e2 = [x._vector for x in [methylacetamide['N'], methylacetamide['CME'], self._monomers[0]['N'],
@@ -871,15 +875,19 @@ class Polypeptide(Polymer):
                                            point=methylacetamide['N']._vector)
             else:
                 methylacetamide.rotate(ref_angle-start_angle,
-                                           axis=methylacetamide['N']._vector-self._monomers[0]['CA']._vector,
-                                           point=methylacetamide['N']._vector)
-            acetamide = OrderedDict()
-            acetamide['C'] = atoms['C']
-            acetamide['CA'] = atoms['CA']
-            acetamide['O'] = atoms['O']
+                                       axis=methylacetamide['N']._vector-self._monomers[0]['CA']._vector,
+                                       point=methylacetamide['N']._vector)
             if self.ligands is None:
-                self.ligands = LigandGroup()
-            self.ligands.append(Ligand(atoms=acetamide, mol_code='ACM'))
+                self.ligands = LigandGroup(ampal_parent=self)
+            acetamide = Ligand(mol_code='ACM', ampal_parent=self.ligands)
+            acetamide_atoms = OrderedDict()
+            acetamide_atoms['C'] = atoms['C']
+            acetamide_atoms['CA'] = atoms['CA']
+            acetamide_atoms['O'] = atoms['O']
+            for atom in acetamide_atoms.values():
+                atom.ampal_parent = acetamide
+            acetamide.atoms = acetamide_atoms
+            self.ligands.append(acetamide)
         else:
             pass  # just in case we want to build different caps in later
         self.tags['assigned_ff'] = False
