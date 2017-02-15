@@ -833,7 +833,7 @@ class Polypeptide(Polymer):
                            point=acetamide['C']._vector)
             if self.ligands is None:
                 self.ligands = LigandGroup()
-            self.ligands.append(Ligand(OrderedDict(NH2 = acetamide['NH2']), mol_code='NH2'))
+            self.ligands.append(Ligand(atoms=OrderedDict([('NH2', acetamide['NH2'])]), mol_code='NH2'))
         else:
             pass
         self.tags['assigned_ff'] = False
@@ -879,7 +879,7 @@ class Polypeptide(Polymer):
             acetamide['O'] = atoms['O']
             if self.ligands is None:
                 self.ligands = LigandGroup()
-            self.ligands.append(Ligand(acetamide, mol_code='ACM'))
+            self.ligands.append(Ligand(atoms=acetamide, mol_code='ACM'))
         else:
             pass  # just in case we want to build different caps in later
         self.tags['assigned_ff'] = False
