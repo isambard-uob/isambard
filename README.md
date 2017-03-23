@@ -1,6 +1,9 @@
-#ISAMBARD
-###Intelligent System for Analysis, Model Building And Rational Design.
+# ISAMBARD
+
+### Intelligent System for Analysis, Model Building And Rational Design.
+
 #### Version 2017.0.1 (Feb 13, 2017), Woolfson Group, University of Bristol.
+
 [![Documentation Status](https://readthedocs.org/projects/isambard/badge/?version=latest)](http://isambard.readthedocs.io/en/latest/?badge=latest)
 [![CircleCI](https://circleci.com/gh/woolfson-group/isambard.svg?style=shield&circle-token=27387ac82a6d30c7bd6a72ce3214fa57677e9d87)](https://circleci.com/gh/woolfson-group/isambard)
 [![codecov](https://codecov.io/gh/woolfson-group/isambard/branch/master/graph/badge.svg)](https://codecov.io/gh/woolfson-group/isambard)
