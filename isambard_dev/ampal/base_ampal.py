@@ -150,6 +150,7 @@ class BaseAmpal(object):
             atoms = self.get_atoms(inc_alt_states=True)
         for atom in atoms:
             w_str = None
+            a_ff_id = None
             if atom.element == 'H':
                 continue
             elif atom.ampal_parent.mol_code in ff:
