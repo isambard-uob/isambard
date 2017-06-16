@@ -12,7 +12,7 @@
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/woolfson-group/isambard/blob/master/LICENSE.md)
 
 ISAMBARD (Intelligent System for Analysis, Model Building And Rational Design), is a Python-based framework for 
-structural analysis and rational design of biomolecules. It is developed and maintained by members of the
+structural analysis and rational design of biomolecules, with a particular focus on parametric modelling of proteins. It is developed and maintained by members of the
 [Woolfson group, University of Bristol](http://www.chm.bris.ac.uk/org/woolfson/index.html).
 
 ## Quick Start
