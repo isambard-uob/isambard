@@ -9,6 +9,8 @@ from ampal.pseudo_atoms import Primitive
 from ampal.analyse_protein import make_primitive_extrapolate_ends, measure_torsion_angles, residues_per_turn, \
     polymer_to_reference_axis_distances, crick_angles, alpha_angles, sequence_molecular_weight, \
     sequence_molar_extinction_280, sequence_isoelectric_point, measure_sidechain_torsion_angles
+from ampal.interactions import generate_covalent_bond_graph, generate_bond_subgraphs_from_break, \
+    find_covalent_bonds
 from external_programs.dssp import extract_all_ss_dssp, run_dssp, extract_solvent_accessibility_dssp
 from external_programs.naccess import run_naccess, extract_residue_accessibility
 from external_programs.scwrl import pack_sidechains
