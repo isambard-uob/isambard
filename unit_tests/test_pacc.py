@@ -2,8 +2,8 @@ import glob
 import os
 import unittest
 
-import isambard_dev as isambard
-import isambard_dev.add_ons.pacc as pacc
+import isambard
+import isambard.add_ons.pacc as pacc
 
 
 class PACCTestCase(unittest.TestCase):

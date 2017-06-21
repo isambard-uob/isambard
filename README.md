@@ -2,7 +2,7 @@
 
 ### Intelligent System for Analysis, Model Building And Rational Design.
 
-#### Version 2017.0.1 (Feb 13, 2017), Woolfson Group, University of Bristol.
+#### Version 2017.0.2 (Jun 21, 2017), Woolfson Group, University of Bristol.
 
 [![Documentation Status](https://readthedocs.org/projects/isambard/badge/?version=latest)](http://isambard.readthedocs.io/en/latest/?badge=latest)
 [![CircleCI](https://circleci.com/gh/woolfson-group/isambard.svg?style=shield&circle-token=27387ac82a6d30c7bd6a72ce3214fa57677e9d87)](https://circleci.com/gh/woolfson-group/isambard)
@@ -14,6 +14,11 @@
 ISAMBARD (Intelligent System for Analysis, Model Building And Rational Design), is a Python-based framework for 
 structural analysis and rational design of biomolecules, with a particular focus on parametric modelling of proteins. It is developed and maintained by members of the
 [Woolfson group, University of Bristol](http://www.chm.bris.ac.uk/org/woolfson/index.html).
+
+## Citing ISAMBARD
+Any publication arising from use of the ISAMBARD software package should cite the following reference:
+
+[Christopher W. Wood, Jack W. Heal, Andrew R. Thomson, Gail J. Bartlett, Amaurys A. Ibarra, R. Leo Brady, Richard B. Sessions, Derek N. Woolfson; ISAMBARD: an open-source computational environment for biomolecular analysis, modelling and design. Bioinformatics 2017 btx352. doi: 10.1093/bioinformatics/btx352](https://doi.org/10.1093/bioinformatics/btx352)
 
 ## Quick Start
 
@@ -66,8 +71,10 @@ To ensure that the package is correctly installed unit tests can be run by:
 
 ## Releases
 
-### 2017.0.1
+### 2017.0.2
+ISAMBARD now contains an add ons module containing code for structural analysis of coiled coils.
 
+### 2017.0.1
 The release contains a range of tweaks and bug fixes, including a major bug in the model building of anti-parallel helices in coiled coils.
 
 ## Principal Investigator

@@ -1,9 +1,9 @@
 import unittest
 import os
 
-import isambard_dev as isambard
-import isambard_dev.add_ons.knobs_into_holes as knobs_into_holes
-import isambard_dev.add_ons.parmed_to_ampal as parmed_to_ampal
+import isambard
+import isambard.add_ons.knobs_into_holes as knobs_into_holes
+import isambard.add_ons.parmed_to_ampal as parmed_to_ampal
 
 
 class KnobGroupTestCase(unittest.TestCase):

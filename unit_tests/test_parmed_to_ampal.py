@@ -3,8 +3,8 @@ import unittest
 
 import parmed
 
-import isambard_dev as isambard
-import isambard_dev.add_ons.parmed_to_ampal as parmed_to_ampal
+import isambard
+import isambard.add_ons.parmed_to_ampal as parmed_to_ampal
 
 
 class ParmedToAmpalTestCase(unittest.TestCase):
