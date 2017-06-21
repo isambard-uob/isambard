@@ -81,9 +81,8 @@ The release contains a range of tweaks and bug fixes, including a major bug in t
 * Derek N. Woolfson
   * Email: d.n.woolfson@bristol.ac.uk
 
-## Developers
-### Core Dev Team
-#### Woolfson Group
+## Developers - Core Dev Team
+### Woolfson Group
 * Gail J. Bartlett 
   * Email: g.bartlett@bristol.ac.uk
 * Jack W. Heal
@@ -97,13 +96,13 @@ The release contains a range of tweaks and bug fixes, including a major bug in t
   * Email: chris.wood@bristol.ac.uk
   * Twitter: @ChrisWellsWood
 
-### Contributors
-#### Woolfson Group
+## Contributors
+### Woolfson Group
 * Caitlin Edgell
 * Kathryn L. Porter Goff
 
-### BUDE Dev Team
-#### Sessions Group
+## BUDE Dev Team
+### Sessions Group
 * Amaurys À. Ibarra
   * Email: amaurys.avilaibarra@bristol.ac.uk
 * Richard B. Sessions
