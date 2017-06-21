@@ -2,7 +2,7 @@
 
 ### Intelligent System for Analysis, Model Building And Rational Design.
 
-#### Version 2017.0.2 (Jun 21, 2017), Woolfson Group, University of Bristol.
+### Version 2017.0.2 (Jun 21, 2017), Woolfson Group, University of Bristol.
 
 [![Documentation Status](https://readthedocs.org/projects/isambard/badge/?version=latest)](http://isambard.readthedocs.io/en/latest/?badge=latest)
 [![CircleCI](https://circleci.com/gh/woolfson-group/isambard.svg?style=shield&circle-token=27387ac82a6d30c7bd6a72ce3214fa57677e9d87)](https://circleci.com/gh/woolfson-group/isambard)
