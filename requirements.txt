@@ -1,5 +1,6 @@
 Cython
 numpy
+scipy
 requests
 SQLAlchemy
 networkx
