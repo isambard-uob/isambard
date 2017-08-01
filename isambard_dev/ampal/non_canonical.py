@@ -8,7 +8,8 @@ import numpy
 from tools.geometry import dihedral, find_transformations
 
 
-REF_PATH = pathlib.Path('reference_ampals', 'non_canonical_amino_acids')
+FILE_PATH = pathlib.Path(__file__).parent
+REF_PATH = FILE_PATH / 'reference_ampals' / 'non_canonical_amino_acids'
 
 
 def convert_pro_to_hyp(pro):
@@ -23,7 +24,7 @@ def convert_pro_to_hyp(pro):
     pro: ampal.Residue
         The proline residue to be mutated to hydroxyproline.
     """
-    with open(REF_PATH + 'hydroxyproline_ref_1bkv_0_6.pickle', 'rb') as inf:
+    with open(REF_PATH / 'hydroxyproline_ref_1bkv_0_6.pickle', 'rb') as inf:
         hyp_ref = pickle.load(inf)
     align_nab(hyp_ref, pro)
     to_remove = ['CB', 'CG', 'CD']
