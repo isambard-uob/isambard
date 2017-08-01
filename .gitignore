@@ -91,6 +91,8 @@ ENV/
 # Temporary Files
 *.db-journal
 
+# Editor Gubbinz
+.vscode/
 
 PyRosetta
 .DS_Store
