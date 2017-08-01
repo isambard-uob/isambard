@@ -32,9 +32,9 @@ def convert_pro_to_hyp(pro):
             to_remove.append(label)
     for label in to_remove:
         del pro.atoms[label]
-    for k, v in hyp_ref.atoms.items():
-        if k not in pro.atoms.keys():
-            pro.atoms[k] = v
+    for key, val in hyp_ref.atoms.items():
+        if key not in pro.atoms.keys():
+            pro.atoms[key] = val
     pro.mol_code = 'HYP'
     pro.mol_letter = 'X'
     pro.is_hetero = True
