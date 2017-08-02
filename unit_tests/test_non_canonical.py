@@ -1,3 +1,5 @@
+"""Tests functionality in ampal/non_cannonical.py"""
+
 import copy
 import unittest
 
