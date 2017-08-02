@@ -40,7 +40,7 @@ def convert_pro_to_hyp(pro):
     >>> col.sequences
     ['GPXGPXGPXGPXGPXGPXGPX', 'GPXGPXGPXGPXGPXGPXGPX', 'GPXGPXGPXGPXGPXGPXGPX']
     """
-    with open(REF_PATH / 'hydroxyproline_ref_1bkv_0_6.pickle', 'rb') as inf:
+    with open(str(REF_PATH / 'hydroxyproline_ref_1bkv_0_6.pickle'), 'rb') as inf:
         hyp_ref = pickle.load(inf)
     align_nab(hyp_ref, pro)
     to_remove = ['CB', 'CG', 'CD']
