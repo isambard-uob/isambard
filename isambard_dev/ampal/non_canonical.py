@@ -34,7 +34,7 @@ def convert_pro_to_hyp(pro):
     >>> col.pack_new_sequences(['GPPGPPGPPGPPGPPGPPGPP']*3)
     >>> to_convert = [
     ...     res for (i, res) in enumerate(col.get_monomers())
-    ...     if not ((i + 1) % 3)]
+    ...     if not (i + 1) % 3]
     >>> for pro in to_convert:
     ...     isambard.ampal.non_canonical.convert_pro_to_hyp(pro)
     >>> col.sequences
