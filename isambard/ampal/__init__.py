@@ -8,3 +8,4 @@ from .pdb_parser import convert_pdb_to_ampal
 from .pseudo_atoms import PseudoGroup, PseudoMonomer, PseudoAtom
 
 import ampal.analyse_protein
+import ampal.non_canonical
