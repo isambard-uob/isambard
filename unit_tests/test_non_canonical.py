@@ -3,7 +3,7 @@
 import copy
 import unittest
 
-import isambard_dev as isambard
+import isambard
 import numpy
 
 
