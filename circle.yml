@@ -21,5 +21,6 @@ test:
     - cd /home/ubuntu/isambard
     - python isambard/configure.py -C
     - nosetests unit_tests/ --with-coverage  --cover-package=isambard
+    - nosetests isambard/ --with-doctest
   post:
     - bash <(curl -s https://codecov.io/bash)
