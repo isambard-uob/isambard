@@ -70,7 +70,8 @@ def write_pdb(residues, chain_id=' ', alt_states=False, strip_states=False):
         poly_id = str(chain_id)
     for monomer in residues:
         if (len(monomer.states) > 1) and alt_states and not strip_states:
-            atom_list = itertools.chain(*[x[1].items() for x in sorted(monomer.states.items())])
+            atom_list = itertools.chain(
+                *[x[1].items() for x in sorted(monomer.states.items())])
         else:
             atom_list = monomer.atoms.items()
         if 'chain_id' in monomer.tags:
@@ -160,7 +161,8 @@ class BaseAmpal(object):
                     a_ff_id = ('WLD', atom.res_label)
                 else:
                     w_str = '{} atom is not parameterised in the selected force field for {} residues,' \
-                            ' this will be ignored.'.format(atom.res_label, atom.ampal_parent.mol_code)
+                            ' this will be ignored.'.format(
+                                atom.res_label, atom.ampal_parent.mol_code)
             elif atom.res_label in ff['WLD']:
                 a_ff_id = ('WLD', atom.res_label)
             elif mol2 and (atom.ampal_parent.mol_code.capitalize() in ff['MOL2']):
@@ -168,10 +170,11 @@ class BaseAmpal(object):
             else:
                 if not mol2:
                     w_str = '{} ({}) atom is not parameterised in the selected residue force field. ' \
-                            'Try activating the heavy atom force field (haff).'.format(atom.element, atom.res_label)
+                            'Try activating the heavy atom force field (haff).'.format(
+                                atom.element, atom.res_label)
                 else:
                     w_str = '{} ({}) atom is not parameterised in the selected force field.'.format(atom.element,
-                                                                                                 atom.res_label)
+                                                                                                    atom.res_label)
             if w_str:
                 warnings.warn(w_str, NotParameterisedWarning)
             atom._ff_id = a_ff_id
@@ -304,7 +307,8 @@ class Polymer(BaseAmpal):
         if isinstance(other, Polymer):
             merged_polymer = self._monomers + other._monomers
         else:
-            raise TypeError('Only Polymer objects may be merged with a Polymer.')
+            raise TypeError(
+                'Only Polymer objects may be merged with a Polymer.')
         return Polymer(monomers=merged_polymer, polymer_id=self.id)
 
     def __len__(self):
@@ -327,14 +331,16 @@ class Polymer(BaseAmpal):
         if isinstance(item, Monomer):
             self._monomers.append(item)
         else:
-            raise TypeError('Only Monomer objects can be appended to an Polymer.')
+            raise TypeError(
+                'Only Monomer objects can be appended to an Polymer.')
         return
 
     def extend(self, polymer):
         if isinstance(polymer, Polymer):
             self._monomers.extend(polymer)
         else:
-            raise TypeError('Only Polymer objects may be merged with a Polymer using unary operator "+".')
+            raise TypeError(
+                'Only Polymer objects may be merged with a Polymer using unary operator "+".')
         return
 
     def get_monomers(self, ligands=True):
@@ -363,7 +369,8 @@ class Polymer(BaseAmpal):
             monomers = self._monomers + self.ligands._monomers
         else:
             monomers = self._monomers
-        atoms = itertools.chain(*(list(m.get_atoms(inc_alt_states=inc_alt_states)) for m in monomers))
+        atoms = itertools.chain(
+            *(list(m.get_atoms(inc_alt_states=inc_alt_states)) for m in monomers))
         return atoms
 
     def relabel_monomers(self, labels=None):
@@ -509,7 +516,8 @@ class Monomer(BaseAmpal):
             return self.atoms.values()
 
     def make_pdb(self):
-        pdb_str = write_pdb([self], ' ' if not self.ampal_parent else self.ampal_parent.id)
+        pdb_str = write_pdb(
+            [self], ' ' if not self.ampal_parent else self.ampal_parent.id)
         return pdb_str
 
     def close_monomers(self, group, cutoff=4.0):
@@ -556,7 +564,8 @@ class Atom(object):
 
     def __repr__(self):
         return "<{} Atom{}. Coordinates: ({:.3f}, {:.3f}, {:.3f})>".format(
-            element_data[self.element.title()]['name'], '' if not self.res_label else ' ({})'.format(self.res_label),
+            element_data[self.element.title(
+            )]['name'], '' if not self.res_label else ' ({})'.format(self.res_label),
             self.x, self.y, self.z)
 
     def __getitem__(self, item):
