@@ -1,3 +1,5 @@
+"""Contains the base and common classes for all AMPAL objects."""
+
 from collections import OrderedDict
 import itertools
 import warnings
@@ -12,12 +14,28 @@ from settings import global_settings
 
 
 def cap(v, l):
+    """Shortens string is above cartain length."""
     s = str(v)
     return s if len(s) <= l else s[-l:]
 
 
 def find_atoms_within_distance(atoms, cutoff_distance, point):
-    """Returns atoms within the distance from the point."""
+    """Returns atoms within the distance from the point.
+
+    Parameters
+    ----------
+    atoms : [ampal.atom]
+        A list of `ampal.atoms`.
+    cutoff_distance : float
+        Maximum distance from point.
+    point : (float, float, float)
+        Reference point, 3D coordinate.
+
+    Returns
+    -------
+    filtered_atoms : [ampal.atoms]
+        `atoms` list filtered by distance.
+    """
     return [x for x in atoms if distance(x, point) <= cutoff_distance]
 
 
@@ -28,12 +46,13 @@ def centre_of_atoms(atoms, mass_weighted=True):
     ----------
     atoms : list
         List of AMPAL atom objects.
-    mass_weighted : bool
+    mass_weighted : bool, optional
         If True returns centre of mass, otherwise just geometric centre of points.
 
     Returns
     -------
-    numpy array
+    centre_of_mass : numpy.array
+        3D coordinate for the centre of mass.
     """
     points = [x._vector for x in atoms]
     if mass_weighted:
@@ -52,9 +71,9 @@ def write_pdb(residues, chain_id=' ', alt_states=False, strip_states=False):
         List of Residue objects.
     chain_id : str
         String of the chain id, defaults to ' '.
-    alt_states : bool
+    alt_states : bool, optional
         If true, include all occupancy states of residues, else outputs primary state only.
-    strip_states : bool
+    strip_states : bool, optional
         If true, remove all state labels from residues. Only use with alt_states false.
 
     Returns
@@ -110,6 +129,16 @@ def write_pdb(residues, chain_id=' ', alt_states=False, strip_states=False):
 
 
 class BaseAmpal(object):
+    """Base class for all AMPAL objects except `ampal.atom`.
+
+    Raises
+    ------
+    NotImplementedError
+        `BaseAmpal` is an abstract base class and is not intended to
+        be instanciated. A `NotImplementedError` is raised if a
+        method is called that is required on a child class but is
+        not implemented in `BaseAmpal`.
+    """
 
     @property
     def pdb(self):
@@ -118,7 +147,18 @@ class BaseAmpal(object):
 
     @property
     def centre_of_mass(self):
-        """ Returns the centre of mass as a numpy.array. (all atoms included in calculation). """
+        """Returns the centre of mass of AMPAL object.
+
+        Notes
+        -----
+        All atoms are included in calculation, call `centre_of_mass`
+        manually if another selection is require. 
+
+        Returns
+        -------
+        centre_of_mass : numpy.array
+            3D coordinate for the centre of mass.
+        """
         elts = set([x.element for x in self.get_atoms()])
         masses_dict = {e: element_data[e]['atomic mass'] for e in elts}
         points = [x._vector for x in self.get_atoms()]
@@ -126,7 +166,7 @@ class BaseAmpal(object):
         return centre_of_mass(points=points, masses=masses)
 
     def is_within(self, cutoff_dist, point):
-        """Returns all atoms in the ampal object that are within the cut-off distance from the input point."""
+        """Returns all atoms in ampal object within `cut-off` distance from the `point`."""
         return find_atoms_within_distance(self.get_atoms(), cutoff_dist, point)
 
     def get_atoms(self):
@@ -142,7 +182,7 @@ class BaseAmpal(object):
         ----------
         ff: BuffForceField
             The force field to be used for scoring.
-        mol2: bool
+        mol2: bool, optional
             If true, mol2 style labels will also be used.
         """
         if hasattr(self, 'ligands'):
@@ -160,9 +200,10 @@ class BaseAmpal(object):
                 elif atom.res_label in ff['WLD']:
                     a_ff_id = ('WLD', atom.res_label)
                 else:
-                    w_str = '{} atom is not parameterised in the selected force field for {} residues,' \
-                            ' this will be ignored.'.format(
-                                atom.res_label, atom.ampal_parent.mol_code)
+                    w_str = ('{} atom is not parameterised in the selected '
+                             'force field for {} residues, this will be '
+                             'ignored.').format(
+                        atom.res_label, atom.ampal_parent.mol_code)
             elif atom.res_label in ff['WLD']:
                 a_ff_id = ('WLD', atom.res_label)
             elif mol2 and (atom.ampal_parent.mol_code.capitalize() in ff['MOL2']):
