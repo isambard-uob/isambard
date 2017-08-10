@@ -112,24 +112,29 @@ class AmpalContainer(object):
 
 
 class Assembly(BaseAmpal):
+    """A container that holds `Polymer` type objects.
+
+    Notes
+    -----
+    Has a simple hierarchy: `Assembly` contains one or more `Polymer`,
+    which in turn contains one or more `Monomer`.
+
+    Parameters
+    ----------
+    molecules : Polymer or [Polymer], optional
+        `Polymer` or list containing `Polymer` objects to be assembled.
+    assembly_id : str, optional
+        An ID that the user can use to identify the `Assembly`. This
+        is used when generating a pdb file using `Assembly().pdb`.
+
+    Raises
+    ------
+    TypeError
+        `Assembly` objects can only be initialised empty, using a `Polymer`
+        or a list of `Polymers`.
+    """
+
     def __init__(self, molecules=None, assembly_id=''):
-        """A container that holds polymer type objects, this is how proteins are represented in ISAMBARD.
-
-        Has a simple hierarchy: Assembly contains one or more Polymer, which in turn contains one or more Monomer.
-
-        Parameters
-        ----------
-        molecules : Polymer or [Polymer]
-            Polymer or list containing Polymer objects to be assembled.
-        assembly_id : str
-            An ID that the user can use to identify the Assembly. This is used when generating a pdb file using
-            Assembly().pdb
-
-        Raises
-        ------
-        TypeError
-            Assembly objects can only be initialised empty, using a Polymer or a list of Polymers.
-        """
         if molecules:
             if isinstance(molecules, Polymer):
                 self._molecules = [molecules]
@@ -137,18 +142,27 @@ class Assembly(BaseAmpal):
                 self._molecules = list(molecules)
             else:
                 raise TypeError(
-                    'Assembly objects can only be initialised empty, using a Polymer or a list of Polymers.')
+                    'Assembly objects can only be initialised empty, using '
+                    'a Polymer or a list of Polymers.')
         else:
             self._molecules = []
         self.id = str(assembly_id)
         self.tags = {}
 
     def __add__(self, other):
+        """Merges together two `Assemblies`.
+
+        Raises
+        ------
+        TypeError
+            Raised if other is any type other than `Assembly`.
+        """
         if isinstance(other, Assembly):
             merged_assembly = self._molecules[:] + other._molecules[:]
         else:
             raise TypeError(
-                'Only Assembly objects may be merged with an Assembly using unary operator "+".')
+                'Only Assembly objects may be merged with an Assembly using '
+                'unary operator "+".')
         return Assembly(molecules=merged_assembly, assembly_id=self.id)
 
     def __len__(self):
@@ -168,14 +182,17 @@ class Assembly(BaseAmpal):
         mol_types = Counter([x.molecule_type for x in self._molecules])
         if 'protein' in mol_types:
             repr_strs.append('{} {}'.format(
-                mol_types['protein'], 'Polypeptide' if len(self._molecules) == 1 else 'Polypeptides'))
+                mol_types['protein'],
+                'Polypeptide' if len(self._molecules) == 1 else 'Polypeptides'))
         if 'nucleic_acid' in mol_types:
             repr_strs.append('{} {}'.format(
-                mol_types['nucleic_acid'], 'Polynucleotide' if len(self._molecules) == 1 else 'Polynucleotides'))
+                mol_types['nucleic_acid'],
+                'Polynucleotide' if len(self._molecules) == 1 else 'Polynucleotides'))
         ligand_count = 0
         if 'ligands' in mol_types:
             repr_strs.append('{} {}'.format(
-                mol_types['ligands'], 'Ligand Group' if len(self._molecules) == 1 else 'Ligand Groups'))
+                mol_types['ligands'],
+                'Ligand Group' if len(self._molecules) == 1 else 'Ligand Groups'))
         for mol in self._molecules:
             if mol.molecule_type == 'ligands':
                 ligand_count += len(mol)
@@ -186,11 +203,19 @@ class Assembly(BaseAmpal):
                 ligand_count, 'Ligand' if ligand_count == 1 else 'Ligands'))
         if 'pseudo_group' in mol_types:
             repr_strs.append('{} {}'.format(
-                mol_types['pseudo_group'], 'Pseudo Group' if len(self._molecules) == 1 else 'Pseudo Groups'))
+                mol_types['pseudo_group'],
+                'Pseudo Group' if len(self._molecules) == 1 else 'Pseudo Groups'))
         id_str = '' if not self.id else '({}) '.format(self.id)
         return '<Assembly {}containing {}>'.format(id_str, ', '.join(repr_strs))
 
     def append(self, item):
+        """Adds a `Polymer` to the `Assembly`.
+
+        Raises
+        ------
+        TypeError
+            Raised if other is any type other than `Polymer`.
+        """
         if isinstance(item, Polymer):
             self._molecules.append(item)
         else:
@@ -199,6 +224,13 @@ class Assembly(BaseAmpal):
         return
 
     def extend(self, assembly):
+        """Extends the `Assembly` with the contents of another `Assembly`.
+
+        Raises
+        ------
+        TypeError
+            Raised if other is any type other than `Assembly`.
+        """
         if isinstance(assembly, Assembly):
             self._molecules.extend(assembly)
         else:
@@ -207,6 +239,15 @@ class Assembly(BaseAmpal):
         return
 
     def get_monomers(self, ligands=True, pseudo_group=False):
+        """Retrieves all the `Monomers` from the `Assembly` object.
+
+        Parameters
+        ----------
+        ligands : bool, optional
+            If `true`, will include ligand `Monomers`.
+        pseudo_group : bool, optional
+            If `True`, will include pseudo atoms.
+        """
         base_filters = dict(ligands=ligands, pseudo_group=pseudo_group)
         restricted_mol_types = [x[0] for x in base_filters.items() if not x[1]]
         in_groups = [x for x in self.filter_mol_types(restricted_mol_types)]
@@ -215,6 +256,13 @@ class Assembly(BaseAmpal):
         return monomers
 
     def get_ligands(self, solvent=True):
+        """Retrieves all ligands from the `Assembly`.
+
+        Parameters
+        ----------
+        solvent : bool, optional
+            If `True`, solvent molecules will be included.
+        """
         if solvent:
             ligand_list = [x for x in self.get_monomers()
                            if isinstance(x, Ligand)]
@@ -224,33 +272,34 @@ class Assembly(BaseAmpal):
         return LigandGroup(monomers=ligand_list)
 
     def get_atoms(self, ligands=True, pseudo_group=False, inc_alt_states=False):
-        """ Flat list of all the Atoms in the Assembly.
+        """ Flat list of all the `Atoms` in the `Assembly`.
 
         Parameters
         ----------
-        ligands : bool
-            Include ligand atoms.
-        pseudo_group : bool
-            Include pseudo_group atoms.
-        inc_alt_states : bool
-            Include alternate side chain conformations.
+        ligands : bool, optional
+            Include ligand `Atoms`.
+        pseudo_group : bool, optional
+            Include pseudo_group `Atoms`.
+        inc_alt_states : bool, optional
+            Include alternate sidechain conformations.
 
         Returns
         -------
         atoms : itertools.chain
-            All the atoms as a iterator.
+            All the `Atoms` as a iterator.
         """
         atoms = itertools.chain(
-            *(list(m.get_atoms(inc_alt_states=inc_alt_states)) for m in self.get_monomers(ligands=ligands,
-                                                                                          pseudo_group=pseudo_group)))
+            *(list(m.get_atoms(inc_alt_states=inc_alt_states))
+                for m in self.get_monomers(ligands=ligands,
+                                           pseudo_group=pseudo_group)))
         return atoms
 
     def is_within(self, cutoff_dist, point, ligands=True):
-        """Returns all atoms in the ampal object that are within the cut-off distance from the input point."""
+        """Returns all atoms in AMPAL object within `cut-off` distance from the `point`."""
         return find_atoms_within_distance(self.get_atoms(ligands=ligands), cutoff_dist, point)
 
     def relabel_all(self):
-        """Relabels all contained Polymers, Monomers and Atoms with default labeling."""
+        """Relabels all Polymers, Monomers and Atoms with default labeling."""
         self.relabel_polymers()
         self.relabel_monomers()
         self.relabel_atoms()
