@@ -578,6 +578,8 @@ class Monomer(BaseAmpal):
         is used to maintain the order items were added to the dictionary.
     monomer_id : str, optional
         String used to identify the residue.
+    ampal_parent : Polymer, optional
+        A reference to the `Polymer` containing this `Monomer`.
     """
     def __init__(self, atoms=None, monomer_id=' ', ampal_parent=None):
         if type(atoms) is dict:
@@ -611,6 +613,7 @@ class Monomer(BaseAmpal):
 
     @property
     def active_state(self):
+        """Defines which state dictionary should be used currently."""
         return self._active_state
 
     @active_state.setter
@@ -623,6 +626,7 @@ class Monomer(BaseAmpal):
 
     @property
     def atoms(self):
+        """Atoms in the currently active state."""
         return self.states[self.active_state]
 
     @atoms.setter
@@ -633,15 +637,29 @@ class Monomer(BaseAmpal):
             self.states[self.active_state] = atom_dict
 
     def get_monomers(self):
+        """Returns the this `Monomer`.
+        
+        Notes
+        -----
+        This function is only present for consistency in the interface.
+        """
         return [self]
 
     def get_atoms(self, inc_alt_states=False):
+        """Returns all atoms in the `Monomer`.
+        
+        Parameters
+        ----------
+        inc_alt_states : bool, optional
+            If `True`, will return `Atoms` for alternate states.
+        """
         if inc_alt_states:
             return itertools.chain(*[x[1].values() for x in sorted(list(self.states.items()))])
         else:
             return self.atoms.values()
 
     def make_pdb(self):
+        """Generates a PDB string for the `Monomer`."""
         pdb_str = write_pdb(
             [self], ' ' if not self.ampal_parent else self.ampal_parent.id)
         return pdb_str
