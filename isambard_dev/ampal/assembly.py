@@ -1,3 +1,5 @@
+"""Defines various containers for AMPAL objects."""
+
 from collections import Counter
 import itertools
 
@@ -7,16 +9,28 @@ from ampal.analyse_protein import sequence_molecular_weight, sequence_molar_exti
     sequence_isoelectric_point
 from buff import find_intra_ampal, find_inter_ampal, score_interactions
 from external_programs.scwrl import pack_sidechains
-from external_programs.naccess import run_naccess,extract_residue_accessibility
+from external_programs.naccess import run_naccess, extract_residue_accessibility
 from settings import global_settings
 
 
 class AmpalContainer(object):
-    """Custom list type class that holds multiple model states, their associated scores and a note string.
+    """Custom list type class that holds multiple model states.
 
-    In this case, a state is defined as a set of coordinates that represents a protein model and an associated score or
-    set of scores.
+    Notes
+    -----
+    In this case, a state is defined as a set of coordinates that
+    represents a protein model and an associated score or set of scores.
+
+    Parameters
+    ----------
+    ampal_objects : [AMPAL], optional
+        A list of AMPAL objects with which to initialise the
+        AMPAL container. This can be an `Assembly`, `Polymer`
+        or `Monomer`.
+    id : str, optional
+        Identifier for the AMPAL container.
     """
+
     def __init__(self, ampal_objects=None, id=None):
         self.id = 'AMPAL Container' if not id else id
         if ampal_objects:
@@ -25,15 +39,23 @@ class AmpalContainer(object):
             self._ampal_objects = []
 
     def __add__(self, other):
+        """Merges two `AmpalContainers`.
+
+        Notes
+        -----
+        Generates new `AmpalContainer`.
+        """
         if isinstance(other, AmpalContainer):
             merged_ac = self._ampal_objects[:] + other._ampal_objects[:]
         else:
             raise TypeError(
-                    'Only AmpalContainer objects may be merged with an AmpalContainer using unary operator "+".')
+                'Only AmpalContainer objects may be merged with an '
+                'AmpalContainer using unary operator "+".')
         return AmpalContainer(ampal_objects=merged_ac)
 
     def __repr__(self):
-        return "<AmpalContainer ({}) containing {} AMPAL Objects>".format(self.id, len(self._ampal_objects))
+        return "<AmpalContainer ({}) containing {} AMPAL Objects>".format(
+            self.id, len(self._ampal_objects))
 
     def __len__(self):
         return len(self._ampal_objects)
@@ -48,20 +70,23 @@ class AmpalContainer(object):
             return AmpalContainer(self._ampal_objects[item])
 
     def append(self, item):
+        """Adds an AMPAL object to the `AmpalContainer`."""
         self._ampal_objects.append(item)
         return
 
     def extend(self, ampal_container):
+        """Extends an `AmpalContainer` with another `AmpalContainer`."""
         if isinstance(ampal_container, AmpalContainer):
             self._ampal_objects.extend(ampal_container)
         else:
-            raise TypeError('Only AmpalContainer objects may be merged with an AmpalContainer.')
+            raise TypeError(
+                'Only AmpalContainer objects may be merged with '
+                'an AmpalContainer.')
         return
 
     @property
     def pdb(self):
-        """Compiles all of the PDB strings for each state into a NMR type structure file showing the minimisation."""
-
+        """Compiles the PDB strings for each state into a single file."""
         header_title = '{:<80}\n'.format('HEADER    {}'.format(self.id))
         data_type = '{:<80}\n'.format('EXPDTA    ISAMBARD Model')
         pdb_strs = []
@@ -76,6 +101,13 @@ class AmpalContainer(object):
         return merged_pdb
 
     def sort_by_tag(self, tag):
+        """Sorts the `AmpalContainer` by a tag on the component objects.
+
+        Parameters
+        ----------
+        tag : str
+            Key of tag used for sorting.
+        """
         return AmpalContainer(sorted(self, key=lambda x: x.tags[tag]))
 
 
@@ -115,7 +147,8 @@ class Assembly(BaseAmpal):
         if isinstance(other, Assembly):
             merged_assembly = self._molecules[:] + other._molecules[:]
         else:
-            raise TypeError('Only Assembly objects may be merged with an Assembly using unary operator "+".')
+            raise TypeError(
+                'Only Assembly objects may be merged with an Assembly using unary operator "+".')
         return Assembly(molecules=merged_assembly, assembly_id=self.id)
 
     def __len__(self):
@@ -161,28 +194,33 @@ class Assembly(BaseAmpal):
         if isinstance(item, Polymer):
             self._molecules.append(item)
         else:
-            raise TypeError('Only Polymer objects can be appended to an Assembly.')
+            raise TypeError(
+                'Only Polymer objects can be appended to an Assembly.')
         return
 
     def extend(self, assembly):
         if isinstance(assembly, Assembly):
             self._molecules.extend(assembly)
         else:
-            raise TypeError('Only Assembly objects may be merged with an Assembly.')
+            raise TypeError(
+                'Only Assembly objects may be merged with an Assembly.')
         return
 
     def get_monomers(self, ligands=True, pseudo_group=False):
         base_filters = dict(ligands=ligands, pseudo_group=pseudo_group)
         restricted_mol_types = [x[0] for x in base_filters.items() if not x[1]]
         in_groups = [x for x in self.filter_mol_types(restricted_mol_types)]
-        monomers = itertools.chain(*(p.get_monomers(ligands=ligands) for p in in_groups))
+        monomers = itertools.chain(
+            *(p.get_monomers(ligands=ligands) for p in in_groups))
         return monomers
 
     def get_ligands(self, solvent=True):
         if solvent:
-            ligand_list = [x for x in self.get_monomers() if isinstance(x, Ligand)]
+            ligand_list = [x for x in self.get_monomers()
+                           if isinstance(x, Ligand)]
         else:
-            ligand_list = [x for x in self.get_monomers() if isinstance(x, Ligand) and not x.is_solvent]
+            ligand_list = [x for x in self.get_monomers() if isinstance(
+                x, Ligand) and not x.is_solvent]
         return LigandGroup(monomers=ligand_list)
 
     def get_atoms(self, ligands=True, pseudo_group=False, inc_alt_states=False):
@@ -274,8 +312,10 @@ class Assembly(BaseAmpal):
         restricted_mol_types = [x[0] for x in base_filters.items() if not x[1]]
         in_groups = [x for x in self.filter_mol_types(restricted_mol_types)]
 
-        pdb_header = 'HEADER {:<80}\n'.format('ISAMBARD Model {}'.format(self.id)) if header else ''
-        pdb_body = ''.join([x.make_pdb(alt_states=alt_states, inc_ligands=ligands) + '{:<80}\n'.format('TER') for x in in_groups])
+        pdb_header = 'HEADER {:<80}\n'.format(
+            'ISAMBARD Model {}'.format(self.id)) if header else ''
+        pdb_body = ''.join([x.make_pdb(
+            alt_states=alt_states, inc_ligands=ligands) + '{:<80}\n'.format('TER') for x in in_groups])
         pdb_footer = '{:<80}\n'.format('END') if footer else ''
         pdb_str = ''.join([pdb_header, pdb_body, pdb_footer])
         return pdb_str
@@ -291,7 +331,8 @@ class Assembly(BaseAmpal):
             Assembly containing only the backbone atoms of the original Assembly. Metadata is not currently preserved
             from the parent object. Sequence data is retained, but only the main chain atoms are retained.
         """
-        bb_molecules = [p.backbone for p in self._molecules if hasattr(p, 'backbone')]
+        bb_molecules = [
+            p.backbone for p in self._molecules if hasattr(p, 'backbone')]
         bb_assembly = Assembly(bb_molecules, assembly_id=self.id)
         return bb_assembly
 
@@ -305,7 +346,8 @@ class Assembly(BaseAmpal):
             Assembly containing only the primitives of the Polymers in the original Assembly. Metadata is not currently
             preserved from the parent object.
         """
-        prim_molecules = [p.primitive for p in self._molecules if hasattr(p, 'primitive')]
+        prim_molecules = [
+            p.primitive for p in self._molecules if hasattr(p, 'primitive')]
         prim_assembly = Assembly(molecules=prim_molecules, assembly_id=self.id)
         return prim_assembly
 
@@ -336,7 +378,8 @@ class Assembly(BaseAmpal):
         """
         strand_molecules = list(itertools.chain(
             *[p.strands._molecules for p in self._molecules if hasattr(p, 'strands')]))
-        strand_assembly = Assembly(molecules=strand_molecules, assembly_id=self.id)
+        strand_assembly = Assembly(
+            molecules=strand_molecules, assembly_id=self.id)
         return strand_assembly
 
     @property
@@ -384,9 +427,11 @@ class Assembly(BaseAmpal):
         max_line_length = 79
         for p in self._molecules:
             if hasattr(p, 'sequence'):
-                fasta_str += '>{0}:{1}|PDBID|CHAIN|SEQUENCE\n'.format(self.id.upper(), p.id)
+                fasta_str += '>{0}:{1}|PDBID|CHAIN|SEQUENCE\n'.format(
+                    self.id.upper(), p.id)
                 seq = p.sequence
-                split_seq = [seq[i: i + max_line_length] for i in range(0, len(seq), max_line_length)]
+                split_seq = [seq[i: i + max_line_length]
+                             for i in range(0, len(seq), max_line_length)]
                 for seq_part in split_seq:
                     fasta_str += '{0}\n'.format(seq_part)
         return fasta_str
@@ -420,7 +465,8 @@ class Assembly(BaseAmpal):
         if assign_ff:
             for molecule in self._molecules:
                 if hasattr(molecule, 'update_ff'):
-                    molecule.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
+                    molecule.update_ff(
+                        ff, mol2=mol2, force_ff_assign=force_ff_assign)
                 else:
                     raise AttributeError(
                         'The following molecule does not have a update_ff method:\n{}\n'
@@ -462,7 +508,8 @@ class Assembly(BaseAmpal):
         if assign_ff:
             for molecule in self._molecules:
                 if hasattr(molecule, 'update_ff'):
-                    molecule.update_ff(ff, mol2=mol2, force_ff_assign=force_ff_assign)
+                    molecule.update_ff(
+                        ff, mol2=mol2, force_ff_assign=force_ff_assign)
                 else:
                     raise AttributeError(
                         'The following molecule does not have a update_ff method:\n{}\n'
@@ -550,7 +597,6 @@ class Assembly(BaseAmpal):
             polymer.tag_dssp_solvent_accessibility(force=force)
         return
 
-
     def tag_torsion_angles(self, force=False):
         """Tags each Monomer of each Polymer in the Assembly with it's omega, phi and psi torsion angle.
 
@@ -608,8 +654,7 @@ class Assembly(BaseAmpal):
     def filter_mol_types(self, mol_types):
         return [x for x in self._molecules if x.molecule_type not in mol_types]
 
-    def tag_residue_solvent_accessibility(self,tag_type=False,tag_total=False,force=False,include_hetatms=False):
-
+    def tag_residue_solvent_accessibility(self, tag_type=False, tag_total=False, force=False, include_hetatms=False):
         """Tags each Monomer in the Assembly with its Relative Residue Solvent Accessibility (RSA) identified by NACCESS.
 
         Parameters
@@ -627,11 +672,13 @@ class Assembly(BaseAmpal):
             MSE, although the accessibility will be set to -99.9 for these residues. Probably best to check if your
             structure has these before using it.
         """
-        tagged = [tag_type in x.tags.keys() for x in self.get_monomers(ligands=False)]
+        tagged = [tag_type in x.tags.keys()
+                  for x in self.get_monomers(ligands=False)]
         if (not all(tagged)) or force:
 
-            naccess_rsa_list,total = extract_residue_accessibility(run_naccess(self.pdb,mode='rsa',path=False,include_hetatms=include_hetatms),path=False,get_total=tag_total)
-            for monomer, naccess_rsa in zip(self.get_monomers(ligands=False),naccess_rsa_list):
+            naccess_rsa_list, total = extract_residue_accessibility(run_naccess(
+                self.pdb, mode='rsa', path=False, include_hetatms=include_hetatms), path=False, get_total=tag_total)
+            for monomer, naccess_rsa in zip(self.get_monomers(ligands=False), naccess_rsa_list):
                 monomer.tags[tag_type] = naccess_rsa
 
             if tag_total:
