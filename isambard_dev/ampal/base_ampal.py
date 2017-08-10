@@ -351,29 +351,29 @@ class BaseAmpal(object):
 
 
 class Polymer(BaseAmpal):
+    """A container that holds `Monomer` type objects.
+
+    Notes
+    -----
+    `Polymer` has a simple hierarchy: A `Polymer` contains one or
+    more `Monomer`.
+
+    Parameters
+    ----------
+    monomers : Monomer or [Monomer], optional
+        Monomer or list containing Monomer objects to form the Polymer().
+    polymer_id : str
+        An ID that the user can use to identify the `Polymer`. This is
+        used when generating a pdb file using `Polymer().pdb`.
+
+    Raises
+    ------
+    TypeError
+        Polymer objects can only be initialised empty, using a Monomer
+        or a list of Monomers.
+    """
     def __init__(self, monomers=None, ligands=None, polymer_id=' ',
                  molecule_type='', ampal_parent=None, sl=2):
-        """A container that holds `Monomer` type objects.
-
-        Notes
-        -----
-        `Polymer` has a simple hierarchy: A `Polymer` contains one or
-        more `Monomer`.
-
-        Parameters
-        ----------
-        monomers : Monomer or [Monomer], optional
-            Monomer or list containing Monomer objects to form the Polymer().
-        polymer_id : str
-            An ID that the user can use to identify the `Polymer`. This is
-            used when generating a pdb file using `Polymer().pdb`.
-
-        Raises
-        ------
-        TypeError
-            Polymer objects can only be initialised empty, using a Monomer
-            or a list of Monomers.
-        """
         if monomers:
             if isinstance(monomers, Monomer):
                 self._monomers = [monomers]
@@ -569,17 +569,17 @@ class Polymer(BaseAmpal):
 
 
 class Monomer(BaseAmpal):
-    def __init__(self, atoms=None, monomer_id=' ', ampal_parent=None):
-        """Object containing Atoms, this is how residues are represented in ISAMBARD.
+    """Groups of `Atoms` that form `Polymers`.
 
-        Parameters
-        ----------
-        atoms : OrderedDict or {OrderedDict}
-            OrderedDict containing Atoms for the Monomer. OrderedDict is used to maintain the order items
-            were added to the dictionary.
-        monomer_id : str
-            String used to identify the residue.
-        """
+    Parameters
+    ----------
+    atoms : OrderedDict or {OrderedDict}, optional
+        OrderedDict containing Atoms for the Monomer. OrderedDict
+        is used to maintain the order items were added to the dictionary.
+    monomer_id : str, optional
+        String used to identify the residue.
+    """
+    def __init__(self, atoms=None, monomer_id=' ', ampal_parent=None):
         if type(atoms) is dict:
             self.states = atoms
             self._active_state = sorted(self.states.keys())[0]
