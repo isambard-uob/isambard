@@ -210,12 +210,13 @@ class BaseAmpal(object):
                 a_ff_id = ('MOL2', atom.res_label.capitalize())
             else:
                 if not mol2:
-                    w_str = '{} ({}) atom is not parameterised in the selected residue force field. ' \
-                            'Try activating the heavy atom force field (haff).'.format(
+                    w_str = ('{} ({}) atom is not parameterised in the selected'
+                             ' residue force field. Try activating the heavy '
+                             ' atom force field (haff).').format(
                                 atom.element, atom.res_label)
                 else:
-                    w_str = '{} ({}) atom is not parameterised in the selected force field.'.format(atom.element,
-                                                                                                    atom.res_label)
+                    w_str = ('{} ({}) atom is not parameterised in the selected'
+                             ' force field.').format(atom.element, atom.res_label)
             if w_str:
                 warnings.warn(w_str, NotParameterisedWarning)
             atom._ff_id = a_ff_id
@@ -232,9 +233,9 @@ class BaseAmpal(object):
         ----------
         ff: BuffForceField
             The force field to be used for scoring.
-        mol2: bool
+        mol2: bool, optional
             If true, mol2 style labels will also be used.
-        force_ff_assign: bool
+        force_ff_assign: bool, optional
             If true, the force field will be completely reassigned, ignoring the
             cached parameters.
         """
@@ -249,7 +250,8 @@ class BaseAmpal(object):
             self.assign_force_field(ff, mol2=mol2)
         return
 
-    def get_internal_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False):
+    def get_internal_energy(self, assign_ff=True, ff=None, mol2=False,
+            force_ff_assign=False):
         """Calculates the internal energy of the AMPAL object.
 
         This method is assigned to the buff_internal_energy property,
@@ -257,13 +259,13 @@ class BaseAmpal(object):
 
         Parameters
         ----------
-        assign_ff: bool
+        assign_ff: bool, optional
             If true the force field will be updated if required.
-        ff: BuffForceField
+        ff: BuffForceField, optional
             The force field to be used for scoring.
-        mol2: bool
+        mol2: bool, optional
             If true, mol2 style labels will also be used.
-        force_ff_assign: bool
+        force_ff_assign: bool, optional
             If true, the force field will be completely reassigned, ignoring the
             cached parameters.
 
@@ -284,18 +286,58 @@ class BaseAmpal(object):
     buff_internal_energy = property(get_internal_energy)
 
     def rotate(self, angle, axis, point=None, radians=False, inc_alt_states=True):
+        """Rotates every atom in the AMPAL object.
+        
+        Parameters
+        ----------
+        angle : float
+            Angle that AMPAL object will be rotated.
+        axis : 3D Vector (tuple, list, numpy.array)
+            Axis about which the AMPAL object will be rotated.
+        point : 3D Vector (tuple, list, numpy.array), optional
+            Point that the axis lies upon. If `None` then the origin is used.
+        radians : bool, optional
+            True is `angle` is define in radians, False is degrees.
+        inc_alt_states : bool, optional
+            If true, will rotate atoms in all states i.e. includes
+            alternate conformations for sidechains.
+        """
         q = Quaternion.angle_and_axis(angle=angle, axis=axis, radians=radians)
         for atom in self.get_atoms(inc_alt_states=inc_alt_states):
             atom._vector = q.rotate_vector(v=atom._vector, point=point)
         return
 
     def translate(self, vector, inc_alt_states=True):
+        """Translates every atom in the AMPAL object.
+        
+        Parameters
+        ----------
+        vector : 3D Vector (tuple, list, numpy.array)
+            Vector used for translation.
+        inc_alt_states : bool, optional
+            If true, will rotate atoms in all states i.e. includes
+            alternate conformations for sidechains.
+        """
         vector = numpy.array(vector)
         for atom in self.get_atoms(inc_alt_states=inc_alt_states):
             atom._vector += vector
         return
 
     def rmsd(self, other, backbone=False):
+        """Calculates the RMSD between two AMPAL objects.
+        
+        Notes
+        -----
+        No fitting operation is performs and both AMPAL objects must
+        have the same number of atoms.
+
+        Parameters
+        ----------
+        other : AMPAL Object
+            Any AMPAL object with `get_atoms` method.
+        backbone : bool, optional
+            Calculates RMSD of backbone only.
+        """
         assert type(self) == type(other)
         if backbone and hasattr(self, 'backbone'):
             points1 = self.backbone.get_atoms()
