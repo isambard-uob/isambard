@@ -213,7 +213,7 @@ class BaseAmpal(object):
                     w_str = ('{} ({}) atom is not parameterised in the selected'
                              ' residue force field. Try activating the heavy '
                              ' atom force field (haff).').format(
-                                atom.element, atom.res_label)
+                        atom.element, atom.res_label)
                 else:
                     w_str = ('{} ({}) atom is not parameterised in the selected'
                              ' force field.').format(atom.element, atom.res_label)
@@ -251,7 +251,7 @@ class BaseAmpal(object):
         return
 
     def get_internal_energy(self, assign_ff=True, ff=None, mol2=False,
-            force_ff_assign=False):
+                            force_ff_assign=False):
         """Calculates the internal energy of the AMPAL object.
 
         This method is assigned to the buff_internal_energy property,
@@ -287,7 +287,7 @@ class BaseAmpal(object):
 
     def rotate(self, angle, axis, point=None, radians=False, inc_alt_states=True):
         """Rotates every atom in the AMPAL object.
-        
+
         Parameters
         ----------
         angle : float
@@ -309,7 +309,7 @@ class BaseAmpal(object):
 
     def translate(self, vector, inc_alt_states=True):
         """Translates every atom in the AMPAL object.
-        
+
         Parameters
         ----------
         vector : 3D Vector (tuple, list, numpy.array)
@@ -325,7 +325,7 @@ class BaseAmpal(object):
 
     def rmsd(self, other, backbone=False):
         """Calculates the RMSD between two AMPAL objects.
-        
+
         Notes
         -----
         No fitting operation is performs and both AMPAL objects must
@@ -351,23 +351,28 @@ class BaseAmpal(object):
 
 
 class Polymer(BaseAmpal):
-    def __init__(self, monomers=None, ligands=None, polymer_id=' ', molecule_type='', ampal_parent=None, sl=2):
-        """A container that holds monomer type objects, this is how polypeptides are represented in ISAMBARD.
+    def __init__(self, monomers=None, ligands=None, polymer_id=' ',
+                 molecule_type='', ampal_parent=None, sl=2):
+        """A container that holds `Monomer` type objects.
 
-        Has a simple hierarchy: A Polymer contains one or more Monomer.
+        Notes
+        -----
+        `Polymer` has a simple hierarchy: A `Polymer` contains one or
+        more `Monomer`.
 
         Parameters
         ----------
-        monomers : Monomer or [Monomer]
+        monomers : Monomer or [Monomer], optional
             Monomer or list containing Monomer objects to form the Polymer().
         polymer_id : str
-            An ID that the user can use to identify the Polymer. This is used when generating a pdb file using
-            Polymer().pdb
+            An ID that the user can use to identify the `Polymer`. This is
+            used when generating a pdb file using `Polymer().pdb`.
 
         Raises
         ------
         TypeError
-            Polymer objects can only be initialised empty, using a Monomer or a list of Monomers.
+            Polymer objects can only be initialised empty, using a Monomer
+            or a list of Monomers.
         """
         if monomers:
             if isinstance(monomers, Monomer):
@@ -376,7 +381,8 @@ class Polymer(BaseAmpal):
                 self._monomers = list(monomers)
             else:
                 raise TypeError(
-                    'Polymer objects can only be initialised empty, using a Monomer or a list of Monomers.')
+                    'Polymer objects can only be initialised empty, '
+                    'using a Monomer or a list of Monomers.')
         else:
             self._monomers = []
         self.id = str(polymer_id)
@@ -411,6 +417,12 @@ class Polymer(BaseAmpal):
             len(self._monomers), 'Monomer' if len(self._monomers) == 1 else 'Monomers')
 
     def append(self, item):
+        """Appends a `Monomer to the `Polymer`.
+
+        Notes
+        -----
+        Does not update labelling.
+        """
         if isinstance(item, Monomer):
             self._monomers.append(item)
         else:
@@ -419,6 +431,12 @@ class Polymer(BaseAmpal):
         return
 
     def extend(self, polymer):
+        """Extends the `Polymer` with the contents of another `Polymer`.
+
+        Notes
+        -----
+        Does not update labelling.
+        """
         if isinstance(polymer, Polymer):
             self._monomers.extend(polymer)
         else:
@@ -427,6 +445,13 @@ class Polymer(BaseAmpal):
         return
 
     def get_monomers(self, ligands=True):
+        """Retrieves all the `Monomers` from the AMPAL object.
+
+        Parameters
+        ----------
+        ligands : bool, optional
+            If true, will include ligand `Monomers`.
+        """
         if ligands and self.ligands:
             monomers = self._monomers + self.ligands._monomers
         else:
@@ -457,24 +482,28 @@ class Polymer(BaseAmpal):
         return atoms
 
     def relabel_monomers(self, labels=None):
-        """Relabels the component Monomers either in numerical order or using a list of labels.
+        """Relabels the either in numerically or using a list of labels.
 
         Parameters
         ----------
-        labels : list
+        labels : list, optional
             A list of new labels.
 
         Raises
         ------
         ValueError
-            Raised if the number of labels does not match the number of component Monoer objects.
+            Raised if the number of labels does not match the number of
+            component Monoer objects.
         """
         if labels:
             if len(self._monomers) == len(labels):
                 for monomer, label in zip(self._monomers, labels):
                     monomer.id = str(label)
             else:
-                raise ValueError('Number of Monomers ({}) and number of labels ({}) must be equal.'.format(
+                error_string = (
+                    'Number of Monomers ({}) and number of labels '
+                    '({}) must be equal.')
+                raise ValueError(error_string.format(
                     len(self._monomers), len(labels)))
         else:
             for i, monomer in enumerate(self._monomers):
@@ -482,7 +511,13 @@ class Polymer(BaseAmpal):
         return
 
     def relabel_atoms(self, start=1):
-        """Relabels all Atoms in numerical order, offset by the start parameter."""
+        """Relabels all `Atoms` in numerical order.
+
+        Parameters
+        ----------
+        start : int, optional
+            Offset the labelling by `start` residues.
+        """
         counter = start
         for atom in self.get_atoms():
             atom.id = counter
@@ -490,18 +525,26 @@ class Polymer(BaseAmpal):
         return
 
     def relabel_all(self):
-        """Relabels all monomers and atoms using default labeling."""
+        """Relabels all `Monomers` and `Atoms` using default labeling."""
         self.relabel_monomers()
         self.relabel_atoms()
         return
 
     def make_pdb(self, alt_states=False, inc_ligands=True):
-        """Generates a PDB string for the Polymer.
+        """Generates a PDB string for the `Polymer`.
+
+        Parameters
+        ----------
+        alt_states : bool, optional
+            Include alternate conformations for `Monomers` in PDB.
+        inc_ligands : bool, optional
+            Includes `Ligands` in PDB.
 
         Returns
         -------
         pdb_str : str
-            String of the pdb for the Polymer. Generated using information from the component Monomers.
+            String of the pdb for the `Polymer`. Generated using information
+            from the component `Monomers`.
         """
         if any([False if x.id else True for x in self._monomers]):
             self.relabel_monomers()
@@ -513,14 +556,14 @@ class Polymer(BaseAmpal):
         return pdb_str
 
     def get_reference_coords(self):
-        """ Gets list of coordinates of all reference atoms in the Polymer.
+        """Gets list of coordinates of all reference atoms in the `Polymer`.
 
         Returns
         -------
-        ref_coords : list(numpy.array)
-            List has the same length as the Polymer.
-            The first, second and third elements of array i contain the x, y and z
-            coordinates of the i-th reference atom.
+        ref_coords : [numpy.array]
+            List has the same length as the `Polymer`.
+            The first, second and third elements of array i contain the
+            x, y and z coordinates of the i-th reference atom.
         """
         return [x[x.reference_atom].array for x in self._monomers]
 
