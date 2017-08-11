@@ -10,8 +10,7 @@ The `specifications` module is also included in this directory as specifications
 
 ### In Progress
 
-* `Assembly.py`
-
 ### Finished
 
+* `assembly.py`
 * `base_ampal.py`
