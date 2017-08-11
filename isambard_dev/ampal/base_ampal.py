@@ -362,9 +362,38 @@ class Polymer(BaseAmpal):
     ----------
     monomers : Monomer or [Monomer], optional
         Monomer or list containing Monomer objects to form the Polymer().
-    polymer_id : str
+    ligands : LigandGroup, optional
+        `Ligands` associated with the `Polymer`.
+    polymer_id : str, optional
         An ID that the user can use to identify the `Polymer`. This is
         used when generating a pdb file using `Polymer().pdb`.
+    molecule_type : str, optional
+        A description of the type of `Polymer` i.e. Protein, DNA etc.
+    ampal_parent : ampal.Assembly, optional
+        Reference to `Assembly` containing the `Polymer`.
+    sl : int, optional
+        The default smoothing level used when calculating the
+        backbone primitive.
+
+    Attributes
+    ----------
+    id : str
+        Polymer ID
+    ampal_parent : ampal.Assembly or None
+        Reference to `Assembly` containing the `Polymer`.
+    molecule_type : str
+        A description of the type of `Polymer` i.e. Protein, DNA etc.
+    ligands : ampal.LigandGroup
+        A `LigandGroup` containing all the `Ligands` associated with this
+        `Polymer` chain.
+    tags : dict
+        A dictionary containing information about this AMPAL object.
+        The tags dictionary is used by AMPAL to cache information
+        about this object, but is also intended to be used by users
+        to store any relevant information they have.
+    sl : int
+        The default smoothing level used when calculating the
+        backbone primitive.
 
     Raises
     ------
@@ -581,6 +610,21 @@ class Monomer(BaseAmpal):
         String used to identify the residue.
     ampal_parent : Polymer, optional
         A reference to the `Polymer` containing this `Monomer`.
+
+    Attributes
+    ----------
+    self.states : dict
+        Contains an `OrderedDicts` containing atom information for each
+        state available for the `Monomer`.
+    id : str
+        String used to identify the residue.
+    ampal_parent : Polymer or None
+        A reference to the `Polymer` containing this `Monomer`.
+    tags : dict
+        A dictionary containing information about this AMPAL object.
+        The tags dictionary is used by AMPAL to cache information
+        about this object, but is also intended to be used by users
+        to store any relevant information they have.
     """
 
     def __init__(self, atoms=None, monomer_id=' ', ampal_parent=None):
@@ -707,6 +751,34 @@ class Atom(object):
         Identifier for `Atom`, usually a number.
     res_label : str, optional
         Label used in `Monomer` to refer to the `Atom` type i.e. "CA" or "OD1".
+    occupancy : float, optional
+        The occupancy of the `Atom`.
+    bfactor : float, optional
+        The bfactor of the `Atom`.
+    charge : str, optional
+        The point charge of the `Atom`.
+    state : str
+        The state of this `Atom`. Used to identify `Atoms` with a
+        number of conformations.
+    ampal_parent : ampal.Monomer, optional
+       A reference to the `Monomer` containing this `Atom`. 
+
+    Attributes
+    ----------
+    id : str
+        Identifier for `Atom`, usually a number.
+    res_label : str
+        Label used in `Monomer` to refer to the `Atom` type i.e. "CA" or "OD1".
+    element : str
+        Element of `Atom`.
+    ampal_parent : ampal.Monomer
+       A reference to the `Monomer` containing this `Atom`. 
+        number of conformations.
+    tags : dict
+        A dictionary containing information about this AMPAL object.
+        The tags dictionary is used by AMPAL to cache information
+        about this object, but is also intended to be used by users
+        to store any relevant information they have.
     """
 
     def __init__(self, coordinates, element, atom_id=' ', res_label=None, occupancy=1.0, bfactor=1.0, charge=' ',
@@ -764,14 +836,17 @@ class Atom(object):
 
     @property
     def x(self):
+        """The x coordinate."""
         return self._vector[0]
 
     @property
     def y(self):
+        """The y coordinate."""
         return self._vector[1]
 
     @property
     def z(self):
+        """The z coordinate."""
         return self._vector[2]
 
     @property
