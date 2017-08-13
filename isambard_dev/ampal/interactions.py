@@ -117,7 +117,7 @@ class NonCovalentInteraction(Interaction):
                 'and {} {}{} (acceptor)>'.format(
                     self.donor.mol_code, self.donor.id, 
                     self.donor.ampal_parent.id, self.acceptor.mol_code,
-                    self.acceptor.id, self.acceptor.ampal_parent.id)
+                    self.acceptor.id, self.acceptor.ampal_parent.id))
 
 
 class HydrogenBond(NonCovalentInteraction):
