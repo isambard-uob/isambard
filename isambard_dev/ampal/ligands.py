@@ -1,4 +1,4 @@
-"""AMPAL objects the represent ligands."""
+"""AMPAL objects that represent ligands."""
 
 from ampal.base_ampal import Polymer, Monomer
 
