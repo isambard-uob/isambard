@@ -18,9 +18,10 @@ up the files in general.
 
 ### In Progress
 
-* `interactions.py`
+* `ligands.py`
 
 ### Finished
 
 * `assembly.py`
 * `base_ampal.py`
+* `interactions.py`

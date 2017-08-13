@@ -73,7 +73,8 @@ class CovalentBond(Interaction):
         bm = self._b.ampal_parent
         bc = bm.ampal_parent
         return '<Covalent bond between {}{} {} {} --- {} {} {}{}>'.format(
-            ac.id, am.id, am.mol_code, self._a.res_label, self._b.res_label, bm.mol_code, bc.id, bm.id)
+            ac.id, am.id, am.mol_code, self._a.res_label, self._b.res_label,
+            bm.mol_code, bc.id, bm.id)
 
 
 class NonCovalentInteraction(Interaction):
@@ -114,9 +115,9 @@ class NonCovalentInteraction(Interaction):
     def __repr__(self):
         return ('<Interaction between {} {}{} (donor) '
                 'and {} {}{} (acceptor)>'.format(
-                    self.donor.mol_code, self.donor.id, self.donor.ampal_parent.id,
-                    self.acceptor.mol_code, self.acceptor.id,
-                    self.acceptor.ampal_parent.id)
+                    self.donor.mol_code, self.donor.id, 
+                    self.donor.ampal_parent.id, self.acceptor.mol_code,
+                    self.acceptor.id, self.acceptor.ampal_parent.id)
 
 
 class HydrogenBond(NonCovalentInteraction):
