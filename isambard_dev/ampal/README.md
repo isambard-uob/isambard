@@ -18,10 +18,11 @@ up the files in general.
 
 ### In Progress
 
-* `ligands.py`
+* `protein.py`
 
 ### Finished
 
 * `assembly.py`
 * `base_ampal.py`
 * `interactions.py`
+* `ligands.py`
