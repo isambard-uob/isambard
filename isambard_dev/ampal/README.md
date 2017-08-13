@@ -19,6 +19,7 @@ up the files in general.
 ### In Progress
 
 * `protein.py`
+  * Finished `Polypeptide`.
 
 ### Finished
 
