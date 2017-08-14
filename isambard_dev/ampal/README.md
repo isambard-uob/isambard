@@ -18,6 +18,8 @@ up the files in general.
 
 ### In Progress
 
+* `pseudo_atoms.py`
+
 ### Finished
 
 * `assembly.py`
