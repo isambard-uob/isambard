@@ -75,6 +75,10 @@ class Ligand(Monomer):
 
     Attributes
     ----------
+    atoms : OrderedDict
+        OrderedDict containing Atoms for the Monomer. OrderedDict
+        is used to maintain the order items were added to the
+        dictionary.
     mol_code : str
         PDB molecule code that represents the `Ligand`.
     insertion_code : str

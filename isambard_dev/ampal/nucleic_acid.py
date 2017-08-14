@@ -93,7 +93,7 @@ class Nucleotide(Monomer):
         Insertion code of `Nucleotide`, used if reading from pdb.
     is_hetero : bool
         True if is a hetero atom in pdb. Helps with PDB formatting.
-    self.states : dict
+    states : dict
         Contains an `OrderedDicts` containing atom information for each
         state available for the `Nucleotide`.
     id : str

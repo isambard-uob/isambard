@@ -613,7 +613,7 @@ class Monomer(BaseAmpal):
 
     Attributes
     ----------
-    self.states : dict
+    states : dict
         Contains an `OrderedDicts` containing atom information for each
         state available for the `Monomer`.
     id : str
