@@ -22,6 +22,7 @@ up the files in general.
 
 * `assembly.py`
 * `ampal_databases.py`
+* `analyse_protein.py`
 * `base_ampal.py`
 * `interactions.py`
 * `ligands.py`
