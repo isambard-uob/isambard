@@ -1,8 +1,11 @@
+"""Contains classes and functions for modelling helical structure."""
+
 from collections import OrderedDict
 
 import numpy
-from tools.geometry import Quaternion, dihedral, find_transformations, cylindrical_to_cartesian, Axis
 
+from tools.geometry import (
+    Quaternion, dihedral, find_transformations, cylindrical_to_cartesian, Axis)
 from ampal.base_ampal import Atom
 from ampal.protein import Polypeptide, Residue
 from ampal.pseudo_atoms import Primitive
@@ -69,6 +72,34 @@ _atom_offsets = {
 
 
 class Helix(Polypeptide):
+    """Creates a model of a `Polypeptide` with helical structure.
+    
+    Parameters
+    ----------
+    aa : int, optional
+        Number of amino acids in the `Helix`.
+    helix_type : str, optional
+        Type of helix, can be: 'alpha', 'pi', '3-10',
+        'PPI', 'PPII', 'collagen'.
+
+    Attributes
+    ----------
+    num_monomers : int
+        Number of amino acids in the `Helix`.
+    helix_type : str
+        Type of helix, can be: 'alpha', 'pi', '3-10',
+        'PPI', 'PPII', 'collagen'.
+    residues_per_turn : float
+        Number of residues per turn of the helix.
+    rise_per_residue : float
+        Distance that each residue travels along the z-axis.
+    handedness : str
+        The handedness of the helix can be 'r' or 'l'.
+    helix_start : 3D Vector (tuple or list or numpy.array)
+        The coordinate of the start of the helix primitive.
+    helix_end : 3D Vector (tuple or list or numpy.array)
+        The coordinate of the end of the helix primitive.
+    """
     def __init__(self, aa=10, helix_type='alpha'):
         super(Helix, self).__init__()
         self.num_monomers = aa
@@ -89,6 +120,21 @@ class Helix(Polypeptide):
 
     @classmethod
     def from_start_and_end(cls, start, end, aa=None, helix_type='alpha'):
+        """Creates a `Helix` between `start` and `end`.
+        
+        Parameters
+        ----------
+        start : 3D Vector (tuple or list or numpy.array)
+            The coordinate of the start of the helix primitive.
+        end : 3D Vector (tuple or list or numpy.array)
+            The coordinate of the end of the helix primitive.
+        aa : int, optional
+            Number of amino acids in the `Helix`. If `None, an
+            appropriate number of residues are added.
+        helix_type : str, optional
+            Type of helix, can be: 'alpha', 'pi', '3-10',
+            'PPI', 'PPII', 'collagen'.
+        """
         start = numpy.array(start)
         end = numpy.array(end)
         if aa is None:
@@ -100,22 +146,27 @@ class Helix(Polypeptide):
 
     @property
     def axis(self):
+        """The `Axis` around which the helix is constructed."""
         return Axis(start=self.helix_start, end=self.helix_end)
 
     @property
     def ax_unit(self):
+        """The unit tangent of the axis."""
         return self.axis.unit_tangent
 
     @property
     def rad_unit(self):
+        """The unit normal of the axis."""
         return self.axis.unit_normal
 
     @property
     def tan_unit(self):
+        """The unit binormal of the axis."""
         return self.axis.unit_binormal
 
     @property
     def helix_length(self):
+        """The length of the `Helix`."""
         return self.num_monomers * self.rise_per_residue
 
     def translate(self, vector):
@@ -125,7 +176,8 @@ class Helix(Polypeptide):
         return
 
     def rotate(self, angle, axis, point=None, radians=False):
-        super(Helix, self).rotate(angle=angle, axis=axis, point=point, radians=radians)
+        super(Helix, self).rotate(angle=angle,
+                                  axis=axis, point=point, radians=radians)
         # modify helix_start and helix_end accordingly.
         q = Quaternion.angle_and_axis(angle=angle, axis=axis, radians=radians)
         self.helix_start = q.rotate_vector(v=self.helix_start, point=point)
@@ -156,8 +208,11 @@ class Helix(Polypeptide):
                 r, zeta, z_shift = atom_offsets[atom_label]
                 rot_ang = ((i * ang_per_res) + zeta) * handedness
                 z = (self.rise_per_residue * i) + z_shift
-                coords = cylindrical_to_cartesian(radius=r, azimuth=rot_ang, z=z, radians=True)
-                atom = Atom(coordinates=coords, element=atom_label[0], ampal_parent=residue, res_label=atom_label)
+                coords = cylindrical_to_cartesian(
+                    radius=r, azimuth=rot_ang, z=z, radians=True)
+                atom = Atom(
+                    coordinates=coords, element=atom_label[0],
+                    ampal_parent=residue, res_label=atom_label)
                 atoms_dict[atom_label] = atom
             residue.atoms = atoms_dict
             monomers.append(residue)
@@ -167,11 +222,26 @@ class Helix(Polypeptide):
         return
 
     def move_to(self, start, end):
+        """Moves the `Helix` to lie on the vector between `start` and `end`.
+        
+        Parameters
+        ----------
+        start : 3D Vector (tuple or list or numpy.array)
+            The coordinate of the start of the helix primitive.
+        end : 3D Vector (tuple or list or numpy.array)
+            The coordinate of the end of the helix primitive.
+
+        Raises
+        ------
+        ValueError
+            Raised if `start` and `end` are very close together.
+        """
         start = numpy.array(start)
         end = numpy.array(end)
         if numpy.allclose(start, end):
             raise ValueError('start and end must NOT be identical')
-        translation, angle, axis, point = find_transformations(self.helix_start, self.helix_end, start, end)
+        translation, angle, axis, point = find_transformations(
+            self.helix_start, self.helix_end, start, end)
         if not numpy.isclose(angle, 0.0):
             self.rotate(angle=angle, axis=axis, point=point, radians=False)
         self.translate(vector=translation)
@@ -216,7 +286,8 @@ class HelicalHelix(Polypeptide):
         end = numpy.array(end)
         if aa is None:
             minor_rise_per_residue = _helix_parameters[minor_helix_type][1]
-            aa = int((numpy.linalg.norm(end - start) / minor_rise_per_residue) + 1)
+            aa = int((numpy.linalg.norm(end - start) /
+                      minor_rise_per_residue) + 1)
         instance = cls(aa=aa, major_pitch=major_pitch, major_radius=major_radius, major_handedness=major_handedness,
                        minor_helix_type=minor_helix_type, orientation=orientation, phi_c_alpha=phi_c_alpha,
                        minor_repeat=minor_repeat)
@@ -241,7 +312,8 @@ class HelicalHelix(Polypeptide):
         curve = self.curve
         curve.axis_start = self.helix_start
         curve.axis_end = self.helix_end
-        coords = curve.get_coords(n_points=(self.num_monomers + 1), spacing=self.minor_rise_per_residue)
+        coords = curve.get_coords(
+            n_points=(self.num_monomers + 1), spacing=self.minor_rise_per_residue)
         if self.orientation == -1:
             coords.reverse()
         return Primitive.from_coordinates(coords)
@@ -255,12 +327,14 @@ class HelicalHelix(Polypeptide):
             minor_rpt = _helix_parameters[self.minor_helix_type][0]
         else:
             # precession angle in radians
-            precession = self.curve.t_from_arc_length(minor_repeat * self.minor_rise_per_residue)
+            precession = self.curve.t_from_arc_length(
+                minor_repeat * self.minor_rise_per_residue)
             if self.orientation == -1:
                 precession = -precession
             if self.major_handedness != self.minor_handedness:
                 precession = -precession
-            minor_rpt = ((minor_repeat * numpy.pi * 2) / ((2 * numpy.pi) + precession))
+            minor_rpt = ((minor_repeat * numpy.pi * 2) /
+                         ((2 * numpy.pi) + precession))
         return minor_rpt
 
     def build(self):
@@ -271,7 +345,8 @@ class HelicalHelix(Polypeptide):
                                             helix_type=self.minor_helix_type,
                                             aa=1)
                    for i in range(len(primitive_coords) - 1)]
-        residues_per_turn = self.minor_residues_per_turn(minor_repeat=self.minor_repeat)
+        residues_per_turn = self.minor_residues_per_turn(
+            minor_repeat=self.minor_repeat)
         if residues_per_turn == 0:
             residues_per_turn = _helix_parameters[self.minor_helix_type][0]
         if self.minor_handedness == 'l':
@@ -284,13 +359,15 @@ class HelicalHelix(Polypeptide):
             initial_angle = dihedral(
                 numpy.array([0, 0, primitive_coords[0][2]]),
                 primitive_coords[0],
-                numpy.array([primitive_coords[0][0], primitive_coords[0][1], primitive_coords[1][2]]),
+                numpy.array([primitive_coords[0][0],
+                             primitive_coords[0][1], primitive_coords[1][2]]),
                 helices[0][0]['CA'])
         # angle required to achieve desired phi_c_alpha value of self.phi_c_alpha.
         addition_angle = self.phi_c_alpha - initial_angle
         for i, h in enumerate(helices):
             angle = (i * (360.0 / residues_per_turn)) + addition_angle
-            h.rotate(angle=angle, axis=h.axis.unit_tangent, point=h.helix_start)
+            h.rotate(angle=angle, axis=h.axis.unit_tangent,
+                     point=h.helix_start)
             helical_helix.extend(h)
         helical_helix.relabel_all()
         self._monomers = helical_helix._monomers[:]
@@ -342,7 +419,8 @@ class HelicalHelix(Polypeptide):
         return
 
     def rotate(self, angle, axis, point=None, radians=False):
-        super(HelicalHelix, self).rotate(angle=angle, axis=axis, point=point, radians=radians)
+        super(HelicalHelix, self).rotate(angle=angle,
+                                         axis=axis, point=point, radians=radians)
         # modify helix_start and helix_end accordingly.
         q = Quaternion.angle_and_axis(angle=angle, axis=axis, radians=radians)
         self.helix_start = q.rotate_vector(v=self.helix_start, point=point)
@@ -354,7 +432,8 @@ class HelicalHelix(Polypeptide):
         end = numpy.array(end)
         if numpy.allclose(start, end):
             raise ValueError('start and end must NOT be identical')
-        translation, angle, axis, point = find_transformations(self.helix_start, self.helix_end, start, end)
+        translation, angle, axis, point = find_transformations(
+            self.helix_start, self.helix_end, start, end)
         if not numpy.isclose(angle, 0.0):
             self.rotate(angle=angle, axis=axis, point=point, radians=False)
         self.translate(vector=translation)
@@ -390,4 +469,3 @@ class HelicalHelix(Polypeptide):
 
 __author__ = 'Jack W. Heal, Christopher W. Wood'
 __status__ = 'Development'
-

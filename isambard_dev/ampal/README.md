@@ -18,6 +18,9 @@ up the files in general.
 
 ### In Progress
 
+* `polymer_specs/`
+    * `helix.py`
+
 ### Finished
 
 * `assembly.py`
@@ -26,6 +29,7 @@ up the files in general.
 * `base_ampal.py`
 * `interactions.py`
 * `ligands.py`
+* `non_cannonical.py`
 * `nucleic_acid.py`
 * `pdb_parser.py`
 * `protein.py`
