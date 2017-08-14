@@ -246,14 +246,40 @@ class PdbParser(object):
             raise ValueError('Empty parse tree, check input PDB format.')
 
     def proc_state(self, state_data, state_id):
-        """Processes a state into an `Assembly`."""
+        """Processes a state into an `Assembly`.
+
+        Parameters
+        ----------
+        state_data : dict
+            Contains information about the state, including all
+            the per line structural data.
+        state_id : str
+            ID given to `Assembly` that represents the state.
+        """
         assembly = Assembly(assembly_id=state_id)
         for k, chain in sorted(state_data.items()):
             assembly._molecules.append(self.proc_chain(chain, assembly))
         return assembly
 
     def proc_chain(self, chain_info, parent):
-        """Converts a chain into a `Polyer` type object."""
+        """Converts a chain into a `Polymer` type object.
+
+        Parameters
+        ----------
+        chain_info : (set, OrderedDict)
+            Contains a set of chain labels and atom records.
+        parent : ampal.Assembly
+            `Assembly` used to assign `ampal_parent` on created
+            `Polymer`.
+
+        Raises
+        ------
+        ValueError
+            Raised if multiple or unknown atom types found
+            within the same chain.
+        AttributeError
+            Raised if unknown `Monomer` type encountered.
+        """
         hetatom_filters = {
             'nc_aas': self.check_for_non_canonical
         }
@@ -309,6 +335,18 @@ class PdbParser(object):
         return chain
 
     def proc_monomer(self, monomer_info, parent, mon_cls=False):
+        """Processes a records into a `Monomer`.
+
+        Parameters
+        ----------
+        monomer_info : (set, OrderedDict)
+            Labels and data for a monomer.
+        parent : ampal.Polymer
+            `Polymer` used to assign `ampal_parent` on created
+            `Monomer`.
+        mon_cls : `Monomer class or subclass`, optional
+            A `Monomer` class can be defined explicitly.
+        """
         monomer_labels, monomer_data = monomer_info
         if len(monomer_labels) > 1:
             raise ValueError(
@@ -336,6 +374,14 @@ class PdbParser(object):
         return monomer
 
     def gen_states(self, monomer_data, parent):
+        """Generates the `states` dictionary for a `Monomer`.
+
+        monomer_data : list
+            A list of atom data parsed from the input PDB.
+        parent : ampal.Monomer
+            `Monomer` used to assign `ampal_parent` on created
+            `Atoms`.
+        """
         states = {}
         for atoms in monomer_data:
             for atom in atoms:
@@ -371,6 +417,7 @@ class PdbParser(object):
     # HETATM filters
     @staticmethod
     def check_for_non_canonical(residue):
+        """Checks to see if the residue is non-canonical."""
         res_label = list(residue[0])[0][2]
         atom_labels = {x[2] for x in itertools.chain(
             *residue[1].values())}  # Used to find unnatural aas
