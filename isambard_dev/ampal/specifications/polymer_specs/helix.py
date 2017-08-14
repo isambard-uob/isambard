@@ -73,7 +73,7 @@ _atom_offsets = {
 
 class Helix(Polypeptide):
     """Creates a model of a `Polypeptide` with helical structure.
-    
+
     Parameters
     ----------
     aa : int, optional
@@ -100,6 +100,7 @@ class Helix(Polypeptide):
     helix_end : 3D Vector (tuple or list or numpy.array)
         The coordinate of the end of the helix primitive.
     """
+
     def __init__(self, aa=10, helix_type='alpha'):
         super(Helix, self).__init__()
         self.num_monomers = aa
@@ -121,7 +122,7 @@ class Helix(Polypeptide):
     @classmethod
     def from_start_and_end(cls, start, end, aa=None, helix_type='alpha'):
         """Creates a `Helix` between `start` and `end`.
-        
+
         Parameters
         ----------
         start : 3D Vector (tuple or list or numpy.array)
@@ -184,7 +185,7 @@ class Helix(Polypeptide):
         self.helix_end = q.rotate_vector(v=self.helix_end, point=point)
         return
 
-    # TODO Separate out the polypeptide bit from the geometry. Potential to optimise.
+    # TODO Separate out the polypeptide bit from the geometry.
     def build(self):
         """Build straight helix along z-axis, starting with CA1 on x-axis"""
         ang_per_res = (2 * numpy.pi) / self.residues_per_turn
@@ -223,7 +224,7 @@ class Helix(Polypeptide):
 
     def move_to(self, start, end):
         """Moves the `Helix` to lie on the vector between `start` and `end`.
-        
+
         Parameters
         ----------
         start : 3D Vector (tuple or list or numpy.array)
@@ -249,8 +250,64 @@ class Helix(Polypeptide):
 
 
 class HelicalHelix(Polypeptide):
-    def __init__(self, aa=10, major_pitch=225.8, major_radius=5.07, major_handedness='l',
-                 minor_helix_type='alpha', orientation=1, phi_c_alpha=0.0, minor_repeat=None):
+    """Builds a `Helix` along a curve defined by a super helix.
+
+    Parameters
+    ----------
+    aa : int
+        Number of amino acids in the `Helix`. If `None, an
+        appropriate number of residues are added.
+    major_pitch : float, optional
+        Pitch of the super helix.
+    major_radius : float, optional
+        Radius of the super helix.
+    major_handedness : str, optional
+        Handedness of the super helix.
+    minor_helix_type : str, optional
+        Type of minor helix, can be: 'alpha', 'pi', '3-10',
+        'PPI', 'PPII', 'collagen'.
+    orientation : int, optional
+        Parallel (1) or anti-parallel (-1).
+    phi_c_alpha : float, optional
+        Rotation of the minor helix relative to the super-
+        helical axis.
+    minor_repeat : float, optional
+        Hydrophobic repeat of the `Helix`.
+
+    Attributes
+    ----------
+    num_monomers : int
+        Number of amino acids in the `Helix`. If `None, an
+    major_pitch : float, optional
+        Pitch of the super helix.
+    major_radius : float, optional
+        Radius of the super helix.
+    major_handedness : str, optional
+        Handedness of the super helix.
+    minor_helix_type : str, optional
+        Type of minor helix, can be: 'alpha', 'pi', '3-10',
+        'PPI', 'PPII', 'collagen'.
+    orientation : int, optional
+        Parallel (1) or anti-parallel (-1).
+    phi_c_alpha : float, optional
+        Rotation of the minor helix relative to the super-
+        helical axis.
+    minor_repeat : float, optional
+        Hydrophobic repeat of the `Helix`,
+        appropriate number of residues are added.
+    minor_rise_per_residue : float
+        Distance that each residue travels along the z-axis.
+    minor_handedness : str
+        The handedness of the helix can be 'r' or 'l'.
+    helix_start : 3D Vector (tuple or list or numpy.array)
+        The coordinate of the start of the helix primitive.
+    helix_end : 3D Vector (tuple or list or numpy.array)
+        The coordinate of the end of the helix primitive.
+    """
+
+    def __init__(self, aa=10, major_pitch=225.8, major_radius=5.07,
+                 major_handedness='l', minor_helix_type='alpha', orientation=1,
+                 phi_c_alpha=0.0, minor_repeat=None):
         super(HelicalHelix, self).__init__()
         # Major helix properties
         self.num_monomers = aa
@@ -280,17 +337,22 @@ class HelicalHelix(Polypeptide):
             len(self._monomers), 'Residue' if len(self._monomers) == 1 else 'Residues', seq)
 
     @classmethod
-    def from_start_and_end(cls, start, end, aa=None, major_pitch=225.8, major_radius=5.07, major_handedness='l',
-                           minor_helix_type='alpha', orientation=1, phi_c_alpha=0.0, minor_repeat=None):
+    def from_start_and_end(cls, start, end, aa=None, major_pitch=225.8,
+                           major_radius=5.07, major_handedness='l',
+                           minor_helix_type='alpha', orientation=1,
+                           phi_c_alpha=0.0, minor_repeat=None):
+        """Creates a `HelicalHelix` between a `start` and `end` point."""
         start = numpy.array(start)
         end = numpy.array(end)
         if aa is None:
             minor_rise_per_residue = _helix_parameters[minor_helix_type][1]
             aa = int((numpy.linalg.norm(end - start) /
                       minor_rise_per_residue) + 1)
-        instance = cls(aa=aa, major_pitch=major_pitch, major_radius=major_radius, major_handedness=major_handedness,
-                       minor_helix_type=minor_helix_type, orientation=orientation, phi_c_alpha=phi_c_alpha,
-                       minor_repeat=minor_repeat)
+        instance = cls(
+            aa=aa, major_pitch=major_pitch, major_radius=major_radius,
+            major_handedness=major_handedness,
+            minor_helix_type=minor_helix_type, orientation=orientation,
+            phi_c_alpha=phi_c_alpha, minor_repeat=minor_repeat)
         instance.move_to(start=start, end=end)
         return instance
 
@@ -301,14 +363,19 @@ class HelicalHelix(Polypeptide):
 
     @property
     def major_axis(self):
+        """Axis of the super helix."""
         return Axis(start=self.helix_start, end=self.helix_end)
 
     @property
     def curve(self):
-        return HelicalCurve.pitch_and_radius(self.major_pitch, self.major_radius, handedness=self.major_handedness)
+        """Curve of the super helix."""
+        return HelicalCurve.pitch_and_radius(
+            self.major_pitch, self.major_radius,
+            handedness=self.major_handedness)
 
     @property
     def curve_primitive(self):
+        """`Primitive` of the super-helical curve."""
         curve = self.curve
         curve.axis_start = self.helix_start
         curve.axis_end = self.helix_end
@@ -320,9 +387,22 @@ class HelicalHelix(Polypeptide):
 
     @property
     def major_rise_per_monomer(self):
+        """Rise along super-helical axis per monomer."""
         return numpy.cos(numpy.deg2rad(self.curve.alpha)) * self.minor_rise_per_residue
 
     def minor_residues_per_turn(self, minor_repeat=None):
+        """Calculates the number of residues per turn of the minor helix.
+
+        Parameters
+        ----------
+        minor_repeat : float, optional
+            Hydrophobic repeat of the minor helix.
+
+        Returns
+        -------
+        minor_rpt : float
+            Residues per turn of the minor helix.
+        """
         if minor_repeat is None:
             minor_rpt = _helix_parameters[self.minor_helix_type][0]
         else:
@@ -338,6 +418,7 @@ class HelicalHelix(Polypeptide):
         return minor_rpt
 
     def build(self):
+        """Builds the `HelicalHelix`."""
         helical_helix = Polypeptide()
         primitive_coords = self.curve_primitive.coordinates
         helices = [Helix.from_start_and_end(start=primitive_coords[i],
@@ -353,7 +434,9 @@ class HelicalHelix(Polypeptide):
             residues_per_turn *= -1
         # initial phi_c_alpha value calculated using the first Helix in helices.
         if self.orientation != -1:
-            initial_angle = dihedral(numpy.array([0, 0, 0]), primitive_coords[0], primitive_coords[1],
+            initial_angle = dihedral(numpy.array([0, 0, 0]),
+                                     primitive_coords[0],
+                                     primitive_coords[1],
                                      helices[0][0]['CA'])
         else:
             initial_angle = dihedral(
@@ -375,12 +458,14 @@ class HelicalHelix(Polypeptide):
             monomer.ampal_parent = self
         return
 
-    def get_orient_angle(self, reference_point=numpy.array([0, 0, 0]), monomer_index=0, res_label='CA', radians=False):
+    def get_orient_angle(self, reference_point=numpy.array([0, 0, 0]),
+                         monomer_index=0, res_label='CA', radians=False):
         """ Angle between reference_point and self[monomer_index][res_label].
 
         Notes
         -----
-        Angle is calculated using the dihedral angle, with the second and third points coming from the curve_primitive.
+        Angle is calculated using the dihedral angle, with the 
+        second and third points coming from the curve_primitive.
 
         Parameters
         ----------
@@ -391,19 +476,16 @@ class HelicalHelix(Polypeptide):
             Atom name for centred atom, e.g. "CA" or "OE1".
         radians : bool
             If True, then desired_angle is in radians instead of degrees.
-
-        Returns
-        -------
-        None
-
         """
         if (monomer_index < len(self)) and monomer_index != -1:
             adjacent_index = monomer_index + 1
         elif (monomer_index == len(self)) or monomer_index == -1:
             adjacent_index = monomer_index - 1
         else:
-            raise ValueError("centred_index ({0}) cannot be greater than the length of the polymer ({1})".format(
-                monomer_index, len(self)))
+            raise ValueError(
+                "centred_index ({0}) cannot be greater than the "
+                "length of the polymer ({1})".format(
+                    monomer_index, len(self)))
         angle = dihedral(reference_point,
                          self.curve_primitive[monomer_index]['CA'],
                          self.curve_primitive[adjacent_index]['CA'],
@@ -428,6 +510,20 @@ class HelicalHelix(Polypeptide):
         return
 
     def move_to(self, start, end):
+        """Moves the `HelicalHelix` to lie on the vector `start` and `end`.
+
+        Parameters
+        ----------
+        start : 3D Vector (tuple or list or numpy.array)
+            The coordinate of the start of the helix primitive.
+        end : 3D Vector (tuple or list or numpy.array)
+            The coordinate of the end of the helix primitive.
+
+        Raises
+        ------
+        ValueError
+            Raised if `start` and `end` are very close together.
+        """
         start = numpy.array(start)
         end = numpy.array(end)
         if numpy.allclose(start, end):
@@ -444,8 +540,9 @@ class HelicalHelix(Polypeptide):
 
         Notes
         -----
-        Each monomer is rotated about the axis formed between its corresponding primitive pseudoatom
-         and that of the subsequent monomer.
+        Each monomer is rotated about the axis formed between its
+        corresponding primitive `PseudoAtom` and that of the 
+        subsequent `Monomer`.
 
         Parameters
         ----------
@@ -453,10 +550,6 @@ class HelicalHelix(Polypeptide):
             Angle by which to rotate each monomer.
         radians : bool
             Indicates whether angle is in radians or degrees.
-
-        Returns
-        -------
-        None
         """
         if radians:
             angle = numpy.rad2deg(angle)
@@ -468,4 +561,3 @@ class HelicalHelix(Polypeptide):
 
 
 __author__ = 'Jack W. Heal, Christopher W. Wood'
-__status__ = 'Development'

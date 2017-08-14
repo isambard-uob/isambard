@@ -18,11 +18,10 @@ up the files in general.
 
 ### In Progress
 
-* `polymer_specs/`
-    * `helix.py`
-
 ### Finished
 
+* `polymer_specs/`
+    * `helix.py`
 * `assembly.py`
 * `ampal_databases.py`
 * `analyse_protein.py`
