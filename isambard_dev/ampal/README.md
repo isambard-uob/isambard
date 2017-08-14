@@ -18,8 +18,7 @@ up the files in general.
 
 ### In Progress
 
-* `protein.py`
-  * Finished `Polypeptide`.
+* `nucleic_acid.py`
 
 ### Finished
 
@@ -27,3 +26,4 @@ up the files in general.
 * `base_ampal.py`
 * `interactions.py`
 * `ligands.py`
+* `protein.py`
