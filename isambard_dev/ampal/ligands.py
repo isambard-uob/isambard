@@ -93,8 +93,8 @@ class Ligand(Monomer):
         The tags dictionary is used by AMPAL to cache information
         about this object, but is also intended to be used by users
         to store any relevant information they have.
-
     """
+
     def __init__(self, mol_code, atoms=None, monomer_id=' ', insertion_code=' ',
                  is_hetero=False, ampal_parent=None):
         super(Ligand, self).__init__(
