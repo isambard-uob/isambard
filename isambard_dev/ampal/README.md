@@ -18,8 +18,6 @@ up the files in general.
 
 ### In Progress
 
-* `pdb_parser.py`
-
 ### Finished
 
 * `assembly.py`
@@ -29,5 +27,6 @@ up the files in general.
 * `interactions.py`
 * `ligands.py`
 * `nucleic_acid.py`
+* `pdb_parser.py`
 * `protein.py`
 * `pseudo_atoms.py`
