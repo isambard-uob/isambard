@@ -18,12 +18,11 @@ up the files in general.
 
 ### In Progress
 
-* `nucleic_acid.py`
-
 ### Finished
 
 * `assembly.py`
 * `base_ampal.py`
 * `interactions.py`
 * `ligands.py`
+* `nucleic_acid.py`
 * `protein.py`
