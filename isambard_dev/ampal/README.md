@@ -18,6 +18,8 @@ up the files in general.
 
 ### In Progress
 
+* `pdb_parser.py`
+
 ### Finished
 
 * `assembly.py`
