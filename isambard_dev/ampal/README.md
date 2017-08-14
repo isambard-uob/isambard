@@ -18,13 +18,13 @@ up the files in general.
 
 ### In Progress
 
-* `pseudo_atoms.py`
-
 ### Finished
 
 * `assembly.py`
+* `ampal_databases.py`
 * `base_ampal.py`
 * `interactions.py`
 * `ligands.py`
 * `nucleic_acid.py`
 * `protein.py`
+* `pseudo_atoms.py`
