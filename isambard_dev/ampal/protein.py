@@ -291,7 +291,7 @@ class Polypeptide(Polymer):
         -------
         bb_poly : Polypeptide
             Polymer containing only the backbone atoms of the original
-            Polymer. 
+            Polymer.
         """
         bb_poly = Polypeptide([x.backbone for x in self._monomers], self.id)
         return bb_poly
@@ -325,7 +325,7 @@ class Polypeptide(Polymer):
         Returns
         -------
         hel_assembly : Assembly
-            `Assembly` containing only the alpha-helices of the 
+            `Assembly` containing only the alpha-helices of the
             original `Polymer`.
         """
         self.tag_secondary_structure()
@@ -496,13 +496,13 @@ class Polypeptide(Polymer):
         ----------
         other: Residue or Polypeptide
         psi: float, optional
-            Psi torsion angle (degrees) between final `Residue` of self 
+            Psi torsion angle (degrees) between final `Residue` of self
             and first `Residue` of other.
         omega: float, optional
-            Omega torsion angle (degrees) between final `Residue` of 
+            Omega torsion angle (degrees) between final `Residue` of
             self and first `Residue` of other.
         phi: float, optional
-            Phi torsion angle (degrees) between final `Residue` of self 
+            Phi torsion angle (degrees) between final `Residue` of self
             and first `Residue` of other.
         o_c_n_angle: float or None, optional
             Desired angle between O, C (final `Residue` of self) and N
@@ -597,7 +597,7 @@ class Polypeptide(Polymer):
             Psi torsion angle (degrees) between final `Residue` of other
             and first `Residue` of self.
         omega: float
-            Omega torsion angle (degrees) between final `Residue` of 
+            Omega torsion angle (degrees) between final `Residue` of
             other and first `Residue` of self.
         phi: float
             Phi torsion angle (degrees) between final `Residue` of other
@@ -697,14 +697,14 @@ class Polypeptide(Polymer):
 
         References
         ----------
-        .. [1] Kabsch W, Sander C (1983) "Dictionary of protein 
+        .. [1] Kabsch W, Sander C (1983) "Dictionary of protein
            secondary structure: pattern recognition of hydrogen-bonded
            and geometrical features", Biopolymers, 22, 2577-637.
 
         Parameters
         ----------
         force : bool, optional
-            If `True` the tag will be run even if `Residues` are 
+            If `True` the tag will be run even if `Residues` are
             already tagged.
         """
         tagged = ['secondary_structure' in x.tags.keys()
@@ -741,7 +741,7 @@ class Polypeptide(Polymer):
             If `True`, the ta will be run even if `Residues` are
             already tagged.
         tag_type : str, optional
-            Specifies the name of the tag. Defaults to 
+            Specifies the name of the tag. Defaults to
             'residue_solvent_accessibility'. Useful for specifying more
             than one tag, e.g. if the Polymer is part of an Assembly.
         tag_total : bool, optional
@@ -779,14 +779,14 @@ class Polypeptide(Polymer):
 
         References
         ----------
-        .. [1] Kabsch W, Sander C (1983) "Dictionary of protein 
+        .. [1] Kabsch W, Sander C (1983) "Dictionary of protein
            secondary structure: pattern recognition of hydrogen-bonded
            and geometrical features", Biopolymers, 22, 2577-637.
 
         Parameters
         ----------
         force : bool, optional
-            If `True` the tag will be run even if `Residues` are 
+            If `True` the tag will be run even if `Residues` are
             already tagged.
         """
         tagged = ['dssp_acc' in x.tags.keys() for x in self._monomers]
@@ -804,7 +804,7 @@ class Polypeptide(Polymer):
         """Tags each monomer with side-chain dihedral angles
 
         force: bool, optional
-            If `True` the tag will be run even if `Residues` are 
+            If `True` the tag will be run even if `Residues` are
             already tagged.
         """
         tagged = ['chi_angles' in x.tags.keys() for x in self._monomers]
@@ -821,7 +821,7 @@ class Polypeptide(Polymer):
         Parameters
         ----------
         force : bool, optional
-            If `True` the tag will be run even if `Residues` are 
+            If `True` the tag will be run even if `Residues` are
             already tagged.
         """
         tagged = ['omega' in x.tags.keys() for x in self._monomers]
@@ -862,7 +862,7 @@ class Polypeptide(Polymer):
         """
         tagged = ['rise_per_residue' in x.tags.keys() for x in self._monomers]
         if (not all(tagged)) or force:
-            # Assign tags values of None if Polymer is too short to have a primitive.
+            # Assign tags None if Polymer is too short to have a primitive.
             if len(self) < 7:
                 rprs = [None] * len(self)
                 rocs = [None] * len(self)
@@ -1142,24 +1142,58 @@ class Polypeptide(Polymer):
 
 
 class Residue(Monomer):
-    def __init__(self, atoms=None, mol_code='UNK',
-                 monomer_id=' ', insertion_code=' ', is_hetero=False, ampal_parent=None):
-        """Object containing Atoms, this is how residues are represented in ISAMBARD.
+    """Represents a amino acid `Residue`.
 
-        Parameters
-        ----------
-        atoms : OrderedDict
-            OrderedDict containing Atoms for the Monomer. OrderedDict is used to maintain the order items
-            were added to the dictionary.
-        mol_code : str
-            One or three letter code that represents the monomer.
-        monomer_id : str
-            String used to identify the residue.
-        insertion_code : str
-            Insertion code of monomer, used if reading from pdb.
-        is_hetero : bool
-            True if is a hetero atom in pdb. Helps with PDB formatting.
-        """
+    Parameters
+    ----------
+    atoms : OrderedDict, optional
+        OrderedDict containing Atoms for the Monomer. OrderedDict
+        is used to maintain the order items were added to the
+        dictionary.
+    mol_code : str, optional
+        One or three letter code that represents the monomer.
+    monomer_id : str, optional
+        String used to identify the residue.
+    insertion_code : str, optional
+        Insertion code of monomer, used if reading from pdb.
+    is_hetero : bool, optional
+        True if is a hetero atom in pdb. Helps with PDB formatting.
+    ampal_parent : ampal.Polypeptide, optional
+        Reference to `Polypeptide` containing the `Residue`.
+
+    Attributes
+    ----------
+    mol_code : str
+        PDB molecule code that represents the `Residue`.
+    insertion_code : str
+        Insertion code of `Residue`, used if reading from pdb.
+    is_hetero : bool
+        True if is a hetero atom in pdb. Helps with PDB formatting.
+    self.states : dict
+        Contains an `OrderedDicts` containing atom information for each
+        state available for the `Residue`.
+    id : str
+        String used to identify the residue.
+    reference_atom : str
+        The key that corresponds to the reference atom. This is used
+        by various functions, for example backbone primitives are
+        calculated using the atom defined using this key.
+    ampal_parent : Polypeptide or None
+        A reference to the `Polypeptide` containing this `Residue`.
+    tags : dict
+        A dictionary containing information about this AMPAL object.
+        The tags dictionary is used by AMPAL to cache information
+        about this object, but is also intended to be used by users
+        to store any relevant information they have.
+
+    Raises
+    ------
+    ValueError
+        Raised if `mol_code` is not length 1 or 3.
+    """
+
+    def __init__(self, atoms=None, mol_code='UNK', monomer_id=' ',
+                 insertion_code=' ', is_hetero=False, ampal_parent=None):
         super(Residue, self).__init__(
             atoms, monomer_id, ampal_parent=ampal_parent)
         if len(mol_code) == 3:
@@ -1170,7 +1204,8 @@ class Residue(Monomer):
             self.mol_letter = mol_code
         else:
             raise ValueError(
-                'Monomer requires either a 1-letter or a 3-letter amino acid code ({})'.format(mol_code))
+                'Monomer requires either a 1-letter or a 3-letter '
+                'amino acid code ({})'.format(mol_code))
         self.insertion_code = insertion_code
         self.is_hetero = is_hetero
         self.reference_atom = 'CA'
@@ -1181,12 +1216,19 @@ class Residue(Monomer):
 
     @property
     def backbone(self):
-        """Generates and returns a new Monomer containing only the backbone atoms of the original Monomer.
+        """Returns a new `Residue` containing only the backbone atoms.
 
         Returns
         -------
         bb_monomer : Residue
-            Monomer containing only the backbone atoms of the original Monomer.
+            `Residue` containing only the backbone atoms of the original
+            `Monomer`.
+
+        Raises
+        ------
+        IndexError
+            Raise if the `atoms` dict does not contain the backbone
+            atoms (N, CA, C, O).
         """
         try:
             backbone = OrderedDict([('N', self.atoms['N']),
@@ -1194,34 +1236,40 @@ class Residue(Monomer):
                                     ('C', self.atoms['C']),
                                     ('O', self.atoms['O'])])
         except IndexError:
-            raise IndexError('Atoms argument invalid. Must be an OrderedDict with coordinates defined for the backbone'
+            raise IndexError('Atoms argument invalid. Must be an OrderedDict '
+                             'with coordinates defined for the backbone'
                              ' (N, CA, C, O) atoms.')
-        bb_monomer = Residue(backbone, self.mol_code, monomer_id=self.id, insertion_code=self.insertion_code,
+        bb_monomer = Residue(backbone, self.mol_code, monomer_id=self.id,
+                             insertion_code=self.insertion_code,
                              is_hetero=self.is_hetero)
         return bb_monomer
 
     @property
     def unique_id(self):
-        """ Generates a tuple that uniquely identifies each monomer in an assembly.
+        """Generates a tuple that uniquely identifies a `Monomer` in an `Assembly`.
 
         Notes
         -----
         The unique_id will uniquely identify each monomer within a polymer.
-        If each polymer in an assembly has a distinct id, it will uniquely identify each monomer within the assembly.
+        If each polymer in an assembly has a distinct id, it will uniquely
+        identify each monomer within the assembly.
 
-        The hetero-flag is defined as in Biopython as a string that is either a single whitespace in the case of a
-        non-hetero atom, or 'H_' plus the name of the hetero-residue (e.g. 'H_GLC' in the case of a glucose molecule),
-        or 'W' in the case of a water molecule.
+        The hetero-flag is defined as in Biopython as a string that is
+        either a single whitespace in the case of a non-hetero atom,
+        or 'H_' plus the name of the hetero-residue (e.g. 'H_GLC' in
+        the case of a glucose molecule), or 'W' in the case of a water
+        molecule.
 
-        For more information, see the Biopython documentation or this Biopython wiki page:
-            http://biopython.org/wiki/The_Biopython_Structural_Bioinformatics_FAQ
-
+        For more information, see the Biopython documentation or this
+        Biopython wiki page:
+        http://biopython.org/wiki/The_Biopython_Structural_Bioinformatics_FAQ
 
         Returns
         -------
         unique_id : tuple
-            unique_id[0] is the polymer_id
-            unique_id[1] is a triple of the hetero-flag, the monomer id (residue number) and the insertion code.
+            unique_id[0] is the polymer_id unique_id[1] is a triple
+            of the hetero-flag, the monomer id (residue number) and the
+            insertion code.
         """
         if self.is_hetero:
             if self.mol_code == 'HOH':
@@ -1234,7 +1282,7 @@ class Residue(Monomer):
 
     @property
     def side_chain(self):
-        """ List of the side-chain atoms (R-group).
+        """List of the side-chain atoms (R-group).
 
         Notes
         -----
@@ -1242,7 +1290,7 @@ class Residue(Monomer):
 
         Returns
         -------
-        side_chain_atoms: list(Atoms)
+        side_chain_atoms: list(`Atoms`)
         """
         side_chain_atoms = []
         if self.mol_code != 'GLY':
@@ -1271,9 +1319,9 @@ class Residue(Monomer):
         return side_chain_atoms
 
     # TODO fix behaviour to allow option not to include residue itself
-    def side_chain_environment(self, cutoff=4, include_neighbours=True, inter_chain=True, include_ligands=False,
-                               include_solvent=False):
-        """ Finds Monomers with any atom within the cutoff distance of the Residue side-chain.
+    def side_chain_environment(self, cutoff=4, include_neighbours=True,
+                               inter_chain=True, include_ligands=False, include_solvent=False):
+        """Finds `Residues` with any atom within the cutoff distance of side-chain.
 
         Notes
         -----
@@ -1281,16 +1329,21 @@ class Residue(Monomer):
 
         Parameters
         ----------
-        cutoff : float
-            Maximum inter-atom distance for residue to be included. Defaults to 4.
-        include_neighbours : bool
-            If false, does not return monomers at i-1, i+1 positions in same chain as Monomer.
-        inter_chain : bool
-            If false, only includes nearby monomers in the same chain as the Monomer.
-        include_ligands : bool
-            If true, Monomers classed as ligands but not identified as solvent will be included in the environment.
-        include_solvent : bool
-            If true, Monomers classed as categorised as solvent will be included in the environment.
+        cutoff : float, optional
+            Maximum inter-atom distance for residue to be included.
+            Defaults to 4.
+        include_neighbours : bool, optional
+            If `false`, does not return `Residue` at i-1, i+1 positions
+            in same chain as `Residue`.
+        inter_chain : bool, optional
+            If `false`, only includes nearby `Residue` in the same chain
+            as the `Residue`.
+        include_ligands : bool, optional
+            If `true`, `Residue` classed as ligands but not identified as
+            solvent will be included in the environment.
+        include_solvent : bool, optional
+            If `true`, Monomers classed as categorised as solvent
+            will be included in the environment.
 
         Returns
         -------
@@ -1299,14 +1352,18 @@ class Residue(Monomer):
         """
         if self.mol_code == 'GLY':
             return [self]
-        side_chain_dict = {x: {y: self.states[x][y] for y in self.states[x] if self.states[x][y] in
+        side_chain_dict = {x: {y: self.states[x][y]
+                               for y in self.states[x] if self.states[x][y] in
                                self.side_chain} for x in self.states}
         side_chain_monomer = Monomer(
-            atoms=side_chain_dict, monomer_id=self.id, ampal_parent=self.ampal_parent)
-        sc_environment = side_chain_monomer.environment(cutoff=cutoff, include_ligands=include_ligands,
-                                                        include_neighbours=include_neighbours,
-                                                        include_solvent=include_solvent, inter_chain=inter_chain)
+            atoms=side_chain_dict, monomer_id=self.id,
+            ampal_parent=self.ampal_parent)
+        sc_environment = side_chain_monomer.environment(
+            cutoff=cutoff, include_ligands=include_ligands,
+            include_neighbours=include_neighbours,
+            include_solvent=include_solvent, inter_chain=inter_chain)
         return sc_environment
 
 
-__author__ = 'Jack W. Heal, Christopher W. Wood, Gail J. Bartlett, Andrew R. Thomson, Kieran L. Hudson'
+__author__ = ('Jack W. Heal, Christopher W. Wood, Gail J. Bartlett, '
+              'Andrew R. Thomson, Kieran L. Hudson')
