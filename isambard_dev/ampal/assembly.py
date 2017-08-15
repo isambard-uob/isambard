@@ -602,7 +602,7 @@ class Assembly(BaseAmpal):
 
         Returns
         -------
-        buff_score: BUFFScore
+        buff_score: buff.BUFFScore
             A BUFFScore object with information about each of the 
             interactions and the atoms involved.
 
@@ -699,11 +699,11 @@ class Assembly(BaseAmpal):
         available, please follow instruction here to add it:
         https://github.com/woolfson-group/isambard#external-programs
 
-        For more information on DSSP see [2].
+        For more information on DSSP see [1].
 
         References
         ----------
-        .. [2] Kabsch W, Sander C (1983) "Dictionary of protein 
+        .. [1] Kabsch W, Sander C (1983) "Dictionary of protein 
            secondary structure: pattern recognition of hydrogen-bonded
            and geometrical features", Biopolymers, 22, 2577-637.
 
@@ -730,11 +730,11 @@ class Assembly(BaseAmpal):
         available, please follow instruction here to add it:
         https://github.com/woolfson-group/isambard#external-programs
 
-        For more information on DSSP see [3].
+        For more information on DSSP see [1].
 
         References
         ----------
-        .. [3] Kabsch W, Sander C (1983) "Dictionary of protein 
+        .. [1] Kabsch W, Sander C (1983) "Dictionary of protein 
            secondary structure: pattern recognition of hydrogen-bonded
            and geometrical features", Biopolymers, 22, 2577-637.
 
