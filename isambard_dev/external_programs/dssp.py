@@ -1,3 +1,14 @@
+"""This module provides an interface to the program DSSP.
+
+For more information on DSSP see [1].
+
+References
+----------
+.. [1] Kabsch W, Sander C (1983) "Dictionary of protein
+   secondary structure: pattern recognition of hydrogen-bonded
+   and geometrical features", Biopolymers, 22, 2577-637.
+"""
+
 import os
 import subprocess
 import tempfile
@@ -7,10 +18,13 @@ from tools.isambard_warnings import check_availability
 
 
 def test_dssp():
+    """Returns `True` if DSSP is available."""
     is_dssp_available = False
     if os.path.isfile(global_settings['dssp']['path']):
         try:
-            subprocess.check_output([global_settings['dssp']['path'], '--version'], stderr=subprocess.DEVNULL)
+            subprocess.check_output(
+                [global_settings['dssp']['path'], '--version'],
+                stderr=subprocess.DEVNULL)
             is_dssp_available = True
         except:
             pass
@@ -27,7 +41,7 @@ def run_dssp(pdb, path=True, outfile=None):
     ----------
     pdb : str
         Path to pdb file or string.
-    path : bool
+    path : bool, optional
         Indicates if pdb is a path or a string.
     outfile : str, optional
         Filepath for storing the dssp output.
@@ -38,19 +52,20 @@ def run_dssp(pdb, path=True, outfile=None):
         Std out from DSSP.
     """
     if not path:
-        # if statement added to be sure that encode is only called on string type.
         if type(pdb) == str:
             pdb = pdb.encode()
         try:
             temp_pdb = tempfile.NamedTemporaryFile(delete=False)
             temp_pdb.write(pdb)
             temp_pdb.seek(0)
-            dssp_out = subprocess.check_output([global_settings['dssp']['path'], temp_pdb.name])
+            dssp_out = subprocess.check_output(
+                [global_settings['dssp']['path'], temp_pdb.name])
             temp_pdb.close()
         finally:
             os.remove(temp_pdb.name)
     else:
-        dssp_out = subprocess.check_output([global_settings['dssp']['path'], pdb])
+        dssp_out = subprocess.check_output(
+            [global_settings['dssp']['path'], pdb])
 
     # Python 3 string formatting.
     dssp_out = dssp_out.decode()
@@ -62,12 +77,14 @@ def run_dssp(pdb, path=True, outfile=None):
 
 
 def extract_all_ss_dssp(in_dssp, path=True):
-    """Uses DSSP to extract secondary structure information on every residue in the input dssp file.
+    """Uses DSSP to extract secondary structure information on every residue.
 
     Parameters
     ----------
     in_dssp : str
         Path to DSSP file.
+    path : bool, optional
+        Indicates if pdb is a path or a string.
 
     Returns
     -------
@@ -109,7 +126,7 @@ def extract_all_ss_dssp(in_dssp, path=True):
 
 
 def extract_solvent_accessibility_dssp(in_dssp, path=True):
-    """Uses DSSP to extract solvent accessibilty information on every residue in the input dssp file.
+    """Uses DSSP to extract solvent accessibilty information on every residue.
 
     Notes
     -----
@@ -147,7 +164,8 @@ def extract_solvent_accessibility_dssp(in_dssp, path=True):
                 chain = line[10:12].strip()
                 residue = line[13]
                 acc = int(line[35:38].strip())
-                # It is IMPORTANT that acc remains the final value of the returned list, due to its usage in
+                # It is IMPORTANT that acc remains the final value of the
+                # returned list, due to its usage in
                 # isambard.ampal.base_ampal.tag_dssp_solvent_accessibility
                 dssp_residues.append([res_num, chain, residue, acc])
             except ValueError:
@@ -160,13 +178,20 @@ def extract_solvent_accessibility_dssp(in_dssp, path=True):
 
 
 def extract_helices_dssp(in_pdb):
-    """Uses DSSP to find helices and extracts helices from a pdb file.
+    """Uses DSSP to find alpha-helices and extracts helices from a pdb file.
 
-    Returns a length 3 list with a helix id, the chain id and a dict containing the coordinates of each residues CA.
+    Returns a length 3 list with a helix id, the chain id and a dict
+    containing the coordinates of each residues CA.
+
+    Parameters
+    ----------
+    in_pdb : string
+        Path to a PDB file.
     """
     from ampal.pdb_parser import split_pdb_lines
 
-    dssp_out = subprocess.check_output([global_settings['dssp']['path'], in_pdb])
+    dssp_out = subprocess.check_output(
+        [global_settings['dssp']['path'], in_pdb])
     helix = 0
     helices = []
     h_on = False
@@ -175,7 +200,8 @@ def extract_helices_dssp(in_pdb):
         try:
             if dssp_line[4] == 'H':
                 if helix not in [x[0] for x in helices]:
-                    helices.append([helix, dssp_line[2], {int(dssp_line[1]): None}])
+                    helices.append(
+                        [helix, dssp_line[2], {int(dssp_line[1]): None}])
                 else:
                     helices[helix][2][int(dssp_line[1])] = None
                 h_on = True
@@ -195,12 +221,23 @@ def extract_helices_dssp(in_pdb):
 
 
 def extract_pp_helices(in_pdb):
-    phi = -75.0
-    phi_d = 29.0
-    psi = 145.0
-    psi_d = 29.0
+    """Uses DSSP to find polyproline helices in a pdb file.
 
-    pph_dssp = subprocess.check_output([global_settings['dssp']['path'], in_pdb])
+    Returns a length 3 list with a helix id, the chain id and a dict
+    containing the coordinates of each residues CA.
+
+    Parameters
+    ----------
+    in_pdb : string
+        Path to a PDB file.
+    """
+    t_phi = -75.0
+    t_phi_d = 29.0
+    t_psi = 145.0
+    t_psi_d = 29.0
+
+    pph_dssp = subprocess.check_output(
+        [global_settings['dssp']['path'], in_pdb])
     dssp_residues = []
     go = False
     for line in pph_dssp.splitlines():
@@ -219,7 +256,9 @@ def extract_pp_helices(in_pdb):
     chain = []
     ch_on = False
     for item in dssp_residues:
-        if (item[1] == ' ') and (phi - phi_d < item[3] < phi + phi_d):
+        if (item[1] == ' ') and (
+            t_phi - t_phi_d < item[3] < t_phi + t_phi_d) and (
+            t_psi - t_psi_d < item[4] < t_psi + t_psi_d):
             chain.append(item)
             ch_on = True
         else:
@@ -236,19 +275,22 @@ def extract_pp_helices(in_pdb):
         res_range = [x[0] for x in pp_helix]
         helix = []
         for atom in pdb_atoms:
-            if (atom[2] == "CA") and (atom[5] == chain_id) and (atom[6] in res_range):
+            if (atom[2] == "CA") and (
+                    atom[5] == chain_id) and (
+                    atom[6] in res_range):
                 helix.append(tuple(atom[8:11]))
         pp_helices.append(helix)
     return pp_helices
 
 
 def find_ss_regions(dssp_residues):
-    """Separates parsed DSSP data into groups based on runs of secondary structure.
+    """Separates parsed DSSP data into groups of secondary structure.
 
     Notes
     -----
-    Example: all residues in a single helix/loop/strand will be gathered into a list, then the next secondary structure
-    element will be gathered into a separate list, and so on.
+    Example: all residues in a single helix/loop/strand will be gathered
+    into a list, then the next secondary structure element will be
+    gathered into a separate list, and so on.
 
     Parameters
     ----------
@@ -264,7 +306,8 @@ def find_ss_regions(dssp_residues):
     Returns
     -------
     fragments : [[list]]
-        Lists grouped in continuous regions of secondary structure. Innermost list has the same format as above.
+        Lists grouped in continuous regions of secondary structure.
+        Innermost list has the same format as above.
     """
 
     loops = [' ', 'B', 'S', 'T']
@@ -290,3 +333,6 @@ def find_ss_regions(dssp_residues):
                 fragment = [ele]
         current_ele = ele[1]
     return fragments
+
+
+__author__ = "Christopher W. Wood, Gail J. Bartlett"
