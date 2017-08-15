@@ -1,3 +1,5 @@
+"""Contains functionality for builting protein structure from torsion angles."""
+
 from collections import OrderedDict
 import numpy
 #cython: embedsignature=True
@@ -21,8 +23,12 @@ cdef _planar_c_and_o_coords(double n_ca, ca_c, c_o, n_ca_c, ca_c_o):
     oz = cz + sin(half_pi + n_ca_c - ca_c_o) * c_o
     return cy, cz, oy, oz
 
+
 def planar_residue(n_ca=1.47, ca_c=1.53, c_o=1.24, n_ca_c=110.0, ca_c_o=121.0):
-    """ GLY Residue with all coordinates in the y-z plane.
+    """
+    planar_residue(n_ca=1.47, ca_c=1.53, c_o=1.24, n_ca_c=110.0, ca_c_o=121.0)
+
+    GLY Residue with all coordinates in the y-z plane.
 
     Note
     ----
@@ -32,15 +38,15 @@ def planar_residue(n_ca=1.47, ca_c=1.53, c_o=1.24, n_ca_c=110.0, ca_c_o=121.0):
 
     Parameters
     ----------
-    n_ca: float
+    n_ca: float, optional
         N-CA bond distance in Angstroms.
-    ca_c: float
+    ca_c: float, optional
         CA-C bond distance in Angstroms.
-    c_o: float
+    c_o: float, optional
         C=O bond distances in Angstroms.
-    n_ca_c: float
+    n_ca_c: float, optional
         N-CA-C bond angle in degrees.
-    ca_c_o: float
+    ca_c_o: float, optional
         CA-C=O bond angle in degrees.
 
     Returns
@@ -50,7 +56,8 @@ def planar_residue(n_ca=1.47, ca_c=1.53, c_o=1.24, n_ca_c=110.0, ca_c_o=121.0):
     """
     n = Atom([0.0, 0.0, 0.0], element='N', res_label='N')
     ca = Atom([0.0, 0.0, n_ca], element='C', res_label='CA')
-    cy, cz, oy, oz = _planar_c_and_o_coords(n_ca=n_ca, ca_c=ca_c, c_o=c_o, n_ca_c=n_ca_c, ca_c_o=ca_c_o)
+    cy, cz, oy, oz = _planar_c_and_o_coords(
+        n_ca=n_ca, ca_c=ca_c, c_o=c_o, n_ca_c=n_ca_c, ca_c_o=ca_c_o)
     c = Atom([0.0, cy, cz], element='C', res_label='C')
     o = Atom(numpy.array([0.0, oy, oz]), element='O', res_label='O')
     atoms = OrderedDict([('N', n), ('CA', ca), ('C', c), ('O', o)])
@@ -61,21 +68,39 @@ def planar_residue(n_ca=1.47, ca_c=1.53, c_o=1.24, n_ca_c=110.0, ca_c_o=121.0):
 
 
 class TAPolypeptide(Polypeptide):
-    """Subclass of Polymer that generates a polypeptide with defined torsion angles. (list of (omega, phi, psi)).
+    """Generates a polypeptide with defined torsion angles.
 
     Note
     ----
-    Default bond angles and distances from:
-    Schulz, G. E, and R. Heiner Schirmer. Principles Of Protein Structure. New York: Springer-Verlag, 1979.
-    The final oxygen atom is positioned as if the next (imaginary) Residue is bonded in a trans conformation
-    (i.e. using a default value for the CA-C=O angle of 121.0, not 119.0).
+    Default bond angles and distances from [1]. The final oxygen atom
+    is positioned as if the next (imaginary) Residue is bonded in a
+    trans conformation (i.e. using a default value for the CA-C=O 
+    angle of 121.0, not 119.0).
+
+    References
+    ----------
+    .. [0] Schulz, G. E, and R. Heiner Schirmer. Principles Of Protein
+       Structure. New York: Springer-Verlag, 1979.
+
+    Parameters
+    ----------
+    torsion_angles : list of triples
+        Contains lists of torsion angles (omega, phi, psi) that will
+        be used to create the polypeptide. The number of residues
+        is equal to the length of this list. The first value of the
+        first list (omega) and the last value of the last list (psi)
+        will not be used to generate the polypeptide.
+    auto_build : bool
+        If `true`, the model will be built as part of instantiation.
 
     Attributes
     ----------
     torsion_angles : list of triples
-        Contains lists of torsion angles (omega, phi, psi) that will be used to create the polypeptide. The number of
-        residues is equal to the length of this list. The first value of the first list (omega) and the last value of
-        the last list (psi) will not be used to generate the polypeptide.
+        Contains lists of torsion angles (omega, phi, psi) that will
+        be used to create the polypeptide. The number of residues
+        is equal to the length of this list. The first value of the
+        first list (omega) and the last value of the last list (psi)
+        will not be used to generate the polypeptide.
     n_ca_bonds: list of float
         Backbone N-CA bond distances in Angstroms.
     ca_c_bonds: list of float
@@ -93,26 +118,42 @@ class TAPolypeptide(Polypeptide):
     c_n_ca_angles: list of float
         Backbone C-N-CA bond angle in degrees.
     """
+
     def __init__(self, torsion_angles, auto_build=True):
         super(TAPolypeptide, self).__init__()
         self.torsion_angles = torsion_angles
         self.num_monomers = len(self.torsion_angles)
-        self.trans = [True if abs(self.torsion_angles[i][0]) >= 90 else False for i in range(self.num_monomers)]
+        self.trans = [True if abs(self.torsion_angles[i][0]) >= 90
+                      else False
+                      for i in range(self.num_monomers)]
         # backbone bond lengths
-        self.c_o_bonds = [ideal_backbone_bond_lengths['c_o'] for _ in range(self.num_monomers)]
-        self.ca_c_bonds = [ideal_backbone_bond_lengths['ca_c'] for _ in range(self.num_monomers)]
-        self.n_ca_bonds = [ideal_backbone_bond_lengths['n_ca'] for _ in range(self.num_monomers)]
-        self.c_n_bonds = [ideal_backbone_bond_lengths['c_n'] for _ in range(self.num_monomers - 1)]
+        self.c_o_bonds = [ideal_backbone_bond_lengths['c_o']
+                          for _ in range(self.num_monomers)]
+        self.ca_c_bonds = [ideal_backbone_bond_lengths['ca_c']
+                           for _ in range(self.num_monomers)]
+        self.n_ca_bonds = [ideal_backbone_bond_lengths['n_ca']
+                           for _ in range(self.num_monomers)]
+        self.c_n_bonds = [ideal_backbone_bond_lengths['c_n']
+                          for _ in range(self.num_monomers - 1)]
         # backbone bond angles
-        self.n_ca_c_angles = [ideal_backbone_bond_angles['trans']['n_ca_c'] if self.trans[i]
-                              else ideal_backbone_bond_angles['cis']['n_ca_c'] for i in range(self.num_monomers)]
-        self.ca_c_o_angles = [ideal_backbone_bond_angles['trans']['ca_c_o'] if self.trans[i + 1]
-                              else ideal_backbone_bond_angles['cis']['ca_c_o'] for i in range(self.num_monomers - 1)]
-        self.ca_c_o_angles.append(ideal_backbone_bond_angles['trans']['ca_c_o'])
-        self.ca_c_n_angles = [ideal_backbone_bond_angles['trans']['ca_c_n'] if self.trans[i + 1]
-                              else ideal_backbone_bond_angles['cis']['ca_c_n'] for i in range(self.num_monomers - 1)]
-        self.c_n_ca_angles = [ideal_backbone_bond_angles['trans']['c_n_ca'] if self.trans[i + 1]
-                              else ideal_backbone_bond_angles['cis']['c_n_ca'] for i in range(self.num_monomers - 1)]
+        self.n_ca_c_angles = [
+            ideal_backbone_bond_angles['trans']['n_ca_c'] if self.trans[i]
+            else ideal_backbone_bond_angles['cis']['n_ca_c']
+            for i in range(self.num_monomers)]
+        self.ca_c_o_angles = [
+            ideal_backbone_bond_angles['trans']['ca_c_o'] if self.trans[i + 1]
+            else ideal_backbone_bond_angles['cis']['ca_c_o']
+            for i in range(self.num_monomers - 1)]
+        self.ca_c_o_angles.append(
+            ideal_backbone_bond_angles['trans']['ca_c_o'])
+        self.ca_c_n_angles = [
+            ideal_backbone_bond_angles['trans']['ca_c_n'] if self.trans[i + 1]
+            else ideal_backbone_bond_angles['cis']['ca_c_n']
+            for i in range(self.num_monomers - 1)]
+        self.c_n_ca_angles = [
+            ideal_backbone_bond_angles['trans']['c_n_ca'] if self.trans[i + 1]
+            else ideal_backbone_bond_angles['cis']['c_n_ca']
+            for i in range(self.num_monomers - 1)]
         if auto_build:
             self.build()
 
@@ -124,11 +165,19 @@ class TAPolypeptide(Polypeptide):
         ----------
         polypeptide : Polypeptide
         align_model : bool
-            If True, runs align() on the TAPolypeptide to align it with the Polypeptide before returning.
+            If True, runs align() on the TAPolypeptide to align it with
+            the Polypeptide before returning.
+        auto_build : bool
+            If `true`, the model will be built as part of instantiation.
 
+        Raises
+        ------
+        TypeError
+            Raised if `polypeptide` is not `ampal.Polypeptide`.
         """
         if not isinstance(polypeptide, Polypeptide):
-            raise TypeError('Invalid object type {0} given. This method can only be used with a Polypeptide'
+            raise TypeError('Invalid object type {0} given. This method can '
+                            'only be used with a Polypeptide'
                             .format(type(polypeptide)))
         torsion_angles = [list(x) for x in measure_torsion_angles(polypeptide)]
         # dummy value for first omega (not used in build, but can't be None)
@@ -148,34 +197,51 @@ class TAPolypeptide(Polypeptide):
             instance.build()
             # Rotate about CA-C bond to align O atoms
             # (there is some rotational freedom of this atom in natural structures).
-            polypeptide_n_ca_c_o_angles = [dihedral(r['N'], r['CA'], r['C'], r['O'])
-                               for r in polypeptide.get_monomers(ligands=False)]
-            instance_n_ca_c_o_angles = [dihedral(r['N'], r['CA'], r['C'], r['O']) for r in instance.get_monomers()]
+            polypeptide_n_ca_c_o_angles = [
+                dihedral(r['N'], r['CA'], r['C'], r['O'])
+                for r in polypeptide.get_monomers(ligands=False)]
+            instance_n_ca_c_o_angles = [
+                dihedral(r['N'], r['CA'], r['C'], r['O'])
+                for r in instance.get_monomers()]
             for i, r in enumerate(instance):
-                angle = polypeptide_n_ca_c_o_angles[i] - instance_n_ca_c_o_angles[i]
-                q = Quaternion.angle_and_axis(angle=angle, axis=(r['C'] - r['CA']))
-                r['O']._vector = q.rotate_vector(r['O']._vector, point=r['C']._vector)
+                angle = (polypeptide_n_ca_c_o_angles[i]
+                         - instance_n_ca_c_o_angles[i])
+                q = Quaternion.angle_and_axis(
+                    angle=angle, axis=(r['C'] - r['CA']))
+                r['O']._vector = q.rotate_vector(
+                    r['O']._vector, point=r['C']._vector)
             if align_model:
                 align(target=polypeptide, mobile=instance)
         return instance
 
     @property
     def o_c_n_angles(self):
-        """ Backbone O=C-N angle determined by CA-C=O and CA-C-N angle. (Must sum to 360.0) """
-        return [360.0 - (x + y) for x, y in zip(self.ca_c_o_angles, self.ca_c_n_angles)]
+        """Backbone O=C-N angle determined by CA-C=O and CA-C-N angle.
+
+        Notes
+        -----
+        Must sum to 360.0.
+        """
+        return [360.0 - (x + y)
+                for x, y in zip(self.ca_c_o_angles, self.ca_c_n_angles)]
 
     def build(self):
-        """ Builds TAPolypeptide according to its bond angle and bond length lists. """
-        planar_residues = [planar_residue(n_ca=self.n_ca_bonds[i], ca_c=self.ca_c_bonds[i],
-                                          c_o=self.c_o_bonds[i], n_ca_c=self.n_ca_c_angles[i],
-                                          ca_c_o=self.ca_c_o_angles[i]) for i in range(self.num_monomers)]
+        """Builds TAPolypeptide using its bond angle and bond length lists."""
+        planar_residues = [planar_residue(
+            n_ca=self.n_ca_bonds[i],
+            ca_c=self.ca_c_bonds[i],
+            c_o=self.c_o_bonds[i],
+            n_ca_c=self.n_ca_c_angles[i],
+            ca_c_o=self.ca_c_o_angles[i])
+            for i in range(self.num_monomers)]
         r = Polypeptide([planar_residues[0]])
         for i in range(self.num_monomers - 1):
             r2 = planar_residues[i + 1]
             omega, phi = self.torsion_angles[i + 1][:2]
             psi = self.torsion_angles[i][2]
             r.c_join(r2, omega=omega, phi=phi, psi=psi,
-                     o_c_n_angle=self.o_c_n_angles[i], c_n_ca_angle=self.c_n_ca_angles[i],
+                     o_c_n_angle=self.o_c_n_angles[i],
+                     c_n_ca_angle=self.c_n_ca_angles[i],
                      c_n_length=self.c_n_bonds[i], relabel=False)
         r.relabel_all()
         self._monomers = r._monomers
@@ -185,4 +251,3 @@ class TAPolypeptide(Polypeptide):
 
 
 __author__ = 'Jack W. Heal, Christopher W. Wood'
-__status__ = 'Development'
