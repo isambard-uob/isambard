@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.buff.force_field module &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="index.html"/>
+        <link rel="up" title="isambard.buff package" href="isambard.buff.html"/>
+        <link rel="next" title="isambard.optimisation package" href="isambard.optimisation.html"/>
+        <link rel="prev" title="isambard.buff.calculate_energy module" href="isambard.buff.calculate_energy.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api_reference.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="isambard.buff.html">isambard.buff package</a> &raquo;</li>
+        
+      <li>isambard.buff.force_field module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/isambard.buff.force_field.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-isambard.buff.force_field">
+<span id="isambard-buff-force-field-module"></span><h1>isambard.buff.force_field module<a class="headerlink" href="#module-isambard.buff.force_field" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="isambard.buff.force_field.BuffForceField">
+<em class="property">class </em><code class="descname">BuffForceField</code><span class="sig-paren">(</span><em>force_field='standard'</em>, <em>auto_update_params=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/buff/force_field.html#BuffForceField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.buff.force_field.BuffForceField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a></p>
+<p>A wrapper around a BUFF force field.</p>
+<dl class="docutils">
+<dt>max_radius_and_npnp: (float, float)</dt>
+<dd>The maximum radius and npnp distance included in the force field.</dd>
+<dt>distance_cutoff: float</dt>
+<dd>Find the distance of the longest possible interaction.</dd>
+<dt>parameter_struct_dict: dict</dt>
+<dd>Dictionary containing PyAtomData structs for the force field
+parameters for each atom in the force field.</dd>
+</dl>
+<dl class="attribute">
+<dt id="isambard.buff.force_field.BuffForceField.distance_cutoff">
+<code class="descname">distance_cutoff</code><a class="headerlink" href="#isambard.buff.force_field.BuffForceField.distance_cutoff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="isambard.buff.force_field.BuffForceField.find_max_rad_npnp">
+<code class="descname">find_max_rad_npnp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/buff/force_field.html#BuffForceField.find_max_rad_npnp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.buff.force_field.BuffForceField.find_max_rad_npnp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the maximum radius and npnp in the force field.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>(max_rad, max_npnp)</strong> &#8211;
+Maximum radius and npnp distance in the loaded force field.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(float, float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.buff.force_field.BuffForceField.max_radius_and_npnp">
+<code class="descname">max_radius_and_npnp</code><a class="headerlink" href="#isambard.buff.force_field.BuffForceField.max_radius_and_npnp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.buff.force_field.BuffForceField.parameter_struct_dict">
+<code class="descname">parameter_struct_dict</code><a class="headerlink" href="#isambard.buff.force_field.BuffForceField.parameter_struct_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="isambard.buff.force_field.ForceFieldParameterError">
+<em class="property">exception </em><code class="descname">ForceFieldParameterError</code><a class="reference internal" href="_modules/isambard/buff/force_field.html#ForceFieldParameterError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.buff.force_field.ForceFieldParameterError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="isambard.optimisation.html" class="btn btn-neutral float-right" title="isambard.optimisation package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="isambard.buff.calculate_energy.html" class="btn btn-neutral" title="isambard.buff.calculate_energy module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 16, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

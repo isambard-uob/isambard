@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.specifications.polymer_specs.ta_polypeptide module &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="index.html"/>
+        <link rel="up" title="isambard.ampal.specifications.polymer_specs package" href="isambard.ampal.specifications.polymer_specs.html"/>
+        <link rel="next" title="isambard.buff package" href="isambard.buff.html"/>
+        <link rel="prev" title="isambard.ampal.specifications.polymer_specs.nucleic_acid_strand module" href="isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api_reference.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="isambard.ampal.specifications.polymer_specs.html">isambard.ampal.specifications.polymer_specs package</a> &raquo;</li>
+        
+      <li>isambard.ampal.specifications.polymer_specs.ta_polypeptide module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/isambard.ampal.specifications.polymer_specs.ta_polypeptide.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="isambard-ampal-specifications-polymer-specs-ta-polypeptide-module">
+<h1>isambard.ampal.specifications.polymer_specs.ta_polypeptide module<a class="headerlink" href="#isambard-ampal-specifications-polymer-specs-ta-polypeptide-module" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-isambard.ampal.specifications.polymer_specs.ta_polypeptide"></span><dl class="class">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide">
+<em class="property">class </em><code class="descname">TAPolypeptide</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ampal.protein.Polypeptide</span></code></p>
+<p>Subclass of Polymer that generates a polypeptide with defined torsion angles. (list of (omega, phi, psi)).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Default bond angles and distances from:
+Schulz, G. E, and R. Heiner Schirmer. Principles Of Protein Structure. New York: Springer-Verlag, 1979.
+The final oxygen atom is positioned as if the next (imaginary) Residue is bonded in a trans conformation
+(i.e. using a default value for the CA-C=O angle of 121.0, not 119.0).</p>
+</div>
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.torsion_angles">
+<code class="descname">torsion_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.torsion_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of triples</em></p>
+<p>Contains lists of torsion angles (omega, phi, psi) that will be used to create the polypeptide. The number of
+residues is equal to the length of this list. The first value of the first list (omega) and the last value of
+the last list (psi) will not be used to generate the polypeptide.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.n_ca_bonds">
+<code class="descname">n_ca_bonds</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.n_ca_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of float</em></p>
+<p>Backbone N-CA bond distances in Angstroms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_bonds">
+<code class="descname">ca_c_bonds</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of float</em></p>
+<p>Backbone CA-C bond distances in Angstroms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_n_bonds">
+<code class="descname">c_n_bonds</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_n_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of float</em></p>
+<p>Backbone C-N (peptide) bond distances in Angstroms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_o_bonds">
+<code class="descname">c_o_bonds</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_o_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of float</em></p>
+<p>Backbone C=O bond distances in Angstroms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.n_ca_c_angles">
+<code class="descname">n_ca_c_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.n_ca_c_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of float</em></p>
+<p>Backbone N-CA-C bond angle in degrees.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_o_angles">
+<code class="descname">ca_c_o_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_o_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of float</em></p>
+<p>Backbone CA-C=O bond angle in degrees.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_n_angles">
+<code class="descname">ca_c_n_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_n_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of float</em></p>
+<p>Backbone CA-C-N bond angle in degrees.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_n_ca_angles">
+<code class="descname">c_n_ca_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_n_ca_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of float</em></p>
+<p>Backbone C-N-CA bond angle in degrees.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds TAPolypeptide according to its bond angle and bond length lists.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.from_polypeptide">
+<em class="property">classmethod </em><code class="descname">from_polypeptide</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.from_polypeptide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds input polypeptide as a TAPolypeptide</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>polypeptide</strong> (<a class="reference internal" href="isambard.ampal.protein.html#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) &#8211; </li>
+<li><strong>align_model</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True, runs align() on the TAPolypeptide to align it with the Polypeptide before returning.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.o_c_n_angles">
+<code class="descname">o_c_n_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.o_c_n_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backbone O=C-N angle determined by CA-C=O and CA-C-N angle. (Must sum to 360.0)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.planar_residue">
+<code class="descname">planar_residue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.planar_residue" title="Permalink to this definition">¶</a></dt>
+<dd><p>GLY Residue with all coordinates in the y-z plane.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Builds a GLY Residue in the y-z plane.
+N is placed at the origin, and CA on the positive z-axis.
+The C and O coordinates are determined by input bond length and angles.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n_ca</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; N-CA bond distance in Angstroms.</li>
+<li><strong>ca_c</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; CA-C bond distance in Angstroms.</li>
+<li><strong>c_o</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; C=O bond distances in Angstroms.</li>
+<li><strong>n_ca_c</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; N-CA-C bond angle in degrees.</li>
+<li><strong>ca_c_o</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; CA-C=O bond angle in degrees.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A GLY Residue in the y-z plane.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="isambard.ampal.protein.html#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue">Residue</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="isambard.buff.html" class="btn btn-neutral float-right" title="isambard.buff package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.html" class="btn btn-neutral" title="isambard.ampal.specifications.polymer_specs.nucleic_acid_strand module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 16, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
