@@ -20,6 +20,8 @@ up the files in general.
 
 ### Finished
 
+* `assembly_specs/`
+    * `coiled_coil.py`
 * `polymer_specs/`
     * `helix.py`
     * `nucleic_acid_strand.py`
