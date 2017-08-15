@@ -23,6 +23,7 @@ up the files in general.
 * `assembly_specs/`
     * `coiled_coil.py`
     * `nucleic_acid_duplex.py`
+    * `solenoid.py`
 * `polymer_specs/`
     * `helix.py`
     * `nucleic_acid_strand.py`
