@@ -1,13 +1,17 @@
+"""Contains code for BUFF force field objects."""
+
 import json
 import os
 
 from settings import global_settings
 
 force_fields = {}
-for ff in os.listdir(os.path.join(global_settings['package_path'], 'buff', 'force_fields')):
+for ff in os.listdir(os.path.join(global_settings['package_path'],
+                                  'buff', 'force_fields')):
     ffs = ff.split('.')
     if ffs[-1] == 'json':
-        force_fields[ffs[0]] = os.path.join(global_settings['package_path'], 'buff', 'force_fields', ff)
+        force_fields[ffs[0]] = os.path.join(
+            global_settings['package_path'], 'buff', 'force_fields', ff)
 
 
 class ForceFieldParameterError(Exception):
@@ -17,15 +21,14 @@ class ForceFieldParameterError(Exception):
 class BuffForceField(dict):
     """A wrapper around a BUFF force field.
 
-    Properties
+    Parameters
     ----------
-    max_radius_and_npnp: (float, float)
-        The maximum radius and npnp distance included in the force field.
-    distance_cutoff: float
-        Find the distance of the longest possible interaction.
-    parameter_struct_dict: dict
-        Dictionary containing PyAtomData structs for the force field
-        parameters for each atom in the force field.
+    force_field : string
+        Name of force field to be loaded.
+    auto_update_params : bool, optional
+
+    Attributes
+    ----------
     """
     _parameter_struct_dict = None
     _old_hash = None
@@ -44,10 +47,12 @@ class BuffForceField(dict):
 
     @property
     def max_radius_and_npnp(self):
+        """Maximum radius and non-polar non-polar distance in the force field."""
         return self.find_max_rad_npnp()
 
     @property
     def distance_cutoff(self):
+        """Distance cut off for interactions within the force field."""
         if self._defined_dist_cutoff is None:
             return self._calc_distance_cutoff()
         else:
@@ -83,17 +88,21 @@ class BuffForceField(dict):
 
     @property
     def parameter_struct_dict(self):
+        """Dictionary containing PyAtomData structs for the force field."""
         if self._parameter_struct_dict is None:
             self._parameter_struct_dict = self._make_ff_params_dict()
         elif self.auto_update_f_params:
-            new_hash = hash(tuple([tuple(item) for sublist in self.values() for item in sublist.values()]))
+            new_hash = hash(
+                tuple([tuple(item)
+                       for sublist in self.values()
+                       for item in sublist.values()]))
             if self._old_hash != new_hash:
                 self._parameter_struct_dict = self._make_ff_params_dict()
                 self._old_hash = new_hash
         return self._parameter_struct_dict
 
     def _make_ff_params_dict(self):
-        """Makes a dictionary containing PyAtomData structs for each element in the force field.
+        """Makes a dictionary containing PyAtomData for the force field.
 
         Returns
         -------
@@ -114,8 +123,13 @@ class BuffForceField(dict):
                     ff_params_struct_dict[res][atom] = PyAtomData(
                         atom.encode(), params[0].encode(), *params[1:])
         except TypeError:
-            raise ForceFieldParameterError('Badly formatted force field parameters: {}'.format(params))
+            raise ForceFieldParameterError(
+                'Badly formatted force field parameters: {}'.format(params))
         return ff_params_struct_dict
+
 
 global_settings[u'buff'][u'force_field'] = BuffForceField(
     force_field=global_settings[u'buff'][u'default_force_field'])
+
+
+__author__ = "Christopher W. Wood"

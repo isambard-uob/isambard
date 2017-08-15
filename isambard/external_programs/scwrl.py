@@ -1,3 +1,19 @@
+"""This module provides an interface to the program Scwrl4.
+
+Scwrl must be available to call. Check by running
+`isambard.external_programs.scwrl.test_scwrl`. If Scwrl is not
+available, please follow instruction here to add it:
+https://github.com/woolfson-group/isambard#external-programs
+
+For more information on Scwrl see [1].
+
+References
+----------
+.. [1] Krivov GG, Shapovalov MV, and Dunbrack Jr RL (2009) "Improved
+   prediction of protein side-chain conformations with SCWRL4.",
+   Proteins.
+"""
+
 import os
 import subprocess
 import tempfile
@@ -8,10 +24,12 @@ from tools.isambard_warnings import check_availability
 
 
 def test_scwrl():
+    """Returns `True` if Scrwl is available."""
     is_scwrl_available = False
     if os.path.isfile(global_settings['scwrl']['path']):
         try:
-            subprocess.check_output([global_settings['scwrl']['path']], stderr=subprocess.DEVNULL)
+            subprocess.check_output(
+                [global_settings['scwrl']['path']], stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
             is_scwrl_available = True
     return is_scwrl_available
@@ -26,7 +44,7 @@ def run_scwrl(pdb, sequence, path=True):
         PDB string or a path to a PDB file.
     sequence : str
         Amino acid sequence for SCWRL to pack in single-letter code.
-    path : bool
+    path : bool, optional
         True if pdb is a path.
 
     Returns
@@ -55,16 +73,18 @@ def run_scwrl(pdb, sequence, path=True):
             scwrl_seq.write(sequence)
             scwrl_seq.seek(0)
             if not global_settings['scwrl']['rigid_rotamer_model']:
-                scwrl_std_out = subprocess.check_output([global_settings['scwrl']['path'],
-                                                         '-i', scwrl_tmp.name,
-                                                         '-o', scwrl_out.name,
-                                                         '-s', scwrl_seq.name])
+                scwrl_std_out = subprocess.check_output(
+                    [global_settings['scwrl']['path'],
+                     '-i', scwrl_tmp.name,
+                     '-o', scwrl_out.name,
+                     '-s', scwrl_seq.name])
             else:
-                scwrl_std_out = subprocess.check_output([global_settings['scwrl']['path'],
-                                                         '-v',  # Rigid rotamer model
-                                                         '-i', scwrl_tmp.name,
-                                                         '-o', scwrl_out.name,
-                                                         '-s', scwrl_seq.name])
+                scwrl_std_out = subprocess.check_output(
+                    [global_settings['scwrl']['path'],
+                     '-v',  # Rigid rotamer model
+                     '-i', scwrl_tmp.name,
+                     '-o', scwrl_out.name,
+                     '-s', scwrl_seq.name])
             scwrl_out.seek(0)
             scwrl_pdb = scwrl_out.read()
     finally:
@@ -93,7 +113,8 @@ def parse_scwrl_out(scwrl_std_out, scwrl_pdb):
     score : float
         SCWRL Score
     """
-    score = re.findall(r'Total minimal energy of the graph = ([-0-9.]+)', scwrl_std_out)[0]
+    score = re.findall(
+        r'Total minimal energy of the graph = ([-0-9.]+)', scwrl_std_out)[0]
     # Add temperature factors to SCWRL out
     split_scwrl = scwrl_pdb.splitlines()
     fixed_scwrl = []
@@ -113,7 +134,24 @@ def parse_scwrl_out(scwrl_std_out, scwrl_pdb):
 
 @check_availability('scwrl', test_scwrl, global_settings)
 def pack_sidechains(pdb, sequence, path=False):
-    """Packs sidechains onto a given PDB file or string."""
+    """Packs sidechains onto a given PDB file or string.
+
+    Parameters
+    ----------
+    pdb : str
+        PDB string or a path to a PDB file.
+    sequence : str
+        Amino acid sequence for SCWRL to pack in single-letter code.
+    path : bool, optional
+        True if pdb is a path.
+
+    Returns
+    -------
+    scwrl_pdb : str
+        String of packed SCWRL PDB.
+    scwrl_score : float
+        Scwrl packing score.
+    """
     scwrl_std_out, scwrl_pdb = run_scwrl(pdb, sequence, path=path)
     return parse_scwrl_out(scwrl_std_out, scwrl_pdb)
 

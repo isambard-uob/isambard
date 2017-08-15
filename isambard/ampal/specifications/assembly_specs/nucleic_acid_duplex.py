@@ -1,7 +1,8 @@
 """Contains code for generating nucleic acid duplexes."""
 
 from ampal.assembly import Assembly
-from ampal.specifications.polymer_specs.nucleic_acid_strand import NucleicAcidStrand
+from ampal.specifications.polymer_specs.nucleic_acid_strand import (
+    NucleicAcidStrand)
 from tools.geometry import dihedral
 
 
@@ -18,14 +19,14 @@ def generate_antisense_sequence(sequence):
 
 
 class DNADuplex(Assembly):
-    def __init__(self, strand):
-        """Creates a DNA duplex from a single strand of helical DNA.
+    """Creates a DNA duplex from a single strand of helical DNA.
 
-        Parameters
-        ----------
-        strand: NucleicAcidStrand
-            DNA single strand helix.
-        """
+    Parameters
+    ----------
+    strand: NucleicAcidStrand
+        DNA single strand helix.
+    """
+    def __init__(self, strand):
         super().__init__([strand, self.generate_complementary_strand(strand)])
         self.relabel_polymers()
 
@@ -37,7 +38,7 @@ class DNADuplex(Assembly):
         ----------
         sequence: str
             Nucleotide sequence.
-        phos_3_prime: bool
+        phos_3_prime: bool, optional
             If false the 5' and the 3' phosphor will be omitted.
         """
         strand1 = NucleicAcidStrand(sequence, phos_3_prime=phos_3_prime)
@@ -56,21 +57,29 @@ class DNADuplex(Assembly):
                 End of build axis.
             sequence: str
                 Nucleotide sequence.
-            phos_3_prime: bool
+            phos_3_prime: bool, optional
                 If false the 5' and the 3' phosphor will be omitted."""
-        strand1 = NucleicAcidStrand.from_start_and_end(start, end, sequence, phos_3_prime=phos_3_prime)
+        strand1 = NucleicAcidStrand.from_start_and_end(
+            start, end, sequence, phos_3_prime=phos_3_prime)
         duplex = cls(strand1)
         return duplex
 
     @staticmethod
     def generate_complementary_strand(strand1):
-        """Takes a SingleStrandHelix and creates the corresponding antisense strand."""
-        rise_adjust = (strand1.rise_per_nucleotide * strand1.axis.unit_tangent) * 2
+        """Takes a SingleStrandHelix and creates the antisense strand."""
+        rise_adjust = (
+            strand1.rise_per_nucleotide * strand1.axis.unit_tangent) * 2
         strand2 = NucleicAcidStrand.from_start_and_end(
             strand1.helix_end - rise_adjust, strand1.helix_start - rise_adjust,
-            generate_antisense_sequence(strand1.base_sequence), phos_3_prime=strand1.phos_3_prime)
+            generate_antisense_sequence(strand1.base_sequence),
+            phos_3_prime=strand1.phos_3_prime)
         ad_ang = dihedral(strand1[0]["C1'"]._vector, strand1.axis.start,
-                          strand2.axis.start + rise_adjust, strand2[-1]["C1'"]._vector)
-        strand2.rotate(225.0 + ad_ang, strand2.axis.unit_tangent, point=strand2.helix_start)  # 225 is the base adjust
+                          strand2.axis.start + rise_adjust,
+                          strand2[-1]["C1'"]._vector)
+        strand2.rotate(
+            225.0 + ad_ang, strand2.axis.unit_tangent,
+            point=strand2.helix_start)  # 225 is the base adjust
         return strand2
 
+
+__author__ = "Christopher W. Wood"
