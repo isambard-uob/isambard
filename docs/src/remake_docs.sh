@@ -1,2 +1,2 @@
-sphinx-apidoc -e -f -o . ../../isambard_dev
+sphinx-apidoc -e -f -o . ../../isambard
 sphinx-build -b html . ..
