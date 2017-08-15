@@ -16,3 +16,4 @@ the ISAMBARD object that is calling the function.
 * `naccess.py`
 * `profit.py`
 * `reduce.py`
+* `scwrl.py`
