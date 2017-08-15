@@ -11,7 +11,7 @@ setuptools.setup(
     name='isambard',
     packages=setuptools.find_packages(),
     include_package_data=True,
-    version='2017.2.0',
+    version='2017.2.1',
     description=(
         'ISAMBARD: An open-source computational environment for'
         ' biomolecular analysis, modelling and design'),
@@ -19,7 +19,7 @@ setuptools.setup(
     author='Woolfson Group, University of Bristol',
     author_email='isambardinfo@gmail.com',
     url='https://github.com/woolfson-group/isambard/',
-    download_url='https://github.com/woolfson-group/isambard/tarball/2017.2.0',
+    download_url='https://github.com/woolfson-group/isambard/tarball/2017.2.1',
     keywords=['isambard', 'biomolecule', 'parametric',
               'modelling', 'bristol', 'woolfson'],
     install_requires=[

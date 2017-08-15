@@ -2,7 +2,7 @@
 
 ### Intelligent System for Analysis, Model Building And Rational Design.
 
-### Version 2017.2.0 (Aug 03, 2017), Woolfson Group, University of Bristol.
+### Version 2017.2.1 (Aug 16th, 2017), Woolfson Group, University of Bristol.
 
 [![Documentation Status](https://readthedocs.org/projects/isambard/badge/?version=latest)](http://isambard.readthedocs.io/en/latest/?badge=latest)
 [![CircleCI](https://circleci.com/gh/woolfson-group/isambard.svg?style=shield&circle-token=27387ac82a6d30c7bd6a72ce3214fa57677e9d87)](https://circleci.com/gh/woolfson-group/isambard)
@@ -70,6 +70,9 @@ To ensure that the package is correctly installed unit tests can be run by:
 `python -m unittest discover unit_tests/`
 
 ## Releases
+
+### 2017.2.1
+Adds a large amount of documentation.
 
 ### 2017.2.0
 Adds new functionality for working with non-canonical amino acids.
