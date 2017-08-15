@@ -1,0 +1,671 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.tools.amino_acids &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.tools.amino_acids</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.tools.amino_acids</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">global_settings</span>
+
+<span class="n">_amino_acids_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">global_settings</span><span class="p">[</span><span class="s1">&#39;package_path&#39;</span><span class="p">],</span> <span class="s1">&#39;tools&#39;</span><span class="p">,</span> <span class="s1">&#39;amino_acids.json&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_amino_acids_json_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+    <span class="n">amino_acids_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">inf</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+<span class="n">water_mass</span> <span class="o">=</span> <span class="mf">18.01528</span>
+
+<span class="n">ideal_backbone_bond_lengths</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Ideal bond distances from:</span>
+    <span class="c1">#  Schulz, G. E, and R. Heiner Schirmer. Principles Of Protein Structure. New York: Springer-Verlag, 1979.</span>
+    <span class="s1">&#39;n_ca&#39;</span><span class="p">:</span> <span class="mf">1.47</span><span class="p">,</span>
+    <span class="s1">&#39;ca_c&#39;</span><span class="p">:</span> <span class="mf">1.53</span><span class="p">,</span>
+    <span class="s1">&#39;c_o&#39;</span><span class="p">:</span> <span class="mf">1.24</span><span class="p">,</span>
+    <span class="c1"># peptide bond length for residues.</span>
+    <span class="s1">&#39;c_n&#39;</span><span class="p">:</span> <span class="mf">1.32</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ideal_backbone_bond_angles</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Ideal bond angles from:</span>
+    <span class="c1">#  Schulz, G. E, and R. Heiner Schirmer. Principles Of Protein Structure. New York: Springer-Verlag, 1979.</span>
+    <span class="s1">&#39;trans&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;n_ca_c&#39;</span><span class="p">:</span> <span class="mf">110.0</span><span class="p">,</span>
+        <span class="s1">&#39;ca_c_o&#39;</span><span class="p">:</span> <span class="mf">121.0</span><span class="p">,</span>
+        <span class="s1">&#39;ca_c_n&#39;</span><span class="p">:</span> <span class="mf">114.0</span><span class="p">,</span>
+        <span class="s1">&#39;c_n_ca&#39;</span><span class="p">:</span> <span class="mf">123.0</span><span class="p">,</span>
+        <span class="s1">&#39;o_c_n&#39;</span><span class="p">:</span> <span class="mf">125.0</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;cis&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;n_ca_c&#39;</span><span class="p">:</span> <span class="mf">110.0</span><span class="p">,</span>
+        <span class="s1">&#39;ca_c_o&#39;</span><span class="p">:</span> <span class="mf">119.0</span><span class="p">,</span>
+        <span class="s1">&#39;ca_c_n&#39;</span><span class="p">:</span> <span class="mf">118.0</span><span class="p">,</span>
+        <span class="s1">&#39;c_n_ca&#39;</span><span class="p">:</span> <span class="mf">126.0</span><span class="p">,</span>
+        <span class="s1">&#39;o_c_n&#39;</span><span class="p">:</span> <span class="mf">123.0</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">residue_mwt</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">71.0779</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">103.1429</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">115.0874</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">129.114</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">147.1739</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">57.0513</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">137.1393</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">113.1576</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">128.1723</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">113.1576</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">131.1961</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">114.1026</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">97.1152</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">128.1292</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">156.1857</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">87.0773</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">101.1039</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">99.1311</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">186.2099</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">163.1733</span><span class="p">,</span>
+    <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="mf">57.0513</span>
+    <span class="p">}</span>
+
+<span class="n">residue_charge</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;N-term&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;C-term&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">}</span>
+
+<span class="n">residue_pka</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">8.3</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">3.65</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">4.25</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">6.1</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">10.53</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">12.48</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">10.1</span><span class="p">,</span>
+    <span class="s1">&#39;N-term&#39;</span><span class="p">:</span> <span class="mf">8.0</span><span class="p">,</span> <span class="s1">&#39;C-term&#39;</span><span class="p">:</span> <span class="mf">3.1</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="mf">0.0</span>
+    <span class="p">}</span>
+
+<span class="n">residue_ext_280</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mi">5690</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mi">1280</span><span class="p">,</span>
+    <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">}</span>
+
+<span class="n">standard_amino_acids</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="s1">&#39;ALA&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="s1">&#39;CYS&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="s1">&#39;ASP&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="s1">&#39;GLU&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="s1">&#39;PHE&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="s1">&#39;GLY&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="s1">&#39;HIS&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="s1">&#39;ILE&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="s1">&#39;LYS&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="s1">&#39;LEU&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="s1">&#39;MET&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="s1">&#39;ASN&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;PRO&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="s1">&#39;GLN&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="s1">&#39;ARG&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="s1">&#39;SER&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="s1">&#39;THR&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;VAL&#39;</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="s1">&#39;TRP&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="s1">&#39;TYR&#39;</span>
+    <span class="p">}</span>
+
+<span class="n">side_chain_dihedrals</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;ARG&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;NE&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ&#39;</span><span class="p">,</span> <span class="s1">&#39;NH1&#39;</span><span class="p">,</span> <span class="s1">&#39;NH2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;NE&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ&#39;</span><span class="p">,</span> <span class="s1">&#39;NH1&#39;</span><span class="p">,</span> <span class="s1">&#39;NH2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;NE&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ&#39;</span><span class="p">,</span> <span class="s1">&#39;NH1&#39;</span><span class="p">,</span> <span class="s1">&#39;NH2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;NE&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ&#39;</span><span class="p">,</span> <span class="s1">&#39;NH1&#39;</span><span class="p">,</span> <span class="s1">&#39;NH2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;ASN&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;OD1&#39;</span><span class="p">,</span> <span class="s1">&#39;ND2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;OD1&#39;</span><span class="p">,</span> <span class="s1">&#39;ND2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;ASP&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;OD1&#39;</span><span class="p">,</span> <span class="s1">&#39;OD2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;OD1&#39;</span><span class="p">,</span> <span class="s1">&#39;OD2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;CYS&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;SG&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;GLN&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;OE1&#39;</span><span class="p">,</span> <span class="s1">&#39;NE2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;OE1&#39;</span><span class="p">,</span> <span class="s1">&#39;NE2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;OE1&#39;</span><span class="p">,</span> <span class="s1">&#39;NE2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;GLU&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;OE1&#39;</span><span class="p">,</span> <span class="s1">&#39;OE2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;OE1&#39;</span><span class="p">,</span> <span class="s1">&#39;OE2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;OE1&#39;</span><span class="p">,</span> <span class="s1">&#39;OE2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;HIS&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;ND1&#39;</span><span class="p">,</span> <span class="s1">&#39;CE1&#39;</span><span class="p">,</span> <span class="s1">&#39;ND2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;ND1&#39;</span><span class="p">,</span> <span class="s1">&#39;CE1&#39;</span><span class="p">,</span> <span class="s1">&#39;ND2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;ILE&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG1&#39;</span><span class="p">,</span> <span class="s1">&#39;CG2&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CG2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;LEU&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;LYS&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">,</span> <span class="s1">&#39;NZ&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">,</span> <span class="s1">&#39;NZ&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">,</span> <span class="s1">&#39;NZ&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">,</span> <span class="s1">&#39;NZ&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;MET&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;SD&#39;</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;SD&#39;</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;SD&#39;</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;PHE&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2&#39;</span><span class="p">,</span> <span class="s1">&#39;CE1&#39;</span><span class="p">,</span> <span class="s1">&#39;CE2&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2&#39;</span><span class="p">,</span> <span class="s1">&#39;CE1&#39;</span><span class="p">,</span> <span class="s1">&#39;CE2&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;PRO&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;SER&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;OG&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;THR&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;OG1&#39;</span><span class="p">,</span> <span class="s1">&#39;CG2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;TRP&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2&#39;</span><span class="p">,</span> <span class="s1">&#39;CE2&#39;</span><span class="p">,</span> <span class="s1">&#39;CE3&#39;</span><span class="p">,</span> <span class="s1">&#39;NE1&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ2&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ3&#39;</span><span class="p">,</span> <span class="s1">&#39;CH2&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2&#39;</span><span class="p">,</span> <span class="s1">&#39;CE2&#39;</span><span class="p">,</span> <span class="s1">&#39;CE3&#39;</span><span class="p">,</span> <span class="s1">&#39;NE1&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ2&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ3&#39;</span><span class="p">,</span> <span class="s1">&#39;CH2&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;TYR&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2&#39;</span><span class="p">,</span> <span class="s1">&#39;CE1&#39;</span><span class="p">,</span> <span class="s1">&#39;CE2&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ&#39;</span><span class="p">,</span> <span class="s1">&#39;OH&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD1&#39;</span><span class="p">,</span> <span class="s1">&#39;CD2&#39;</span><span class="p">,</span> <span class="s1">&#39;CE1&#39;</span><span class="p">,</span> <span class="s1">&#39;CE2&#39;</span><span class="p">,</span> <span class="s1">&#39;CZ&#39;</span><span class="p">,</span> <span class="s1">&#39;OH&#39;</span><span class="p">]],</span>
+        <span class="s1">&#39;VAL&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG1&#39;</span><span class="p">,</span> <span class="s1">&#39;CG2&#39;</span><span class="p">]]</span>
+    <span class="p">}</span>
+
+<span class="c1"># Data taken from http://web.expasy.org/protscale/ unless otherwise stated. Original reference also given.</span>
+<span class="c1"># Levitt M. Biochemistry 17:4277-4285(1978)</span>
+<span class="n">a_helix_Levitt</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">1.29</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">1.11</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">1.04</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">1.44</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">1.07</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">0.56</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">1.22</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">0.97</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">1.23</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">1.47</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">0.52</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">1.27</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">0.96</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">0.91</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">0.72</span>
+    <span class="p">}</span>
+
+
+<span class="c1"># Janin J. Nature 277:491-492(1979)</span>
+<span class="n">accessibility_Janin</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">6.6</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">7.7</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">5.7</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">2.4</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">6.7</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">2.8</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">10.3</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">4.8</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">6.7</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">4.8</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">5.2</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">4.5</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">9.4</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">7.0</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">4.5</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">1.4</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">5.1</span>
+    <span class="p">}</span>
+
+<span class="c1"># Bhaskaran R., Ponnuswamy P.K. Int. J. Pept. Protein. Res. 32:242-255(1988)</span>
+<span class="n">avg_flex_index</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">0.36</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">0.51</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">0.54</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">0.32</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">0.46</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">0.47</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">0.37</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">0.46</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">0.51</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">0.49</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">0.53</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">0.51</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">0.44</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">0.39</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">0.42</span>
+    <span class="p">}</span>
+
+<span class="c1"># Levitt M. Biochemistry 17:4277-4285(1978)</span>
+<span class="n">beta_sheet_Levitt</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">0.74</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">1.32</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">0.92</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">1.08</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">1.45</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">0.77</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">1.02</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">0.97</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">0.76</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">0.64</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">1.21</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">1.49</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">1.14</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">1.25</span>
+    <span class="p">}</span>
+
+<span class="c1"># Levitt M. Biochemistry 17:4277-4285(1978)</span>
+<span class="n">beta_turn_Levitt</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">0.77</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">0.81</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">1.41</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">0.59</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">1.64</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">0.68</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">0.51</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">0.96</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">0.58</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">0.41</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">1.28</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">1.91</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">0.98</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">0.88</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">1.32</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">1.04</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">0.47</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">0.76</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">1.05</span>
+    <span class="p">}</span>
+
+<span class="c1"># Zimmerman J.M., Eliezer N., Simha R. J. Theor. Biol. 21:170-201(1968)</span>
+<span class="n">bulkiness</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">11.5</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">13.46</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">11.68</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">13.57</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">19.8</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">3.4</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">13.69</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">21.4</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">15.71</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">21.4</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">16.25</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">12.82</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">17.43</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">14.45</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">14.28</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">9.47</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">15.77</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">21.57</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">21.67</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">18.03</span>
+    <span class="p">}</span>
+
+<span class="c1"># Kyte J., Doolittle R.F. J. Mol. Biol. 157:105-132(1982)</span>
+<span class="n">hydropathicity</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">1.8</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">2.8</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.2</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">4.5</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.9</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">3.8</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">1.9</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.6</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">4.5</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">4.2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.9</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.3</span>
+    <span class="p">}</span>
+
+<span class="c1"># http://biopython.org/DIST/docs/api/Bio.PDB.DSSP%27-pysrc.html</span>
+<span class="c1"># Sander &amp; Rost, (1994), Proteins, 20:216-226</span>
+<span class="n">max_asa</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">106.0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">135.0</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">163.0</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">194.0</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">197.0</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">84.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">184.0</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">169.0</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">205.0</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">164.0</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">188.0</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">157.0</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">136.0</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">198.0</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">135.0</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">130.0</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">142.0</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">142.0</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">227.0</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">222.0</span>
+    <span class="p">}</span>
+
+<span class="c1"># Grantham R. Science 185:862-864(1974)</span>
+<span class="n">polarity_Grantham</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">8.1</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">5.5</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">13.0</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">12.3</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">5.2</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">9.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">10.4</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">5.2</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">11.3</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">4.9</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">5.7</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">11.6</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">8.0</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">10.5</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">10.5</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">9.2</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">8.6</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">5.9</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">5.4</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">6.2</span>
+    <span class="p">}</span>
+
+<span class="c1"># Zimmerman J.M., Eliezer N., Simha R. J. Theor. Biol. 21:170-201(1968)</span>
+<span class="n">polarity_Zimmerman</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">1.48</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">49.7</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">49.9</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">51.6</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">49.5</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">1.43</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">3.38</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">1.58</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">3.53</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">52.0</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">1.67</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">1.66</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">2.1</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">1.61</span>
+    <span class="p">}</span>
+
+<span class="c1"># Fraga S. Can. J. Chem. 60:2606-2610(1982)</span>
+<span class="n">recognition_factors</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">78.0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">89.0</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">81.0</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">78.0</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">81.0</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">84.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">84.0</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">88.0</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">87.0</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">85.0</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">94.0</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">91.0</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">87.0</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">95.0</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">107.0</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">93.0</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">89.0</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">104.0</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">84.0</span>
+    <span class="p">}</span>
+
+<span class="c1"># Jones. D.D. J. Theor. Biol. 50:167-184(1975)</span>
+<span class="n">refractivity</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">4.34</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">35.77</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">12.0</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">17.26</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">29.4</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">21.81</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">19.06</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">21.29</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">18.78</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">21.64</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">13.28</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">10.93</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">17.56</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">26.66</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">6.35</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">11.01</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">13.92</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">42.53</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">31.53</span>
+    <span class="p">}</span>
+
+<span class="c1"># Dayhoff M.O., Schwartz R.M., Orcutt B.C. In &quot;Atlas of Protein Sequence and Structure&quot;, Vol.5, Suppl.3 (1978)</span>
+<span class="n">relative_mutability</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">106.0</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">102.0</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">41.0</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">49.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">66.0</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">96.0</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">56.0</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">40.0</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">94.0</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">134.0</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">56.0</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">93.0</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">65.0</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">120.0</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">97.0</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">74.0</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">18.0</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">41.0</span>
+    <span class="p">}</span>
+
+<span class="c1"># Meek J.L. Proc. Natl. Acad. Sci. USA 77:1632-1636(1980)</span>
+<span class="n">retention_coeff_hplc_pH7pt4</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">6.8</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">8.2</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">16.9</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">13.2</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">13.9</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">8.8</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">4.8</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">6.1</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">4.8</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">2.7</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">2.7</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">14.9</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">6.1</span>
+    <span class="p">}</span>
+
+<span class="c1"># Zhao, G., London E. Protein Sci. 15:1987-2001(2006)</span>
+<span class="n">transmembrane_tendancy</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">0.38</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.27</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.9</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">1.98</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.19</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.44</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">1.97</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.46</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">1.82</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">1.4</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.62</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.44</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.84</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.57</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.53</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.32</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">1.46</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">1.53</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">0.49</span>
+    <span class="p">}</span>
+
+<span class="c1"># Bairoch A. Release notes for UniProtKB/Swiss-Prot release 2013_04 - April 2013</span>
+<span class="n">uniprot_composition_2013</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">8.25</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">1.37</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">5.45</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">6.75</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">3.86</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">7.07</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">2.27</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">5.96</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">5.84</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">9.66</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">2.42</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">4.06</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">4.7</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">3.93</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">5.53</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">6.56</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">5.34</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">6.87</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">1.08</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">2.92</span>
+    <span class="p">}</span>
+
+
+<span class="n">number_of_codons</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+
+<span class="c1"># pI, pk_COOH, pK_NH3, pK_Rgroup all taken from:</span>
+<span class="c1"># http://www.sigmaaldrich.com/life-science/metabolomics/learning-center/amino-acid-reference-chart.html#prop&#39;</span>
+<span class="c1"># D. R. Lide, Handbook of Chemistry and Physics, 72nd Edition, CRC Press, Boca Raton, FL, 1991.</span>
+<span class="n">pI</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">5.07</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">2.77</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">3.22</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">5.48</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">5.97</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">7.59</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">6.02</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">9.74</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">5.98</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">5.74</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">5.41</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">6.3</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">5.65</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">10.76</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">5.68</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">5.6</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">5.96</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">5.89</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">5.66</span>
+    <span class="p">}</span>
+
+<span class="n">pK_COOH</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">2.34</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">1.96</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">1.88</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">2.19</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">1.83</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">2.34</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">1.82</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">2.36</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">2.18</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">2.36</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">2.28</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">2.02</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">1.99</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">2.17</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">2.17</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">2.21</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">2.09</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">2.32</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">2.83</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">2.2</span>
+    <span class="p">}</span>
+
+<span class="n">pK_NH3</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">9.69</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">10.28</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">9.6</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">9.67</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">9.13</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">9.6</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">9.17</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">9.6</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">8.95</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="mf">9.6</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mf">9.21</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">8.8</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">10.6</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="mf">9.13</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">9.04</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">9.15</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="mf">9.1</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">9.62</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">9.39</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">9.11</span>
+    <span class="p">}</span>
+
+<span class="n">pK_Rgroup</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">8.18</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">3.65</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mf">4.25</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">10.53</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="mf">12.48</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">10.07</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="get_aa_code"><a class="viewcode-back" href="../../../isambard.tools.amino_acids.html#isambard.tools.amino_acids.get_aa_code">[docs]</a><span class="k">def</span> <span class="nf">get_aa_code</span><span class="p">(</span><span class="n">aa_letter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get three-letter aa code if possible. If not, return None.</span>
+
+<span class="sd">    If three-letter code is None, will have to find this later from the filesystem.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aa_letter : str</span>
+<span class="sd">        One-letter amino acid code.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    aa_code : str, or None</span>
+<span class="sd">        Three-letter aa code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">aa_code</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">aa_letter</span> <span class="o">!=</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">standard_amino_acids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">aa_letter</span><span class="p">:</span>
+                <span class="n">aa_code</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="n">aa_code</span>
+
+</div>
+<div class="viewcode-block" id="get_aa_letter"><a class="viewcode-back" href="../../../isambard.tools.amino_acids.html#isambard.tools.amino_acids.get_aa_letter">[docs]</a><span class="k">def</span> <span class="nf">get_aa_letter</span><span class="p">(</span><span class="n">aa_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get one-letter version of aa_code if possible. If not, return &#39;X&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aa_code : str</span>
+<span class="sd">        Three-letter amino acid code.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    aa_letter : str</span>
+<span class="sd">        One-letter aa code.</span>
+<span class="sd">        Default value is &#39;X&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">aa_letter</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">standard_amino_acids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="n">aa_code</span><span class="p">:</span>
+            <span class="n">aa_letter</span> <span class="o">=</span> <span class="n">key</span>
+
+    <span class="k">return</span> <span class="n">aa_letter</span>
+
+</div>
+<div class="viewcode-block" id="get_aa_info"><a class="viewcode-back" href="../../../isambard.tools.amino_acids.html#isambard.tools.amino_acids.get_aa_info">[docs]</a><span class="k">def</span> <span class="nf">get_aa_info</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get dictionary of information relating to a new amino acid code not currently in the database.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Use this function to get a dictionary that is then to be sent to the function add_amino_acid_to_json().</span>
+<span class="sd">    use to fill in rows of amino_acid table for new amino acid code.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    code : str</span>
+<span class="sd">        Three-letter amino acid code.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        If unable to locate the page associated with the amino acid name on the PDBE site.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    aa_dict : dict</span>
+<span class="sd">        Keys are AminoAcidDB field names.</span>
+<span class="sd">        Values are the str values for the new amino acid, scraped from the PDBE if possible. None if not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">letter</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
+    <span class="c1"># Try to get content from PDBE.</span>
+    <span class="n">url_string</span> <span class="o">=</span> <span class="s1">&#39;http://www.ebi.ac.uk/pdbe-srv/pdbechem/chemicalCompound/show/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_string</span><span class="p">)</span>
+    <span class="c1"># Raise error if content not obtained.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not get to url {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url_string</span><span class="p">))</span>
+
+    <span class="c1"># Parse r.text in an ugly way to get the required information.</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&lt;h3&gt;Molecule name&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()[:</span><span class="mi">255</span><span class="p">]</span>
+    <span class="n">modified</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&lt;h3&gt;Standard parent &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">modified</span> <span class="o">=</span> <span class="n">modified</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">modified</span> <span class="o">==</span> <span class="s2">&quot;NotAssigned&quot;</span><span class="p">:</span>
+        <span class="n">modified</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c1"># Add the required information to a dictionary which can then be passed to add_amino_acid_to_json.</span>
+    <span class="n">aa_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="n">code</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span> <span class="s1">&#39;modified&#39;</span><span class="p">:</span> <span class="n">modified</span><span class="p">,</span> <span class="s1">&#39;letter&#39;</span><span class="p">:</span> <span class="n">letter</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">aa_dict</span>
+
+</div>
+<div class="viewcode-block" id="add_amino_acid_to_json"><a class="viewcode-back" href="../../../isambard.tools.amino_acids.html#isambard.tools.amino_acids.add_amino_acid_to_json">[docs]</a><span class="k">def</span> <span class="nf">add_amino_acid_to_json</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">letter</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">modified</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">force_add</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Add an amino acid to the amino_acids.json file used to populate the amino_acid table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    code : str</span>
+<span class="sd">        New code to be added to amino acid table.</span>
+<span class="sd">    description : str</span>
+<span class="sd">        Description of the amino acid, e.g. &#39;amidated terminal carboxy group&#39;.</span>
+<span class="sd">    letter : str, optional</span>
+<span class="sd">        One letter code for the amino acid.</span>
+<span class="sd">        Defaults to &#39;X&#39;</span>
+<span class="sd">    modified : str or None, optional</span>
+<span class="sd">        Code of modified amino acid, e.g. &#39;ALA&#39;, or None.</span>
+<span class="sd">        Defaults to None</span>
+<span class="sd">    force_add : bool, optional</span>
+<span class="sd">        If True, will over-write existing dictionary value for code if already in amino_acids.json.</span>
+<span class="sd">        If False, then an IOError is raised if code is already in amino_acids.json.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        If code is already in amino_acids.json and force_add is False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If code is already in the dictionary, raise an error</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">force_add</span><span class="p">)</span> <span class="ow">and</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">amino_acids_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;{0} is already in the amino_acids dictionary, with values: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">code</span><span class="p">,</span> <span class="n">amino_acids_dict</span><span class="p">[</span><span class="n">code</span><span class="p">]))</span>
+
+    <span class="c1"># Prepare data to be added.</span>
+    <span class="n">add_code</span> <span class="o">=</span> <span class="n">code</span>
+    <span class="n">add_code_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span> <span class="s1">&#39;letter&#39;</span><span class="p">:</span> <span class="n">letter</span><span class="p">,</span> <span class="s1">&#39;modified&#39;</span><span class="p">:</span> <span class="n">modified</span><span class="p">}</span>
+
+    <span class="c1"># Check that data does not already exist, and if not, add it to the dictionary.</span>
+    <span class="n">amino_acids_dict</span><span class="p">[</span><span class="n">add_code</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_code_dict</span>
+
+    <span class="c1"># Write over json file with updated dictionary.</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_amino_acids_json_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">foo</span><span class="p">:</span>
+        <span class="n">foo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">amino_acids_dict</span><span class="p">))</span>
+
+    <span class="k">return</span>
+
+</div>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jack W. Heal&#39;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 16, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

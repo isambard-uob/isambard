@@ -1,0 +1,837 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.base_ampal &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.ampal.base_ampal</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.ampal.base_ampal</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">buff</span> <span class="kn">import</span> <span class="n">find_intra_ampal</span><span class="p">,</span> <span class="n">score_interactions</span>
+<span class="kn">from</span> <span class="nn">ampal.ampal_databases</span> <span class="kn">import</span> <span class="n">element_data</span>
+<span class="kn">from</span> <span class="nn">tools.isambard_warnings</span> <span class="kn">import</span> <span class="n">NotParameterisedWarning</span>
+<span class="kn">from</span> <span class="nn">tools.geometry</span> <span class="kn">import</span> <span class="n">distance</span><span class="p">,</span> <span class="n">Quaternion</span><span class="p">,</span> <span class="n">centre_of_mass</span><span class="p">,</span> <span class="n">rmsd</span>
+<span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">global_settings</span>
+
+
+<div class="viewcode-block" id="cap"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.cap">[docs]</a><span class="k">def</span> <span class="nf">cap</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">l</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="k">else</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="n">l</span><span class="p">:]</span>
+
+</div>
+<div class="viewcode-block" id="find_atoms_within_distance"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.find_atoms_within_distance">[docs]</a><span class="k">def</span> <span class="nf">find_atoms_within_distance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">cutoff_distance</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns atoms within the distance from the point.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span> <span class="k">if</span> <span class="n">distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">cutoff_distance</span><span class="p">]</span>
+
+</div>
+<div class="viewcode-block" id="centre_of_atoms"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.centre_of_atoms">[docs]</a><span class="k">def</span> <span class="nf">centre_of_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">mass_weighted</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns centre point of any list of atoms.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atoms : list</span>
+<span class="sd">        List of AMPAL atom objects.</span>
+<span class="sd">    mass_weighted : bool</span>
+<span class="sd">        If True returns centre of mass, otherwise just geometric centre of points.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">mass_weighted</span><span class="p">:</span>
+        <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">mass</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">masses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="n">centre_of_mass</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">masses</span><span class="o">=</span><span class="n">masses</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="write_pdb"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.write_pdb">[docs]</a><span class="k">def</span> <span class="nf">write_pdb</span><span class="p">(</span><span class="n">residues</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">alt_states</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">strip_states</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Writes a pdb file for a list of residues.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    residues : list</span>
+<span class="sd">        List of Residue objects.</span>
+<span class="sd">    chain_id : str</span>
+<span class="sd">        String of the chain id, defaults to &#39; &#39;.</span>
+<span class="sd">    alt_states : bool</span>
+<span class="sd">        If true, include all occupancy states of residues, else outputs primary state only.</span>
+<span class="sd">    strip_states : bool</span>
+<span class="sd">        If true, remove all state labels from residues. Only use with alt_states false.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pdb_str : str</span>
+<span class="sd">        String of the PDB file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pdb_atom_col_dict</span> <span class="o">=</span> <span class="n">global_settings</span><span class="p">[</span><span class="s1">&#39;ampal&#39;</span><span class="p">][</span><span class="s1">&#39;pdb_atom_col_dict&#39;</span><span class="p">]</span>
+    <span class="n">out_pdb</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chain_id</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">poly_id</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">poly_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">chain_id</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">monomer</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">monomer</span><span class="o">.</span><span class="n">states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">alt_states</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">strip_states</span><span class="p">:</span>
+            <span class="n">atom_list</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">monomer</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">())])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">atom_list</span> <span class="o">=</span> <span class="n">monomer</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;chain_id&#39;</span> <span class="ow">in</span> <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">poly_id</span> <span class="o">=</span> <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;chain_id&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">atom_t</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atom_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">strip_states</span><span class="p">:</span>
+                <span class="n">state_label</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">monomer</span><span class="o">.</span><span class="n">states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">state_label</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state_label</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span>
+            <span class="n">atom_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;atom_number&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&gt;5}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>
+                <span class="s1">&#39;atom_name&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&lt;4}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">pdb_atom_col_dict</span><span class="p">[</span><span class="n">atom_t</span><span class="p">],</span> <span class="mi">4</span><span class="p">)),</span>
+                <span class="s1">&#39;alt_loc_ind&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&lt;1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">state_label</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                <span class="s1">&#39;residue_type&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&lt;3}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">monomer</span><span class="o">.</span><span class="n">mol_code</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                <span class="s1">&#39;chain_id&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&lt;1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">poly_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                <span class="s1">&#39;res_num&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&gt;4}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">monomer</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+                <span class="s1">&#39;icode&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&lt;1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">monomer</span><span class="o">.</span><span class="n">insertion_code</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                <span class="s1">&#39;coord_str&#39;</span><span class="p">:</span> <span class="s1">&#39;{0:&gt;8.3f}{1:&gt;8.3f}{2:&gt;8.3f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atom</span><span class="p">]),</span>
+                <span class="s1">&#39;occupancy&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&gt;6.2f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;occupancy&#39;</span><span class="p">]),</span>
+                <span class="s1">&#39;temp_factor&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&gt;6.2f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;bfactor&#39;</span><span class="p">]),</span>
+                <span class="s1">&#39;element&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&gt;2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+                <span class="s1">&#39;charge&#39;</span><span class="p">:</span> <span class="s1">&#39;{:&lt;2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cap</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;charge&#39;</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">monomer</span><span class="o">.</span><span class="n">is_hetero</span><span class="p">:</span>
+                <span class="n">pdb_line_template</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s1">&#39;HETATM{atom_number} {atom_name}{alt_loc_ind}{residue_type} {chain_id}{res_num}&#39;</span>
+                    <span class="s1">&#39;{icode}   {coord_str}{occupancy}{temp_factor}          {element}{charge}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pdb_line_template</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s1">&#39;ATOM  {atom_number} {atom_name}{alt_loc_ind}{residue_type} {chain_id}{res_num}&#39;</span>
+                    <span class="s1">&#39;{icode}   {coord_str}{occupancy}{temp_factor}          {element}{charge}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">out_pdb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb_line_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">atom_data</span><span class="p">))</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_pdb</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="BaseAmpal"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal">[docs]</a><span class="k">class</span> <span class="nc">BaseAmpal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Runs make_pdb in default mode.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_pdb</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">centre_of_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the centre of mass as a numpy.array. (all atoms included in calculation). &quot;&quot;&quot;</span>
+        <span class="n">elts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">element</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()])</span>
+        <span class="n">masses_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="n">element_data</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="s1">&#39;atomic mass&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elts</span><span class="p">}</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()]</span>
+        <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="n">masses_dict</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">element</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">centre_of_mass</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">masses</span><span class="o">=</span><span class="n">masses</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseAmpal.is_within"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.is_within">[docs]</a>    <span class="k">def</span> <span class="nf">is_within</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff_dist</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns all atoms in the ampal object that are within the cut-off distance from the input point.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">find_atoms_within_distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(),</span> <span class="n">cutoff_dist</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseAmpal.get_atoms"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.get_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">get_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="BaseAmpal.make_pdb"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.make_pdb">[docs]</a>    <span class="k">def</span> <span class="nf">make_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="BaseAmpal.assign_force_field"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.assign_force_field">[docs]</a>    <span class="k">def</span> <span class="nf">assign_force_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">mol2</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assigns force field parameters to Atoms in the AMPAL object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ff: BuffForceField</span>
+<span class="sd">            The force field to be used for scoring.</span>
+<span class="sd">        mol2: bool</span>
+<span class="sd">            If true, mol2 style labels will also be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;ligands&#39;</span><span class="p">):</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">ligands</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inc_alt_states</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">inc_alt_states</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+            <span class="n">w_str</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">element</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">atom</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">mol_code</span> <span class="ow">in</span> <span class="n">ff</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span> <span class="ow">in</span> <span class="n">ff</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">mol_code</span><span class="p">]:</span>
+                    <span class="n">a_ff_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">mol_code</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span> <span class="ow">in</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;WLD&#39;</span><span class="p">]:</span>
+                    <span class="n">a_ff_id</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;WLD&#39;</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">w_str</span> <span class="o">=</span> <span class="s1">&#39;{} atom is not parameterised in the selected force field for {} residues,&#39;</span> \
+                            <span class="s1">&#39; this will be ignored.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">res_label</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">mol_code</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span> <span class="ow">in</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;WLD&#39;</span><span class="p">]:</span>
+                <span class="n">a_ff_id</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;WLD&#39;</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mol2</span> <span class="ow">and</span> <span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">mol_code</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;MOL2&#39;</span><span class="p">]):</span>
+                <span class="n">a_ff_id</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;MOL2&#39;</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">mol2</span><span class="p">:</span>
+                    <span class="n">w_str</span> <span class="o">=</span> <span class="s1">&#39;{} ({}) atom is not parameterised in the selected residue force field. &#39;</span> \
+                            <span class="s1">&#39;Try activating the heavy atom force field (haff).&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">w_str</span> <span class="o">=</span> <span class="s1">&#39;{} ({}) atom is not parameterised in the selected force field.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="p">,</span>
+                                                                                                 <span class="n">atom</span><span class="o">.</span><span class="n">res_label</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">w_str</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">w_str</span><span class="p">,</span> <span class="n">NotParameterisedWarning</span><span class="p">)</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">_ff_id</span> <span class="o">=</span> <span class="n">a_ff_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;assigned_ff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="BaseAmpal.update_ff"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.update_ff">[docs]</a>    <span class="k">def</span> <span class="nf">update_ff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">mol2</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">force_ff_assign</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Manages assigning the force field parameters.</span>
+
+<span class="sd">        The aim of this method is to avoid unnecessary assignment of the</span>
+<span class="sd">        force field.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ff: BuffForceField</span>
+<span class="sd">            The force field to be used for scoring.</span>
+<span class="sd">        mol2: bool</span>
+<span class="sd">            If true, mol2 style labels will also be used.</span>
+<span class="sd">        force_ff_assign: bool</span>
+<span class="sd">            If true, the force field will be completely reassigned, ignoring the</span>
+<span class="sd">            cached parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">aff</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">force_ff_assign</span><span class="p">:</span>
+            <span class="n">aff</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="s1">&#39;assigned_ff&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">aff</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;assigned_ff&#39;</span><span class="p">]:</span>
+            <span class="n">aff</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">aff</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assign_force_field</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">mol2</span><span class="o">=</span><span class="n">mol2</span><span class="p">)</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="BaseAmpal.get_internal_energy"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.get_internal_energy">[docs]</a>    <span class="k">def</span> <span class="nf">get_internal_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assign_ff</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">ff</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mol2</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">force_ff_assign</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the internal energy of the AMPAL object.</span>
+
+<span class="sd">        This method is assigned to the buff_internal_energy property,</span>
+<span class="sd">        using the default arguments.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        assign_ff: bool</span>
+<span class="sd">            If true the force field will be updated if required.</span>
+<span class="sd">        ff: BuffForceField</span>
+<span class="sd">            The force field to be used for scoring.</span>
+<span class="sd">        mol2: bool</span>
+<span class="sd">            If true, mol2 style labels will also be used.</span>
+<span class="sd">        force_ff_assign: bool</span>
+<span class="sd">            If true, the force field will be completely reassigned, ignoring the</span>
+<span class="sd">            cached parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        BUFF_score: BUFFScore</span>
+<span class="sd">            A BUFFScore object with information about each of the interactions and</span>
+<span class="sd">            the atoms involved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ff</span><span class="p">:</span>
+            <span class="n">ff</span> <span class="o">=</span> <span class="n">global_settings</span><span class="p">[</span><span class="s1">&#39;buff&#39;</span><span class="p">][</span><span class="s1">&#39;force_field&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">assign_ff</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_ff</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">mol2</span><span class="o">=</span><span class="n">mol2</span><span class="p">,</span> <span class="n">force_ff_assign</span><span class="o">=</span><span class="n">force_ff_assign</span><span class="p">)</span>
+        <span class="n">interactions</span> <span class="o">=</span> <span class="n">find_intra_ampal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ff</span><span class="o">.</span><span class="n">distance_cutoff</span><span class="p">)</span>
+        <span class="n">buff_score</span> <span class="o">=</span> <span class="n">score_interactions</span><span class="p">(</span><span class="n">interactions</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">buff_score</span>
+</div>
+    <span class="n">buff_internal_energy</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_internal_energy</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseAmpal.rotate"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">inc_alt_states</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">Quaternion</span><span class="o">.</span><span class="n">angle_and_axis</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="n">radians</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">inc_alt_states</span><span class="o">=</span><span class="n">inc_alt_states</span><span class="p">):</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">_vector</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">atom</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">)</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="BaseAmpal.translate"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">,</span> <span class="n">inc_alt_states</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">vector</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">inc_alt_states</span><span class="o">=</span><span class="n">inc_alt_states</span><span class="p">):</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">_vector</span> <span class="o">+=</span> <span class="n">vector</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="BaseAmpal.rmsd"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.BaseAmpal.rmsd">[docs]</a>    <span class="k">def</span> <span class="nf">rmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">backbone</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">backbone</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;backbone&#39;</span><span class="p">):</span>
+            <span class="n">points1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span>
+            <span class="n">points2</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">points1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span>
+            <span class="n">points2</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span>
+        <span class="n">points1</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">points1</span><span class="p">]</span>
+        <span class="n">points2</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">points2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">rmsd</span><span class="p">(</span><span class="n">points1</span><span class="o">=</span><span class="n">points1</span><span class="p">,</span> <span class="n">points2</span><span class="o">=</span><span class="n">points2</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Polymer"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer">[docs]</a><span class="k">class</span> <span class="nc">Polymer</span><span class="p">(</span><span class="n">BaseAmpal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monomers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ligands</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">molecule_type</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A container that holds monomer type objects, this is how polypeptides are represented in ISAMBARD.</span>
+
+<span class="sd">        Has a simple hierarchy: A Polymer contains one or more Monomer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        monomers : Monomer or [Monomer]</span>
+<span class="sd">            Monomer or list containing Monomer objects to form the Polymer().</span>
+<span class="sd">        polymer_id : str</span>
+<span class="sd">            An ID that the user can use to identify the Polymer. This is used when generating a pdb file using</span>
+<span class="sd">            Polymer().pdb</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            Polymer objects can only be initialised empty, using a Monomer or a list of Monomers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">monomers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">monomers</span><span class="p">,</span> <span class="n">Monomer</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">=</span> <span class="p">[</span><span class="n">monomers</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">monomers</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">monomers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Monomer</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">monomers</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s1">&#39;Polymer objects can only be initialised empty, using a Monomer or a list of Monomers.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">polymer_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">=</span> <span class="n">ampal_parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">molecule_type</span> <span class="o">=</span> <span class="n">molecule_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ligands</span> <span class="o">=</span> <span class="n">ligands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sl</span> <span class="o">=</span> <span class="n">sl</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Polymer</span><span class="p">):</span>
+            <span class="n">merged_polymer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Only Polymer objects may be merged with a Polymer.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Polymer</span><span class="p">(</span><span class="n">monomers</span><span class="o">=</span><span class="n">merged_polymer</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">id_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">id</span><span class="p">):</span> <span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">id_dict</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Polymer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="n">polymer_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;Polymer containing {} {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">),</span> <span class="s1">&#39;Monomer&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;Monomers&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Polymer.append"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Monomer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Only Monomer objects can be appended to an Polymer.&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="Polymer.extend"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polymer</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="n">Polymer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">polymer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Only Polymer objects may be merged with a Polymer using unary operator &quot;+&quot;.&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="Polymer.get_monomers"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.get_monomers">[docs]</a>    <span class="k">def</span> <span class="nf">get_monomers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ligands</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ligands</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ligands</span><span class="p">:</span>
+            <span class="n">monomers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ligands</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">monomers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">monomers</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Polymer.get_atoms"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.get_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">get_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ligands</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inc_alt_states</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Flat list of all the Atoms in the Polymer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inc_alt_states : bool</span>
+<span class="sd">            If true atoms from alternate conformations are included rather</span>
+<span class="sd">            than only the &quot;active&quot; states.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        atoms : itertools.chain</span>
+<span class="sd">            Returns an iterator of all the atoms. Convert to list if you</span>
+<span class="sd">            require indexing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ligands</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ligands</span><span class="p">:</span>
+            <span class="n">monomers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ligands</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">monomers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">inc_alt_states</span><span class="o">=</span><span class="n">inc_alt_states</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">monomers</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">atoms</span>
+</div>
+<div class="viewcode-block" id="Polymer.relabel_monomers"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.relabel_monomers">[docs]</a>    <span class="k">def</span> <span class="nf">relabel_monomers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Relabels the component Monomers either in numerical order or using a list of labels.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        labels : list</span>
+<span class="sd">            A list of new labels.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            Raised if the number of labels does not match the number of component Monoer objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">monomer</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+                    <span class="n">monomer</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Number of Monomers ({}) and number of labels ({}) must be equal.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">monomer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">):</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="Polymer.relabel_atoms"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.relabel_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">relabel_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Relabels all Atoms in numerical order, offset by the start parameter.&quot;&quot;&quot;</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">():</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">counter</span>
+            <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="Polymer.relabel_all"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.relabel_all">[docs]</a>    <span class="k">def</span> <span class="nf">relabel_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Relabels all monomers and atoms using default labeling.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relabel_monomers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relabel_atoms</span><span class="p">()</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="Polymer.make_pdb"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.make_pdb">[docs]</a>    <span class="k">def</span> <span class="nf">make_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alt_states</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">inc_ligands</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates a PDB string for the Polymer.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pdb_str : str</span>
+<span class="sd">            String of the pdb for the Polymer. Generated using information from the component Monomers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="bp">False</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">id</span> <span class="k">else</span> <span class="bp">True</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">relabel_monomers</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ligands</span> <span class="ow">and</span> <span class="n">inc_ligands</span><span class="p">:</span>
+            <span class="n">monomers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ligands</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">monomers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="n">pdb_str</span> <span class="o">=</span> <span class="n">write_pdb</span><span class="p">(</span><span class="n">monomers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">alt_states</span><span class="o">=</span><span class="n">alt_states</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pdb_str</span>
+</div>
+<div class="viewcode-block" id="Polymer.get_reference_coords"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer.get_reference_coords">[docs]</a>    <span class="k">def</span> <span class="nf">get_reference_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Gets list of coordinates of all reference atoms in the Polymer.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ref_coords : list(numpy.array)</span>
+<span class="sd">            List has the same length as the Polymer.</span>
+<span class="sd">            The first, second and third elements of array i contain the x, y and z</span>
+<span class="sd">            coordinates of the i-th reference atom.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">reference_atom</span><span class="p">]</span><span class="o">.</span><span class="n">array</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="Monomer"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer">[docs]</a><span class="k">class</span> <span class="nc">Monomer</span><span class="p">(</span><span class="n">BaseAmpal</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">monomer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Object containing Atoms, this is how residues are represented in ISAMBARD.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atoms : OrderedDict or {OrderedDict}</span>
+<span class="sd">            OrderedDict containing Atoms for the Monomer. OrderedDict is used to maintain the order items</span>
+<span class="sd">            were added to the dictionary.</span>
+<span class="sd">        monomer_id : str</span>
+<span class="sd">            String used to identify the residue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="n">atoms</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_active_state</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="ow">is</span> <span class="n">OrderedDict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_active_state</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Sets up dummy states which should be filled later</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">()}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_active_state</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">monomer_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">=</span> <span class="n">ampal_parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;Monomer containing {} {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">),</span> <span class="s1">&#39;Atom&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;Atoms&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_state</span>
+
+    <span class="nd">@active_state.setter</span>
+    <span class="k">def</span> <span class="nf">active_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_active_state</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="s1">&#39;Selected alternate state is not available please use: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">active_state</span><span class="p">]</span>
+
+    <span class="nd">@atoms.setter</span>
+    <span class="k">def</span> <span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">atom_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="n">OrderedDict</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Atoms dict must be of the type OrderedDict.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">active_state</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_dict</span>
+
+<div class="viewcode-block" id="Monomer.get_monomers"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer.get_monomers">[docs]</a>    <span class="k">def</span> <span class="nf">get_monomers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Monomer.get_atoms"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer.get_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">get_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inc_alt_states</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">inc_alt_states</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">()))])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Monomer.make_pdb"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer.make_pdb">[docs]</a>    <span class="k">def</span> <span class="nf">make_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pdb_str</span> <span class="o">=</span> <span class="n">write_pdb</span><span class="p">([</span><span class="bp">self</span><span class="p">],</span> <span class="s1">&#39; &#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pdb_str</span>
+</div>
+<div class="viewcode-block" id="Monomer.close_monomers"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer.close_monomers">[docs]</a>    <span class="k">def</span> <span class="nf">close_monomers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">4.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list of Monomers from within a cut off distance of the Monomer</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        group: BaseAmpal or Subclass</span>
+<span class="sd">            Group to be search for Monomers that are close to this Monomer.</span>
+<span class="sd">        cutoff: float</span>
+<span class="sd">            Distance cut off.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        nearby_residues: [Monomers]</span>
+<span class="sd">            List of Monomers within cut off distance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nearby_residues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">self_atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">nearby_atoms</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">is_within</span><span class="p">(</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">self_atom</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">res_atom</span> <span class="ow">in</span> <span class="n">nearby_atoms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">res_atom</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nearby_residues</span><span class="p">:</span>
+                    <span class="n">nearby_residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res_atom</span><span class="o">.</span><span class="n">ampal_parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nearby_residues</span>
+
+</div></div>
+<div class="viewcode-block" id="Atom"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom">[docs]</a><span class="k">class</span> <span class="nc">Atom</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Object containing atomic coordinates and element information. Used to represent atoms in ISAMBARD.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">atom_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">res_label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">occupancy</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">bfactor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span>
+                 <span class="n">state</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">atom_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res_label</span> <span class="o">=</span> <span class="n">res_label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="n">element</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">=</span> <span class="n">ampal_parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;occupancy&#39;</span><span class="p">:</span> <span class="n">occupancy</span><span class="p">,</span>
+            <span class="s1">&#39;bfactor&#39;</span><span class="p">:</span> <span class="n">bfactor</span><span class="p">,</span>
+            <span class="s1">&#39;charge&#39;</span><span class="p">:</span> <span class="n">charge</span><span class="p">,</span>
+            <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="n">state</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ff_id</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;{} Atom{}. Coordinates: ({:.3f}, {:.3f}, {:.3f})&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">element_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">title</span><span class="p">()][</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">res_label</span> <span class="k">else</span> <span class="s1">&#39; ({})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res_label</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="Atom.__sub__"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom.__sub__">[docs]</a>    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Subtracts coordinates and returns a numpy.array. Objects themselves remain unchanged.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Atom</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">_vector</span>
+</div>
+<div class="viewcode-block" id="Atom.__add__"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom.__add__">[docs]</a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds coordinates and returns a numpy.array. Objects themselves remain unchanged.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Atom</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">_vector</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Converts the atomic coordinate to a numpy.array&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">unique_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">chain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">residue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">return</span> <span class="n">chain</span><span class="p">,</span> <span class="n">residue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+
+<div class="viewcode-block" id="Atom.rotate"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">Quaternion</span><span class="o">.</span><span class="n">angle_and_axis</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="n">radians</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">)</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="Atom.translate"><a class="viewcode-back" href="../../../isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vector</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+        <span class="k">return</span>
+
+</div></div>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Christopher W. Wood, Kieran L. Hudson&#39;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 16, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

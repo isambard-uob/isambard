@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.pseudo_atoms &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.ampal.pseudo_atoms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.ampal.pseudo_atoms</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">ampal.base_ampal</span> <span class="kn">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Monomer</span><span class="p">,</span> <span class="n">Polymer</span><span class="p">,</span> <span class="n">write_pdb</span>
+<span class="kn">from</span> <span class="nn">tools.geometry</span> <span class="kn">import</span> <span class="n">distance</span><span class="p">,</span> <span class="n">radius_of_circumcircle</span>
+
+
+<div class="viewcode-block" id="PseudoGroup"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.PseudoGroup">[docs]</a><span class="k">class</span> <span class="nc">PseudoGroup</span><span class="p">(</span><span class="n">Polymer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monomers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">monomers</span><span class="o">=</span><span class="n">monomers</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="n">polymer_id</span><span class="p">,</span> <span class="n">molecule_type</span><span class="o">=</span><span class="s1">&#39;pseudo_group&#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="n">sl</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;PseudoGroup chain containing {} {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">),</span> <span class="s1">&#39;PseudoMonomer&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;PseudoMonomers&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="PseudoMonomer"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.PseudoMonomer">[docs]</a><span class="k">class</span> <span class="nc">PseudoMonomer</span><span class="p">(</span><span class="n">Monomer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pseudo_atoms</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mol_code</span><span class="o">=</span><span class="s1">&#39;UNK&#39;</span><span class="p">,</span>
+                 <span class="n">monomer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">insertion_code</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Object containing PseudoAtoms, this is how Monomers are represented in ISAMBARD.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pseudo_atoms : OrderedDict</span>
+<span class="sd">            OrderedDict containing Atoms for the Monomer. OrderedDict is used to maintain the order items</span>
+<span class="sd">            were added to the dictionary.</span>
+<span class="sd">        mol_code : str</span>
+<span class="sd">            PDB molecule code that represents the monomer.</span>
+<span class="sd">        monomer_id : str</span>
+<span class="sd">            String used to identify the residue.</span>
+<span class="sd">        insertion_code : str</span>
+<span class="sd">            Insertion code of monomer, used if reading from pdb.</span>
+<span class="sd">        is_hetero : bool</span>
+<span class="sd">            True if is a hetero atom in pdb. Helps with PDB formatting.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PseudoMonomer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">pseudo_atoms</span><span class="p">,</span> <span class="n">monomer_id</span><span class="o">=</span><span class="n">monomer_id</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span> <span class="o">=</span> <span class="n">mol_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insertion_code</span> <span class="o">=</span> <span class="n">insertion_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_hetero</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;PseudoMonomer containing {} {}. PseudoMonomer code: {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">),</span> <span class="s1">&#39;PseudoAtom&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;PseudoAtoms&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pdb_str</span> <span class="o">=</span> <span class="n">write_pdb</span><span class="p">([</span><span class="bp">self</span><span class="p">],</span> <span class="s1">&#39; &#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;chain_id&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;chain_id&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pdb_str</span>
+
+</div>
+<div class="viewcode-block" id="PseudoAtom"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.PseudoAtom">[docs]</a><span class="k">class</span> <span class="nc">PseudoAtom</span><span class="p">(</span><span class="n">Atom</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Object containing 3D coordinates and name. Used to represent pseudo atoms (e.g. centre_of_mass) in ISAMBARD.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">occupancy</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">bfactor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">atom_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">occupancy</span><span class="o">=</span><span class="n">occupancy</span><span class="p">,</span>
+                         <span class="n">bfactor</span><span class="o">=</span><span class="n">bfactor</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;PseudoAtom. Name: {}. Coordinates: ({:.3f}, {:.3f}, {:.3f})&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Primitive"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive">[docs]</a><span class="k">class</span> <span class="nc">Primitive</span><span class="p">(</span><span class="n">PseudoGroup</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monomers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">monomers</span><span class="o">=</span><span class="n">monomers</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="n">polymer_id</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="n">sl</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;Primitive chain containing {} {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">),</span> <span class="s1">&#39;PseudoMonomer&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;PseudoMonomers&#39;</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Primitive.from_coordinates"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive.from_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">from_coordinates</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">):</span>
+        <span class="n">prim</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">coordinates</span><span class="p">:</span>
+            <span class="n">pm</span> <span class="o">=</span> <span class="n">PseudoMonomer</span><span class="p">(</span><span class="n">ampal_parent</span><span class="o">=</span><span class="n">prim</span><span class="p">)</span>
+            <span class="n">pa</span> <span class="o">=</span> <span class="n">PseudoAtom</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">pm</span><span class="p">)</span>
+            <span class="n">pm</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="n">pa</span><span class="p">)])</span>
+            <span class="n">prim</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pm</span><span class="p">)</span>
+        <span class="n">prim</span><span class="o">.</span><span class="n">relabel_all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">prim</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()]</span>
+
+<div class="viewcode-block" id="Primitive.rise_per_residue"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive.rise_per_residue">[docs]</a>    <span class="k">def</span> <span class="nf">rise_per_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The rise per residue at each point on the Primitive.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Each element of the returned list is the rise per residue, at a point on the Primitive.</span>
+<span class="sd">        Element i is the distance between primitive[i] and primitive[i + 1].</span>
+<span class="sd">        The final value is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rprs</span> <span class="o">=</span> <span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">rprs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rprs</span>
+</div>
+<div class="viewcode-block" id="Primitive.radii_of_curvature"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive.radii_of_curvature">[docs]</a>    <span class="k">def</span> <span class="nf">radii_of_curvature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The radius of curvature at each point on the Polymer primitive.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Each element of the returned list is the radius of curvature, at a point on the Polymer primitive.</span>
+<span class="sd">        Element i is the radius of the circumcircle formed from indices [i-1, i, i+1] of the primitve.</span>
+<span class="sd">        The first and final values are None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rocs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">rocs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">radius_of_circumcircle</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rocs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rocs</span>
+
+</div></div>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jack W. Heal&#39;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 16, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,3 +1,5 @@
+"""Contains the base and common classes for all AMPAL objects."""
+
 from collections import OrderedDict
 import itertools
 import warnings
@@ -12,12 +14,28 @@ from settings import global_settings
 
 
 def cap(v, l):
+    """Shortens string is above certain length."""
     s = str(v)
     return s if len(s) <= l else s[-l:]
 
 
 def find_atoms_within_distance(atoms, cutoff_distance, point):
-    """Returns atoms within the distance from the point."""
+    """Returns atoms within the distance from the point.
+
+    Parameters
+    ----------
+    atoms : [ampal.atom]
+        A list of `ampal.atoms`.
+    cutoff_distance : float
+        Maximum distance from point.
+    point : (float, float, float)
+        Reference point, 3D coordinate.
+
+    Returns
+    -------
+    filtered_atoms : [ampal.atoms]
+        `atoms` list filtered by distance.
+    """
     return [x for x in atoms if distance(x, point) <= cutoff_distance]
 
 
@@ -28,12 +46,13 @@ def centre_of_atoms(atoms, mass_weighted=True):
     ----------
     atoms : list
         List of AMPAL atom objects.
-    mass_weighted : bool
+    mass_weighted : bool, optional
         If True returns centre of mass, otherwise just geometric centre of points.
 
     Returns
     -------
-    numpy array
+    centre_of_mass : numpy.array
+        3D coordinate for the centre of mass.
     """
     points = [x._vector for x in atoms]
     if mass_weighted:
@@ -52,9 +71,9 @@ def write_pdb(residues, chain_id=' ', alt_states=False, strip_states=False):
         List of Residue objects.
     chain_id : str
         String of the chain id, defaults to ' '.
-    alt_states : bool
+    alt_states : bool, optional
         If true, include all occupancy states of residues, else outputs primary state only.
-    strip_states : bool
+    strip_states : bool, optional
         If true, remove all state labels from residues. Only use with alt_states false.
 
     Returns
@@ -70,7 +89,8 @@ def write_pdb(residues, chain_id=' ', alt_states=False, strip_states=False):
         poly_id = str(chain_id)
     for monomer in residues:
         if (len(monomer.states) > 1) and alt_states and not strip_states:
-            atom_list = itertools.chain(*[x[1].items() for x in sorted(monomer.states.items())])
+            atom_list = itertools.chain(
+                *[x[1].items() for x in sorted(monomer.states.items())])
         else:
             atom_list = monomer.atoms.items()
         if 'chain_id' in monomer.tags:
@@ -109,6 +129,16 @@ def write_pdb(residues, chain_id=' ', alt_states=False, strip_states=False):
 
 
 class BaseAmpal(object):
+    """Base class for all AMPAL objects except `ampal.atom`.
+
+    Raises
+    ------
+    NotImplementedError
+        `BaseAmpal` is an abstract base class and is not intended to
+        be instanciated. A `NotImplementedError` is raised if a
+        method is called that is required on a child class but is
+        not implemented in `BaseAmpal`.
+    """
 
     @property
     def pdb(self):
@@ -117,7 +147,18 @@ class BaseAmpal(object):
 
     @property
     def centre_of_mass(self):
-        """ Returns the centre of mass as a numpy.array. (all atoms included in calculation). """
+        """Returns the centre of mass of AMPAL object.
+
+        Notes
+        -----
+        All atoms are included in calculation, call `centre_of_mass`
+        manually if another selection is require. 
+
+        Returns
+        -------
+        centre_of_mass : numpy.array
+            3D coordinate for the centre of mass.
+        """
         elts = set([x.element for x in self.get_atoms()])
         masses_dict = {e: element_data[e]['atomic mass'] for e in elts}
         points = [x._vector for x in self.get_atoms()]
@@ -125,7 +166,7 @@ class BaseAmpal(object):
         return centre_of_mass(points=points, masses=masses)
 
     def is_within(self, cutoff_dist, point):
-        """Returns all atoms in the ampal object that are within the cut-off distance from the input point."""
+        """Returns all atoms in ampal object within `cut-off` distance from the `point`."""
         return find_atoms_within_distance(self.get_atoms(), cutoff_dist, point)
 
     def get_atoms(self):
@@ -141,7 +182,7 @@ class BaseAmpal(object):
         ----------
         ff: BuffForceField
             The force field to be used for scoring.
-        mol2: bool
+        mol2: bool, optional
             If true, mol2 style labels will also be used.
         """
         if hasattr(self, 'ligands'):
@@ -159,19 +200,23 @@ class BaseAmpal(object):
                 elif atom.res_label in ff['WLD']:
                     a_ff_id = ('WLD', atom.res_label)
                 else:
-                    w_str = '{} atom is not parameterised in the selected force field for {} residues,' \
-                            ' this will be ignored.'.format(atom.res_label, atom.ampal_parent.mol_code)
+                    w_str = ('{} atom is not parameterised in the selected '
+                             'force field for {} residues, this will be '
+                             'ignored.').format(
+                        atom.res_label, atom.ampal_parent.mol_code)
             elif atom.res_label in ff['WLD']:
                 a_ff_id = ('WLD', atom.res_label)
             elif mol2 and (atom.ampal_parent.mol_code.capitalize() in ff['MOL2']):
                 a_ff_id = ('MOL2', atom.res_label.capitalize())
             else:
                 if not mol2:
-                    w_str = '{} ({}) atom is not parameterised in the selected residue force field. ' \
-                            'Try activating the heavy atom force field (haff).'.format(atom.element, atom.res_label)
+                    w_str = ('{} ({}) atom is not parameterised in the selected'
+                             ' residue force field. Try activating the heavy '
+                             ' atom force field (haff).').format(
+                        atom.element, atom.res_label)
                 else:
-                    w_str = '{} ({}) atom is not parameterised in the selected force field.'.format(atom.element,
-                                                                                                 atom.res_label)
+                    w_str = ('{} ({}) atom is not parameterised in the selected'
+                             ' force field.').format(atom.element, atom.res_label)
             if w_str:
                 warnings.warn(w_str, NotParameterisedWarning)
             atom._ff_id = a_ff_id
@@ -188,9 +233,9 @@ class BaseAmpal(object):
         ----------
         ff: BuffForceField
             The force field to be used for scoring.
-        mol2: bool
+        mol2: bool, optional
             If true, mol2 style labels will also be used.
-        force_ff_assign: bool
+        force_ff_assign: bool, optional
             If true, the force field will be completely reassigned, ignoring the
             cached parameters.
         """
@@ -205,7 +250,8 @@ class BaseAmpal(object):
             self.assign_force_field(ff, mol2=mol2)
         return
 
-    def get_internal_energy(self, assign_ff=True, ff=None, mol2=False, force_ff_assign=False):
+    def get_internal_energy(self, assign_ff=True, ff=None, mol2=False,
+                            force_ff_assign=False):
         """Calculates the internal energy of the AMPAL object.
 
         This method is assigned to the buff_internal_energy property,
@@ -213,13 +259,13 @@ class BaseAmpal(object):
 
         Parameters
         ----------
-        assign_ff: bool
+        assign_ff: bool, optional
             If true the force field will be updated if required.
-        ff: BuffForceField
+        ff: BuffForceField, optional
             The force field to be used for scoring.
-        mol2: bool
+        mol2: bool, optional
             If true, mol2 style labels will also be used.
-        force_ff_assign: bool
+        force_ff_assign: bool, optional
             If true, the force field will be completely reassigned, ignoring the
             cached parameters.
 
@@ -240,18 +286,58 @@ class BaseAmpal(object):
     buff_internal_energy = property(get_internal_energy)
 
     def rotate(self, angle, axis, point=None, radians=False, inc_alt_states=True):
+        """Rotates every atom in the AMPAL object.
+
+        Parameters
+        ----------
+        angle : float
+            Angle that AMPAL object will be rotated.
+        axis : 3D Vector (tuple, list, numpy.array)
+            Axis about which the AMPAL object will be rotated.
+        point : 3D Vector (tuple, list, numpy.array), optional
+            Point that the axis lies upon. If `None` then the origin is used.
+        radians : bool, optional
+            True is `angle` is define in radians, False is degrees.
+        inc_alt_states : bool, optional
+            If true, will rotate atoms in all states i.e. includes
+            alternate conformations for sidechains.
+        """
         q = Quaternion.angle_and_axis(angle=angle, axis=axis, radians=radians)
         for atom in self.get_atoms(inc_alt_states=inc_alt_states):
             atom._vector = q.rotate_vector(v=atom._vector, point=point)
         return
 
     def translate(self, vector, inc_alt_states=True):
+        """Translates every atom in the AMPAL object.
+
+        Parameters
+        ----------
+        vector : 3D Vector (tuple, list, numpy.array)
+            Vector used for translation.
+        inc_alt_states : bool, optional
+            If true, will rotate atoms in all states i.e. includes
+            alternate conformations for sidechains.
+        """
         vector = numpy.array(vector)
         for atom in self.get_atoms(inc_alt_states=inc_alt_states):
             atom._vector += vector
         return
 
     def rmsd(self, other, backbone=False):
+        """Calculates the RMSD between two AMPAL objects.
+
+        Notes
+        -----
+        No fitting operation is performs and both AMPAL objects must
+        have the same number of atoms.
+
+        Parameters
+        ----------
+        other : AMPAL Object
+            Any AMPAL object with `get_atoms` method.
+        backbone : bool, optional
+            Calculates RMSD of backbone only.
+        """
         assert type(self) == type(other)
         if backbone and hasattr(self, 'backbone'):
             points1 = self.backbone.get_atoms()
@@ -265,24 +351,59 @@ class BaseAmpal(object):
 
 
 class Polymer(BaseAmpal):
-    def __init__(self, monomers=None, ligands=None, polymer_id=' ', molecule_type='', ampal_parent=None, sl=2):
-        """A container that holds monomer type objects, this is how polypeptides are represented in ISAMBARD.
+    """A container that holds `Monomer` type objects.
 
-        Has a simple hierarchy: A Polymer contains one or more Monomer.
+    Notes
+    -----
+    `Polymer` has a simple hierarchy: A `Polymer` contains one or
+    more `Monomer`.
 
-        Parameters
-        ----------
-        monomers : Monomer or [Monomer]
-            Monomer or list containing Monomer objects to form the Polymer().
-        polymer_id : str
-            An ID that the user can use to identify the Polymer. This is used when generating a pdb file using
-            Polymer().pdb
+    Parameters
+    ----------
+    monomers : Monomer or [Monomer], optional
+        Monomer or list containing Monomer objects to form the Polymer().
+    ligands : LigandGroup, optional
+        `Ligands` associated with the `Polymer`.
+    polymer_id : str, optional
+        An ID that the user can use to identify the `Polymer`. This is
+        used when generating a pdb file using `Polymer().pdb`.
+    molecule_type : str, optional
+        A description of the type of `Polymer` i.e. Protein, DNA etc.
+    ampal_parent : ampal.Assembly, optional
+        Reference to `Assembly` containing the `Polymer`.
+    sl : int, optional
+        The default smoothing level used when calculating the
+        backbone primitive.
 
-        Raises
-        ------
-        TypeError
-            Polymer objects can only be initialised empty, using a Monomer or a list of Monomers.
-        """
+    Attributes
+    ----------
+    id : str
+        Polymer ID
+    ampal_parent : ampal.Assembly or None
+        Reference to `Assembly` containing the `Polymer`.
+    molecule_type : str
+        A description of the type of `Polymer` i.e. Protein, DNA etc.
+    ligands : ampal.LigandGroup
+        A `LigandGroup` containing all the `Ligands` associated with this
+        `Polymer` chain.
+    tags : dict
+        A dictionary containing information about this AMPAL object.
+        The tags dictionary is used by AMPAL to cache information
+        about this object, but is also intended to be used by users
+        to store any relevant information they have.
+    sl : int
+        The default smoothing level used when calculating the
+        backbone primitive.
+
+    Raises
+    ------
+    TypeError
+        Polymer objects can only be initialised empty, using a Monomer
+        or a list of Monomers.
+    """
+
+    def __init__(self, monomers=None, ligands=None, polymer_id=' ',
+                 molecule_type='', ampal_parent=None, sl=2):
         if monomers:
             if isinstance(monomers, Monomer):
                 self._monomers = [monomers]
@@ -290,7 +411,8 @@ class Polymer(BaseAmpal):
                 self._monomers = list(monomers)
             else:
                 raise TypeError(
-                    'Polymer objects can only be initialised empty, using a Monomer or a list of Monomers.')
+                    'Polymer objects can only be initialised empty, '
+                    'using a Monomer or a list of Monomers.')
         else:
             self._monomers = []
         self.id = str(polymer_id)
@@ -304,7 +426,8 @@ class Polymer(BaseAmpal):
         if isinstance(other, Polymer):
             merged_polymer = self._monomers + other._monomers
         else:
-            raise TypeError('Only Polymer objects may be merged with a Polymer.')
+            raise TypeError(
+                'Only Polymer objects may be merged with a Polymer.')
         return Polymer(monomers=merged_polymer, polymer_id=self.id)
 
     def __len__(self):
@@ -324,20 +447,41 @@ class Polymer(BaseAmpal):
             len(self._monomers), 'Monomer' if len(self._monomers) == 1 else 'Monomers')
 
     def append(self, item):
+        """Appends a `Monomer to the `Polymer`.
+
+        Notes
+        -----
+        Does not update labelling.
+        """
         if isinstance(item, Monomer):
             self._monomers.append(item)
         else:
-            raise TypeError('Only Monomer objects can be appended to an Polymer.')
+            raise TypeError(
+                'Only Monomer objects can be appended to an Polymer.')
         return
 
     def extend(self, polymer):
+        """Extends the `Polymer` with the contents of another `Polymer`.
+
+        Notes
+        -----
+        Does not update labelling.
+        """
         if isinstance(polymer, Polymer):
             self._monomers.extend(polymer)
         else:
-            raise TypeError('Only Polymer objects may be merged with a Polymer using unary operator "+".')
+            raise TypeError(
+                'Only Polymer objects may be merged with a Polymer using unary operator "+".')
         return
 
     def get_monomers(self, ligands=True):
+        """Retrieves all the `Monomers` from the AMPAL object.
+
+        Parameters
+        ----------
+        ligands : bool, optional
+            If true, will include ligand `Monomers`.
+        """
         if ligands and self.ligands:
             monomers = self._monomers + self.ligands._monomers
         else:
@@ -363,28 +507,33 @@ class Polymer(BaseAmpal):
             monomers = self._monomers + self.ligands._monomers
         else:
             monomers = self._monomers
-        atoms = itertools.chain(*(list(m.get_atoms(inc_alt_states=inc_alt_states)) for m in monomers))
+        atoms = itertools.chain(
+            *(list(m.get_atoms(inc_alt_states=inc_alt_states)) for m in monomers))
         return atoms
 
     def relabel_monomers(self, labels=None):
-        """Relabels the component Monomers either in numerical order or using a list of labels.
+        """Relabels the either in numerically or using a list of labels.
 
         Parameters
         ----------
-        labels : list
+        labels : list, optional
             A list of new labels.
 
         Raises
         ------
         ValueError
-            Raised if the number of labels does not match the number of component Monoer objects.
+            Raised if the number of labels does not match the number of
+            component Monoer objects.
         """
         if labels:
             if len(self._monomers) == len(labels):
                 for monomer, label in zip(self._monomers, labels):
                     monomer.id = str(label)
             else:
-                raise ValueError('Number of Monomers ({}) and number of labels ({}) must be equal.'.format(
+                error_string = (
+                    'Number of Monomers ({}) and number of labels '
+                    '({}) must be equal.')
+                raise ValueError(error_string.format(
                     len(self._monomers), len(labels)))
         else:
             for i, monomer in enumerate(self._monomers):
@@ -392,7 +541,13 @@ class Polymer(BaseAmpal):
         return
 
     def relabel_atoms(self, start=1):
-        """Relabels all Atoms in numerical order, offset by the start parameter."""
+        """Relabels all `Atoms` in numerical order.
+
+        Parameters
+        ----------
+        start : int, optional
+            Offset the labelling by `start` residues.
+        """
         counter = start
         for atom in self.get_atoms():
             atom.id = counter
@@ -400,18 +555,26 @@ class Polymer(BaseAmpal):
         return
 
     def relabel_all(self):
-        """Relabels all monomers and atoms using default labeling."""
+        """Relabels all `Monomers` and `Atoms` using default labeling."""
         self.relabel_monomers()
         self.relabel_atoms()
         return
 
     def make_pdb(self, alt_states=False, inc_ligands=True):
-        """Generates a PDB string for the Polymer.
+        """Generates a PDB string for the `Polymer`.
+
+        Parameters
+        ----------
+        alt_states : bool, optional
+            Include alternate conformations for `Monomers` in PDB.
+        inc_ligands : bool, optional
+            Includes `Ligands` in PDB.
 
         Returns
         -------
         pdb_str : str
-            String of the pdb for the Polymer. Generated using information from the component Monomers.
+            String of the pdb for the `Polymer`. Generated using information
+            from the component `Monomers`.
         """
         if any([False if x.id else True for x in self._monomers]):
             self.relabel_monomers()
@@ -423,30 +586,48 @@ class Polymer(BaseAmpal):
         return pdb_str
 
     def get_reference_coords(self):
-        """ Gets list of coordinates of all reference atoms in the Polymer.
+        """Gets list of coordinates of all reference atoms in the `Polymer`.
 
         Returns
         -------
-        ref_coords : list(numpy.array)
-            List has the same length as the Polymer.
-            The first, second and third elements of array i contain the x, y and z
-            coordinates of the i-th reference atom.
+        ref_coords : [numpy.array]
+            List has the same length as the `Polymer`.
+            The first, second and third elements of array i contain the
+            x, y and z coordinates of the i-th reference atom.
         """
         return [x[x.reference_atom].array for x in self._monomers]
 
 
 class Monomer(BaseAmpal):
-    def __init__(self, atoms=None, monomer_id=' ', ampal_parent=None):
-        """Object containing Atoms, this is how residues are represented in ISAMBARD.
+    """Groups of `Atoms` that form `Polymers`.
 
-        Parameters
-        ----------
-        atoms : OrderedDict or {OrderedDict}
-            OrderedDict containing Atoms for the Monomer. OrderedDict is used to maintain the order items
-            were added to the dictionary.
-        monomer_id : str
-            String used to identify the residue.
-        """
+    Parameters
+    ----------
+    atoms : OrderedDict or {OrderedDict}, optional
+        OrderedDict containing Atoms for the Monomer. OrderedDict
+        is used to maintain the order items were added to the dictionary.
+    monomer_id : str, optional
+        String used to identify the residue.
+    ampal_parent : Polymer, optional
+        A reference to the `Polymer` containing this `Monomer`.
+
+    Attributes
+    ----------
+    states : dict
+        Contains an `OrderedDicts` containing atom information for each
+        state available for the `Monomer`.
+    id : str
+        String used to identify the residue.
+    ampal_parent : Polymer or None
+        A reference to the `Polymer` containing this `Monomer`.
+    tags : dict
+        A dictionary containing information about this AMPAL object.
+        The tags dictionary is used by AMPAL to cache information
+        about this object, but is also intended to be used by users
+        to store any relevant information they have.
+    """
+
+    def __init__(self, atoms=None, monomer_id=' ', ampal_parent=None):
         if type(atoms) is dict:
             self.states = atoms
             self._active_state = sorted(self.states.keys())[0]
@@ -478,6 +659,7 @@ class Monomer(BaseAmpal):
 
     @property
     def active_state(self):
+        """Defines which state dictionary should be used currently."""
         return self._active_state
 
     @active_state.setter
@@ -490,6 +672,7 @@ class Monomer(BaseAmpal):
 
     @property
     def atoms(self):
+        """Atoms in the currently active state."""
         return self.states[self.active_state]
 
     @atoms.setter
@@ -500,16 +683,31 @@ class Monomer(BaseAmpal):
             self.states[self.active_state] = atom_dict
 
     def get_monomers(self):
+        """Returns the this `Monomer`.
+
+        Notes
+        -----
+        This function is only present for consistency in the interface.
+        """
         return [self]
 
     def get_atoms(self, inc_alt_states=False):
+        """Returns all atoms in the `Monomer`.
+
+        Parameters
+        ----------
+        inc_alt_states : bool, optional
+            If `True`, will return `Atoms` for alternate states.
+        """
         if inc_alt_states:
             return itertools.chain(*[x[1].values() for x in sorted(list(self.states.items()))])
         else:
             return self.atoms.values()
 
     def make_pdb(self):
-        pdb_str = write_pdb([self], ' ' if not self.ampal_parent else self.ampal_parent.id)
+        """Generates a PDB string for the `Monomer`."""
+        pdb_str = write_pdb(
+            [self], ' ' if not self.ampal_parent else self.ampal_parent.id)
         return pdb_str
 
     def close_monomers(self, group, cutoff=4.0):
@@ -537,7 +735,51 @@ class Monomer(BaseAmpal):
 
 
 class Atom(object):
-    """Object containing atomic coordinates and element information. Used to represent atoms in ISAMBARD."""
+    """Object containing atomic coordinates and element information.
+
+    Notes
+    -----
+    `Atom` is an AMPAL object, but it does not inherit from `BaseAmpal`.
+
+    Parameters
+    ----------
+    coordinates : 3D Vector (tuple, list, numpy.array)
+        Position of `Atom` in 3D space.
+    element : str
+        Element of `Atom`.
+    atom_id : str
+        Identifier for `Atom`, usually a number.
+    res_label : str, optional
+        Label used in `Monomer` to refer to the `Atom` type i.e. "CA" or "OD1".
+    occupancy : float, optional
+        The occupancy of the `Atom`.
+    bfactor : float, optional
+        The bfactor of the `Atom`.
+    charge : str, optional
+        The point charge of the `Atom`.
+    state : str
+        The state of this `Atom`. Used to identify `Atoms` with a
+        number of conformations.
+    ampal_parent : ampal.Monomer, optional
+       A reference to the `Monomer` containing this `Atom`. 
+
+    Attributes
+    ----------
+    id : str
+        Identifier for `Atom`, usually a number.
+    res_label : str
+        Label used in `Monomer` to refer to the `Atom` type i.e. "CA" or "OD1".
+    element : str
+        Element of `Atom`.
+    ampal_parent : ampal.Monomer
+       A reference to the `Monomer` containing this `Atom`. 
+        number of conformations.
+    tags : dict
+        A dictionary containing information about this AMPAL object.
+        The tags dictionary is used by AMPAL to cache information
+        about this object, but is also intended to be used by users
+        to store any relevant information they have.
+    """
 
     def __init__(self, coordinates, element, atom_id=' ', res_label=None, occupancy=1.0, bfactor=1.0, charge=' ',
                  state='A', ampal_parent=None):
@@ -556,7 +798,8 @@ class Atom(object):
 
     def __repr__(self):
         return "<{} Atom{}. Coordinates: ({:.3f}, {:.3f}, {:.3f})>".format(
-            element_data[self.element.title()]['name'], '' if not self.res_label else ' ({})'.format(self.res_label),
+            element_data[self.element.title(
+            )]['name'], '' if not self.res_label else ' ({})'.format(self.res_label),
             self.x, self.y, self.z)
 
     def __getitem__(self, item):
@@ -567,44 +810,91 @@ class Atom(object):
         return
 
     def __sub__(self, other):
-        """Subtracts coordinates and returns a numpy.array. Objects themselves remain unchanged."""
+        """Subtracts coordinates and returns a `numpy.array`.
+
+        Notes
+        -----
+        Objects themselves remain unchanged.
+        """
         assert isinstance(other, Atom)
         return self._vector - other._vector
 
     def __add__(self, other):
-        """Adds coordinates and returns a numpy.array. Objects themselves remain unchanged."""
+        """Adds coordinates and returns a `numpy.array`.
+
+        Notes
+        -----
+        Objects themselves remain unchanged.
+        """
         assert isinstance(other, Atom)
         return self._vector + other._vector
 
     @property
     def array(self):
-        """Converts the atomic coordinate to a numpy.array"""
+        """Converts the atomic coordinate to a `numpy.array`."""
         return self._vector
 
     @property
     def x(self):
+        """The x coordinate."""
         return self._vector[0]
 
     @property
     def y(self):
+        """The y coordinate."""
         return self._vector[1]
 
     @property
     def z(self):
+        """The z coordinate."""
         return self._vector[2]
 
     @property
     def unique_id(self):
+        """Creates a unique ID for the `Atom` based on its parents.
+
+        Returns
+        -------
+        unique_id : (str, str, str)
+            (polymer.id, residue.id, atom.id)
+        """
         chain = self.ampal_parent.ampal_parent.id
         residue = self.ampal_parent.id
         return chain, residue, self.id
 
     def rotate(self, angle, axis, point=None, radians=False):
+        """Rotates `Atom` by `angle`.
+
+        Parameters
+        ----------
+        angle : float
+            Angle that `Atom` will be rotated.
+        axis : 3D Vector (tuple, list, numpy.array)
+            Axis about which the `Atom` will be rotated.
+        point : 3D Vector (tuple, list, numpy.array), optional
+            Point that the `axis` lies upon. If `None` then the origin is used.
+        radians : bool, optional
+            True is `angle` is define in radians, False is degrees.
+        """
         q = Quaternion.angle_and_axis(angle=angle, axis=axis, radians=radians)
         self._vector = q.rotate_vector(v=self._vector, point=point)
         return
 
     def translate(self, vector):
+        """Translates `Atom`.
+
+        Parameters
+        ----------
+        vector : 3D Vector (tuple, list, numpy.array)
+            Vector used for translation.
+        inc_alt_states : bool, optional
+            If true, will rotate atoms in all states i.e. includes
+            alternate conformations for sidechains.
+        """
+        vector = numpy.array(vector)
+        for atom in self.get_atoms(inc_alt_states=inc_alt_states):
+            atom._vector += vector
+        return
         self._vector += numpy.array(vector)
         return
 
