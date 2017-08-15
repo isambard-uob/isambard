@@ -22,6 +22,7 @@ up the files in general.
 
 * `polymer_specs/`
     * `helix.py`
+    * `nucleic_acid_strand.py`
 * `assembly.py`
 * `ampal_databases.py`
 * `analyse_protein.py`
