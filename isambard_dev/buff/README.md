@@ -25,3 +25,4 @@ up the files in general.
 
 ### Finished
 
+* `calculate_energy.pyx`
