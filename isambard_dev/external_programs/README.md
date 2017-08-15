@@ -13,3 +13,4 @@ the ISAMBARD object that is calling the function.
 ### Finished
 
 * `dssp.py`
+* `naccess.py`
