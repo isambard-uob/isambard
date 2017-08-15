@@ -15,3 +15,4 @@ the ISAMBARD object that is calling the function.
 * `dssp.py`
 * `naccess.py`
 * `profit.py`
+* `reduce.py`
