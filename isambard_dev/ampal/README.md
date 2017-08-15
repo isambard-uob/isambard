@@ -8,13 +8,9 @@ class is added, a corresponding filter should be added to the PDBParser.
 The `specifications` module is also included in this directory as specifications
 directly inherit from the AMPAL framework.
 
-# To Do
+# Work In Progress
 
 ## Documentation
-
-ChrisWellsWood: I'm currently working through the documentation in this module
-and attempting to improve it. I'm also running `autopep8` on everything to tidy
-up the files in general.
 
 ### In Progress
 
