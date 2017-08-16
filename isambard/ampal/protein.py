@@ -1235,10 +1235,15 @@ class Residue(Monomer):
                                     ('CA', self.atoms['CA']),
                                     ('C', self.atoms['C']),
                                     ('O', self.atoms['O'])])
-        except IndexError:
-            raise IndexError('Atoms argument invalid. Must be an OrderedDict '
-                             'with coordinates defined for the backbone'
-                             ' (N, CA, C, O) atoms.')
+        except KeyError:
+            missing_atoms = filter(lambda x: x not in self.atoms.keys(),
+                                   ('N', 'CA', 'C', 'O')
+                                   )
+            raise KeyError('Error in residue {} {} {}, missing ({}) atoms. '
+                           '`atoms` must be an `OrderedDict` with coordinates '
+                           'defined for the backbone (N, CA, C, O) atoms.'
+                           .format(self.ampal_parent.id, self.mol_code,
+                                   self.id, ', '.join(missing_atoms)))
         bb_monomer = Residue(backbone, self.mol_code, monomer_id=self.id,
                              insertion_code=self.insertion_code,
                              is_hetero=self.is_hetero)
