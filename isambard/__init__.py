@@ -1,6 +1,5 @@
 import os as _os
 import sys as _sys
-import pyximport; pyximport.install()
 
 _sys.path.append('')
 _starting_dir = _os.getcwd()
