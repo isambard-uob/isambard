@@ -15,16 +15,16 @@ setuptools.setup(
     # This code automatically builds the Cython extensions.
     ext_modules=cythonize(
         [Extension(
-            "isambard_dev.tools.geometry",
-            ["isambard_dev/tools/geometry.pyx"]),
+            "isambard.tools.geometry",
+            ["isambard/tools/geometry.pyx"]),
          Extension(
-             "isambard_dev.buff.calculate_energy",
-             ["isambard_dev/buff/calculate_energy.pyx"],
-             include_dir=["isambard_dev/buff/"],
+             "isambard.buff.calculate_energy",
+             ["isambard/buff/calculate_energy.pyx"],
+             include_dir=["isambard/buff/"],
              language='c++'),
          Extension(
-             "isambard_dev.ampal.specifications.polymer_specs.ta_polypeptide",
-             [("isambard_dev/ampal/specifications/polymer_specs/"
+             "isambard.ampal.specifications.polymer_specs.ta_polypeptide",
+             [("isambard/ampal/specifications/polymer_specs/"
                "ta_polypeptide.pyx")]),
          ]),
     include_package_data=True,
