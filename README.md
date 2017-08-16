@@ -24,7 +24,7 @@ Any publication arising from use of the ISAMBARD software package should cite th
 
 ### Basic Install
 
-ISAMBARD can be installed straight from PYPI using pip:
+ISAMBARD can be installed straight from PyPI using `pip`:
 
 ```
 pip install isambard
@@ -37,10 +37,12 @@ pip install .
 
 ISAMBARD has a few Python package requirements, just install them through pip if it asks for them. We recommend using the [Anaconda Python 3 distribution](https://www.continuum.io/downloads), it contains most of the dependencies. 
 
-**Windows Users** - You'll need to download a C compiler, if you want to use ISAMBARD. This is because we use a package called Cython to make the code run fast. 
-The exact version of Microsoft Visual C++ compiler depends on the python version that you are using. Here are the [installation instructions](https://wiki.python.org/moin/WindowsCompilers).  
+~**Windows Users** - You'll need to download a C compiler, if you want to use ISAMBARD. This is because we use a package called Cython to make the code run fast. 
+The exact version of Microsoft Visual C++ compiler depends on the python version that you are using. Here are the [installation instructions](https://wiki.python.org/moin/WindowsCompilers).~
 
-*You can also use MinGW, but it's not currently supported. [Instructions here](http://cython.readthedocs.io/en/latest/src/tutorial/appendix.html).*
+~*You can also use MinGW, but it's not currently supported. [Instructions here](http://cython.readthedocs.io/en/latest/src/tutorial/appendix.html).*~
+
+The most recent versions of ISAMBARD contain precompiled binaries for Python 3.5/3.6 on Windows/Mac, so a C compiler should no longer be required!
 
 ### External Programs
 
