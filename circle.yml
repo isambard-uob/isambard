@@ -15,7 +15,7 @@ dependencies:
     - pip install --upgrade setuptools
     - pip install -r requirements.txt
   override:
-    - pip install .
+    - python setup.py build_ext --inplace
 test:
   override:
     - cd /home/ubuntu/isambard_dev
