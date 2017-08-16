@@ -1,4 +1,6 @@
 import setuptools
+from setuptools.extension import Extension
+from Cython.Build import cythonize
 
 try:
     import pypandoc
@@ -10,6 +12,21 @@ except(IOError, ImportError):
 setuptools.setup(
     name='isambard',
     packages=setuptools.find_packages(),
+    # This code automatically builds the Cython extensions.
+    ext_modules=cythonize(
+        [Extension(
+            "isambard.tools.geometry",
+            ["isambard/tools/geometry.pyx"]),
+         Extension(
+             "isambard.buff.calculate_energy",
+             ["isambard/buff/calculate_energy.pyx"],
+             include_dir=["isambard/buff/"],
+             language='c++'),
+         Extension(
+             "isambard.ampal.specifications.polymer_specs.ta_polypeptide",
+             [("isambard/ampal/specifications/polymer_specs/"
+               "ta_polypeptide.pyx")]),
+         ]),
     include_package_data=True,
     version='2017.2.2',
     description=(
