@@ -1,6 +1,4 @@
 machine:
-  environment:
-    PYTHONPATH: "/home/ubuntu:$PYTHONPATH"
   python:
     version: 3.5.0
 dependencies:
@@ -14,8 +12,10 @@ dependencies:
     # DSSP
     - chmod +x /home/ubuntu/isambard_dev/dependencies_for_isambard/dssp/dssp-2.0.4
     - pip install --upgrade pip
-  override:
+    - pip install --upgrade setuptools
     - pip install -r requirements.txt
+  override:
+    - python setup.py build_ext --inplace
 test:
   override:
     - cd /home/ubuntu/isambard_dev
