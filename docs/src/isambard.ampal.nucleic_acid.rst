@@ -1,5 +1,5 @@
-isambard.ampal.nucleic_acid module
-==================================
+isambard\.ampal\.nucleic\_acid module
+=====================================
 
 .. automodule:: isambard.ampal.nucleic_acid
     :members:

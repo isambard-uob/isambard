@@ -1,5 +1,5 @@
-isambard.optimisation.optimizer module
-======================================
+isambard\.optimisation\.optimizer module
+========================================
 
 .. automodule:: isambard.optimisation.optimizer
     :members:

@@ -1,5 +1,5 @@
-isambard.ampal.analyse_protein module
-=====================================
+isambard\.ampal\.analyse\_protein module
+========================================
 
 .. automodule:: isambard.ampal.analyse_protein
     :members:

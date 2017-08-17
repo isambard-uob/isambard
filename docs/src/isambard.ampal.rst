@@ -1,5 +1,5 @@
-isambard.ampal package
-======================
+isambard\.ampal package
+=======================
 
 Subpackages
 -----------

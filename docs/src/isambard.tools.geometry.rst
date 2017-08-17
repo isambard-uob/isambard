@@ -1,5 +1,5 @@
-isambard.tools.geometry module
-==============================
+isambard\.tools\.geometry module
+================================
 
 .. automodule:: isambard.tools.geometry
     :members:

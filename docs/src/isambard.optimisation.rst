@@ -1,5 +1,5 @@
-isambard.optimisation package
-=============================
+isambard\.optimisation package
+==============================
 
 Submodules
 ----------

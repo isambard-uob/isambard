@@ -1,5 +1,5 @@
-isambard.tools.isambard_warnings module
-=======================================
+isambard\.tools\.isambard\_warnings module
+==========================================
 
 .. automodule:: isambard.tools.isambard_warnings
     :members:

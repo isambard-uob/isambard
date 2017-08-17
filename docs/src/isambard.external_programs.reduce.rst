@@ -1,5 +1,5 @@
-isambard.external_programs.reduce module
-========================================
+isambard\.external\_programs\.reduce module
+===========================================
 
 .. automodule:: isambard.external_programs.reduce
     :members:

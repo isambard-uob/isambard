@@ -1,5 +1,5 @@
-isambard.ampal.assembly module
-==============================
+isambard\.ampal\.assembly module
+================================
 
 .. automodule:: isambard.ampal.assembly
     :members:

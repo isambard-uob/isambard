@@ -1,5 +1,5 @@
-isambard.add_ons package
-========================
+isambard\.add\_ons package
+==========================
 
 Submodules
 ----------

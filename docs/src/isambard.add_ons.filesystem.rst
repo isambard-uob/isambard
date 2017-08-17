@@ -1,5 +1,5 @@
-isambard.add_ons.filesystem module
-==================================
+isambard\.add\_ons\.filesystem module
+=====================================
 
 .. automodule:: isambard.add_ons.filesystem
     :members:

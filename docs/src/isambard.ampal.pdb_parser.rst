@@ -1,5 +1,5 @@
-isambard.ampal.pdb_parser module
-================================
+isambard\.ampal\.pdb\_parser module
+===================================
 
 .. automodule:: isambard.ampal.pdb_parser
     :members:

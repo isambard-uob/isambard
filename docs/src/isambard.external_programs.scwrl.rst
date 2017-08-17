@@ -1,5 +1,5 @@
-isambard.external_programs.scwrl module
-=======================================
+isambard\.external\_programs\.scwrl module
+==========================================
 
 .. automodule:: isambard.external_programs.scwrl
     :members:

@@ -1,5 +1,5 @@
-isambard.external_programs.naccess module
-=========================================
+isambard\.external\_programs\.naccess module
+============================================
 
 .. automodule:: isambard.external_programs.naccess
     :members:

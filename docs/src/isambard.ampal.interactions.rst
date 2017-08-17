@@ -1,5 +1,5 @@
-isambard.ampal.interactions module
-==================================
+isambard\.ampal\.interactions module
+====================================
 
 .. automodule:: isambard.ampal.interactions
     :members:

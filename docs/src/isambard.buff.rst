@@ -1,5 +1,5 @@
-isambard.buff package
-=====================
+isambard\.buff package
+======================
 
 Submodules
 ----------

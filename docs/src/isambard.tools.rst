@@ -1,5 +1,5 @@
-isambard.tools package
-======================
+isambard\.tools package
+=======================
 
 Submodules
 ----------

@@ -1,5 +1,5 @@
-isambard.configure module
-=========================
+isambard\.configure module
+==========================
 
 .. automodule:: isambard.configure
     :members:

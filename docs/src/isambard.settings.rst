@@ -1,5 +1,5 @@
-isambard.settings module
-========================
+isambard\.settings module
+=========================
 
 .. automodule:: isambard.settings
     :members:

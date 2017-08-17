@@ -1,5 +1,5 @@
-isambard.ampal.base_ampal module
-================================
+isambard\.ampal\.base\_ampal module
+===================================
 
 .. automodule:: isambard.ampal.base_ampal
     :members:

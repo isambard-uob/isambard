@@ -1,5 +1,5 @@
-isambard.buff.force_field module
-================================
+isambard\.buff\.force\_field module
+===================================
 
 .. automodule:: isambard.buff.force_field
     :members:

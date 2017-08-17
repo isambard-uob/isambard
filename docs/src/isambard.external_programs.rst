@@ -1,5 +1,5 @@
-isambard.external_programs package
-==================================
+isambard\.external\_programs package
+====================================
 
 Submodules
 ----------

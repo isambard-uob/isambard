@@ -1,5 +1,5 @@
-isambard.external_programs.dssp module
-======================================
+isambard\.external\_programs\.dssp module
+=========================================
 
 .. automodule:: isambard.external_programs.dssp
     :members:

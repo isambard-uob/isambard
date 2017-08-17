@@ -1,5 +1,5 @@
-isambard.ampal.specifications.polymer_specs package
-===================================================
+isambard\.ampal\.specifications\.polymer\_specs package
+=======================================================
 
 Submodules
 ----------

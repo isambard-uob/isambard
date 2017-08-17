@@ -1,5 +1,5 @@
-isambard.ampal.ligands module
-=============================
+isambard\.ampal\.ligands module
+===============================
 
 .. automodule:: isambard.ampal.ligands
     :members:

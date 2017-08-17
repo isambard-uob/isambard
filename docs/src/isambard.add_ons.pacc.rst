@@ -1,5 +1,5 @@
-isambard.add_ons.pacc module
-============================
+isambard\.add\_ons\.pacc module
+===============================
 
 .. automodule:: isambard.add_ons.pacc
     :members:

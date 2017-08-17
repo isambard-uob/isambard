@@ -1,5 +1,5 @@
-isambard.tools.file_parsing module
-==================================
+isambard\.tools\.file\_parsing module
+=====================================
 
 .. automodule:: isambard.tools.file_parsing
     :members:

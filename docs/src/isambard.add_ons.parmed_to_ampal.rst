@@ -1,5 +1,5 @@
-isambard.add_ons.parmed_to_ampal module
-=======================================
+isambard\.add\_ons\.parmed\_to\_ampal module
+============================================
 
 .. automodule:: isambard.add_ons.parmed_to_ampal
     :members:

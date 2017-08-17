@@ -1,5 +1,5 @@
-isambard.ampal.pseudo_atoms module
-==================================
+isambard\.ampal\.pseudo\_atoms module
+=====================================
 
 .. automodule:: isambard.ampal.pseudo_atoms
     :members:

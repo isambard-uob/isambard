@@ -1,5 +1,5 @@
-isambard.ampal.protein module
-=============================
+isambard\.ampal\.protein module
+===============================
 
 .. automodule:: isambard.ampal.protein
     :members:

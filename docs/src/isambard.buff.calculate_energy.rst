@@ -1,5 +1,5 @@
-isambard.buff.calculate_energy module
-=====================================
+isambard\.buff\.calculate\_energy module
+========================================
 
 .. automodule:: isambard.buff.calculate_energy
     :members:

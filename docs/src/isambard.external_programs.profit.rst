@@ -1,5 +1,5 @@
-isambard.external_programs.profit module
-========================================
+isambard\.external\_programs\.profit module
+===========================================
 
 .. automodule:: isambard.external_programs.profit
     :members:

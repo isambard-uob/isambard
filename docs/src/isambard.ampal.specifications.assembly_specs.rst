@@ -1,5 +1,5 @@
-isambard.ampal.specifications.assembly_specs package
-====================================================
+isambard\.ampal\.specifications\.assembly\_specs package
+========================================================
 
 Submodules
 ----------

@@ -1,5 +1,5 @@
-isambard.ampal.specifications package
-=====================================
+isambard\.ampal\.specifications package
+=======================================
 
 Subpackages
 -----------

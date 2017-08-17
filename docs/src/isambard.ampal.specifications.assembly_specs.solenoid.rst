@@ -1,5 +1,5 @@
-isambard.ampal.specifications.assembly_specs.solenoid module
-============================================================
+isambard\.ampal\.specifications\.assembly\_specs\.solenoid module
+=================================================================
 
 .. automodule:: isambard.ampal.specifications.assembly_specs.solenoid
     :members:

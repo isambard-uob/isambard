@@ -1,5 +1,5 @@
-isambard.tools.amino_acids module
-=================================
+isambard\.tools\.amino\_acids module
+====================================
 
 .. automodule:: isambard.tools.amino_acids
     :members:
