@@ -1,0 +1,909 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.add_ons.knobs_into_holes &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.add_ons.knobs_into_holes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.add_ons.knobs_into_holes</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">networkx</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">scipy.cluster.hierarchy</span> <span class="k">import</span> <span class="n">linkage</span><span class="p">,</span> <span class="n">fcluster</span>
+
+<span class="kn">from</span> <span class="nn">ampal.protein</span> <span class="k">import</span> <span class="n">Polypeptide</span>
+<span class="kn">from</span> <span class="nn">ampal.assembly</span> <span class="k">import</span> <span class="n">Assembly</span>
+<span class="kn">from</span> <span class="nn">ampal.pdb_parser</span> <span class="k">import</span> <span class="n">convert_pdb_to_ampal</span>
+<span class="kn">from</span> <span class="nn">ampal.pseudo_atoms</span> <span class="k">import</span> <span class="n">PseudoAtom</span><span class="p">,</span> <span class="n">PseudoGroup</span><span class="p">,</span> <span class="n">PseudoMonomer</span><span class="p">,</span> <span class="n">Primitive</span>
+<span class="kn">from</span> <span class="nn">ampal.ampal_databases</span> <span class="k">import</span> <span class="n">element_data</span>
+<span class="kn">from</span> <span class="nn">ampal.analyse_protein</span> <span class="k">import</span> <span class="n">polypeptide_vector</span><span class="p">,</span> <span class="n">crick_angles</span>
+<span class="kn">from</span> <span class="nn">.pacc</span> <span class="k">import</span> <span class="n">fit_heptad_register</span>
+<span class="kn">from</span> <span class="nn">tools.geometry</span> <span class="k">import</span> <span class="n">centre_of_mass</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">angle_between_vectors</span><span class="p">,</span> <span class="n">is_acute</span><span class="p">,</span> <span class="n">find_foot</span><span class="p">,</span> <span class="n">Axis</span><span class="p">,</span> \
+    <span class="n">minimal_distance_between_lines</span>
+
+
+
+<span class="n">_heptad_colours</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="s1">&#39;yellow&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="s1">&#39;violet&#39;</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="side_chain_centres"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.side_chain_centres">[docs]</a><span class="k">def</span> <span class="nf">side_chain_centres</span><span class="p">(</span><span class="n">assembly</span><span class="p">,</span> <span class="n">masses</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; PseudoGroup containing side_chain centres of each Residue in each Polypeptide in Assembly.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Each PseudoAtom is a side-chain centre.</span>
+<span class="sd">    There is one PseudoMonomer per chain in ampal (each containing len(chain) PseudoAtoms).</span>
+<span class="sd">    The PseudoGroup has len(ampal) PseudoMonomers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    assembly : Assembly</span>
+<span class="sd">    masses : bool</span>
+<span class="sd">        If True, side-chain centres are centres of mass.</span>
+<span class="sd">        If False, side-chain centres are centres of coordinates.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PseudoGroup</span>
+<span class="sd">        containing all side_chain centres, and with ampal_parent=assembly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">masses</span><span class="p">:</span>
+        <span class="n">elts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">element</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">assembly</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()])</span>
+        <span class="n">masses_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="n">element_data</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="s1">&#39;atomic mass&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elts</span><span class="p">}</span>
+    <span class="n">pseudo_monomers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">assembly</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">Polypeptide</span><span class="p">):</span>
+            <span class="n">centres</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">(</span><span class="n">ligands</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                <span class="n">side_chain</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">side_chain</span>
+                <span class="k">if</span> <span class="n">masses</span><span class="p">:</span>
+                    <span class="n">masses_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">masses_dict</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">element</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">side_chain</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">masses_list</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">side_chain</span><span class="p">:</span>
+                    <span class="n">centre</span> <span class="o">=</span> <span class="n">centre_of_mass</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">side_chain</span><span class="p">],</span> <span class="n">masses</span><span class="o">=</span><span class="n">masses_list</span><span class="p">)</span>
+                <span class="c1"># for Glycine residues.</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">centre</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+                <span class="n">centres</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">unique_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">PseudoAtom</span><span class="p">(</span><span class="n">coordinates</span><span class="o">=</span><span class="n">centre</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">unique_id</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">pseudo_monomers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PseudoMonomer</span><span class="p">(</span><span class="n">pseudo_atoms</span><span class="o">=</span><span class="n">centres</span><span class="p">,</span> <span class="n">monomer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">chain</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">PseudoGroup</span><span class="p">(</span><span class="n">monomers</span><span class="o">=</span><span class="n">pseudo_monomers</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">assembly</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_helices"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.cluster_helices">[docs]</a><span class="k">def</span> <span class="nf">cluster_helices</span><span class="p">(</span><span class="n">helices</span><span class="p">,</span> <span class="n">cluster_distance</span><span class="o">=</span><span class="mf">12.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Clusters helices according to the minimum distance between the line segments representing their backbone.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Each helix is represented as a line segement joining the CA of its first Residue to the CA if its final Residue.</span>
+<span class="sd">    The minimal distance between pairwise line segments is calculated and stored in a condensed_distance_matrix.</span>
+<span class="sd">    This is clustered using the &#39;single&#39; linkage metric</span>
+<span class="sd">     (all members of cluster i are at &lt; cluster_distance away from at least one other member of cluster i).</span>
+<span class="sd">    Helices belonging to the same cluster are grouped together as values of the returned cluster_dict.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    helices: Assembly</span>
+<span class="sd">    cluster_distance: float</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cluster_dict: dict</span>
+<span class="sd">        Keys: int</span>
+<span class="sd">            cluster number</span>
+<span class="sd">        Values: [Polymer]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">condensed_distance_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">helices</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">md</span> <span class="o">=</span> <span class="n">minimal_distance_between_lines</span><span class="p">(</span><span class="n">h1</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">h1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                                            <span class="n">h2</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">h2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">segments</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">condensed_distance_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">md</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">linkage</span><span class="p">(</span><span class="n">condensed_distance_matrix</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">)</span>
+    <span class="n">clusters</span> <span class="o">=</span> <span class="n">fcluster</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">cluster_distance</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;distance&#39;</span><span class="p">)</span>
+    <span class="n">cluster_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">helices</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cluster_dict</span><span class="p">:</span>
+            <span class="n">cluster_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cluster_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cluster_dict</span></div>
+
+
+<div class="viewcode-block" id="find_kihs"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.find_kihs">[docs]</a><span class="k">def</span> <span class="nf">find_kihs</span><span class="p">(</span><span class="n">assembly</span><span class="p">,</span> <span class="n">hole_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">7.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; KnobIntoHoles between residues of different chains in assembly.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    A KnobIntoHole is a found when the side-chain centre of a Residue a chain is close than (cutoff) Angstroms from at</span>
+<span class="sd">    least (hole_size) side-chain centres of Residues of a different chain.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    assembly : Assembly</span>
+<span class="sd">    hole_size : int</span>
+<span class="sd">        Number of Residues required to form each hole.</span>
+<span class="sd">    cutoff : float</span>
+<span class="sd">        Maximum distance between the knob and each of the hole residues.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kihs : [KnobIntoHole]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pseudo_group</span> <span class="o">=</span> <span class="n">side_chain_centres</span><span class="p">(</span><span class="n">assembly</span><span class="o">=</span><span class="n">assembly</span><span class="p">,</span> <span class="n">masses</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="n">pseudo_group</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">kihs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pp_1</span><span class="p">,</span> <span class="n">pp_2</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">pp_1</span><span class="p">:</span>
+            <span class="n">close_atoms</span> <span class="o">=</span> <span class="n">pp_2</span><span class="o">.</span><span class="n">is_within</span><span class="p">(</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+            <span class="c1"># kihs occur between residue and (hole_size) closest side-chains on adjacent polypeptide.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">close_atoms</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">hole_size</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">close_atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">hole_size</span><span class="p">:</span>
+                <span class="n">close_atoms</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">close_atoms</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">))[:</span><span class="n">hole_size</span><span class="p">]</span>
+            <span class="n">kih</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">kih</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">hole_atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">close_atoms</span><span class="p">):</span>
+                <span class="n">kih</span><span class="p">[</span><span class="s1">&#39;h</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">hole_atom</span>
+            <span class="n">knob_into_hole</span> <span class="o">=</span> <span class="n">KnobIntoHole</span><span class="p">(</span><span class="n">pseudo_atoms</span><span class="o">=</span><span class="n">kih</span><span class="p">)</span>
+            <span class="n">kihs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">knob_into_hole</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">kihs</span></div>
+
+
+<div class="viewcode-block" id="find_contiguous_packing_segments"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.find_contiguous_packing_segments">[docs]</a><span class="k">def</span> <span class="nf">find_contiguous_packing_segments</span><span class="p">(</span><span class="n">polypeptide</span><span class="p">,</span> <span class="n">residues</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Assembly containing segments of polypeptide, divided according to separation of contiguous residues.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    polypeptide : Polypeptide</span>
+<span class="sd">    residues : iterable containing Residues</span>
+<span class="sd">    max_dist : float</span>
+<span class="sd">        Separation beyond which splitting of Polymer occurs.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    segments : Assembly</span>
+<span class="sd">        Each segment contains a subset of residues, each not separated by more than max_dist from the previous Residue.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="n">Assembly</span><span class="p">(</span><span class="n">assembly_id</span><span class="o">=</span><span class="n">polypeptide</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="n">residues_in_polypeptide</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">residues</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">polypeptide</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">())),</span>
+                                          <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">id</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">residues_in_polypeptide</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">segments</span>
+    <span class="c1"># residue_pots contains separate pots of residues divided according to their separation distance.</span>
+    <span class="n">residue_pots</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pot</span> <span class="o">=</span> <span class="p">[</span><span class="n">residues_in_polypeptide</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">residues_in_polypeptide</span><span class="p">,</span> <span class="n">residues_in_polypeptide</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">distance</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">max_dist</span><span class="p">:</span>
+            <span class="n">pot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">residue_pots</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">pot</span><span class="p">)])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">residues_in_polypeptide</span><span class="p">):</span>
+                <span class="n">residue_pots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pot</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">residue_pots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pot</span><span class="p">)</span>
+            <span class="n">pot</span> <span class="o">=</span> <span class="p">[</span><span class="n">r2</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">pot</span> <span class="ow">in</span> <span class="n">residue_pots</span><span class="p">:</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="n">polypeptide</span><span class="o">.</span><span class="n">get_slice_from_res_id</span><span class="p">(</span><span class="n">pot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">pot</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">segment</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">=</span> <span class="n">polypeptide</span><span class="o">.</span><span class="n">ampal_parent</span>
+        <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">segments</span></div>
+
+
+<div class="viewcode-block" id="KnobGroup"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobGroup">[docs]</a><span class="k">class</span> <span class="nc">KnobGroup</span><span class="p">(</span><span class="n">PseudoGroup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Collection of KnobsIntoHoles interactions with associated methods. &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monomers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">KnobGroup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">monomers</span><span class="o">=</span><span class="n">monomers</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="n">polymer_id</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cutoff</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">max_kh_distance</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutoff</span> <span class="o">=</span> <span class="n">cutoff</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;KnobGroup containing </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">),</span> <span class="s1">&#39;KnobIntoHole&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;KnobsIntoHoles&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KnobGroup.from_helices"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobGroup.from_helices">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_helices</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">assembly</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">7.0</span><span class="p">,</span> <span class="n">min_helix_length</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generate KnobGroup from the helices in the assembly - classic socket functionality.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Socket identifies knobs-into-holes (KIHs) packing motifs in protein structures.</span>
+<span class="sd">        The following resources can provide more information:</span>
+<span class="sd">        The socket webserver: http://coiledcoils.chm.bris.ac.uk/socket/server.html</span>
+<span class="sd">        The help page: http://coiledcoils.chm.bris.ac.uk/socket/help.html</span>
+<span class="sd">        The original publication reference: Walshaw, J. &amp; Woolfson, D.N. (2001) J. Mol. Biol., 307 (5), 1427-1450.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        assembly : Assembly</span>
+<span class="sd">        cutoff : float</span>
+<span class="sd">            Socket cutoff in Angstroms</span>
+<span class="sd">        min_helix_length : int</span>
+<span class="sd">            Minimum number of Residues in a helix considered for KIH packing.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        instance : KnobGroup</span>
+<span class="sd">        None if no helices or no kihs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cutoff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cutoff</span><span class="p">)</span>
+        <span class="n">helices</span> <span class="o">=</span> <span class="n">Assembly</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">assembly</span><span class="o">.</span><span class="n">helices</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_helix_length</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">helices</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># reassign ampal_parents</span>
+        <span class="n">helices</span><span class="o">.</span><span class="n">relabel_polymers</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">helices</span><span class="p">):</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ampal_parent</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">h</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">():</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;helix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="n">all_kihs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cluster_dict</span> <span class="o">=</span> <span class="n">cluster_helices</span><span class="p">(</span><span class="n">helices</span><span class="p">,</span> <span class="n">cluster_distance</span><span class="o">=</span><span class="p">(</span><span class="n">cutoff</span> <span class="o">+</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cluster_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">kihs</span> <span class="o">=</span> <span class="n">find_kihs</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">hole_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kihs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kihs</span><span class="p">:</span>
+                    <span class="n">all_kihs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ampal_parent</span><span class="o">=</span><span class="n">helices</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_kihs</span><span class="p">:</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">=</span> <span class="n">instance</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">=</span> <span class="n">all_kihs</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">relabel_monomers</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
+
+<div class="viewcode-block" id="KnobGroup.knob_subgroup"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobGroup.knob_subgroup">[docs]</a>    <span class="k">def</span> <span class="nf">knob_subgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">7.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; KnobGroup where all KnobsIntoHoles have max_kh_distance &lt;= cutoff. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cutoff</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cutoff supplied (</span><span class="si">{0}</span><span class="s2">) cannot be greater than self.cutoff (</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cutoff</span><span class="p">,</span>
+                                                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">cutoff</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">KnobGroup</span><span class="p">(</span><span class="n">monomers</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">()</span>
+                                   <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">max_kh_distance</span> <span class="o">&lt;=</span> <span class="n">cutoff</span><span class="p">],</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">complementary_knobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">knob_residue</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_complementary</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)]))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns MultiDiGraph from kihs. Nodes are helices and edges are kihs. &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">networkx</span><span class="o">.</span><span class="n">MultiDiGraph</span><span class="p">()</span>
+        <span class="n">edge_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="o">.</span><span class="n">knob_helix</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">hole_helix</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;kih&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">()]</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edge_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">g</span>
+
+<div class="viewcode-block" id="KnobGroup.filter_graph"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobGroup.filter_graph">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">filter_graph</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">7.0</span><span class="p">,</span> <span class="n">min_kihs</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get subgraph formed from edges that have max_kh_distance &lt; cutoff.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        g : MultiDiGraph representing KIHs</span>
+<span class="sd">            g is the output from graph_from_protein</span>
+<span class="sd">        cutoff : float</span>
+<span class="sd">            Socket cutoff in Angstroms.</span>
+<span class="sd">            Default is 7.0.</span>
+<span class="sd">        min_kihs : int</span>
+<span class="sd">            Minimum number of KIHs shared between all pairs of connected nodes in the graph.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        networkx.MultiDigraph</span>
+<span class="sd">            subgraph formed from edges that have max_kh_distance &lt; cutoff.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">edge_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;kih&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max_kh_distance</span> <span class="o">&lt;=</span> <span class="n">cutoff</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">min_kihs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">([(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">])</span>
+            <span class="c1"># list of nodes that share &gt; min_kihs edges with at least one other node.</span>
+            <span class="n">node_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">min_kihs</span><span class="p">])))</span>
+            <span class="n">edge_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edge_list</span> <span class="k">if</span> <span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">node_list</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">node_list</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">networkx</span><span class="o">.</span><span class="n">MultiDiGraph</span><span class="p">(</span><span class="n">edge_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KnobGroup.get_coiledcoil_region"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobGroup.get_coiledcoil_region">[docs]</a>    <span class="k">def</span> <span class="nf">get_coiledcoil_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cc_number</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">7.0</span><span class="p">,</span> <span class="n">min_kihs</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Assembly containing only assigned regions (i.e. regions with contiguous KnobsIntoHoles. &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">min_kihs</span><span class="o">=</span><span class="n">min_kihs</span><span class="p">)</span>
+        <span class="n">ccs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">networkx</span><span class="o">.</span><span class="n">connected_component_subgraphs</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                                 <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">()),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">ccs</span><span class="p">[</span><span class="n">cc_number</span><span class="p">]</span>
+        <span class="n">helices</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">number</span> <span class="ow">in</span> <span class="n">cc</span><span class="o">.</span><span class="n">nodes</span><span class="p">()]</span>
+        <span class="n">assigned_regions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_assigned_regions</span><span class="p">(</span><span class="n">helices</span><span class="o">=</span><span class="n">helices</span><span class="p">,</span> <span class="n">include_alt_states</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">complementary_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">coiledcoil_monomers</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">get_slice_from_res_id</span><span class="p">(</span><span class="o">*</span><span class="n">assigned_regions</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">number</span><span class="p">])</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Assembly</span><span class="p">(</span><span class="n">coiledcoil_monomers</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">daisy_chain_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Directed graph with edges from knob residue to each hole residue for each KnobIntoHole in self. &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">networkx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">hole</span><span class="p">:</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">knob</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">g</span>
+
+<div class="viewcode-block" id="KnobGroup.daisy_chains"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobGroup.daisy_chains">[docs]</a>    <span class="k">def</span> <span class="nf">daisy_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kih</span><span class="p">,</span> <span class="n">max_path_length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generator for daisy chains (complementary kihs) associated with a knob.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Daisy chain graph is the directed graph with edges from knob residue to each hole residue for each KnobIntoHole</span>
+<span class="sd">         in self.</span>
+<span class="sd">        Given a KnobIntoHole, the daisy chains are non-trivial paths in this graph (walks along the directed edges)</span>
+<span class="sd">        that begin and end at the knob.</span>
+<span class="sd">        These paths must be of length  &lt;= max_path_length</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kih : KnobIntoHole interaction.</span>
+<span class="sd">        max_path_length : int or None</span>
+<span class="sd">            Maximum length of a daisy chain.</span>
+<span class="sd">            Defaults to number of chains in self.ampal_parent.</span>
+<span class="sd">            This is the maximum sensible value. Larger values than this will cause slow running of this function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">max_path_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_path_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">daisy_chain_graph</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="n">networkx</span><span class="o">.</span><span class="n">all_simple_paths</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">kih</span><span class="o">.</span><span class="n">knob</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">kih</span><span class="o">.</span><span class="n">knob</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">max_path_length</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">paths</span></div>
+
+<div class="viewcode-block" id="KnobGroup.get_assigned_regions"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobGroup.get_assigned_regions">[docs]</a>    <span class="k">def</span> <span class="nf">get_assigned_regions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">helices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_alt_states</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">complementary_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        helices : None, or subset of chains in self.ampal_parent.</span>
+<span class="sd">            If None, helices is set to self.ampal_parent.</span>
+<span class="sd">        include_alt_states : bool</span>
+<span class="sd">            If True, include alternate states for residues.</span>
+<span class="sd">            If False, include only residues with a single defined state.</span>
+<span class="sd">        complementary_only : bool</span>
+<span class="sd">            Consider only KnobIntoHoles with complementary knobs.</span>
+<span class="sd">        cutoff : None or float</span>
+<span class="sd">            Cutoff at which to determine complementarity.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        assigned_regions : dict</span>
+<span class="sd">            Keys : int</span>
+<span class="sd">                The helix number</span>
+<span class="sd">            Values : tuple(int)</span>
+<span class="sd">                The Residue numbers of the start and end of the assigned region.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">helices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">helices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span>
+            <span class="n">kihs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kihs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">()</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">knob_helix</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">hole_helix</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">complementary_only</span><span class="p">:</span>
+            <span class="n">kihs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kihs</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_complementary</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)]</span>
+        <span class="n">assigned_regions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">:</span>
+            <span class="n">kih_residues</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">residues</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kihs</span><span class="p">]))</span>
+            <span class="n">h_cc_residues</span> <span class="o">=</span> <span class="n">kih_residues</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">()))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">h_cc_residues</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">include_alt_states</span><span class="p">:</span>
+                <span class="n">h_cc_residues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">h_cc_residues</span><span class="p">))</span>
+            <span class="n">h_cc_res_numbers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">h_cc_residues</span><span class="p">])</span>
+            <span class="n">assigned_regions</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">number</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_cc_res_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">h_cc_res_numbers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">assigned_regions</span></div></div>
+
+
+<div class="viewcode-block" id="KnobIntoHole"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobIntoHole">[docs]</a><span class="k">class</span> <span class="nc">KnobIntoHole</span><span class="p">(</span><span class="n">PseudoMonomer</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pseudo_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mol_code</span><span class="o">=</span><span class="s1">&#39;UNK&#39;</span><span class="p">,</span> <span class="n">monomer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">insertion_code</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">KnobIntoHole</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pseudo_atoms</span><span class="o">=</span><span class="n">pseudo_atoms</span><span class="p">,</span> <span class="n">monomer_id</span><span class="o">=</span><span class="n">monomer_id</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span> <span class="o">=</span> <span class="n">mol_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insertion_code</span> <span class="o">=</span> <span class="n">insertion_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_hetero</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;KnobIntoHole from </span><span class="si">{0}</span><span class="s1"> to [</span><span class="si">{1}</span><span class="s1">]&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">knob</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">knob_helix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">knob</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;helix&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hole_helix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;helix&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">knob_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">knob_helix</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hole_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole_helix</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">knob_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">knob</span><span class="o">.</span><span class="n">ampal_parent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hole_residues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">residues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">knob_residue</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole_residues</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">knob</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hole</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;h&#39;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">knob_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Coordinates of the end of the knob residue (atom in side-chain furthest from CB atom.</span>
+<span class="sd">        Returns CA coordinates for GLY.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">side_chain_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">knob_residue</span><span class="o">.</span><span class="n">side_chain</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">side_chain_atoms</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">knob_residue</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">knob_residue</span><span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">side_chain_atoms</span><span class="p">]</span>
+        <span class="n">max_d</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">knob_end_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">side_chain_atoms</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="n">max_d</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">knob_end_atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">knob_end_atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">knob_end_atoms</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">max_kh_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">([</span><span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">knob</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">packing_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Angle between CA-CB of knob and CA(h1)-CA(h2). Returns None if knob is GLY. &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">knob_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">knob_residue</span><span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">knob_residue</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span>
+        <span class="c1"># exception for GLY residues (with no CB atom).</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">hole_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole_residues</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole_residues</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">angle_between_vectors</span><span class="p">(</span><span class="n">knob_vector</span><span class="p">,</span> <span class="n">hole_vector</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">max_knob_end_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Maximum distance between knob_end and each of the hole side-chain centres. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">([</span><span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">knob_end</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">polypeptide_vector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">knob_helix</span><span class="p">)</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">polypeptide_vector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hole_helix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">is_acute</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KnobIntoHole.is_complementary"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobIntoHole.is_complementary">[docs]</a>    <span class="k">def</span> <span class="nf">is_complementary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">knob_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">knob_group</span><span class="p">,</span> <span class="n">KnobGroup</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Method only possible when ampal_parent is a KnobGroup. (ampal_parent = </span><span class="si">{0}</span><span class="s2">)&quot;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ampal_parent</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cutoff</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_kh_distance</span><span class="p">:</span>
+                <span class="n">complementary</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">return</span> <span class="n">complementary</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">knob_group</span> <span class="o">=</span> <span class="n">knob_group</span><span class="o">.</span><span class="n">knob_subgroup</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
+        <span class="n">complementary</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="nb">next</span><span class="p">(</span><span class="n">knob_group</span><span class="o">.</span><span class="n">daisy_chains</span><span class="p">(</span><span class="n">kih</span><span class="o">=</span><span class="bp">self</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">complementary</span></div>
+
+<div class="viewcode-block" id="KnobIntoHole.knob_type"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_type">[docs]</a>    <span class="k">def</span> <span class="nf">knob_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">insertion_cutoff</span><span class="o">=</span><span class="mf">7.0</span><span class="p">):</span>
+        <span class="n">kt</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_knob_end_distance</span> <span class="o">&gt;</span> <span class="n">insertion_cutoff</span> <span class="k">else</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_complementary</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">):</span>
+            <span class="n">kt</span> <span class="o">+=</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">kt</span></div></div>
+
+
+<div class="viewcode-block" id="make_pymol"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.make_pymol">[docs]</a><span class="k">def</span> <span class="nf">make_pymol</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">7.0</span><span class="p">,</span> <span class="n">min_kihs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Pymol script for viewing classic coiled-coil Socket output.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    For examples of these views, browse the CC+ database here: http://coiledcoils.chm.bris.ac.uk/ccplus/search/.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pdb_file: str</span>
+<span class="sd">        Path to a pdb_file.</span>
+<span class="sd">    cutoff: float</span>
+<span class="sd">        Socket cutoff in Angstroms.</span>
+<span class="sd">    min_kihs: int</span>
+<span class="sd">        Mininmum number of KnobIntoHole interactions between pairs of helices needed to define a coiled coil.</span>
+<span class="sd">    outfile: None or str</span>
+<span class="sd">        Path to a output file to save the pml script.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    script_string: str</span>
+<span class="sd">        Pymol commands for classic coiled-coil view.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">convert_pdb_to_ampal</span><span class="p">(</span><span class="n">pdb</span><span class="o">=</span><span class="n">pdb_file</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">kg</span> <span class="o">=</span> <span class="n">KnobGroup</span><span class="o">.</span><span class="n">from_helices</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">filter_graph</span><span class="p">(</span><span class="n">kg</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">min_kihs</span><span class="o">=</span><span class="n">min_kihs</span><span class="p">)</span>
+    <span class="n">ccs</span> <span class="o">=</span> <span class="n">sorted_connected_components</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="c1"># Opens pymol script, initial set up of screen</span>
+    <span class="n">script_lines</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;load </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">)]</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;hide all&quot;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;bg_color white&quot;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;set antialias, 1&quot;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;set cartoon_dumbbell_length, 0.35&quot;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;set_color lightgrey, [240,240,240]&quot;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;set depth_cue, 0&quot;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;color lightgrey, all&quot;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;cartoon dumbbell&quot;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;show cartoon&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cc_number</span><span class="p">,</span> <span class="n">cc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ccs</span><span class="p">):</span>
+        <span class="n">helices</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">number</span> <span class="ow">in</span> <span class="n">cc</span><span class="o">.</span><span class="n">nodes</span><span class="p">()]</span>
+        <span class="c1">#helices = cc.nodes()</span>
+        <span class="n">cc_region</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">get_coiledcoil_region</span><span class="p">(</span><span class="n">cc_number</span><span class="o">=</span><span class="n">cc_number</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">min_kihs</span><span class="o">=</span><span class="n">min_kihs</span><span class="p">)</span>
+        <span class="n">tag_residues_with_heptad_register</span><span class="p">(</span><span class="n">cc_region</span><span class="p">)</span>
+        <span class="n">assigned_regions</span> <span class="o">=</span> <span class="n">kg</span><span class="o">.</span><span class="n">get_assigned_regions</span><span class="p">(</span><span class="n">include_alt_states</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">complementary_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">helices</span><span class="o">=</span><span class="n">helices</span><span class="p">)</span>
+        <span class="n">helix_starts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">]</span>
+        <span class="n">helix_ends</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">]</span>
+        <span class="n">chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">]</span>
+        <span class="n">assigned_starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">assigned_regions</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">number</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">]</span>
+        <span class="n">assigned_ends</span> <span class="o">=</span> <span class="p">[</span><span class="n">assigned_regions</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">number</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">]</span>
+        <span class="n">assigned_selections</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">-</span><span class="si">{2}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">assigned_start</span><span class="p">,</span> <span class="n">assigned_end</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">chain</span><span class="p">,</span> <span class="n">assigned_start</span><span class="p">,</span> <span class="n">assigned_end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">chains</span><span class="p">,</span> <span class="n">assigned_starts</span><span class="p">,</span> <span class="n">assigned_ends</span><span class="p">)]</span>
+        <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;select cc</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cc_number</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">assigned_selections</span><span class="p">)))</span>
+        <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;cartoon automatic, cc</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cc_number</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">h_number</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">helices</span><span class="p">):</span>
+            <span class="n">chain</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="n">h_number</span><span class="p">]</span>
+            <span class="n">helix_start</span> <span class="o">=</span> <span class="n">helix_starts</span><span class="p">[</span><span class="n">h_number</span><span class="p">]</span>
+            <span class="n">helix_end</span> <span class="o">=</span> <span class="n">helix_ends</span><span class="p">[</span><span class="n">h_number</span><span class="p">]</span>
+            <span class="n">assigned_start</span> <span class="o">=</span> <span class="n">assigned_starts</span><span class="p">[</span><span class="n">h_number</span><span class="p">]</span>
+            <span class="n">assigned_end</span> <span class="o">=</span> <span class="n">assigned_ends</span><span class="p">[</span><span class="n">h_number</span><span class="p">]</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">-</span><span class="si">{2}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">helix_start</span><span class="p">,</span> <span class="n">helix_end</span><span class="p">)</span>
+            <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;select cc</span><span class="si">{0}</span><span class="s2">eh</span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cc_number</span><span class="p">,</span> <span class="n">h_number</span><span class="p">,</span> <span class="n">selection</span><span class="p">))</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">-</span><span class="si">{2}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">assigned_start</span><span class="p">,</span> <span class="n">assigned_end</span><span class="p">)</span>
+            <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;select cc</span><span class="si">{0}</span><span class="s2">ah</span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cc_number</span><span class="p">,</span> <span class="n">h_number</span><span class="p">,</span> <span class="n">selection</span><span class="p">))</span>
+            <span class="n">kihs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kg</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">knob_helix</span> <span class="o">==</span> <span class="n">h</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kihs</span><span class="p">:</span>
+                <span class="n">knob_selection_name</span> <span class="o">=</span> <span class="s1">&#39;cc</span><span class="si">{0}</span><span class="s1">ah</span><span class="si">{1}</span><span class="s1">k</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cc_number</span><span class="p">,</span> <span class="n">h_number</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">knob_residue</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="n">hole_selection_name</span> <span class="o">=</span> <span class="n">knob_selection_name</span> <span class="o">+</span> <span class="s1">&#39;hole&#39;</span>
+                <span class="n">knob_selection</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">knob_residue</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;select </span><span class="si">{0}</span><span class="s1">, </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">knob_selection_name</span><span class="p">,</span> <span class="n">knob_selection</span><span class="p">))</span>
+                <span class="n">hole_selection</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">hole_chain</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">hole_residues</span><span class="p">])</span>
+                <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;select </span><span class="si">{0}</span><span class="s1">, </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hole_selection_name</span><span class="p">,</span> <span class="n">hole_selection</span><span class="p">))</span>
+                <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;show sticks, </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">knob_selection_name</span><span class="p">))</span>
+                <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;show sticks, </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hole_selection_name</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">h</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s1">&#39;register&#39;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">_heptad_colours</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;register&#39;</span><span class="p">]]</span>
+                    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;color </span><span class="si">{0}</span><span class="s1">, </span><span class="si">{1}</span><span class="s1">/</span><span class="si">{2}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">chain</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;deselect&#39;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;orient&#39;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;rotate z, 90&#39;</span><span class="p">)</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;zoom complete=1&#39;</span><span class="p">)</span>
+    <span class="n">script_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_lines</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">outfile</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;pml&#39;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">foo</span><span class="p">:</span>
+                <span class="n">foo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">script_string</span></div>
+
+
+<div class="viewcode-block" id="start_and_end_of_reference_axis"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.start_and_end_of_reference_axis">[docs]</a><span class="k">def</span> <span class="nf">start_and_end_of_reference_axis</span><span class="p">(</span><span class="n">chains</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get start and end coordinates that approximate the reference axis for a collection of chains</span>
+<span class="sd">     (not necessarily all the same length).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    chains : [Polypeptide]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    start, end : numpy.array</span>
+<span class="sd">        3D start and end coordinates for defining the reference axis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)]</span>
+    <span class="n">orient_vector</span> <span class="o">=</span> <span class="n">polypeptide_vector</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># Append the coordinates for the remaining chains, reversing the direction in antiparallel arrangements.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="k">if</span> <span class="n">is_acute</span><span class="p">(</span><span class="n">polypeptide_vector</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">orient_vector</span><span class="p">):</span>
+            <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)))</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span></div>
+
+
+<div class="viewcode-block" id="gen_reference_primitive"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.gen_reference_primitive">[docs]</a><span class="k">def</span> <span class="nf">gen_reference_primitive</span><span class="p">(</span><span class="n">polypeptide</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Generates a reference Primitive for a Polypeptide given start and end coordinates.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses the rise_per_residue of the Polypeptide primitive to define the separation of points on the line joining</span>
+<span class="sd">    start and end.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    polypeptide : Polypeptide</span>
+<span class="sd">    start : numpy.array</span>
+<span class="sd">        3D coordinates of reference axis start</span>
+<span class="sd">    end : numpy.array</span>
+<span class="sd">        3D coordinates of reference axis end</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    reference_primitive : Primitive</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prim</span> <span class="o">=</span> <span class="n">polypeptide</span><span class="o">.</span><span class="n">primitive</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">find_foot</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">prim</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">Axis</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+    <span class="c1"># flip axis if antiparallel to polypeptide_vector</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_acute</span><span class="p">(</span><span class="n">polypeptide_vector</span><span class="p">(</span><span class="n">polypeptide</span><span class="p">),</span> <span class="n">ax</span><span class="o">.</span><span class="n">unit_tangent</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">Axis</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">arc_length</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">start</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">rise</span> <span class="ow">in</span> <span class="n">prim</span><span class="o">.</span><span class="n">rise_per_residue</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">arc_length</span> <span class="o">+=</span> <span class="n">rise</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">t_from_arc_length</span><span class="p">(</span><span class="n">arc_length</span><span class="o">=</span><span class="n">arc_length</span><span class="p">)</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">point</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+    <span class="n">reference_primitive</span> <span class="o">=</span> <span class="n">Primitive</span><span class="o">.</span><span class="n">from_coordinates</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reference_primitive</span></div>
+
+
+<div class="viewcode-block" id="tag_residues_with_heptad_register"><a class="viewcode-back" href="../../../isambard.add_ons.knobs_into_holes.html#isambard.add_ons.knobs_into_holes.tag_residues_with_heptad_register">[docs]</a><span class="k">def</span> <span class="nf">tag_residues_with_heptad_register</span><span class="p">(</span><span class="n">helices</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; tags Residues in input helices with heptad register. (Helices not required to be the same length).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    helices : [Polypeptide]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_reg</span> <span class="o">=</span> <span class="s1">&#39;abcdefg&#39;</span>
+    <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">start_and_end_of_reference_axis</span><span class="p">(</span><span class="n">helices</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helices</span><span class="p">:</span>
+        <span class="n">ref_axis</span> <span class="o">=</span> <span class="n">gen_reference_primitive</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+        <span class="n">crangles</span> <span class="o">=</span> <span class="n">crick_angles</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">reference_axis</span><span class="o">=</span><span class="n">ref_axis</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">False</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">reg_fit</span> <span class="o">=</span> <span class="n">fit_heptad_register</span><span class="p">(</span><span class="n">crangles</span><span class="p">)</span>
+        <span class="n">exp_base</span> <span class="o">=</span> <span class="n">base_reg</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">//</span> <span class="mi">7</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">hep_pos</span> <span class="o">=</span> <span class="n">reg_fit</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">register_string</span> <span class="o">=</span> <span class="n">exp_base</span><span class="p">[</span><span class="n">hep_pos</span><span class="p">:</span><span class="n">hep_pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">register</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">register_string</span><span class="p">):</span>
+            <span class="n">h</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;register&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">register</span>
+    <span class="k">return</span></div>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jack W. Heal&#39;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

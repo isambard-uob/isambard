@@ -1,0 +1,579 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.specifications.polymer_specs.nucleic_acid_strand &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../../index.html"/> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.ampal.specifications.polymer_specs.nucleic_acid_strand</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.ampal.specifications.polymer_specs.nucleic_acid_strand</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Contains code for generating single polynucleotides.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">tools.geometry</span> <span class="k">import</span> <span class="p">(</span><span class="n">angle_between_vectors</span><span class="p">,</span> <span class="n">unit_vector</span><span class="p">,</span> <span class="n">find_foot</span><span class="p">,</span>
+                            <span class="n">Quaternion</span><span class="p">,</span> <span class="n">dihedral</span><span class="p">,</span> <span class="n">find_transformations</span><span class="p">,</span>
+                            <span class="n">cylindrical_to_cartesian</span><span class="p">,</span> <span class="n">Axis</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">ampal.base_ampal</span> <span class="k">import</span> <span class="n">Atom</span>
+<span class="kn">from</span> <span class="nn">ampal.nucleic_acid</span> <span class="k">import</span> <span class="n">Polynucleotide</span><span class="p">,</span> <span class="n">Nucleotide</span>
+
+<span class="n">_helix_parameters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># nucleotides_per_turn, rise_per_nucleotide</span>
+    <span class="s1">&#39;a_dna&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">11.0</span><span class="p">,</span> <span class="mf">2.6</span><span class="p">),</span>
+    <span class="s1">&#39;b_dna&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.2</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">),</span>
+    <span class="s1">&#39;z_dna&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">12.3</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="n">_helix_handedness</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;a_dna&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b_dna&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;z_dna&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span>
+<span class="p">}</span>
+
+
+<span class="n">_backbone_properties</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># helix_type : {atom_type: [radius, angular_offset (in radians), z-shift]}</span>
+    <span class="s1">&#39;a_dna&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">8.92</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># P</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;b_dna&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;mol_code_format&#39;</span><span class="p">:</span> <span class="s1">&#39;D</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;OP1&quot;</span><span class="p">,</span> <span class="s2">&quot;OP2&quot;</span><span class="p">,</span> <span class="s2">&quot;O5&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C4&#39;&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C3&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;O3&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C2&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C1&#39;&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;atoms&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mf">8.92</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">10.23</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.21</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">9.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.77</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">7.72</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.11</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">7.68</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.36</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.05</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">7.57</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.17</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.33</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">6.22</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.11</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.17</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">8.19</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.19</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.93</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">8.74</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.04</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.55</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">7.02</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.06</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">5.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.14</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.83</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">4.58</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.30</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.83</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;z_dna&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">8.92</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># P</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">_bases</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C1&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;N9&quot;</span><span class="p">,</span> <span class="s2">&quot;C8&quot;</span><span class="p">,</span> <span class="s2">&quot;N7&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;C6&quot;</span><span class="p">,</span> <span class="s2">&quot;O6&quot;</span><span class="p">,</span> <span class="s2">&quot;N1&quot;</span><span class="p">,</span> <span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">,</span> <span class="s2">&quot;N3&quot;</span><span class="p">,</span> <span class="s2">&quot;C4&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;ref_atom&#39;</span><span class="p">:</span> <span class="s2">&quot;N9&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;rot_adj&#39;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">,</span>
+        <span class="s1">&#39;atoms&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mf">33.930</span><span class="p">,</span> <span class="mf">30.325</span><span class="p">,</span> <span class="mf">17.814</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">34.631</span><span class="p">,</span> <span class="mf">29.403</span><span class="p">,</span> <span class="mf">17.056</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">35.908</span><span class="p">,</span> <span class="mf">29.190</span><span class="p">,</span> <span class="mf">17.720</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">36.117</span><span class="p">,</span> <span class="mf">28.636</span><span class="p">,</span> <span class="mf">18.964</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">37.376</span><span class="p">,</span> <span class="mf">28.606</span><span class="p">,</span> <span class="mf">19.309</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">38.040</span><span class="p">,</span> <span class="mf">29.196</span><span class="p">,</span> <span class="mf">18.238</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.419</span><span class="p">,</span> <span class="mf">29.435</span><span class="p">,</span> <span class="mf">18.041</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">40.348</span><span class="p">,</span> <span class="mf">29.171</span><span class="p">,</span> <span class="mf">18.808</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.672</span><span class="p">,</span> <span class="mf">30.068</span><span class="p">,</span> <span class="mf">16.810</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">38.706</span><span class="p">,</span> <span class="mf">30.393</span><span class="p">,</span> <span class="mf">15.889</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.131</span><span class="p">,</span> <span class="mf">30.975</span><span class="p">,</span> <span class="mf">14.756</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">37.406</span><span class="p">,</span> <span class="mf">30.170</span><span class="p">,</span> <span class="mf">16.069</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">37.150</span><span class="p">,</span> <span class="mf">29.567</span><span class="p">,</span> <span class="mf">17.255</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C1&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;N1&quot;</span><span class="p">,</span> <span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="s2">&quot;O2&quot;</span><span class="p">,</span> <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;N4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;C6&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;ref_atom&#39;</span><span class="p">:</span> <span class="s2">&quot;N1&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;rot_adj&#39;</span><span class="p">:</span> <span class="mf">47.0</span><span class="p">,</span>
+        <span class="s1">&#39;atoms&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mf">35.422</span><span class="p">,</span> <span class="mf">27.992</span><span class="p">,</span> <span class="mf">13.920</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">36.655</span><span class="p">,</span> <span class="mf">27.383</span><span class="p">,</span> <span class="mf">13.630</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">37.240</span><span class="p">,</span> <span class="mf">26.863</span><span class="p">,</span> <span class="mf">14.903</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">38.622</span><span class="p">,</span> <span class="mf">26.960</span><span class="p">,</span> <span class="mf">15.116</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.337</span><span class="p">,</span> <span class="mf">27.469</span><span class="p">,</span> <span class="mf">14.237</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.137</span><span class="p">,</span> <span class="mf">26.506</span><span class="p">,</span> <span class="mf">16.285</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">38.336</span><span class="p">,</span> <span class="mf">25.972</span><span class="p">,</span> <span class="mf">17.205</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">38.892</span><span class="p">,</span> <span class="mf">25.545</span><span class="p">,</span> <span class="mf">18.338</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">36.925</span><span class="p">,</span> <span class="mf">25.864</span><span class="p">,</span> <span class="mf">17.008</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">36.426</span><span class="p">,</span> <span class="mf">26.317</span><span class="p">,</span> <span class="mf">15.853</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C1&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;N9&quot;</span><span class="p">,</span> <span class="s2">&quot;C8&quot;</span><span class="p">,</span> <span class="s2">&quot;N7&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;C6&quot;</span><span class="p">,</span> <span class="s2">&quot;N6&quot;</span><span class="p">,</span> <span class="s2">&quot;N1&quot;</span><span class="p">,</span> <span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="s2">&quot;N3&quot;</span><span class="p">,</span> <span class="s2">&quot;C4&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;ref_atom&#39;</span><span class="p">:</span> <span class="s2">&quot;N9&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;rot_adj&#39;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="s1">&#39;atoms&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mf">39.099</span><span class="p">,</span> <span class="mf">26.091</span><span class="p">,</span>  <span class="mf">9.763</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.785</span><span class="p">,</span> <span class="mf">24.859</span><span class="p">,</span>  <span class="mf">9.897</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.558</span><span class="p">,</span> <span class="mf">24.371</span><span class="p">,</span> <span class="mf">11.250</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">38.407</span><span class="p">,</span> <span class="mf">23.814</span><span class="p">,</span> <span class="mf">11.737</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">38.478</span><span class="p">,</span> <span class="mf">23.462</span><span class="p">,</span> <span class="mf">12.998</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.769</span><span class="p">,</span> <span class="mf">23.803</span><span class="p">,</span> <span class="mf">13.357</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">40.461</span><span class="p">,</span> <span class="mf">23.687</span><span class="p">,</span> <span class="mf">14.561</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.913</span><span class="p">,</span> <span class="mf">23.168</span><span class="p">,</span> <span class="mf">15.662</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">41.745</span><span class="p">,</span> <span class="mf">24.130</span><span class="p">,</span> <span class="mf">14.598</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">42.280</span><span class="p">,</span> <span class="mf">24.652</span><span class="p">,</span> <span class="mf">13.481</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">41.715</span><span class="p">,</span> <span class="mf">24.823</span><span class="p">,</span> <span class="mf">12.282</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">40.447</span><span class="p">,</span> <span class="mf">24.374</span><span class="p">,</span> <span class="mf">12.291</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C1&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;N1&quot;</span><span class="p">,</span> <span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="s2">&quot;O2&quot;</span><span class="p">,</span> <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;O4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;C7&quot;</span><span class="p">,</span> <span class="s2">&quot;C6&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;ref_atom&#39;</span><span class="p">:</span> <span class="s2">&quot;N1&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;rot_adj&#39;</span><span class="p">:</span> <span class="mf">30.0</span><span class="p">,</span>
+        <span class="s1">&#39;atoms&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mf">43.43</span><span class="p">,</span>  <span class="mf">23.953</span><span class="p">,</span>  <span class="mf">9.349</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">44.116</span><span class="p">,</span> <span class="mf">22.801</span><span class="p">,</span>  <span class="mf">9.767</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">43.234</span><span class="p">,</span> <span class="mf">22.076</span><span class="p">,</span> <span class="mf">10.744</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">43.702</span><span class="p">,</span> <span class="mf">21.817</span><span class="p">,</span> <span class="mf">12.016</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">44.824</span><span class="p">,</span> <span class="mf">22.102</span><span class="p">,</span> <span class="mf">12.389</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">42.814</span><span class="p">,</span> <span class="mf">21.185</span><span class="p">,</span> <span class="mf">12.840</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">41.527</span><span class="p">,</span> <span class="mf">20.804</span><span class="p">,</span> <span class="mf">12.542</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">40.808</span><span class="p">,</span> <span class="mf">20.241</span><span class="p">,</span> <span class="mf">13.364</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">41.084</span><span class="p">,</span> <span class="mf">21.115</span><span class="p">,</span> <span class="mf">11.196</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">39.697</span><span class="p">,</span> <span class="mf">20.746</span><span class="p">,</span> <span class="mf">10.751</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">41.948</span><span class="p">,</span> <span class="mf">21.737</span><span class="p">,</span> <span class="mf">10.374</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="NucleicAcidStrand"><a class="viewcode-back" href="../../../../../isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.html#isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.NucleicAcidStrand">[docs]</a><span class="k">class</span> <span class="nc">NucleicAcidStrand</span><span class="p">(</span><span class="n">Polynucleotide</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a `Polynucleotide` from a sequence of bases.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sequence: str</span>
+<span class="sd">        The nucleotide sequence of the nucleic acid.</span>
+<span class="sd">    helix_type: str, optional</span>
+<span class="sd">        The type of nucleic acid helix to generate.</span>
+<span class="sd">    phos_3_prime: bool, optional</span>
+<span class="sd">        If false the 5&#39; and the 3&#39; phosphor will be omitted.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    base_sequence : str</span>
+<span class="sd">        Nucleotide sequence for the nucleic acid.</span>
+<span class="sd">    num_monomers : int</span>
+<span class="sd">        Number of bases in the sequence.</span>
+<span class="sd">    helix_type : str</span>
+<span class="sd">        The type of nucleic acid helix. Currently only b-DNA is</span>
+<span class="sd">        implemented.</span>
+<span class="sd">    phos_3_prime : bool</span>
+<span class="sd">        If `true`, the 3&#39; end of the strand will have a phosphate.</span>
+<span class="sd">    nucleotides_per_turn : float</span>
+<span class="sd">        Number of nucleotides per turn of the nucleic acid super</span>
+<span class="sd">        helix.</span>
+<span class="sd">    rise_per_nucleotide : float</span>
+<span class="sd">        Rise along the nucleic acid super helix per base.</span>
+<span class="sd">    handedness : str</span>
+<span class="sd">        Handedness of the super helix.</span>
+<span class="sd">    helix_start : 3D Vector (tuple or list or numpy.array)</span>
+<span class="sd">        Initial coordinate of the backbone primitive.</span>
+<span class="sd">    helix_end : 3D Vector (tuple or list or numpy.array)</span>
+<span class="sd">        Last coordinate of the backbone primitive.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised if a sequence is not provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="s1">&#39;GATC&#39;</span><span class="p">,</span> <span class="n">helix_type</span><span class="o">=</span><span class="s1">&#39;b_dna&#39;</span><span class="p">,</span> <span class="n">phos_3_prime</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sequence</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;A sequence must be provided to build a region of DNA.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_sequence</span> <span class="o">=</span> <span class="n">sequence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_monomers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helix_type</span> <span class="o">=</span> <span class="n">helix_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phos_3_prime</span> <span class="o">=</span> <span class="n">phos_3_prime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nucleotides_per_turn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rise_per_nucleotide</span> <span class="o">=</span> <span class="n">_helix_parameters</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">helix_type</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handedness</span> <span class="o">=</span> <span class="n">_helix_handedness</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">helix_type</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helix_start</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helix_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">helix_length</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<div class="viewcode-block" id="NucleicAcidStrand.from_start_and_end"><a class="viewcode-back" href="../../../../../isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.html#isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.NucleicAcidStrand.from_start_and_end">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_start_and_end</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">helix_type</span><span class="o">=</span><span class="s1">&#39;b_dna&#39;</span><span class="p">,</span>
+                           <span class="n">phos_3_prime</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates a helical `Polynucleotide` that is built along an axis.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start: [float, float, float]</span>
+<span class="sd">            Start of the build axis.</span>
+<span class="sd">        end: [float, float, float]</span>
+<span class="sd">            End of build axis.</span>
+<span class="sd">        sequence: str</span>
+<span class="sd">            The nucleotide sequence of the nucleic acid.</span>
+<span class="sd">        helix_type: str</span>
+<span class="sd">            The type of nucleic acid helix to generate.</span>
+<span class="sd">        phos_3_prime: bool</span>
+<span class="sd">            If false the 5&#39; and the 3&#39; phosphor will be omitted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">helix_type</span><span class="o">=</span><span class="n">helix_type</span><span class="p">,</span>
+                       <span class="n">phos_3_prime</span><span class="o">=</span><span class="n">phos_3_prime</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">move_to</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">axis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The super-helical axis.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Axis</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">helix_start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">helix_end</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ax_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The unit tangent of the super-helical axis.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">unit_tangent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rad_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The unit normal of the super-helical axis.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">unit_normal</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tan_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The unit binormal of the super-helical axis.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">unit_binormal</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">helix_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Length of the helix in Ångstroms.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_monomers</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rise_per_nucleotide</span>
+
+<div class="viewcode-block" id="NucleicAcidStrand.translate"><a class="viewcode-back" href="../../../../../isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.html#isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.NucleicAcidStrand.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Polynucleotide</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">vector</span><span class="o">=</span><span class="n">vector</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helix_start</span> <span class="o">+=</span> <span class="n">vector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helix_end</span> <span class="o">+=</span> <span class="n">vector</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="NucleicAcidStrand.rotate"><a class="viewcode-back" href="../../../../../isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.html#isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.NucleicAcidStrand.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Polynucleotide</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span>
+            <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="n">radians</span><span class="p">)</span>
+        <span class="c1"># modify helix_start and helix_end accordingly.</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">Quaternion</span><span class="o">.</span><span class="n">angle_and_axis</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="n">radians</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helix_start</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">helix_start</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helix_end</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">helix_end</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="NucleicAcidStrand.build"><a class="viewcode-back" href="../../../../../isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.html#isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.NucleicAcidStrand.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build single DNA strand along z-axis, starting with P on x-axis&quot;&quot;&quot;</span>
+        <span class="n">ang_per_res</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nucleotides_per_turn</span>
+        <span class="n">atom_offset_coords</span> <span class="o">=</span> <span class="n">_backbone_properties</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">helix_type</span><span class="p">][</span><span class="s1">&#39;atoms&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handedness</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+            <span class="n">handedness</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">handedness</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">base_atom_labels</span> <span class="o">=</span> <span class="n">_backbone_properties</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">helix_type</span><span class="p">][</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span>
+        <span class="n">monomers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mol_code_format</span> <span class="o">=</span> <span class="n">_backbone_properties</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">helix_type</span><span class="p">][</span><span class="s1">&#39;mol_code_format&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_sequence</span><span class="p">):</span>
+            <span class="n">nucleotide</span> <span class="o">=</span> <span class="n">Nucleotide</span><span class="p">(</span>
+                <span class="n">mol_code</span><span class="o">=</span><span class="n">mol_code_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">atoms_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_sequence</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">phos_3_prime</span><span class="p">:</span>
+                <span class="c1"># Do not include phosphate on last nucleotide</span>
+                <span class="n">atom_labels</span> <span class="o">=</span> <span class="n">base_atom_labels</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="n">_bases</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;labels&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]]</span>
+                <span class="n">atom_offsets</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="n">atom_labels</span><span class="p">,</span> <span class="n">atom_offset_coords</span><span class="p">[</span><span class="mi">3</span><span class="p">:])}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">atom_labels</span> <span class="o">=</span> <span class="n">base_atom_labels</span> <span class="o">+</span> <span class="p">[</span><span class="n">_bases</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;labels&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]]</span>
+                <span class="n">atom_offsets</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="n">atom_labels</span><span class="p">,</span> <span class="n">atom_offset_coords</span><span class="p">)}</span>
+            <span class="k">for</span> <span class="n">atom_label</span> <span class="ow">in</span> <span class="n">atom_labels</span><span class="p">:</span>
+                <span class="n">r</span><span class="p">,</span> <span class="n">zeta</span><span class="p">,</span> <span class="n">z_shift</span> <span class="o">=</span> <span class="n">atom_offsets</span><span class="p">[</span><span class="n">atom_label</span><span class="p">]</span>
+                <span class="n">rot_ang</span> <span class="o">=</span> <span class="p">((</span><span class="n">i</span> <span class="o">*</span> <span class="n">ang_per_res</span><span class="p">)</span> <span class="o">+</span> <span class="n">zeta</span><span class="p">)</span> <span class="o">*</span> <span class="n">handedness</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rise_per_nucleotide</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">z_shift</span>
+                <span class="n">coords</span> <span class="o">=</span> <span class="n">cylindrical_to_cartesian</span><span class="p">(</span>
+                    <span class="n">radius</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="n">rot_ang</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">atom</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">(</span>
+                    <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">atom_label</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">ampal_parent</span><span class="o">=</span><span class="n">nucleotide</span><span class="p">,</span> <span class="n">res_label</span><span class="o">=</span><span class="n">atom_label</span><span class="p">)</span>
+                <span class="n">atoms_dict</span><span class="p">[</span><span class="n">atom_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom</span>
+            <span class="n">base_ref</span> <span class="o">=</span> <span class="n">_bases</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;ref_atom&#39;</span><span class="p">]</span>
+            <span class="n">rot_adj</span> <span class="o">=</span> <span class="n">_bases</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;rot_adj&#39;</span><span class="p">]</span>
+            <span class="n">base_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">_bases</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;labels&#39;</span><span class="p">],</span> <span class="n">_bases</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;atoms&#39;</span><span class="p">]))</span>
+            <span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="n">find_transformations</span><span class="p">(</span>
+                <span class="n">base_dict</span><span class="p">[</span><span class="n">base_ref</span><span class="p">],</span> <span class="n">base_dict</span><span class="p">[</span><span class="s2">&quot;C1&#39;&quot;</span><span class="p">],</span>
+                <span class="n">atoms_dict</span><span class="p">[</span><span class="n">base_ref</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">atoms_dict</span><span class="p">[</span><span class="s2">&quot;C1&#39;&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+            <span class="n">q1</span> <span class="o">=</span> <span class="n">Quaternion</span><span class="o">.</span><span class="n">angle_and_axis</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+            <span class="c1"># Align N9 C1&#39;</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">base_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">base_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">q1</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span> <span class="o">+</span> <span class="n">translation</span>
+            <span class="c1"># Rotate to align O4&#39;</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">base_dict</span><span class="p">[</span><span class="s2">&quot;C1&#39;&quot;</span><span class="p">])</span> <span class="o">-</span> <span class="n">base_dict</span><span class="p">[</span><span class="n">base_ref</span><span class="p">]</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span><span class="n">base_dict</span><span class="p">[</span><span class="s2">&quot;O4&#39;&quot;</span><span class="p">],</span> <span class="n">base_dict</span><span class="p">[</span><span class="n">base_ref</span><span class="p">],</span>
+                             <span class="n">base_dict</span><span class="p">[</span><span class="s2">&quot;C1&#39;&quot;</span><span class="p">],</span> <span class="n">atoms_dict</span><span class="p">[</span><span class="s2">&quot;O4&#39;&quot;</span><span class="p">])</span> <span class="o">-</span> <span class="n">rot_adj</span>
+            <span class="n">q2</span> <span class="o">=</span> <span class="n">Quaternion</span><span class="o">.</span><span class="n">angle_and_axis</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">base_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atoms_dict</span><span class="p">:</span>
+                    <span class="n">atom</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">(</span><span class="n">q2</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">base_dict</span><span class="p">[</span><span class="n">base_ref</span><span class="p">]),</span>
+                                <span class="n">element</span><span class="o">=</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">nucleotide</span><span class="p">,</span>
+                                <span class="n">res_label</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+                    <span class="n">atoms_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom</span>
+            <span class="n">nucleotide</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms_dict</span>
+            <span class="n">monomers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucleotide</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">=</span> <span class="n">monomers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relabel_monomers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relabel_atoms</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="NucleicAcidStrand.move_to"><a class="viewcode-back" href="../../../../../isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.html#isambard.ampal.specifications.polymer_specs.nucleic_acid_strand.NucleicAcidStrand.move_to">[docs]</a>    <span class="k">def</span> <span class="nf">move_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Moves the `Polynucleotide` to lie on the `start` and `end` vector.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start : 3D Vector (tuple or list or numpy.array)</span>
+<span class="sd">            The coordinate of the start of the helix primitive.</span>
+<span class="sd">        end : 3D Vector (tuple or list or numpy.array)</span>
+<span class="sd">            The coordinate of the end of the helix primitive.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            Raised if `start` and `end` are very close together.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;start and end must NOT be identical&#39;</span><span class="p">)</span>
+        <span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="n">find_transformations</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">helix_start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">helix_end</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">vector</span><span class="o">=</span><span class="n">translation</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jack W. Heal, Christopher W. Wood&#39;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,791 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Making Models With Isambard &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../index.html"/>
+        <link rel="up" title="Tutorial" href="tutorial.html"/>
+        <link rel="next" title="Tagging in the AMPAL framework" href="AMPALTagging.html"/>
+        <link rel="prev" title="Advanced Selections and Analysis" href="2_Advanced_Selections_and_Analysis.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1_AMPAL_Introduction_and_Selections.html">An Introduction to the AMPAL Framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_Advanced_Selections_and_Analysis.html">Advanced Selections and Analysis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Making Models With Isambard</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#specifications">1. Specifications</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters-required-to-make-a-coiled-coil-dimer">Parameters required to make a coiled-coil dimer</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#reading-in-a-structure-and-identifying-parameters">2. Reading in a structure and identifying parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#measuring-geometric-parameters">3. Measuring geometric parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-a-model">4. Building a model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tweaking-the-parameters">Tweaking the parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#going-antiparallel">Going antiparallel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#making-it-better-an-introduction-to-optimisation">5. Making it better - an introduction to optimisation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#making-bigger-things">Making bigger things</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="AMPALTagging.html">Tagging in the AMPAL framework</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="tutorial.html">Tutorial</a> &raquo;</li>
+        
+      <li>Making Models With Isambard</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorial/MakingModels.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="making-models-with-isambard">
+<h1>Making Models With Isambard<a class="headerlink" href="#making-models-with-isambard" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="specifications">
+<h2>1. Specifications<a class="headerlink" href="#specifications" title="Permalink to this headline">¶</a></h2>
+<p>A number of specifications (the term is borrowed from the field of
+architecture, where a specification is defined as “a detailed
+description of the design and materials used to make something”) are
+currently available through ISAMBARD. These include: <span class="math">\(\alpha\)</span>
+helices, coiled-coil assemblies of different flavours, and simple DNA
+duplexes. To make a structure based on a specification, you need to know
+the parameters of that specification. We will demonstrate this with a
+simple <span class="math">\(\alpha\)</span>-helical coiled-coil dimer.</p>
+<div class="section" id="parameters-required-to-make-a-coiled-coil-dimer">
+<h3>Parameters required to make a coiled-coil dimer<a class="headerlink" href="#parameters-required-to-make-a-coiled-coil-dimer" title="Permalink to this headline">¶</a></h3>
+<div class="figure" id="id1">
+<img alt="dimer\_parameters" src="https://cloud.githubusercontent.com/assets/16082702/12421221/08613f3e-beb9-11e5-9bb0-652fd40e33c1.png" />
+<p class="caption"><span class="caption-text">dimer_parameters</span></p>
+</div>
+<p>To make a coiled-coil dimer, you need to know</p>
+<ol class="arabic simple">
+<li>the number of residues on each helix,</li>
+<li>the radius of the assembly,</li>
+<li>the pitch of the assembly and</li>
+<li>the interface angle at which helices meet (Phi-C:math:<cite>alpha</cite>)</li>
+</ol>
+</div>
+</div>
+<div class="section" id="reading-in-a-structure-and-identifying-parameters">
+<h2>2. Reading in a structure and identifying parameters<a class="headerlink" href="#reading-in-a-structure-and-identifying-parameters" title="Permalink to this headline">¶</a></h2>
+<p>We will read a known coiled-coil dimer structure (CC-DI, PDB
+<a class="reference external" href="https://drive.google.com/open?id=0B2sZ5She4fA2QzdsUENNa2hmTE0">4DZM.pdb</a>),
+into the AMPAL framework, and use tools within ISAMBARD to calculate the
+parameters we need. [N.B. This is a slightly modified form of 4DZM where
+we’ve converted iodo-phenylalanine to phenylalanine, and got rid of
+water molecules to make life a bit easier, so take the linked copy
+rather than downloading from another source.]</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">isambard</span>
+
+<span class="n">my_cc</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">ampal</span><span class="o">.</span><span class="n">convert_pdb_to_ampal</span><span class="p">(</span><span class="s2">&quot;4DZM.pdb&quot;</span><span class="p">)</span>
+
+<span class="n">my_cc</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Assembly</span> <span class="p">(</span><span class="mi">4</span><span class="n">DZM</span><span class="p">)</span> <span class="n">containing</span> <span class="mi">2</span> <span class="n">Polypeptides</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>This has given us an <code class="docutils literal"><span class="pre">Assembly</span></code> object, which contains two
+<code class="docutils literal"><span class="pre">Polypeptides</span></code>. We can access the sequences of each chain individually
+using the <code class="docutils literal"><span class="pre">.sequences</span></code> attribute. This is a list - you can access
+individual list elements as you would a regular python list.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_cc</span><span class="o">.</span><span class="n">sequences</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;GEIAALKQEIAALKKENAALKFEIAALKQGY&#39;</span><span class="p">,</span> <span class="s1">&#39;GEIAALKQEIAALKKENAALKFEIAALKQGY&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_cc_a</span> <span class="o">=</span> <span class="n">my_cc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">my_cc_b</span> <span class="o">=</span> <span class="n">my_cc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">my_cc_a</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Polypeptide</span> <span class="n">containing</span> <span class="mi">31</span> <span class="n">Residues</span><span class="o">.</span> <span class="n">Sequence</span><span class="p">:</span> <span class="n">GEIAALKQEIAA</span><span class="o">...&gt;</span>
+</pre></div>
+</div>
+<p>From the Polypeptide object, which is a special type of Polymer within
+the AMPAL framework, we can access the number of residues, and the chain
+identifier if needed. You can access the length of the chain either from
+the chain object itself, or from the length of the sequence.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">my_cc_a</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">31</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">my_cc_a</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">31</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_cc_a</span><span class="o">.</span><span class="n">id</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="s1">&#39;A&#39;</span>
+</pre></div>
+</div>
+<p>Before we extract parameters from the structure, we might want to know
+how ‘good’ the BUDE forcefield [BUFF] thinks the structure is, so that
+when we build a structure <em>de novo</em> we have something to compare it to.
+BUFF provides two scores, one for the interaction between
+<code class="docutils literal"><span class="pre">Polypeptides</span></code> in the <code class="docutils literal"><span class="pre">Assembly</span></code>, and one for the internal energy of
+the <code class="docutils literal"><span class="pre">Assembly</span></code>.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_cc</span><span class="o">.</span><span class="n">buff_interaction_energy</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">BUFF</span> <span class="n">Score</span> <span class="o">-</span><span class="mf">250.24</span><span class="p">:</span> <span class="mf">50.73</span> <span class="n">St</span> <span class="o">|</span> <span class="o">-</span><span class="mf">281.57</span> <span class="n">De</span> <span class="o">|</span> <span class="o">-</span><span class="mf">19.39</span> <span class="n">Ch</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_cc</span><span class="o">.</span><span class="n">buff_internal_energy</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">BUFF</span> <span class="n">Score</span> <span class="o">-</span><span class="mf">938.07</span><span class="p">:</span> <span class="mf">136.53</span> <span class="n">St</span> <span class="o">|</span> <span class="o">-</span><span class="mf">790.27</span> <span class="n">De</span> <span class="o">|</span> <span class="o">-</span><span class="mf">284.33</span> <span class="n">Ch</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="measuring-geometric-parameters">
+<h2>3. Measuring geometric parameters<a class="headerlink" href="#measuring-geometric-parameters" title="Permalink to this headline">¶</a></h2>
+<p>In order to measure radius, pitch and Phi-C<span class="math">\(\alpha\)</span> of the
+assembly, we need to define a <strong>*reference axis*</strong>, that is the line
+that runs down the centre of the assembly. For a coiled-coil dimer, it
+runs between the two helices; for a barrel, this would be at the centre
+of the barrel, and is a list of points in 3D space. We will use this to
+calculate the other parameters. The reference axis is defined as a
+<code class="docutils literal"><span class="pre">Primitive</span></code> chain object populated with <code class="docutils literal"><span class="pre">PseudoMonomers</span></code> which
+represent the points in space of the axis.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">reference_axis</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">analyse_protein</span><span class="o">.</span><span class="n">reference_axis_from_chains</span><span class="p">(</span><span class="n">my_cc</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">reference_axis</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Primitive</span> <span class="n">chain</span> <span class="n">containing</span> <span class="mi">31</span> <span class="n">PseudoMonomers</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>In Isambard, interface angles are accessed via the
+<code class="docutils literal"><span class="pre">analyse_protein.crick_angles</span></code> method, and are calculated for each
+residue in each helix individually.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">crangles_a</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">analyse_protein</span><span class="o">.</span><span class="n">crick_angles</span><span class="p">(</span><span class="n">my_cc_a</span><span class="p">,</span><span class="n">reference_axis</span><span class="p">)</span>
+<span class="n">crangles_b</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">analyse_protein</span><span class="o">.</span><span class="n">crick_angles</span><span class="p">(</span><span class="n">my_cc_b</span><span class="p">,</span><span class="n">reference_axis</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">crangles_a</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mf">165.46311695313284</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">73.7731235966416</span><span class="p">,</span>
+ <span class="mf">26.54672679839078</span><span class="p">,</span>
+ <span class="mf">128.47141485160603</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">127.72847955562587</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">29.230898305107225</span><span class="p">,</span>
+ <span class="mf">75.77896871985133</span><span class="p">,</span>
+ <span class="mf">179.13811106898652</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">78.91543487166474</span><span class="p">,</span>
+ <span class="mf">24.619715382288263</span><span class="p">,</span>
+ <span class="mf">124.86576008079678</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">132.1659822842109</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">33.094770958544274</span><span class="p">,</span>
+ <span class="mf">71.5612908445053</span><span class="p">,</span>
+ <span class="mf">172.66909579579703</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">87.21396295102991</span><span class="p">,</span>
+ <span class="mf">17.62150247217829</span><span class="p">,</span>
+ <span class="mf">122.41786905701451</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">132.30491551944263</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">25.580896174877395</span><span class="p">,</span>
+ <span class="mf">77.39202166004726</span><span class="p">,</span>
+ <span class="mf">178.68641715037646</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">81.08703803043669</span><span class="p">,</span>
+ <span class="mf">21.378411765253517</span><span class="p">,</span>
+ <span class="mf">124.46637604063143</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">137.48525842491375</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">38.516041308102864</span><span class="p">,</span>
+ <span class="mf">65.8051730938853</span><span class="p">,</span>
+ <span class="mf">173.8634442139843</span><span class="p">,</span>
+ <span class="o">-</span><span class="mf">69.52238541573473</span><span class="p">,</span>
+ <span class="kc">None</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>To get an average Phi-C<span class="math">\(\alpha\)</span> value, we take every seventh
+value from the list, and take the mean of this. To get the mean we need
+to use a module called <code class="docutils literal"><span class="pre">numpy</span></code>, which is <em>Numerical Python</em> and gives
+us access to lots of mathematical functions. In the following cell, we
+are going to use it to calculate mean Phi-C<span class="math">\(\alpha\)</span> values.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="n">phica_a_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">crangles_a</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">crangles_a</span><span class="p">),</span><span class="mi">7</span><span class="p">)</span> <span class="k">if</span> <span class="n">crangles_a</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+<span class="n">phica_b_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">crangles_b</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">crangles_b</span><span class="p">),</span><span class="mi">7</span><span class="p">)</span> <span class="k">if</span> <span class="n">crangles_b</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">phica_a</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">phica_a_list</span><span class="p">)</span>
+<span class="n">phica_b</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">phica_b_list</span><span class="p">)</span>
+
+<span class="n">phica_a</span><span class="p">,</span> <span class="n">phica_b</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mf">173.96403703645541</span><span class="p">,</span> <span class="mf">173.96403703645541</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Radius is calculated by looking at successive distances from the centre
+of the <span class="math">\(\alpha\)</span> helix to the reference axis we calculated earlier.
+Again, this is calculated for each helix, and we take the mean value to
+use for model building.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">radius_a_list</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">analyse_protein</span><span class="o">.</span><span class="n">polymer_to_reference_axis_distances</span><span class="p">(</span><span class="n">my_cc_a</span><span class="p">,</span> <span class="n">reference_axis</span><span class="p">)</span>
+<span class="n">radius_b_list</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">analyse_protein</span><span class="o">.</span><span class="n">polymer_to_reference_axis_distances</span><span class="p">(</span><span class="n">my_cc_b</span><span class="p">,</span> <span class="n">reference_axis</span><span class="p">)</span>
+
+<span class="n">radius</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">radius_a_list</span><span class="o">+</span><span class="n">radius_b_list</span><span class="p">)</span>
+
+<span class="n">radius</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">5.12974619218142</span>
+</pre></div>
+</div>
+<p>Pitch is calculated on a per-helix basis using <span class="math">\(\alpha\)</span> angles,
+which measures the tilt of a helix in a coiled-coil assembly wtith
+respect to the central reference axis that we already calculated. The
+radius of the helices is also required. For model building we take a
+mean value.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">alpha_a_list</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">analyse_protein</span><span class="o">.</span><span class="n">alpha_angles</span><span class="p">(</span><span class="n">my_cc_a</span><span class="p">,</span> <span class="n">reference_axis</span><span class="p">)</span>
+<span class="n">alpha_b_list</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">analyse_protein</span><span class="o">.</span><span class="n">alpha_angles</span><span class="p">(</span><span class="n">my_cc_b</span><span class="p">,</span> <span class="n">reference_axis</span><span class="p">)</span>
+
+<span class="n">pitch_a_list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">radius</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">alpha_a_list</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+<span class="n">pitch_b_list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">radius</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">alpha_b_list</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">pitch</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pitch_a_list</span> <span class="o">+</span> <span class="n">pitch_b_list</span><span class="p">)</span>
+
+<span class="n">pitch</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">220.28472172509427</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-a-model">
+<h2>4. Building a model<a class="headerlink" href="#building-a-model" title="Permalink to this headline">¶</a></h2>
+<p>We now know all the parameters we need to rebuild this structure, and it
+can be done by generating a specification object from the <code class="docutils literal"><span class="pre">CoiledCoil</span></code>
+class. We will do this by ‘subclassing’, i.e. inheriting all the things
+we need from the general <code class="docutils literal"><span class="pre">CoiledCoil</span></code> class, and adding specific
+parameters for our case, into a class called <code class="docutils literal"><span class="pre">SimpleDimer2Phi</span></code>.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleDimer2Phi</span><span class="p">(</span><span class="n">isambard</span><span class="o">.</span><span class="n">specifications</span><span class="o">.</span><span class="n">CoiledCoil</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">phica1</span><span class="p">,</span><span class="n">phica2</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">auto_build</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aas</span> <span class="o">=</span> <span class="p">[</span><span class="n">aa</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">major_radii</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">major_pitches</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phi_c_alphas</span> <span class="o">=</span> <span class="p">[</span><span class="n">phica1</span><span class="p">,</span><span class="n">phica2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orientations</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We can now make a model by calling the <code class="docutils literal"><span class="pre">SimpleDimer2Phi</span></code> class and
+filling in the parameters obtained earlier in the workbook. Enter these
+parameters in the cell below before pressing Ctrl+Enter to run it.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_model</span> <span class="o">=</span> <span class="n">SimpleDimer2Phi</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">my_cc</span><span class="o">.</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">radius</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">phica_a</span><span class="p">,</span> <span class="n">phica_b</span><span class="p">)</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now write out this model to a PDB file that can be viewed using a
+standard protein strutcure viewer such as
+<a class="reference external" href="https://www.pymol.org/">PyMOL</a>.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_model.pdb&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+    <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">pdb</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure" id="id2">
+<img alt="my\_model\_bb" src="https://cloud.githubusercontent.com/assets/16082702/12421222/0861c33c-beb9-11e5-919d-67168da10135.png" />
+<p class="caption"><span class="caption-text">my_model_bb</span></p>
+</div>
+<p>Hopefully your model looks something like the picture above. It has made
+a poly-alanine version of a coiled-coil helical dimer. Now we can model
+the sidechains using SCWRL4 (G. G. Krivov, M. V. Shapovalov, and R. L.
+Dunbrack, Jr. Improved prediction of protein side-chain conformations
+with SCWRL4. Proteins (2009)), output the PDB file for future reference.
+You should be able to see the sidechains as below.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">sequences</span> <span class="o">=</span> <span class="n">my_cc</span><span class="o">.</span><span class="n">sequences</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">pack_new_sequences</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_model_sc.pdb&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+    <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">pdb</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure" id="id3">
+<img alt="my\_model\_sc" src="https://cloud.githubusercontent.com/assets/16082702/12421307/85a3b2f6-beb9-11e5-848a-cd43b081f2be.png" />
+<p class="caption"><span class="caption-text">my_model_sc</span></p>
+</div>
+<p>Your model should look something like the picture above. Now we can
+score this model using BUFF, and also we can calculate an RMSD from this
+model to the original structure using ProFit (Martin, A.C.R.,
+<a class="reference external" href="http://www.bioinf.org.uk/software/profit/">http://www.bioinf.org.uk/software/profit/</a>).</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_model</span><span class="o">.</span><span class="n">buff_interaction_energy</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">BUFF</span> <span class="n">Score</span> <span class="o">-</span><span class="mf">285.48</span><span class="p">:</span> <span class="mf">16.99</span> <span class="n">St</span> <span class="o">|</span> <span class="o">-</span><span class="mf">295.91</span> <span class="n">De</span> <span class="o">|</span> <span class="o">-</span><span class="mf">6.56</span> <span class="n">Ch</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">rmsds</span><span class="p">,</span><span class="n">overlay</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">external_programs</span><span class="o">.</span><span class="n">run_profit</span><span class="p">(</span><span class="n">my_cc</span><span class="o">.</span><span class="n">pdb</span><span class="p">,</span> <span class="n">my_model</span><span class="o">.</span><span class="n">pdb</span><span class="p">,</span> <span class="n">return_pdb_string</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">align_type</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">rmsds</span></code> is the all-atom RMSDs calculated by ProFit.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">rmsds</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mf">2.173</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Write out the overlaid structure for future reference.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_model_overlaid.pdb&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+    <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">overlay</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure" id="id4">
+<img alt="my\_cc\_my\_model\_overlay" src="https://cloud.githubusercontent.com/assets/16082702/12421220/0860a862-beb9-11e5-8682-13974df51711.png" />
+<p class="caption"><span class="caption-text">my_cc_my_model_overlay</span></p>
+</div>
+<p>The overlay is a simple PDB string returned from ProFit. We can convert
+this back to an AMPAL object, write it out for viewing.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">overlay_ampal</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">ampal</span><span class="o">.</span><span class="n">convert_pdb_to_ampal</span><span class="p">(</span><span class="n">overlay</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1">## convert overlay to AMPAL object</span>
+</pre></div>
+</div>
+<p>If you have a look closely at the asparagine pair at the middle of the
+dimeric structure (shown below), you’ll see that the rotamers that SCWRL
+has picked for asparagine (right-hand side, dark blue) are more sensible
+than those in the original structure (left-hand side, cyan). The
+original 4DZM structure has multiple occupancies for the asparagine
+residues, and for simplicity we picked the first pair. The structure
+that SCWRL has returned has a hydrogen bond between the asparagine
+residues.</p>
+<div class="figure" id="id5">
+<img alt="asn\_hbonds" src="https://cloud.githubusercontent.com/assets/16082702/12421660/29935b86-bebb-11e5-9746-9b9f6588113f.png" />
+<p class="caption"><span class="caption-text">asn_hbonds</span></p>
+</div>
+<div class="section" id="tweaking-the-parameters">
+<h3>Tweaking the parameters<a class="headerlink" href="#tweaking-the-parameters" title="Permalink to this headline">¶</a></h3>
+<p>Try rebuilding the model again, this time changing the parameters as you
+like. What happens if you change the Phi-C<span class="math">\(\alpha\)</span> values of one
+helix (or both)? Try varying the radius. Each time, score your model
+using BUFF and make a note of the RMSD to the original structure, and
+have a look at the models you produce on PyMOL.</p>
+</div>
+<div class="section" id="going-antiparallel">
+<h3>Going antiparallel<a class="headerlink" href="#going-antiparallel" title="Permalink to this headline">¶</a></h3>
+<p>We are going to remake the coiled-coil dimer as an antiparallel
+structure. To do this, we need to modify the <code class="docutils literal"><span class="pre">SimpleDimer2Phi</span></code> class,
+two extra parameters to specify firstly that the orientation of the
+second helix is antiparallel, and secondly, the z-shift, how far the
+helices can slide past one another. We’ll make this using another
+subclass of CoiledCoil:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleDimer2PhiAP</span><span class="p">(</span><span class="n">isambard</span><span class="o">.</span><span class="n">specifications</span><span class="o">.</span><span class="n">CoiledCoil</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">phica1</span><span class="p">,</span><span class="n">phica2</span><span class="p">,</span><span class="n">zshift</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">auto_build</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aas</span> <span class="o">=</span> <span class="p">[</span><span class="n">aa</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">major_radii</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">major_pitches</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phi_c_alphas</span> <span class="o">=</span> <span class="p">[</span><span class="n">phica1</span><span class="p">,</span><span class="n">phica2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_shifts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">zshift</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orientations</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ap_cc</span> <span class="o">=</span> <span class="n">SimpleDimer2PhiAP</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">my_cc</span><span class="o">.</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">radius</span><span class="p">,</span><span class="n">pitch</span><span class="p">,</span><span class="n">phica_a</span><span class="p">,</span><span class="n">phica_b</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">my_ap_cc</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="n">my_ap_cc</span><span class="o">.</span><span class="n">pack_new_sequences</span><span class="p">(</span><span class="n">my_cc</span><span class="o">.</span><span class="n">sequences</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Write the model out to PDB for future reference.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_ap_cc_model.pdb&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+
+    <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">my_ap_cc</span><span class="o">.</span><span class="n">pdb</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Score the model using BUFF:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ap_cc</span><span class="o">.</span><span class="n">buff_interaction_energy</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">BUFF</span> <span class="n">Score</span> <span class="o">-</span><span class="mf">48.11</span><span class="p">:</span> <span class="mf">167.36</span> <span class="n">St</span> <span class="o">|</span> <span class="o">-</span><span class="mf">215.94</span> <span class="n">De</span> <span class="o">|</span> <span class="mf">0.48</span> <span class="n">Ch</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="making-it-better-an-introduction-to-optimisation">
+<h2>5. Making it better - an introduction to optimisation<a class="headerlink" href="#making-it-better-an-introduction-to-optimisation" title="Permalink to this headline">¶</a></h2>
+<p>It’s not such a good score :-) (obviously?) We could improve this score
+by ‘minimizing’ the structure, i.e. trying to find new parameters for
+the sequence that improve the BUDE score. This is, in real life, a very
+bad idea, because we know that this sequence comes from a crystal
+structure of a parallel coiled-coil dimer, and it is highly unlikely
+ever to go antiparallel. Here, we are going to pretend that we can make
+it so, as a good exercise in learning how an optimiser works. Hopefully
+this will also help to empahasise that although you can get an improved
+BUFF score through this process, if you make an unrealistic assumption
+at the beginning, BUFF and the optimiser will not help you out.</p>
+<p>We’ll carry out this optimisation using an algorithm called
+<a class="reference external" href="https://en.wikipedia.org/wiki/Differential_evolution">**differential
+evolution**</a>.
+This is a metaheuristic, which means it makes no assumptions about the
+optimisation (this means it knows nothing about your parameters), and is
+able to search large spaces of candidate solutions (i.e. a large
+parameter space). It optimizes the parameters by keeping a population of
+candidate solutions (sets of model parameters) and creates new solutions
+(sets of parameters) by combining existing ones and then keeping
+whichever candidate has the best score.</p>
+<p>The optimiser is actually quite easy to set up. You need to give it an
+ISAMBARD specification (in our case <code class="docutils literal"><span class="pre">SimpleDimer2PhiAP</span></code>) and an output
+path (which can be the current directory for the moment, as specified by
+‘.’)</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">optimiser</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">optimisation</span><span class="o">.</span><span class="n">DE_Opt</span><span class="p">(</span><span class="n">SimpleDimer2PhiAP</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">run_id</span><span class="o">=</span><span class="s1">&#39;test_antiparallel&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The next step is to give the optimiser the sequences to model, a set of
+parameter means and variances within which to sample. Again, you can see
+what the optimiser is expecting by using SHIFT+TAB inside the brackets
+of <code class="docutils literal"><span class="pre">optimiser.parameters</span></code>.</p>
+<p>The order of the parameters inside the value means and value ranges must
+match the order required by <code class="docutils literal"><span class="pre">SimpleDimer2PhiAP</span></code>, which is
+<code class="docutils literal"><span class="pre">radius,</span> <span class="pre">pitch,</span> <span class="pre">phica1,</span> <span class="pre">phica2</span></code>. We will allow the radius to vary by
+up to 1 <span class="math">\(\unicode{x212B}\)</span> either side of 5
+<span class="math">\(\unicode{x212B}\)</span>, the pitch by 100 <span class="math">\(^\circ\)</span> and the
+Phi-C<span class="math">\(\alpha\)</span>s by a full circle. We’ll keep the z-shift to
+zero for this instance.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">optimiser</span><span class="o">.</span><span class="n">parameters</span><span class="p">(</span><span class="n">my_ap_cc</span><span class="o">.</span><span class="n">sequences</span><span class="p">,</span> <span class="p">[</span><span class="mf">5.0</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">],</span>
+                    <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">my_ap_cc</span><span class="o">.</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s1">&#39;var0&#39;</span><span class="p">,</span><span class="s1">&#39;var1&#39;</span><span class="p">,</span><span class="s1">&#39;var2&#39;</span><span class="p">,</span><span class="s1">&#39;var3&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Now, run it! You need to specify the size of each generation and the
+number of generations. We will use 20 models per generation and 30
+generations.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">optimiser</span><span class="o">.</span><span class="n">run_opt</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">gen</span> <span class="n">evals</span>   <span class="n">avg</span>             <span class="n">std</span>     <span class="nb">min</span>             <span class="nb">max</span>
+<span class="mi">0</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">103.708</span>        <span class="mf">36.8511</span> <span class="o">-</span><span class="mf">156.506</span>        <span class="o">-</span><span class="mf">21.8501</span>
+<span class="mi">1</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">118.403</span>        <span class="mf">33.0856</span> <span class="o">-</span><span class="mf">180.937</span>        <span class="o">-</span><span class="mf">61.5667</span>
+<span class="mi">2</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">134.078</span>        <span class="mf">29.6034</span> <span class="o">-</span><span class="mf">196.748</span>        <span class="o">-</span><span class="mf">86.8828</span>
+<span class="mi">3</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">143.757</span>        <span class="mf">26.298</span>  <span class="o">-</span><span class="mf">196.748</span>        <span class="o">-</span><span class="mf">108.776</span>
+<span class="mi">4</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">150.678</span>        <span class="mf">25.4218</span> <span class="o">-</span><span class="mf">196.748</span>        <span class="o">-</span><span class="mf">109.963</span>
+<span class="mi">5</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">158.192</span>        <span class="mf">22.3413</span> <span class="o">-</span><span class="mf">196.748</span>        <span class="o">-</span><span class="mf">122.078</span>
+<span class="mi">6</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">163.653</span>        <span class="mf">19.9526</span> <span class="o">-</span><span class="mf">196.748</span>        <span class="o">-</span><span class="mf">126.732</span>
+<span class="mi">7</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">170.98</span>         <span class="mf">15.0293</span> <span class="o">-</span><span class="mf">201.815</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">8</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">174.022</span>        <span class="mf">14.6422</span> <span class="o">-</span><span class="mf">201.815</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">9</span>   <span class="mi">20</span>      <span class="o">-</span><span class="mf">176.845</span>        <span class="mf">14.5718</span> <span class="o">-</span><span class="mf">201.815</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">10</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">179.775</span>        <span class="mf">12.8957</span> <span class="o">-</span><span class="mf">201.815</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">11</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">180.345</span>        <span class="mf">13.0091</span> <span class="o">-</span><span class="mf">201.815</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">12</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">181.44</span>         <span class="mf">12.878</span>  <span class="o">-</span><span class="mf">201.815</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">13</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">185.048</span>        <span class="mf">13.5667</span> <span class="o">-</span><span class="mf">203.227</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">14</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">186.853</span>        <span class="mf">14.8841</span> <span class="o">-</span><span class="mf">220.695</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">15</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">187.556</span>        <span class="mf">14.6897</span> <span class="o">-</span><span class="mf">220.695</span>        <span class="o">-</span><span class="mf">148.964</span>
+<span class="mi">16</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">188.825</span>        <span class="mf">13.6166</span> <span class="o">-</span><span class="mf">220.695</span>        <span class="o">-</span><span class="mf">151.649</span>
+<span class="mi">17</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">189.149</span>        <span class="mf">13.538</span>  <span class="o">-</span><span class="mf">220.695</span>        <span class="o">-</span><span class="mf">151.649</span>
+<span class="mi">18</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">189.877</span>        <span class="mf">12.4043</span> <span class="o">-</span><span class="mf">220.695</span>        <span class="o">-</span><span class="mf">160.042</span>
+<span class="mi">19</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">191.594</span>        <span class="mf">11.982</span>  <span class="o">-</span><span class="mf">220.695</span>        <span class="o">-</span><span class="mf">167.122</span>
+<span class="mi">20</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">191.829</span>        <span class="mf">11.8771</span> <span class="o">-</span><span class="mf">220.695</span>        <span class="o">-</span><span class="mf">167.122</span>
+<span class="mi">21</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">193.433</span>        <span class="mf">11.1191</span> <span class="o">-</span><span class="mf">225.598</span>        <span class="o">-</span><span class="mf">169.102</span>
+<span class="mi">22</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">197.64</span>         <span class="mf">11.9067</span> <span class="o">-</span><span class="mf">225.598</span>        <span class="o">-</span><span class="mf">180.937</span>
+<span class="mi">23</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">197.948</span>        <span class="mf">11.8677</span> <span class="o">-</span><span class="mf">225.598</span>        <span class="o">-</span><span class="mf">180.937</span>
+<span class="mi">24</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">198.635</span>        <span class="mf">11.3247</span> <span class="o">-</span><span class="mf">225.598</span>        <span class="o">-</span><span class="mf">180.937</span>
+<span class="mi">25</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">199.536</span>        <span class="mf">10.9473</span> <span class="o">-</span><span class="mf">225.598</span>        <span class="o">-</span><span class="mf">184.778</span>
+<span class="mi">26</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">202.483</span>        <span class="mf">9.89183</span> <span class="o">-</span><span class="mf">225.598</span>        <span class="o">-</span><span class="mf">189.472</span>
+<span class="mi">27</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">202.965</span>        <span class="mf">9.93346</span> <span class="o">-</span><span class="mf">225.598</span>        <span class="o">-</span><span class="mf">189.472</span>
+<span class="mi">28</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">208.955</span>        <span class="mf">18.8063</span> <span class="o">-</span><span class="mf">268.702</span>        <span class="o">-</span><span class="mf">189.472</span>
+<span class="mi">29</span>  <span class="mi">20</span>      <span class="o">-</span><span class="mf">211.825</span>        <span class="mf">18.758</span>  <span class="o">-</span><span class="mf">268.702</span>        <span class="o">-</span><span class="mf">189.472</span>
+<span class="n">Evaluated</span> <span class="mi">600</span> <span class="n">models</span> <span class="ow">in</span> <span class="n">total</span>
+<span class="n">Best</span> <span class="n">fitness</span> <span class="ow">is</span> <span class="p">(</span><span class="o">-</span><span class="mf">268.70178162510257</span><span class="p">,)</span>
+<span class="n">Best</span> <span class="n">parameters</span> <span class="n">are</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span> <span class="mf">5.332837258790041</span><span class="p">,</span> <span class="mf">87.29356456739866</span><span class="p">,</span> <span class="mf">160.66995437820316</span><span class="p">,</span> <span class="mf">264.0269844540661</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">----</span><span class="n">Minimisation</span> <span class="n">plot</span><span class="p">:</span>
+</pre></div>
+</div>
+<img alt="tutorial/MakingModels_files/MakingModels_69_1.png" src="tutorial/MakingModels_files/MakingModels_69_1.png" />
+<p>The output above shows you the progress of the optimisation process,
+which is reproduced in a log file in the location we requested the
+output to be. Additionally the best model pdb file will be written to
+the same location. Open this up and have a look at the optimised model.
+What has the optimiser done to the model?</p>
+<p>There are different optimization methods available; have a look inside
+the optimisation directory for these.</p>
+<div class="section" id="making-bigger-things">
+<h3>Making bigger things<a class="headerlink" href="#making-bigger-things" title="Permalink to this headline">¶</a></h3>
+<p>Now you know how to subclass the <code class="docutils literal"><span class="pre">CoiledCoil</span></code> AMPAL specification
+object, see if you can make an <span class="math">\(\alpha\)</span>-helical barrel by
+increasing the value of <code class="docutils literal"><span class="pre">n</span></code>. Don’t worry about what sequence to use
+initially, make some models and get comfortable with the parameters -
+for example try a few different radii, pitch and Phi-c<span class="math">\(\alpha\)</span>
+values. As an aide, here are some parameters for the coiled-coil barrels
+in &lt;a
+href=”<a class="reference external" href="http://www.sciencemag.org/cgi/rapidpdf/346/6208/485?ijkey=ysj8Y4h7WOYgo&amp;keytype=ref&amp;siteid=sci">http://www.sciencemag.org/cgi/rapidpdf/346/6208/485?ijkey=ysj8Y4h7WOYgo&amp;keytype=ref&amp;siteid=sci</a>”&gt;Thomson
+et. al. (Science 2014). Score the models you make using BUFF.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="11%" />
+<col width="12%" />
+<col width="11%" />
+<col width="29%" />
+<col width="23%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Oligo</th>
+<th class="head">Radius</th>
+<th class="head">Pitch</th>
+<th class="head">PhiC<span class="math">\(\alpha\)</span></th>
+<th class="head">Sequence (g-&gt;f)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>CC-Pent</td>
+<td>5</td>
+<td>8.62</td>
+<td>182.8</td>
+<td>14.44</td>
+<td>KIEQILQ</td>
+</tr>
+<tr class="row-odd"><td>CC-Hex2</td>
+<td>6</td>
+<td>9.48</td>
+<td>131.7</td>
+<td>18.22</td>
+<td>EIAKSLK</td>
+</tr>
+<tr class="row-even"><td>CC-Hex3</td>
+<td>6</td>
+<td>9.72</td>
+<td>162.2</td>
+<td>13.07</td>
+<td>EIAQSIK</td>
+</tr>
+<tr class="row-odd"><td>CC-Hept</td>
+<td>7</td>
+<td>9.80</td>
+<td>328.6</td>
+<td>15.1</td>
+<td>EIAQALK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="AMPALTagging.html" class="btn btn-neutral float-right" title="Tagging in the AMPAL framework" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="2_Advanced_Selections_and_Analysis.html" class="btn btn-neutral" title="Advanced Selections and Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

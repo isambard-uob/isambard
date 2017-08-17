@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.configure &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.configure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.configure</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This file allows the user to configure their ISAMBARD install.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">readline</span>
+
+<span class="n">text_colours</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;HEADER&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[95m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OK_BLUE&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[94m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OK_GREEN&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[92m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;WARNING&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[93mWARNING: &#39;</span><span class="p">,</span>
+    <span class="s1">&#39;FAIL&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[91m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;END_C&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;BOLD&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[1m&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;UNDERLINE&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[4m&#39;</span>
+<span class="p">}</span>
+
+<span class="n">isambard_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+<span class="n">home_dir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">))</span>
+<span class="n">settings_file_name</span> <span class="o">=</span> <span class="s1">&#39;.isambard_settings&#39;</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../isambard.configure.html#isambard.configure.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="c1"># setup the line parser for user input</span>
+    <span class="n">readline</span><span class="o">.</span><span class="n">set_completer_delims</span><span class="p">(</span><span class="s1">&#39; </span><span class="se">\t\n</span><span class="s1">;&#39;</span><span class="p">)</span>
+    <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s2">&quot;tab: complete&quot;</span><span class="p">)</span>
+    <span class="n">readline</span><span class="o">.</span><span class="n">set_completer</span><span class="p">(</span><span class="n">complete</span><span class="p">)</span>
+
+    <span class="n">settings_path</span> <span class="o">=</span> <span class="n">home_dir</span> <span class="o">/</span> <span class="n">settings_file_name</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">circleci</span><span class="p">:</span>
+        <span class="n">install_for_circleci</span><span class="p">(</span><span class="n">settings_path</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">settings_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">overwrite</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">{FAIL}</span><span class="s1">Configuration files found, these can be overwritten using the &quot;-o&quot; flag.</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="n">install</span><span class="p">(</span><span class="n">settings_path</span><span class="p">,</span> <span class="n">basic</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">basic</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{BOLD}{HEADER}</span><span class="s1">Configuration completed successfully.</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="complete"><a class="viewcode-back" href="../../isambard.configure.html#isambard.configure.complete">[docs]</a><span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">text</span><span class="o">+</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="kc">None</span><span class="p">])[</span><span class="n">state</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="install"><a class="viewcode-back" href="../../isambard.configure.html#isambard.configure.install">[docs]</a><span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="n">settings_path</span><span class="p">,</span> <span class="n">basic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">base_install</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">basic</span><span class="p">:</span>
+        <span class="n">optional_install</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">settings_path</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Writing settings file to &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">settings_path</span><span class="p">))</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)))</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="base_install"><a class="viewcode-back" href="../../isambard.configure.html#isambard.configure.base_install">[docs]</a><span class="k">def</span> <span class="nf">base_install</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Generates configuration setting for required functionality of ISAMBARD.&quot;&quot;&quot;</span>
+    <span class="c1"># scwrl</span>
+    <span class="n">scwrl</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{BOLD}{HEADER}</span><span class="s1">Generating configuration files for ISAMBARD.</span><span class="si">{END_C}</span><span class="se">\n</span><span class="s1">&#39;</span>
+          <span class="s1">&#39;All required input can use tab completion for paths.</span><span class="se">\n</span><span class="s1">&#39;</span>
+          <span class="s1">&#39;</span><span class="si">{BOLD}</span><span class="s1">Setting up SCWRL 4.0 (Recommended)</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="n">scwrl_path</span> <span class="o">=</span> <span class="n">get_user_path</span><span class="p">(</span><span class="s1">&#39;Please provide a path to your SCWRL executable&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">scwrl</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">scwrl_path</span><span class="p">)</span>
+    <span class="n">pack_mode</span> <span class="o">=</span> <span class="n">get_user_option</span><span class="p">(</span>
+        <span class="s1">&#39;Please choose your packing mode (flexible is significantly slower but is more accurate).&#39;</span><span class="p">,</span>
+        <span class="p">[</span><span class="s1">&#39;flexible&#39;</span><span class="p">,</span> <span class="s1">&#39;rigid&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s1">&#39;rigid&#39;</span><span class="p">:</span>
+        <span class="n">scwrl</span><span class="p">[</span><span class="s1">&#39;rigid_rotamer_model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scwrl</span><span class="p">[</span><span class="s1">&#39;rigid_rotamer_model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;scwrl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scwrl</span>
+
+    <span class="c1"># dssp</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{BOLD}</span><span class="s1">Setting up DSSP (Recommended)</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="n">dssp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">dssp_path</span> <span class="o">=</span> <span class="n">get_user_path</span><span class="p">(</span><span class="s1">&#39;Please provide a path to your DSSP executable.&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">dssp</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dssp_path</span><span class="p">)</span>
+    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;dssp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dssp</span>
+
+    <span class="c1"># buff</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{BOLD}</span><span class="s1">Setting up BUFF (Required)</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="n">buff</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ffs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ff_dir</span> <span class="o">=</span> <span class="n">isambard_path</span> <span class="o">/</span> <span class="s1">&#39;buff&#39;</span> <span class="o">/</span> <span class="s1">&#39;force_fields&#39;</span>
+    <span class="k">for</span> <span class="n">ff_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ff_dir</span><span class="p">)):</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">ff_file</span><span class="p">)</span>
+        <span class="n">ffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+    <span class="n">force_field_choice</span> <span class="o">=</span> <span class="n">get_user_option</span><span class="p">(</span>
+        <span class="s1">&#39;Please choose the default BUFF force field, this can be modified during runtime.&#39;</span><span class="p">,</span>
+        <span class="n">ffs</span><span class="p">)</span>
+    <span class="n">buff</span><span class="p">[</span><span class="s1">&#39;default_force_field&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">force_field_choice</span>
+    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;buff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">buff</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="optional_install"><a class="viewcode-back" href="../../isambard.configure.html#isambard.configure.optional_install">[docs]</a><span class="k">def</span> <span class="nf">optional_install</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Generates configuration settings for optional functionality of ISAMBARD.&quot;&quot;&quot;</span>
+    <span class="c1"># reduce</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{BOLD}</span><span class="s1">Setting up Reduce (optional)</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="n">reduce</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">reduce_path</span> <span class="o">=</span> <span class="n">get_user_path</span><span class="p">(</span><span class="s1">&#39;Please provide a path to your reduce executable.&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">reduce</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">reduce_path</span><span class="p">)</span>
+    <span class="n">reduce</span><span class="p">[</span><span class="s1">&#39;folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">reduce_path</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span> <span class="k">if</span> <span class="n">reduce_path</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;reduce&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduce</span>
+
+    <span class="c1"># naccess</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{BOLD}</span><span class="s1">Setting up naccess (optional)</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="n">naccess</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">naccess_path</span> <span class="o">=</span> <span class="n">get_user_path</span><span class="p">(</span><span class="s1">&#39;Please provide a path to your naccess executable.&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">naccess</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">naccess_path</span><span class="p">)</span>
+    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;naccess&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">naccess</span>
+
+    <span class="c1"># profit</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{BOLD}</span><span class="s1">Setting up ProFit (optional)</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="n">profit</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">profit_path</span> <span class="o">=</span> <span class="n">get_user_path</span><span class="p">(</span><span class="s1">&#39;Please provide a path to your ProFit executable.&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">profit</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">profit_path</span><span class="p">)</span>
+    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;profit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">profit</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="install_for_circleci"><a class="viewcode-back" href="../../isambard.configure.html#isambard.configure.install_for_circleci">[docs]</a><span class="k">def</span> <span class="nf">install_for_circleci</span><span class="p">(</span><span class="n">settings_path</span><span class="p">):</span>
+    <span class="n">cci_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;buff&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;default_force_field&quot;</span><span class="p">:</span> <span class="s2">&quot;standard&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;dssp&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/ubuntu/isambard/dependencies_for_isambard/dssp/dssp-2.0.4&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;reduce&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;folder&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/ubuntu/isambard/dependencies_for_isambard/reduce&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/ubuntu/isambard/dependencies_for_isambard/reduce/reduce.3.23.130521.linuxi386&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;scwrl&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/ubuntu/isambard/Scwrl4&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;rigid_rotamer_model&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">settings_path</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cci_settings</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)))</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="get_user_path"><a class="viewcode-back" href="../../isambard.configure.html#isambard.configure.get_user_path">[docs]</a><span class="k">def</span> <span class="nf">get_user_path</span><span class="p">(</span><span class="n">input_messege</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">good_path</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">f_input_mess</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{OK_BLUE}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">input_messege</span><span class="p">,</span> <span class="s1">&#39; Tab completion enabled:</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f_input_mess</span><span class="p">)</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">good_path</span><span class="p">:</span>
+        <span class="n">ui_path</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">ui_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{WARNING}</span><span class="s1">Path required for core ISAMBARD functionality.</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">ui_path</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>  <span class="c1"># Convert relative paths to absolute</span>
+            <span class="n">good_path</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{WARNING}</span><span class="s1">Path does not exist.</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+            <span class="n">force_continue</span> <span class="o">=</span> <span class="n">get_user_option</span><span class="p">(</span><span class="s1">&#39;Use this path anyway?&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Yes&#39;</span><span class="p">,</span> <span class="s1">&#39;No&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">force_continue</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">ui_path</span>
+                <span class="n">good_path</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Path set to &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="get_user_option"><a class="viewcode-back" href="../../isambard.configure.html#isambard.configure.get_user_option">[docs]</a><span class="k">def</span> <span class="nf">get_user_option</span><span class="p">(</span><span class="n">input_message</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="n">good_option</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">option_strings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">option</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+        <span class="n">option_str</span> <span class="o">=</span> <span class="s1">&#39;[</span><span class="si">{}</span><span class="s1">] </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">option</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>  <span class="c1"># Adjust indices to make more convenient</span>
+        <span class="n">option_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">option_str</span><span class="p">)</span>
+    <span class="n">f_input_mess</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+        <span class="s1">&#39;</span><span class="si">{OK_BLUE}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">input_message</span><span class="p">,</span> <span class="s1">&#39; Use a number to select an option:</span><span class="se">\n</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">option_strings</span><span class="p">)])</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">text_colours</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f_input_mess</span><span class="p">)</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">good_option</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">option_choice</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">option_choice</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)):</span>
+                <span class="n">good_option</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">good_option</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{WARNING}</span><span class="s1">Option not recognised, please use the number for the listed option.</span><span class="si">{END_C}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="o">**</span><span class="n">text_colours</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">options</span><span class="p">[</span><span class="n">option_choice</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">argparse</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Generates configuration files required to you certain features of ISAMBARD.&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="s1">&#39;--basic&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Adds only the core functionality.&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--overwrite&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Overwrites existing configuration files.&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-C&#39;</span><span class="p">,</span> <span class="s1">&#39;--circleci&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generates settings for circleci.&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">main</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

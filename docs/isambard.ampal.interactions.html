@@ -1,0 +1,512 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.interactions module &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="index.html"/>
+        <link rel="up" title="isambard.ampal package" href="isambard.ampal.html"/>
+        <link rel="next" title="isambard.ampal.ligands module" href="isambard.ampal.ligands.html"/>
+        <link rel="prev" title="isambard.ampal.base_ampal module" href="isambard.ampal.base_ampal.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api_reference.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="isambard.ampal.html">isambard.ampal package</a> &raquo;</li>
+        
+      <li>isambard.ampal.interactions module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/isambard.ampal.interactions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-isambard.ampal.interactions">
+<span id="isambard-ampal-interactions-module"></span><h1>isambard.ampal.interactions module<a class="headerlink" href="#module-isambard.ampal.interactions" title="Permalink to this headline">¶</a></h1>
+<p>Contains code for analysing chemical interactions in AMPAL objects.</p>
+<dl class="class">
+<dt id="isambard.ampal.interactions.CovalentBond">
+<em class="property">class </em><code class="descname">CovalentBond</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>dist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/interactions.html#CovalentBond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.interactions.CovalentBond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#isambard.ampal.interactions.Interaction" title="isambard.ampal.interactions.Interaction"><code class="xref py py-class docutils literal"><span class="pre">isambard.ampal.interactions.Interaction</span></code></a></p>
+<p>Defines a covalent bond.</p>
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.CovalentBond.a">
+<code class="descname">a</code><a class="headerlink" href="#isambard.ampal.interactions.CovalentBond.a" title="Permalink to this definition">¶</a></dt>
+<dd><p>One <cite>Atom</cite> involved in the covalent bond.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.CovalentBond.b">
+<code class="descname">b</code><a class="headerlink" href="#isambard.ampal.interactions.CovalentBond.b" title="Permalink to this definition">¶</a></dt>
+<dd><p>One <cite>Atom</cite> involved in the covalent bond.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.ampal.interactions.HydrogenBond">
+<em class="property">class </em><code class="descname">HydrogenBond</code><span class="sig-paren">(</span><em>donor</em>, <em>acceptor</em>, <em>dist</em>, <em>ang_d</em>, <em>ang_a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/interactions.html#HydrogenBond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.interactions.HydrogenBond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#isambard.ampal.interactions.NonCovalentInteraction" title="isambard.ampal.interactions.NonCovalentInteraction"><code class="xref py py-class docutils literal"><span class="pre">isambard.ampal.interactions.NonCovalentInteraction</span></code></a></p>
+<p>Defines a hydrogen bond in terms of a donor and an acceptor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>donor</strong> (<em>ampal.Atom</em>) – The donor <cite>Atom</cite> in the interaction.</li>
+<li><strong>acceptor</strong> (<em>ampal.Atom</em>) – The acceptor atom in the interaction.</li>
+<li><strong>dist</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – The distance between <cite>Atom</cite> <cite>a</cite> and <cite>b</cite>.</li>
+<li><strong>ang_a</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Angle between the acceptor and the interaction vector.</li>
+<li><strong>ang_d</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Angle between the donor and the interaction vector.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.HydrogenBond.donor">
+<code class="descname">donor</code><a class="headerlink" href="#isambard.ampal.interactions.HydrogenBond.donor" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ampal.Atom</em> – The donor <cite>Atom</cite> in the interaction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.HydrogenBond.acceptor">
+<code class="descname">acceptor</code><a class="headerlink" href="#isambard.ampal.interactions.HydrogenBond.acceptor" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ampal.Atom</em> – The acceptor atom in the interaction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.HydrogenBond.dist">
+<code class="descname">dist</code><a class="headerlink" href="#isambard.ampal.interactions.HydrogenBond.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The distance between <cite>Atom</cite> <cite>a</cite> and <cite>b</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.HydrogenBond.ang_a">
+<code class="descname">ang_a</code><a class="headerlink" href="#isambard.ampal.interactions.HydrogenBond.ang_a" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Angle between the acceptor and the interaction vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.HydrogenBond.ang_d">
+<code class="descname">ang_d</code><a class="headerlink" href="#isambard.ampal.interactions.HydrogenBond.ang_d" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Angle between the donor and the interaction vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.HydrogenBond.acceptor_monomer">
+<code class="descname">acceptor_monomer</code><a class="headerlink" href="#isambard.ampal.interactions.HydrogenBond.acceptor_monomer" title="Permalink to this definition">¶</a></dt>
+<dd><p>The acceptor <cite>Monomer</cite> in the interaction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.HydrogenBond.donor_monomer">
+<code class="descname">donor_monomer</code><a class="headerlink" href="#isambard.ampal.interactions.HydrogenBond.donor_monomer" title="Permalink to this definition">¶</a></dt>
+<dd><p>The donor <cite>Monomer</cite> in the interaction.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.ampal.interactions.Interaction">
+<em class="property">class </em><code class="descname">Interaction</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>dist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/interactions.html#Interaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.interactions.Interaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A container for all types of interaction with donor and acceptor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>a</strong> (<em>ampal.Atom</em>) – A member of a pairwise interaction.</li>
+<li><strong>b</strong> (<em>ampal.Atom</em>) – A member of a pairwise interaction.</li>
+<li><strong>dist</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – The distance between <cite>a</cite> and <cite>b</cite>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.Interaction.a">
+<code class="descname">a</code><a class="headerlink" href="#isambard.ampal.interactions.Interaction.a" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ampal.Atom</em> – A member of a pairwise interaction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.Interaction.b">
+<code class="descname">b</code><a class="headerlink" href="#isambard.ampal.interactions.Interaction.b" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ampal.Atom</em> – A member of a pairwise interaction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.Interaction.dist">
+<code class="descname">dist</code><a class="headerlink" href="#isambard.ampal.interactions.Interaction.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The distance between <cite>Atom</cite> <cite>a</cite> and <cite>b</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.ampal.interactions.NonCovalentInteraction">
+<em class="property">class </em><code class="descname">NonCovalentInteraction</code><span class="sig-paren">(</span><em>donor</em>, <em>acceptor</em>, <em>dist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/interactions.html#NonCovalentInteraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.interactions.NonCovalentInteraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#isambard.ampal.interactions.Interaction" title="isambard.ampal.interactions.Interaction"><code class="xref py py-class docutils literal"><span class="pre">isambard.ampal.interactions.Interaction</span></code></a></p>
+<p>A container for all non-covalent interaction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>donor</strong> (<em>ampal.Atom</em>) – The donor <cite>Atom</cite> in the interaction.</li>
+<li><strong>acceptor</strong> (<em>ampal.Atom</em>) – The acceptor atom in the interaction.</li>
+<li><strong>dist</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – The distance between <cite>Atom</cite> <cite>a</cite> and <cite>b</cite>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.NonCovalentInteraction.donor">
+<code class="descname">donor</code><a class="headerlink" href="#isambard.ampal.interactions.NonCovalentInteraction.donor" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ampal.Atom</em> – The donor <cite>Atom</cite> in the interaction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.NonCovalentInteraction.acceptor">
+<code class="descname">acceptor</code><a class="headerlink" href="#isambard.ampal.interactions.NonCovalentInteraction.acceptor" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ampal.Atom</em> – The acceptor atom in the interaction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.interactions.NonCovalentInteraction.dist">
+<code class="descname">dist</code><a class="headerlink" href="#isambard.ampal.interactions.NonCovalentInteraction.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The distance between <cite>Atom</cite> <cite>a</cite> and <cite>b</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">acceptor</code></dt>
+<dd><p>The acceptor in the interaction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">donor</code></dt>
+<dd><p>The donor <cite>Atom</cite> in the interaction.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.ampal.interactions.covalent_bonds">
+<code class="descname">covalent_bonds</code><span class="sig-paren">(</span><em>atoms</em>, <em>threshold=1.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/interactions.html#covalent_bonds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.interactions.covalent_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the covalent bonds in a list of <cite>Atom</cite> pairs.</p>
+<p class="rubric">Notes</p>
+<p>Uses information <cite>element_data</cite>, which can be accessed directly
+through this module i.e. <cite>isambard.ampal.interactions.element_data</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atoms</strong> ([(<cite>Atom</cite>, <cite>Atom</cite>)]) – List of pairs of <cite>Atoms</cite>.</li>
+<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Allows deviation from ideal covalent bond distance to be included.
+For example, a value of 1.1 would allow interactions up to 10% further
+from the ideal distance to be included.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.ampal.interactions.find_covalent_bonds">
+<code class="descname">find_covalent_bonds</code><span class="sig-paren">(</span><em>ampal</em>, <em>max_range=2.2</em>, <em>threshold=1.1</em>, <em>tag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/interactions.html#find_covalent_bonds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.interactions.find_covalent_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all covalent bonds in the AMPAL object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ampal</strong> (<em>AMPAL Object</em>) – Any AMPAL object with a <cite>get_atoms</cite> method.</li>
+<li><strong>max_range</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Used to define the sector size, so interactions at longer ranges
+will not be found.</li>
+<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Allows deviation from ideal covalent bond distance to be included.
+For example, a value of 1.1 would allow interactions up to 10% further
+from the ideal distance to be included.</li>
+<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, will add the covalent bond to the tags dictionary of
+each <cite>Atom</cite> involved in the interaction under the <cite>covalent_bonds</cite>
+key.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.ampal.interactions.generate_bond_subgraphs_from_break">
+<code class="descname">generate_bond_subgraphs_from_break</code><span class="sig-paren">(</span><em>bond_graph</em>, <em>atom1</em>, <em>atom2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/interactions.html#generate_bond_subgraphs_from_break"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.interactions.generate_bond_subgraphs_from_break" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits the bond graph between two atoms to producing subgraphs.</p>
+<p class="rubric">Notes</p>
+<p>This will not work if there are cycles in the bond graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bond_graph</strong> (<em>networkx.Graph</em>) – Graph of covalent bond network</li>
+<li><strong>atom1</strong> (<em>isambard.ampal.Atom</em>) – First atom in the bond.</li>
+<li><strong>atom2</strong> (<em>isambard.ampal.Atom</em>) – Second atom in the bond.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>subgraphs</strong> – A list of subgraphs generated when a bond is broken in the covalent
+bond network.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">[networkx.Graph]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.ampal.interactions.generate_covalent_bond_graph">
+<code class="descname">generate_covalent_bond_graph</code><span class="sig-paren">(</span><em>covalent_bonds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/interactions.html#generate_covalent_bond_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.interactions.generate_covalent_bond_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a graph of the covalent bond network described by the interactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>covalent_bonds</strong> (<em>[</em><a class="reference internal" href="#isambard.ampal.interactions.CovalentBond" title="isambard.ampal.interactions.CovalentBond"><em>CovalentBond</em></a><em>]</em>) – List of <cite>CovalentBond</cite>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bond_graph</strong> – A graph of the covalent bond network.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.Graph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="isambard.ampal.ligands.html" class="btn btn-neutral float-right" title="isambard.ampal.ligands module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="isambard.ampal.base_ampal.html" class="btn btn-neutral" title="isambard.ampal.base_ampal module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

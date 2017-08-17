@@ -1,0 +1,634 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.tools.file_parsing &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.tools.file_parsing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.tools.file_parsing</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">bs4</span> <span class="k">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">parmed</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
+<span class="kn">from</span> <span class="nn">urllib.error</span> <span class="k">import</span> <span class="n">URLError</span>
+
+
+<div class="viewcode-block" id="dict_from_mmcif"><a class="viewcode-back" href="../../../isambard.tools.file_parsing.html#isambard.tools.file_parsing.dict_from_mmcif">[docs]</a><span class="k">def</span> <span class="nf">dict_from_mmcif</span><span class="p">(</span><span class="n">mmcif</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse mmcif file into a dictionary.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Full list of keys/value types, and further information on them can be viewed here:</span>
+<span class="sd">            http://mmcif.wwpdb.org/docs/pdb_to_pdbx_correspondences.html</span>
+<span class="sd">    All values in the returned dict are str or list(str).</span>
+<span class="sd">    This means that some of the data values are string representations of integers</span>
+<span class="sd">    - parse these outside of this function if desired.</span>
+<span class="sd">    An alternative approach to this can be found in Biopython (via the function Bio.PDB.MMCIF2Dict.MMCIF2Dict).</span>
+<span class="sd">    mmcif files are subject to the usual &quot;here be dragons&quot; problems of the PDB and difficult file formats.</span>
+<span class="sd">    As such, this function is likely to be in a permanent state of flux as more dragons are found.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mmcif : str</span>
+<span class="sd">        mmcif string or a path to an mmcif file.</span>
+<span class="sd">    path : bool</span>
+<span class="sd">        True if mmcif is a path.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cif_data : dict</span>
+<span class="sd">        Keys are cif data names, e.g. &#39;_struct_keywords.text&#39;.</span>
+<span class="sd">        Values are str or list(str).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mmcif</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">foo</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">mmcif</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+
+    <span class="c1"># Some of the data in a .cif files are stored between &#39;loop_&#39; to initiate a loop, and &#39;#&#39; to terminate it.</span>
+    <span class="c1"># The variable &#39;loop&#39; is a flag to keep track of this behaviour.</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Set up the dictionary to populate as the lines of the .cif file are iterated over.</span>
+    <span class="n">cif_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># hash signifies end of a loop. Ensure loop flag is set to False.</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+            <span class="n">loop</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">loop</span><span class="p">:</span>
+            <span class="c1"># This line initiates a loop section, in which keys are listed first,</span>
+            <span class="c1"># followed by lines of data in which the values are listed in the same order as the above keys.</span>
+            <span class="c1"># The values in the loop section will be stored as lists - there are multiple values for one key.</span>
+            <span class="c1"># An example of this type of data is the &#39;REVDAT&#39; section, which stores details on the (potentially</span>
+            <span class="c1"># numerous) various revisions made to the PDB file during its history.</span>
+
+            <span class="k">if</span> <span class="n">line</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;loop_&#39;</span><span class="p">:</span>
+                <span class="n">loop</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">key_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Lines beginning with &#39;_&#39; start with data names, i.e. keys in the cif_data dictionary.</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;_&#39;</span><span class="p">:</span>
+                <span class="c1"># If line consists only of a key, then subsequent lines may contain the associated value.</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">current_key</span> <span class="o">=</span> <span class="n">line</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="c1"># Look forward until a key is found, keeping count of the number of lines in between.</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">count</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span><span class="p">:</span>
+                                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                            <span class="c1"># prevent infinite loop.</span>
+                            <span class="k">elif</span> <span class="n">i</span> <span class="o">+</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+                                <span class="k">break</span>
+
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                                    <span class="k">try</span><span class="p">:</span>
+                                        <span class="n">cif_data</span><span class="p">[</span><span class="n">current_key</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">count</span><span class="p">])</span>
+                                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                                        <span class="n">cif_data</span><span class="p">[</span><span class="n">current_key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">cif_data</span><span class="p">[</span><span class="n">current_key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                                <span class="k">break</span>
+                        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                            <span class="k">break</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Simplest case. Line is a key-value pair, with the key identified by its first character, &#39;_&#39;.</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">cif_data</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                        <span class="n">cif_data</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># Line is one of multiple lines that are combined into a value in the while True: loop above.</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Within a loop section, keys are identified by their first character &#39;_&#39;.</span>
+            <span class="c1"># Add them to the list of keys in the loop.</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;_&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">key_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">line</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cif_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">cif_data</span><span class="p">[</span><span class="n">line</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Within a loop section, the values are listed within a single space-separated line in the same order</span>
+            <span class="c1"># that the keys were listed at the start of the loop.</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Cannot do a simple split if any of the values themselves are strings containing at least one space.</span>
+                <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">line_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">line_parts</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">line_parts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+                                <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>
+
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()):</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                        <span class="n">cif_data</span><span class="p">[</span><span class="n">key_list</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># CURRENTLY THERE IS A PROBLEM WITH REALLY LONG LOOPS eg _pdbx_refine_tls*, _pdbx_struct_oper_list*</span>
+                    <span class="c1"># The values span multiple lines, and therefore do not satisfy</span>
+                    <span class="c1"># the condition of the above &#39;if&#39; statement.</span>
+                    <span class="c1"># A correction for this needs to keep track of the value count on subsequent lines,</span>
+                    <span class="c1"># until the &#39;if&#39; condition is met.</span>
+                    <span class="k">continue</span>
+
+    <span class="k">return</span> <span class="n">cif_data</span></div>
+
+
+<div class="viewcode-block" id="get_protein_dict"><a class="viewcode-back" href="../../../isambard.tools.file_parsing.html#isambard.tools.file_parsing.get_protein_dict">[docs]</a><span class="k">def</span> <span class="nf">get_protein_dict</span><span class="p">(</span><span class="n">cif_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse cif_data dict for a subset of its data.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    cif_data dict contains all the data from the .cif file, with values as strings.</span>
+<span class="sd">    This function returns a more &#39;human readable&#39; dictionary of key-value pairs.</span>
+<span class="sd">    The keys have simpler (and still often more descriptive!) names, and the values are not restricted to being strings.</span>
+<span class="sd">    To add more key-value pairs to the protein_dict, follow the patterns used in this function.</span>
+<span class="sd">    Add the key and youre name for it to mmcif_data_names.</span>
+<span class="sd">    Will it need further parsing, like with the dates in the function below?</span>
+<span class="sd">    If the value is not a string, add it to a list of data-types at the end of the function.</span>
+<span class="sd">    More information on what key-value pairs can be obtained can be gleaned by examining cif_data and/or by viewing the</span>
+<span class="sd">    mmcif resource on the PDB website: http://mmcif.wwpdb.org/docs/pdb_to_pdbx_correspondences.html</span>
+<span class="sd">    WARNING: Do not alter the keys of protein_dict without caution.</span>
+<span class="sd">    The keys of protein_dict MUST match the column names of the Protein model in the protgraph database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cif_data : dict</span>
+<span class="sd">        Key/value pairs taken directly from a .cif file.</span>
+<span class="sd">        Output of the function dict_from_mmcif.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    protein_dict : dict</span>
+<span class="sd">        A dictionary containing a parsed subset of the data in cif_data.</span>
+<span class="sd">        The keys have the same name as fields in the Protein model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Dictionary relating the keys of protein_dict (column names in Protein model) to the keys of cif_data.</span>
+    <span class="n">mmcif_data_names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;keywords&#39;</span><span class="p">:</span> <span class="s1">&#39;_struct_keywords.text&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="s1">&#39;_struct_keywords.pdbx_keywords&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;space_group&#39;</span><span class="p">:</span> <span class="s1">&#39;_symmetry.space_group_name_H-M&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;experimental_method&#39;</span><span class="p">:</span> <span class="s1">&#39;_exptl.method&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;crystal_growth&#39;</span><span class="p">:</span> <span class="s1">&#39;_exptl_crystal_grow.pdbx_details&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;resolution&#39;</span><span class="p">:</span> <span class="s1">&#39;_refine.ls_d_res_high&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;r_value_obs&#39;</span><span class="p">:</span> <span class="s1">&#39;_refine.ls_R_factor_obs&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;atoms_protein&#39;</span><span class="p">:</span> <span class="s1">&#39;_refine_hist.pdbx_number_atoms_protein&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;atoms_solvent&#39;</span><span class="p">:</span> <span class="s1">&#39;_refine_hist.number_atoms_solvent&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;atoms_ligand&#39;</span><span class="p">:</span> <span class="s1">&#39;_refine_hist.pdbx_number_atoms_ligand&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;atoms_nucleic_acid&#39;</span><span class="p">:</span> <span class="s1">&#39;_refine_hist.pdbx_number_atoms_nucleic_acid&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;atoms_total&#39;</span><span class="p">:</span> <span class="s1">&#39;_refine_hist.number_atoms_total&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;_struct.title&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pdb_descriptor&#39;</span><span class="p">:</span> <span class="s1">&#39;_struct.pdbx_descriptor&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;model_details&#39;</span><span class="p">:</span> <span class="s1">&#39;_struct.pdbx_model_details&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;casp_flag&#39;</span><span class="p">:</span> <span class="s1">&#39;_struct.pdbx_CASP_flag&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;model_type_details&#39;</span><span class="p">:</span> <span class="s1">&#39;_struct.pdbx_model_type_details&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ncbi_taxonomy&#39;</span><span class="p">:</span> <span class="s1">&#39;_entity_src_nat.pdbx_ncbi_taxonomy_id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ncbi_taxonomy_gene&#39;</span><span class="p">:</span> <span class="s1">&#39;_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ncbi_taxonomy_host_org&#39;</span><span class="p">:</span> <span class="s1">&#39;_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Set up initial protein_dict.</span>
+    <span class="n">protein_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">cif_name</span> <span class="ow">in</span> <span class="n">mmcif_data_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">cif_data</span><span class="p">[</span><span class="n">cif_name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="c1"># These entries are modified from the mmcif dictionary.</span>
+    <span class="c1"># There may be many revision dates in cif_data. We save the original deposition, release and last_modified dates.</span>
+    <span class="c1"># If there are many dates, they will be in a list in cif_data, otherwise it&#39;s one date in a string</span>
+    <span class="c1"># Is there a tidier way to do this?</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cif_data</span><span class="p">[</span><span class="s1">&#39;_database_PDB_rev.date_original&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;deposition_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cif_data</span><span class="p">[</span><span class="s1">&#39;_database_PDB_rev.date_original&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;deposition_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cif_data</span><span class="p">[</span><span class="s1">&#39;_database_PDB_rev.date_original&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cif_data</span><span class="p">[</span><span class="s1">&#39;_database_PDB_rev.date&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;release_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cif_data</span><span class="p">[</span><span class="s1">&#39;_database_PDB_rev.date&#39;</span><span class="p">]</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;last_modified_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cif_data</span><span class="p">[</span><span class="s1">&#39;_database_PDB_rev.date&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;release_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cif_data</span><span class="p">[</span><span class="s1">&#39;_database_PDB_rev.date&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;last_modified_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cif_data</span><span class="p">[</span><span class="s1">&#39;_database_PDB_rev.date&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># crystal_growth should be a string or None</span>
+    <span class="n">crystal_growth</span> <span class="o">=</span> <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;crystal_growth&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">crystal_growth</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">crystal_growth</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;crystal_growth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">crystal_growth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">protein_dict</span><span class="p">[</span><span class="s1">&#39;crystal_growth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># taxonomy data types should be ints, not lists</span>
+    <span class="n">taxonomy_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ncbi_taxonomy&#39;</span><span class="p">,</span> <span class="s1">&#39;ncbi_taxonomy_gene&#39;</span><span class="p">,</span> <span class="s1">&#39;ncbi_taxonomy_host_org&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">taxonomy_key</span> <span class="ow">in</span> <span class="n">taxonomy_keys</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">protein_dict</span><span class="p">[</span><span class="n">taxonomy_key</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">protein_dict</span><span class="p">[</span><span class="n">taxonomy_key</span><span class="p">])</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">protein_dict</span><span class="p">[</span><span class="n">taxonomy_key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">protein_dict</span><span class="p">[</span><span class="n">taxonomy_key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="ow">or</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="n">protein_dict</span><span class="p">[</span><span class="n">taxonomy_key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Convert data types from strings to their correct data type.</span>
+    <span class="n">ints</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;atoms_ligand&#39;</span><span class="p">,</span> <span class="s1">&#39;atoms_nucleic_acid&#39;</span><span class="p">,</span> <span class="s1">&#39;atoms_protein&#39;</span><span class="p">,</span> <span class="s1">&#39;atoms_solvent&#39;</span><span class="p">,</span> <span class="s1">&#39;atoms_total&#39;</span><span class="p">]</span>
+    <span class="n">floats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r_value_obs&#39;</span><span class="p">,</span> <span class="s1">&#39;resolution&#39;</span><span class="p">]</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;deposition_date&#39;</span><span class="p">,</span> <span class="s1">&#39;release_date&#39;</span><span class="p">,</span> <span class="s1">&#39;last_modified_date&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">protein_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s1">&#39;?&#39;</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+                <span class="n">protein_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ints</span><span class="p">:</span>
+                <span class="n">protein_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">floats</span><span class="p">:</span>
+                <span class="n">protein_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">:</span>
+                <span class="n">protein_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># Parse awkward strings from cif_data.</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;loop_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; # &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">:</span>
+                    <span class="n">protein_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">protein_dict</span></div>
+
+
+<div class="viewcode-block" id="get_protein_dict_from_parmed"><a class="viewcode-back" href="../../../isambard.tools.file_parsing.html#isambard.tools.file_parsing.get_protein_dict_from_parmed">[docs]</a><span class="k">def</span> <span class="nf">get_protein_dict_from_parmed</span><span class="p">(</span><span class="n">cif_file</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">parmed</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">CIFFile</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">cif_file</span><span class="p">,</span> <span class="n">skip_bonds</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">protein_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;keywords&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">keywords</span><span class="p">,</span>
+        <span class="s1">&#39;space group&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">space_group</span><span class="p">,</span>
+        <span class="s1">&#39;experimental_method&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">experimental</span><span class="p">,</span>
+        <span class="s1">&#39;resolution&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span>
+        <span class="s1">&#39;atoms_total&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">atoms</span><span class="p">),</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+        <span class="s1">&#39;journal&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">journal</span><span class="p">,</span>
+        <span class="s1">&#39;authors&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">authors</span><span class="p">,</span>
+        <span class="s1">&#39;journal_year&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+        <span class="s1">&#39;journal_volume&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
+        <span class="s1">&#39;journal_volume_page&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">volume_page</span><span class="p">,</span>
+        <span class="s1">&#39;journal_page&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">page</span><span class="p">,</span>
+        <span class="s1">&#39;doi&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">doi</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">protein_dict</span></div>
+
+
+<div class="viewcode-block" id="parse_PISCES_output"><a class="viewcode-back" href="../../../isambard.tools.file_parsing.html#isambard.tools.file_parsing.parse_PISCES_output">[docs]</a><span class="k">def</span> <span class="nf">parse_PISCES_output</span><span class="p">(</span><span class="n">pisces_output</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Takes the output list of a PISCES cull and returns in a usable dictionary.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Designed for outputs of protein sequence redundancy culls conducted using the PISCES server.</span>
+<span class="sd">    http://dunbrack.fccc.edu/PISCES.php</span>
+<span class="sd">    G. Wang and R. L. Dunbrack, Jr. PISCES: a protein sequence culling server. Bioinformatics, 19:1589-1591, 2003.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pisces_output : str or path</span>
+<span class="sd">        Output list of non-redundant protein chains from PISCES, or path to text file.</span>
+<span class="sd">    path : bool</span>
+<span class="sd">        True if path given rather than string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pisces_dict : dict</span>
+<span class="sd">        Data output by PISCES in dictionary form.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pisces_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">pisces_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pisces_output</span><span class="p">)</span>
+        <span class="n">pisces_content</span> <span class="o">=</span> <span class="n">pisces_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pisces_content</span> <span class="o">=</span> <span class="n">pisces_output</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">pisces_content</span><span class="p">:</span>
+        <span class="n">pdb</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">chain</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pdb_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s1">&#39;resolution&#39;</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="s1">&#39;R-factor&#39;</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;R-free&#39;</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">5</span><span class="p">]}</span>
+        <span class="k">if</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">pisces_dict</span><span class="p">:</span>
+            <span class="n">pisces_dict</span><span class="p">[</span><span class="n">pdb</span><span class="p">][</span><span class="s1">&#39;chains&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chain</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdb_dict</span><span class="p">[</span><span class="s1">&#39;chains&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain</span><span class="p">]</span>
+            <span class="n">pisces_dict</span><span class="p">[</span><span class="n">pdb</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdb_dict</span>
+    <span class="k">return</span> <span class="n">pisces_dict</span></div>
+
+
+<div class="viewcode-block" id="download_decode"><a class="viewcode-back" href="../../../isambard.tools.file_parsing.html#isambard.tools.file_parsing.download_decode">[docs]</a><span class="k">def</span> <span class="nf">download_decode</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Downloads data from URL and returns decoded contents.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading data from &quot;</span> <span class="o">+</span> <span class="n">URL</span><span class="p">)</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">u</span><span class="p">:</span>
+            <span class="n">decoded_file</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">URLError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s1">&#39;reason&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Server could not be reached.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reason: &#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s1">&#39;code&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The server couldn</span><span class="se">\&#39;</span><span class="s1">t fulfill the request.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error code: &#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">decoded_file</span></div>
+
+
+<div class="viewcode-block" id="olderado_best_model"><a class="viewcode-back" href="../../../isambard.tools.file_parsing.html#isambard.tools.file_parsing.olderado_best_model">[docs]</a><span class="k">def</span> <span class="nf">olderado_best_model</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Checks the Olderado web server and returns the most representative conformation for PDB NMR structures.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses OLDERADO from the EBI.</span>
+<span class="sd">    See http://www.ebi.ac.uk/pdbe/nmr/olderado/ and citations therein.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pdb_id : str</span>
+<span class="sd">        The 4-character PDB code for the NMR structure of interest.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    model_no : int</span>
+<span class="sd">        The conformation number of the most-representative conformation.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the model number it finds is not an integer. This might indicate that the website format has changed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pdb_code</span> <span class="o">=</span> <span class="n">pdb_id</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">olderado_url</span> <span class="o">=</span> <span class="s1">&#39;http://www.ebi.ac.uk/pdbe/nmr/olderado/searchEntry?pdbCode=&#39;</span> <span class="o">+</span> <span class="n">pdb_code</span>
+    <span class="n">olderado_page</span> <span class="o">=</span> <span class="n">download_decode</span><span class="p">(</span><span class="n">olderado_url</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">olderado_page</span><span class="p">:</span>
+        <span class="n">parsed_page</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">olderado_page</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">best_model</span> <span class="o">=</span> <span class="n">parsed_page</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No model info could be found for </span><span class="si">{0}</span><span class="s2"> - ensure that it&#39;s an NMR structure.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">model_no</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">best_model</span><span class="o">.</span><span class="n">string</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">v</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Did not find a number for best model.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">model_no</span></div>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jack W. Heal, Kieran L. Hudson&#39;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.pseudo_atoms &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.ampal.pseudo_atoms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.ampal.pseudo_atoms</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Contains AMPAL objects representing pseudo atoms.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">ampal.base_ampal</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Monomer</span><span class="p">,</span> <span class="n">Polymer</span><span class="p">,</span> <span class="n">write_pdb</span>
+<span class="kn">from</span> <span class="nn">tools.geometry</span> <span class="k">import</span> <span class="n">distance</span><span class="p">,</span> <span class="n">radius_of_circumcircle</span>
+
+
+<div class="viewcode-block" id="PseudoGroup"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.PseudoGroup">[docs]</a><span class="k">class</span> <span class="nc">PseudoGroup</span><span class="p">(</span><span class="n">Polymer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Container for `PseudoMonomer`, inherits from `Polymer`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    monomers : PseudoAtom or [PseudoGroup], optional</span>
+<span class="sd">        `PseudoMonomer` or list containing `PseudoMonomer` objects to form the</span>
+<span class="sd">        `PseudoGroup`.</span>
+<span class="sd">    polymer_id : str, optional</span>
+<span class="sd">        An ID that the user can use to identify the `PseudoGroup`. This is</span>
+<span class="sd">        used when generating a pdb file using `PseudoGroup().pdb`.</span>
+<span class="sd">    ampal_parent : ampal.Assembly, optional</span>
+<span class="sd">        Reference to `Assembly` containing the `PseudoGroup`.</span>
+<span class="sd">    sl : int, optional</span>
+<span class="sd">        The default smoothing level used when calculating the</span>
+<span class="sd">        backbone primitive.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id : str</span>
+<span class="sd">        `PseudoGroup` ID</span>
+<span class="sd">    ampal_parent : ampal.Assembly or None</span>
+<span class="sd">        Reference to `Assembly` containing the `PseudoGroup`</span>
+<span class="sd">    molecule_type : str</span>
+<span class="sd">        A description of the type of `Polymer` i.e. Protein, DNA etc.</span>
+<span class="sd">    ligands : ampal.LigandGroup</span>
+<span class="sd">        A `LigandGroup` containing all the `Ligands` associated with this</span>
+<span class="sd">        `PseudoGroup` chain.</span>
+<span class="sd">    tags : dict</span>
+<span class="sd">        A dictionary containing information about this AMPAL object.</span>
+<span class="sd">        The tags dictionary is used by AMPAL to cache information</span>
+<span class="sd">        about this object, but is also intended to be used by users</span>
+<span class="sd">        to store any relevant information they have.</span>
+<span class="sd">    sl : int</span>
+<span class="sd">        The default smoothing level used when calculating the</span>
+<span class="sd">        backbone primitive.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        `Polymer` type objects can only be initialised empty or using</span>
+<span class="sd">        a `Monomer`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monomers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">monomers</span><span class="o">=</span><span class="n">monomers</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="n">polymer_id</span><span class="p">,</span>
+            <span class="n">molecule_type</span><span class="o">=</span><span class="s1">&#39;pseudo_group&#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="n">sl</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;PseudoGroup chain containing </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">),</span>
+            <span class="s1">&#39;PseudoMonomer&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;PseudoMonomers&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PseudoMonomer"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.PseudoMonomer">[docs]</a><span class="k">class</span> <span class="nc">PseudoMonomer</span><span class="p">(</span><span class="n">Monomer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a collection of `PsuedoAtoms`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pseudo_atoms : OrderedDict, optional</span>
+<span class="sd">        OrderedDict containing Atoms for the `PsuedoMonomer`. OrderedDict</span>
+<span class="sd">        is used to maintain the order items were added to the</span>
+<span class="sd">        dictionary.</span>
+<span class="sd">    mol_code : str, optional</span>
+<span class="sd">        One or three letter code that represents the `PsuedoMonomer`.</span>
+<span class="sd">    monomer_id : str, optional</span>
+<span class="sd">        String used to identify the `PsuedoMonomer`.</span>
+<span class="sd">    insertion_code : str, optional</span>
+<span class="sd">        Insertion code of `PsuedoMonomer`, used if reading from pdb.</span>
+<span class="sd">    is_hetero : bool, optional</span>
+<span class="sd">        True if is a hetero atom in pdb. Helps with PDB formatting.</span>
+<span class="sd">    ampal_parent : ampal.PseudoGroup, optional</span>
+<span class="sd">        Reference to `PseudoGroup` containing the `PsuedoMonomer`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mol_code : str</span>
+<span class="sd">        PDB molecule code that represents the `Nucleotide`.</span>
+<span class="sd">    insertion_code : str</span>
+<span class="sd">        Insertion code of `Nucleotide`, used if reading from pdb.</span>
+<span class="sd">    is_hetero : bool</span>
+<span class="sd">        True if is a hetero atom in pdb. Helps with PDB formatting.</span>
+<span class="sd">    states : dict</span>
+<span class="sd">        Contains an `OrderedDicts` containing atom information for each</span>
+<span class="sd">        state available for the `Nucleotide`.</span>
+<span class="sd">    id : str</span>
+<span class="sd">        String used to identify the `Nucleotide`.</span>
+<span class="sd">    reference_atom : str</span>
+<span class="sd">        The key that corresponds to the reference `Atom`. This is used</span>
+<span class="sd">        by various functions, for example backbone primitives are</span>
+<span class="sd">        calculated using the `Atom` defined using this key.</span>
+<span class="sd">    ampal_parent : Polynucleotide or None</span>
+<span class="sd">        A reference to the `Polynucleotide` containing this `Nucleotide`.</span>
+<span class="sd">    tags : dict</span>
+<span class="sd">        A dictionary containing information about this AMPAL object.</span>
+<span class="sd">        The tags dictionary is used by AMPAL to cache information</span>
+<span class="sd">        about this object, but is also intended to be used by users</span>
+<span class="sd">        to store any relevant information they have.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised if `mol_code` is not length 1 or 3.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pseudo_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mol_code</span><span class="o">=</span><span class="s1">&#39;UNK&#39;</span><span class="p">,</span>
+                 <span class="n">monomer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">insertion_code</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PseudoMonomer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">atoms</span><span class="o">=</span><span class="n">pseudo_atoms</span><span class="p">,</span> <span class="n">monomer_id</span><span class="o">=</span><span class="n">monomer_id</span><span class="p">,</span>
+            <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span> <span class="o">=</span> <span class="n">mol_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insertion_code</span> <span class="o">=</span> <span class="n">insertion_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_hetero</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;PseudoMonomer containing </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">. PseudoMonomer code: </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">),</span> <span class="s1">&#39;PseudoAtom&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;PseudoAtoms&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates a PDB string for the `PseudoMonomer`.&quot;&quot;&quot;</span>
+        <span class="n">pdb_str</span> <span class="o">=</span> <span class="n">write_pdb</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="p">],</span> <span class="s1">&#39; &#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;chain_id&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;chain_id&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pdb_str</span></div>
+
+
+<div class="viewcode-block" id="PseudoAtom"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.PseudoAtom">[docs]</a><span class="k">class</span> <span class="nc">PseudoAtom</span><span class="p">(</span><span class="n">Atom</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Object containing 3D coordinates and name.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Used to represent pseudo atoms (e.g. centre_of_mass) in ISAMBARD.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coordinates : 3D Vector (tuple, list, numpy.array)</span>
+<span class="sd">        Position of `PseudoAtom` in 3D space.</span>
+<span class="sd">    element : str</span>
+<span class="sd">        Element of `PseudoAtom`.</span>
+<span class="sd">    atom_id : str</span>
+<span class="sd">        Identifier for `PseudoAtom`, usually a number.</span>
+<span class="sd">    res_label : str, optional</span>
+<span class="sd">        Label used in `Monomer` to refer to the `PseudoAtom` type i.e.</span>
+<span class="sd">        &quot;CA&quot; or &quot;OD1&quot;.</span>
+<span class="sd">    occupancy : float, optional</span>
+<span class="sd">        The occupancy of the `PseudoAtom`.</span>
+<span class="sd">    bfactor : float, optional</span>
+<span class="sd">        The bfactor of the `PseudoAtom`.</span>
+<span class="sd">    charge : str, optional</span>
+<span class="sd">        The point charge of the `PseudoAtom`.</span>
+<span class="sd">    state : str</span>
+<span class="sd">        The state of this `PseudoAtom`. Used to identify `PseudoAtoms`</span>
+<span class="sd">        with a number of conformations.</span>
+<span class="sd">    ampal_parent : ampal.Monomer, optional</span>
+<span class="sd">       A reference to the `Monomer` containing this `PseudoAtom`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id : str</span>
+<span class="sd">        Identifier for `PseudoAtom`, usually a number.</span>
+<span class="sd">    res_label : str</span>
+<span class="sd">        Label used in `PseudoGroup` to refer to the `Atom` type i.e. &quot;CA&quot; or &quot;OD1&quot;.</span>
+<span class="sd">    element : str</span>
+<span class="sd">        Element of `Atom`.</span>
+<span class="sd">    ampal_parent : ampal.PseudoAtom</span>
+<span class="sd">       A reference to the `PseudoGroup` containing this `PseudoAtom`.</span>
+<span class="sd">        number of conformations.</span>
+<span class="sd">    tags : dict</span>
+<span class="sd">        A dictionary containing information about this AMPAL object.</span>
+<span class="sd">        The tags dictionary is used by AMPAL to cache information</span>
+<span class="sd">        about this object, but is also intended to be used by users</span>
+<span class="sd">        to store any relevant information they have.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">occupancy</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">bfactor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">charge</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">atom_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span>
+                         <span class="n">occupancy</span><span class="o">=</span><span class="n">occupancy</span><span class="p">,</span> <span class="n">bfactor</span><span class="o">=</span><span class="n">bfactor</span><span class="p">,</span>
+                         <span class="n">charge</span><span class="o">=</span><span class="n">charge</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;&lt;PseudoAtom. Name: </span><span class="si">{}</span><span class="s2">. Coordinates: &quot;</span>
+                <span class="s2">&quot;(</span><span class="si">{:.3f}</span><span class="s2">, </span><span class="si">{:.3f}</span><span class="s2">, </span><span class="si">{:.3f}</span><span class="s2">)&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Primitive"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive">[docs]</a><span class="k">class</span> <span class="nc">Primitive</span><span class="p">(</span><span class="n">PseudoGroup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A backbone path composed of `PseudoAtoms`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pseudo_atoms : OrderedDict, optional</span>
+<span class="sd">        OrderedDict containing Atoms for the `PsuedoMonomer`. OrderedDict</span>
+<span class="sd">        is used to maintain the order items were added to the</span>
+<span class="sd">        dictionary.</span>
+<span class="sd">    mol_code : str, optional</span>
+<span class="sd">        One or three letter code that represents the `PsuedoMonomer`.</span>
+<span class="sd">    monomer_id : str, optional</span>
+<span class="sd">        String used to identify the `PsuedoMonomer`.</span>
+<span class="sd">    insertion_code : str, optional</span>
+<span class="sd">        Insertion code of `PsuedoMonomer`, used if reading from pdb.</span>
+<span class="sd">    is_hetero : bool, optional</span>
+<span class="sd">        True if is a hetero atom in pdb. Helps with PDB formatting.</span>
+<span class="sd">    ampal_parent : ampal.PseudoGroup, optional</span>
+<span class="sd">        Reference to `PseudoGroup` containing the `PsuedoMonomer`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mol_code : str</span>
+<span class="sd">        PDB molecule code that represents the `Nucleotide`.</span>
+<span class="sd">    insertion_code : str</span>
+<span class="sd">        Insertion code of `Nucleotide`, used if reading from pdb.</span>
+<span class="sd">    is_hetero : bool</span>
+<span class="sd">        True if is a hetero atom in pdb. Helps with PDB formatting.</span>
+<span class="sd">    states : dict</span>
+<span class="sd">        Contains an `OrderedDicts` containing atom information for each</span>
+<span class="sd">        state available for the `Nucleotide`.</span>
+<span class="sd">    id : str</span>
+<span class="sd">        String used to identify the `Nucleotide`.</span>
+<span class="sd">    reference_atom : str</span>
+<span class="sd">        The key that corresponds to the reference `Atom`. This is used</span>
+<span class="sd">        by various functions, for example backbone primitives are</span>
+<span class="sd">        calculated using the `Atom` defined using this key.</span>
+<span class="sd">    ampal_parent : Polynucleotide or None</span>
+<span class="sd">        A reference to the `Polynucleotide` containing this `Nucleotide`.</span>
+<span class="sd">    tags : dict</span>
+<span class="sd">        A dictionary containing information about this AMPAL object.</span>
+<span class="sd">        The tags dictionary is used by AMPAL to cache information</span>
+<span class="sd">        about this object, but is also intended to be used by users</span>
+<span class="sd">        to store any relevant information they have.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised if `mol_code` is not length 1 or 3.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monomers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">monomers</span><span class="o">=</span><span class="n">monomers</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="n">polymer_id</span><span class="p">,</span>
+            <span class="n">ampal_parent</span><span class="o">=</span><span class="n">ampal_parent</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="n">sl</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;Primitive chain containing </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">),</span>
+            <span class="s1">&#39;PseudoMonomer&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;PseudoMonomers&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Primitive.from_coordinates"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive.from_coordinates">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_coordinates</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a `Primitive` from a list of coordinates.&quot;&quot;&quot;</span>
+        <span class="n">prim</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">coordinates</span><span class="p">:</span>
+            <span class="n">pm</span> <span class="o">=</span> <span class="n">PseudoMonomer</span><span class="p">(</span><span class="n">ampal_parent</span><span class="o">=</span><span class="n">prim</span><span class="p">)</span>
+            <span class="n">pa</span> <span class="o">=</span> <span class="n">PseudoAtom</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">ampal_parent</span><span class="o">=</span><span class="n">pm</span><span class="p">)</span>
+            <span class="n">pm</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="n">pa</span><span class="p">)])</span>
+            <span class="n">prim</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pm</span><span class="p">)</span>
+        <span class="n">prim</span><span class="o">.</span><span class="n">relabel_all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">prim</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the backbone coordinates for the `Primitive`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()]</span>
+
+<div class="viewcode-block" id="Primitive.rise_per_residue"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive.rise_per_residue">[docs]</a>    <span class="k">def</span> <span class="nf">rise_per_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The rise per residue at each point on the Primitive.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Each element of the returned list is the rise per residue,</span>
+<span class="sd">        at a point on the Primitive. Element i is the distance</span>
+<span class="sd">        between primitive[i] and primitive[i + 1]. The final value</span>
+<span class="sd">        is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rprs</span> <span class="o">=</span> <span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">rprs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rprs</span></div>
+
+<div class="viewcode-block" id="Primitive.radii_of_curvature"><a class="viewcode-back" href="../../../isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive.radii_of_curvature">[docs]</a>    <span class="k">def</span> <span class="nf">radii_of_curvature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The radius of curvature at each point on the Polymer primitive.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Each element of the returned list is the radius of curvature,</span>
+<span class="sd">        at a point on the Polymer primitive. Element i is the radius</span>
+<span class="sd">        of the circumcircle formed from indices [i-1, i, i+1] of the</span>
+<span class="sd">        primitve. The first and final values are None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rocs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">rocs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">radius_of_circumcircle</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rocs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rocs</span></div></div>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jack W. Heal&#39;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.non_canonical &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.ampal.non_canonical</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.ampal.non_canonical</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Contains tools for working with non-canonical animo acids.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">tools.geometry</span> <span class="k">import</span> <span class="n">dihedral</span><span class="p">,</span> <span class="n">find_transformations</span>
+
+
+<span class="n">FILE_PATH</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">REF_PATH</span> <span class="o">=</span> <span class="n">FILE_PATH</span> <span class="o">/</span> <span class="s1">&#39;reference_ampals&#39;</span> <span class="o">/</span> <span class="s1">&#39;non_canonical_amino_acids&#39;</span>
+
+
+<div class="viewcode-block" id="convert_pro_to_hyp"><a class="viewcode-back" href="../../../isambard.ampal.non_canonical.html#isambard.ampal.non_canonical.convert_pro_to_hyp">[docs]</a><span class="k">def</span> <span class="nf">convert_pro_to_hyp</span><span class="p">(</span><span class="n">pro</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts a pro residue to a hydroxypro residue.</span>
+
+<span class="sd">    All metadata associated with the original pro will be lost i.e. tags.</span>
+<span class="sd">    As a consequence, it is advisable to relabel all atoms in the structure</span>
+<span class="sd">    in order to make them contiguous.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pro: ampal.Residue</span>
+<span class="sd">        The proline residue to be mutated to hydroxyproline.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    We can create a collagen model using isambard and convert every third</span>
+<span class="sd">    residue to hydroxyproline:</span>
+
+<span class="sd">    &gt;&gt;&gt; import isambard</span>
+<span class="sd">    &gt;&gt;&gt; col = isambard.specifications.CoiledCoil.tropocollagen(aa=21)</span>
+<span class="sd">    &gt;&gt;&gt; col.pack_new_sequences([&#39;GPPGPPGPPGPPGPPGPPGPP&#39;]*3)</span>
+<span class="sd">    &gt;&gt;&gt; to_convert = [</span>
+<span class="sd">    ...     res for (i, res) in enumerate(col.get_monomers())</span>
+<span class="sd">    ...     if not (i + 1) % 3]</span>
+<span class="sd">    &gt;&gt;&gt; for pro in to_convert:</span>
+<span class="sd">    ...     isambard.ampal.non_canonical.convert_pro_to_hyp(pro)</span>
+<span class="sd">    &gt;&gt;&gt; col.sequences</span>
+<span class="sd">    [&#39;GPXGPXGPXGPXGPXGPXGPX&#39;, &#39;GPXGPXGPXGPXGPXGPXGPX&#39;, &#39;GPXGPXGPXGPXGPXGPXGPX&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">REF_PATH</span> <span class="o">/</span> <span class="s1">&#39;hydroxyproline_ref_1bkv_0_6.pickle&#39;</span><span class="p">),</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+        <span class="n">hyp_ref</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+    <span class="n">align_nab</span><span class="p">(</span><span class="n">hyp_ref</span><span class="p">,</span> <span class="n">pro</span><span class="p">)</span>
+    <span class="n">to_remove</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">atom</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pro</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">element</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+            <span class="n">to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">to_remove</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">pro</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">hyp_ref</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pro</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">pro</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="n">pro</span><span class="o">.</span><span class="n">mol_code</span> <span class="o">=</span> <span class="s1">&#39;HYP&#39;</span>
+    <span class="n">pro</span><span class="o">.</span><span class="n">mol_letter</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
+    <span class="n">pro</span><span class="o">.</span><span class="n">is_hetero</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">pro</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pro</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">pro</span><span class="o">.</span><span class="n">atoms</span><span class="p">}</span>
+    <span class="n">pro</span><span class="o">.</span><span class="n">active_state</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">pro</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">():</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">=</span> <span class="n">pro</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bfactor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;charge&#39;</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;occupancy&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">}</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="align_nab"><a class="viewcode-back" href="../../../isambard.ampal.non_canonical.html#isambard.ampal.non_canonical.align_nab">[docs]</a><span class="k">def</span> <span class="nf">align_nab</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Aligns the N-CA and CA-CB vector of the target monomer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tar: ampal.Residue</span>
+<span class="sd">        The residue that will be aligned to the reference.</span>
+<span class="sd">    ref: ampal.Residue</span>
+<span class="sd">        The reference residue for the alignment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rot_trans_1</span> <span class="o">=</span> <span class="n">find_transformations</span><span class="p">(</span>
+        <span class="n">tar</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">tar</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+    <span class="n">apply_trans_rot</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="o">*</span><span class="n">rot_trans_1</span><span class="p">)</span>
+    <span class="n">rot_ang_ca_cb</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span><span class="n">tar</span><span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">])</span>
+    <span class="n">tar</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">rot_ang_ca_cb</span><span class="p">,</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="apply_trans_rot"><a class="viewcode-back" href="../../../isambard.ampal.non_canonical.html#isambard.ampal.non_canonical.apply_trans_rot">[docs]</a><span class="k">def</span> <span class="nf">apply_trans_rot</span><span class="p">(</span><span class="n">ampal</span><span class="p">,</span> <span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Applies a translation and rotation to an AMPAL object.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">ampal</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="n">radians</span><span class="p">)</span>
+    <span class="n">ampal</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">vector</span><span class="o">=</span><span class="n">translation</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christopher W. Wood&quot;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

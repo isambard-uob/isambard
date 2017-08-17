@@ -1,0 +1,692 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.add_ons.knobs_into_holes module &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>isambard.add_ons.knobs_into_holes module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/isambard.add_ons.knobs_into_holes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-isambard.add_ons.knobs_into_holes">
+<span id="isambard-add-ons-knobs-into-holes-module"></span><h1>isambard.add_ons.knobs_into_holes module<a class="headerlink" href="#module-isambard.add_ons.knobs_into_holes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup">
+<em class="property">class </em><code class="descname">KnobGroup</code><span class="sig-paren">(</span><em>monomers=None</em>, <em>polymer_id=' '</em>, <em>ampal_parent=None</em>, <em>cutoff=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ampal.pseudo_atoms.PseudoGroup</span></code></p>
+<p>Collection of KnobsIntoHoles interactions with associated methods.</p>
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.complementary_knobs">
+<code class="descname">complementary_knobs</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.complementary_knobs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.daisy_chain_graph">
+<code class="descname">daisy_chain_graph</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.daisy_chain_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directed graph with edges from knob residue to each hole residue for each KnobIntoHole in self.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.daisy_chains">
+<code class="descname">daisy_chains</code><span class="sig-paren">(</span><em>kih</em>, <em>max_path_length=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobGroup.daisy_chains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.daisy_chains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator for daisy chains (complementary kihs) associated with a knob.</p>
+<p class="rubric">Notes</p>
+<dl class="docutils">
+<dt>Daisy chain graph is the directed graph with edges from knob residue to each hole residue for each KnobIntoHole</dt>
+<dd>in self.</dd>
+</dl>
+<p>Given a KnobIntoHole, the daisy chains are non-trivial paths in this graph (walks along the directed edges)
+that begin and end at the knob.
+These paths must be of length  &lt;= max_path_length</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kih</strong> (<em>KnobIntoHole interaction.</em>) – </li>
+<li><strong>max_path_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a>) – Maximum length of a daisy chain.
+Defaults to number of chains in self.ampal_parent.
+This is the maximum sensible value. Larger values than this will cause slow running of this function.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.filter_graph">
+<em class="property">static </em><code class="descname">filter_graph</code><span class="sig-paren">(</span><em>g</em>, <em>cutoff=7.0</em>, <em>min_kihs=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobGroup.filter_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.filter_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get subgraph formed from edges that have max_kh_distance &lt; cutoff.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>MultiDiGraph representing KIHs</em>) – g is the output from graph_from_protein</li>
+<li><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Socket cutoff in Angstroms.
+Default is 7.0.</li>
+<li><strong>min_kihs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Minimum number of KIHs shared between all pairs of connected nodes in the graph.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">subgraph formed from edges that have max_kh_distance &lt; cutoff.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.MultiDigraph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.from_helices">
+<em class="property">classmethod </em><code class="descname">from_helices</code><span class="sig-paren">(</span><em>assembly</em>, <em>cutoff=7.0</em>, <em>min_helix_length=8</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobGroup.from_helices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.from_helices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate KnobGroup from the helices in the assembly - classic socket functionality.</p>
+<p class="rubric">Notes</p>
+<p>Socket identifies knobs-into-holes (KIHs) packing motifs in protein structures.
+The following resources can provide more information:
+The socket webserver: <a class="reference external" href="http://coiledcoils.chm.bris.ac.uk/socket/server.html">http://coiledcoils.chm.bris.ac.uk/socket/server.html</a>
+The help page: <a class="reference external" href="http://coiledcoils.chm.bris.ac.uk/socket/help.html">http://coiledcoils.chm.bris.ac.uk/socket/help.html</a>
+The original publication reference: Walshaw, J. &amp; Woolfson, D.N. (2001) J. Mol. Biol., 307 (5), 1427-1450.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>assembly</strong> (<a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly"><em>Assembly</em></a>) – </li>
+<li><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Socket cutoff in Angstroms</li>
+<li><strong>min_helix_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Minimum number of Residues in a helix considered for KIH packing.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>instance</strong> (<em>KnobGroup</em>)</li>
+<li><em>None if no helices or no kihs.</em></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.get_assigned_regions">
+<code class="descname">get_assigned_regions</code><span class="sig-paren">(</span><em>helices=None</em>, <em>include_alt_states=False</em>, <em>complementary_only=False</em>, <em>cutoff=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobGroup.get_assigned_regions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.get_assigned_regions" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>helices</strong> (<a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em>, or </em><em>subset of chains in self.ampal_parent.</em>) – If None, helices is set to self.ampal_parent.</li>
+<li><strong>include_alt_states</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, include alternate states for residues.
+If False, include only residues with a single defined state.</li>
+<li><strong>complementary_only</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Consider only KnobIntoHoles with complementary knobs.</li>
+<li><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Cutoff at which to determine complementarity.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>assigned_regions</strong> –</p>
+<dl class="docutils">
+<dt>Keys <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The helix number</p>
+</dd>
+<dt>Values <span class="classifier-delimiter">:</span> <span class="classifier">tuple(int)</span></dt>
+<dd><p class="first last">The Residue numbers of the start and end of the assigned region.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.get_coiledcoil_region">
+<code class="descname">get_coiledcoil_region</code><span class="sig-paren">(</span><em>cc_number=0</em>, <em>cutoff=7.0</em>, <em>min_kihs=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobGroup.get_coiledcoil_region"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.get_coiledcoil_region" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembly containing only assigned regions (i.e. regions with contiguous KnobsIntoHoles.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.graph">
+<code class="descname">graph</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns MultiDiGraph from kihs. Nodes are helices and edges are kihs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.add_ons.knobs_into_holes.KnobGroup.knob_subgroup">
+<code class="descname">knob_subgroup</code><span class="sig-paren">(</span><em>cutoff=7.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobGroup.knob_subgroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobGroup.knob_subgroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>KnobGroup where all KnobsIntoHoles have max_kh_distance &lt;= cutoff.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole">
+<em class="property">class </em><code class="descname">KnobIntoHole</code><span class="sig-paren">(</span><em>pseudo_atoms=None</em>, <em>mol_code='UNK'</em>, <em>monomer_id=' '</em>, <em>insertion_code=' '</em>, <em>ampal_parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobIntoHole"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ampal.pseudo_atoms.PseudoMonomer</span></code></p>
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.hole">
+<code class="descname">hole</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.hole" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.hole_chain">
+<code class="descname">hole_chain</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.hole_chain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.hole_helix">
+<code class="descname">hole_helix</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.hole_helix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.hole_residues">
+<code class="descname">hole_residues</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.hole_residues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.is_complementary">
+<code class="descname">is_complementary</code><span class="sig-paren">(</span><em>cutoff=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobIntoHole.is_complementary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.is_complementary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.is_parallel">
+<code class="descname">is_parallel</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.is_parallel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.knob">
+<code class="descname">knob</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.knob" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_chain">
+<code class="descname">knob_chain</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_chain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_end">
+<code class="descname">knob_end</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the end of the knob residue (atom in side-chain furthest from CB atom.
+Returns CA coordinates for GLY.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_helix">
+<code class="descname">knob_helix</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_helix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_residue">
+<code class="descname">knob_residue</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_residue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_type">
+<code class="descname">knob_type</code><span class="sig-paren">(</span><em>cutoff=None</em>, <em>insertion_cutoff=7.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#KnobIntoHole.knob_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.knob_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.max_kh_distance">
+<code class="descname">max_kh_distance</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.max_kh_distance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.max_knob_end_distance">
+<code class="descname">max_knob_end_distance</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.max_knob_end_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum distance between knob_end and each of the hole side-chain centres.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.packing_angle">
+<code class="descname">packing_angle</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.packing_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Angle between CA-CB of knob and CA(h1)-CA(h2). Returns None if knob is GLY.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.add_ons.knobs_into_holes.KnobIntoHole.residues">
+<code class="descname">residues</code><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole.residues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.add_ons.knobs_into_holes.cluster_helices">
+<code class="descname">cluster_helices</code><span class="sig-paren">(</span><em>helices</em>, <em>cluster_distance=12.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#cluster_helices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.cluster_helices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clusters helices according to the minimum distance between the line segments representing their backbone.</p>
+<p class="rubric">Notes</p>
+<p>Each helix is represented as a line segement joining the CA of its first Residue to the CA if its final Residue.
+The minimal distance between pairwise line segments is calculated and stored in a condensed_distance_matrix.
+This is clustered using the ‘single’ linkage metric</p>
+<blockquote>
+<div>(all members of cluster i are at &lt; cluster_distance away from at least one other member of cluster i).</div></blockquote>
+<p>Helices belonging to the same cluster are grouped together as values of the returned cluster_dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>helices</strong> (<a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly"><em>Assembly</em></a>) – </li>
+<li><strong>cluster_distance</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>cluster_dict</strong> –</p>
+<dl class="docutils">
+<dt>Keys: int</dt>
+<dd><p class="first last">cluster number</p>
+</dd>
+</dl>
+<p>Values: [Polymer]</p>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.add_ons.knobs_into_holes.find_contiguous_packing_segments">
+<code class="descname">find_contiguous_packing_segments</code><span class="sig-paren">(</span><em>polypeptide</em>, <em>residues</em>, <em>max_dist=10.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#find_contiguous_packing_segments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.find_contiguous_packing_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembly containing segments of polypeptide, divided according to separation of contiguous residues.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>polypeptide</strong> (<a class="reference internal" href="isambard.ampal.protein.html#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) – </li>
+<li><strong>residues</strong> (<em>iterable containing Residues</em>) – </li>
+<li><strong>max_dist</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Separation beyond which splitting of Polymer occurs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>segments</strong> – Each segment contains a subset of residues, each not separated by more than max_dist from the previous Residue.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly">Assembly</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.add_ons.knobs_into_holes.find_kihs">
+<code class="descname">find_kihs</code><span class="sig-paren">(</span><em>assembly</em>, <em>hole_size=4</em>, <em>cutoff=7.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#find_kihs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.find_kihs" title="Permalink to this definition">¶</a></dt>
+<dd><p>KnobIntoHoles between residues of different chains in assembly.</p>
+<p class="rubric">Notes</p>
+<p>A KnobIntoHole is a found when the side-chain centre of a Residue a chain is close than (cutoff) Angstroms from at
+least (hole_size) side-chain centres of Residues of a different chain.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>assembly</strong> (<a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly"><em>Assembly</em></a>) – </li>
+<li><strong>hole_size</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of Residues required to form each hole.</li>
+<li><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Maximum distance between the knob and each of the hole residues.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>kihs</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">[<a class="reference internal" href="#isambard.add_ons.knobs_into_holes.KnobIntoHole" title="isambard.add_ons.knobs_into_holes.KnobIntoHole">KnobIntoHole</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.add_ons.knobs_into_holes.gen_reference_primitive">
+<code class="descname">gen_reference_primitive</code><span class="sig-paren">(</span><em>polypeptide</em>, <em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#gen_reference_primitive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.gen_reference_primitive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a reference Primitive for a Polypeptide given start and end coordinates.</p>
+<p class="rubric">Notes</p>
+<p>Uses the rise_per_residue of the Polypeptide primitive to define the separation of points on the line joining
+start and end.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>polypeptide</strong> (<a class="reference internal" href="isambard.ampal.protein.html#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) – </li>
+<li><strong>start</strong> (<em>numpy.array</em>) – 3D coordinates of reference axis start</li>
+<li><strong>end</strong> (<em>numpy.array</em>) – 3D coordinates of reference axis end</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>reference_primitive</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.Primitive" title="isambard.ampal.pseudo_atoms.Primitive">Primitive</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.add_ons.knobs_into_holes.make_pymol">
+<code class="descname">make_pymol</code><span class="sig-paren">(</span><em>pdb_file</em>, <em>cutoff=7.0</em>, <em>min_kihs=2</em>, <em>outfile=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#make_pymol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.make_pymol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pymol script for viewing classic coiled-coil Socket output.</p>
+<p class="rubric">Notes</p>
+<p>For examples of these views, browse the CC+ database here: <a class="reference external" href="http://coiledcoils.chm.bris.ac.uk/ccplus/search/">http://coiledcoils.chm.bris.ac.uk/ccplus/search/</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pdb_file</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to a pdb_file.</li>
+<li><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Socket cutoff in Angstroms.</li>
+<li><strong>min_kihs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Mininmum number of KnobIntoHole interactions between pairs of helices needed to define a coiled coil.</li>
+<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to a output file to save the pml script.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>script_string</strong> – Pymol commands for classic coiled-coil view.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.add_ons.knobs_into_holes.side_chain_centres">
+<code class="descname">side_chain_centres</code><span class="sig-paren">(</span><em>assembly</em>, <em>masses=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#side_chain_centres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.side_chain_centres" title="Permalink to this definition">¶</a></dt>
+<dd><p>PseudoGroup containing side_chain centres of each Residue in each Polypeptide in Assembly.</p>
+<p class="rubric">Notes</p>
+<p>Each PseudoAtom is a side-chain centre.
+There is one PseudoMonomer per chain in ampal (each containing len(chain) PseudoAtoms).
+The PseudoGroup has len(ampal) PseudoMonomers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>assembly</strong> (<a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly"><em>Assembly</em></a>) – </li>
+<li><strong>masses</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, side-chain centres are centres of mass.
+If False, side-chain centres are centres of coordinates.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">containing all side_chain centres, and with ampal_parent=assembly.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="isambard.ampal.pseudo_atoms.html#isambard.ampal.pseudo_atoms.PseudoGroup" title="isambard.ampal.pseudo_atoms.PseudoGroup">PseudoGroup</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.add_ons.knobs_into_holes.start_and_end_of_reference_axis">
+<code class="descname">start_and_end_of_reference_axis</code><span class="sig-paren">(</span><em>chains</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#start_and_end_of_reference_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.start_and_end_of_reference_axis" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Get start and end coordinates that approximate the reference axis for a collection of chains</dt>
+<dd>(not necessarily all the same length).</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>chains</strong> (<em>[</em><a class="reference internal" href="isambard.ampal.protein.html#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a><em>]</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>start, end</strong> – 3D start and end coordinates for defining the reference axis.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.add_ons.knobs_into_holes.tag_residues_with_heptad_register">
+<code class="descname">tag_residues_with_heptad_register</code><span class="sig-paren">(</span><em>helices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/knobs_into_holes.html#tag_residues_with_heptad_register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.knobs_into_holes.tag_residues_with_heptad_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>tags Residues in input helices with heptad register. (Helices not required to be the same length).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>helices</strong> (<em>[</em><a class="reference internal" href="isambard.ampal.protein.html#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a><em>]</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

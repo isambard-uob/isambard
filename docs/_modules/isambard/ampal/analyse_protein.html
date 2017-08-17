@@ -1,0 +1,957 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.analyse_protein &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.ampal.analyse_protein</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.ampal.analyse_protein</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Contains various tools for analysing protein structure.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+
+<span class="kn">from</span> <span class="nn">ampal.pseudo_atoms</span> <span class="k">import</span> <span class="n">Primitive</span>
+<span class="kn">from</span> <span class="nn">tools.geometry</span> <span class="k">import</span> <span class="p">(</span><span class="n">angle_between_vectors</span><span class="p">,</span> <span class="n">dihedral</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span>
+                            <span class="n">find_foot</span><span class="p">,</span> <span class="n">unit_vector</span><span class="p">,</span> <span class="n">is_acute</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">tools.amino_acids</span> <span class="k">import</span> <span class="p">(</span><span class="n">residue_mwt</span><span class="p">,</span> <span class="n">water_mass</span><span class="p">,</span> <span class="n">residue_ext_280</span><span class="p">,</span>
+                               <span class="n">residue_pka</span><span class="p">,</span> <span class="n">residue_charge</span><span class="p">,</span> <span class="n">side_chain_dihedrals</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">tools.isambard_warnings</span> <span class="k">import</span> <span class="n">NoncanonicalWarning</span>
+
+
+<span class="n">_nc_warning_str</span> <span class="o">=</span> <span class="s1">&#39;Unnatural amino acid detected, this value may be inaccurate.&#39;</span>
+
+
+<div class="viewcode-block" id="sequence_molecular_weight"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.sequence_molecular_weight">[docs]</a><span class="k">def</span> <span class="nf">sequence_molecular_weight</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the molecular weight of the polypeptide sequence.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Units = Daltons</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seq : str</span>
+<span class="sd">        Sequence of amino acids.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;X&#39;</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">_nc_warning_str</span><span class="p">,</span> <span class="n">NoncanonicalWarning</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">residue_mwt</span><span class="p">[</span><span class="n">aa</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span> <span class="k">for</span> <span class="n">aa</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span> <span class="o">+</span> <span class="n">water_mass</span></div>
+
+
+<span class="c1"># TODO How to account for cystine Vs cysteine.</span>
+<span class="c1"># (when there&#39;s a disuplhide bond, ext coefficient changes to 125.</span>
+<div class="viewcode-block" id="sequence_molar_extinction_280"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.sequence_molar_extinction_280">[docs]</a><span class="k">def</span> <span class="nf">sequence_molar_extinction_280</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the molar extinction coefficient of the sequence at 280 nm.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Units = M/cm</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seq : str</span>
+<span class="sd">        Sequence of amino acids.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;X&#39;</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">_nc_warning_str</span><span class="p">,</span> <span class="n">NoncanonicalWarning</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">residue_ext_280</span><span class="p">[</span><span class="n">aa</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span> <span class="k">for</span> <span class="n">aa</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span></div>
+
+
+<div class="viewcode-block" id="partial_charge"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.partial_charge">[docs]</a><span class="k">def</span> <span class="nf">partial_charge</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span> <span class="n">pH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the partial charge of the amino acid.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aa : str</span>
+<span class="sd">        Amino acid single-letter code.</span>
+<span class="sd">    pH : float</span>
+<span class="sd">        pH of interest.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">difference</span> <span class="o">=</span> <span class="n">pH</span> <span class="o">-</span> <span class="n">residue_pka</span><span class="p">[</span><span class="n">aa</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">residue_charge</span><span class="p">[</span><span class="n">aa</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">difference</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="n">difference</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">difference</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ratio</span></div>
+
+
+<div class="viewcode-block" id="sequence_charge"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.sequence_charge">[docs]</a><span class="k">def</span> <span class="nf">sequence_charge</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">pH</span><span class="o">=</span><span class="mf">7.4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the total charge of the input polypeptide sequence.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seq : str</span>
+<span class="sd">        Sequence of amino acids.</span>
+<span class="sd">    pH : float</span>
+<span class="sd">        pH of interest.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;X&#39;</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">_nc_warning_str</span><span class="p">,</span> <span class="n">NoncanonicalWarning</span><span class="p">)</span>
+    <span class="n">adj_protein_charge</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">partial_charge</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span> <span class="n">pH</span><span class="p">)</span> <span class="o">*</span> <span class="n">residue_charge</span><span class="p">[</span><span class="n">aa</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
+         <span class="k">for</span> <span class="n">aa</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+    <span class="n">adj_protein_charge</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="n">partial_charge</span><span class="p">(</span><span class="s1">&#39;N-term&#39;</span><span class="p">,</span> <span class="n">pH</span><span class="p">)</span> <span class="o">*</span> <span class="n">residue_charge</span><span class="p">[</span><span class="s1">&#39;N-term&#39;</span><span class="p">])</span>
+    <span class="n">adj_protein_charge</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="n">partial_charge</span><span class="p">(</span><span class="s1">&#39;C-term&#39;</span><span class="p">,</span> <span class="n">pH</span><span class="p">)</span> <span class="o">*</span> <span class="n">residue_charge</span><span class="p">[</span><span class="s1">&#39;C-term&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">adj_protein_charge</span></div>
+
+
+<div class="viewcode-block" id="charge_series"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.charge_series">[docs]</a><span class="k">def</span> <span class="nf">charge_series</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">granularity</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the charge for pH 1-13.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seq : str</span>
+<span class="sd">        Sequence of amino acids.</span>
+<span class="sd">    granularity : float, optional</span>
+<span class="sd">        Granularity of pH values i.e. if 0.1 pH = [1.0, 1.1, 1.2...]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;X&#39;</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">_nc_warning_str</span><span class="p">,</span> <span class="n">NoncanonicalWarning</span><span class="p">)</span>
+    <span class="n">ph_range</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="n">granularity</span><span class="p">)</span>
+    <span class="n">charge_at_ph</span> <span class="o">=</span> <span class="p">[</span><span class="n">sequence_charge</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">ph</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph</span> <span class="ow">in</span> <span class="n">ph_range</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ph_range</span><span class="p">,</span> <span class="n">charge_at_ph</span></div>
+
+
+<div class="viewcode-block" id="sequence_isoelectric_point"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.sequence_isoelectric_point">[docs]</a><span class="k">def</span> <span class="nf">sequence_isoelectric_point</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">granularity</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the isoelectric point of the sequence for ph 1-13.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seq : str</span>
+<span class="sd">        Sequence of amino acids.</span>
+<span class="sd">    granularity : float, optional</span>
+<span class="sd">        Granularity of pH values i.e. if 0.1 pH = [1.0, 1.1, 1.2...]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;X&#39;</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">_nc_warning_str</span><span class="p">,</span> <span class="n">NoncanonicalWarning</span><span class="p">)</span>
+    <span class="n">ph_range</span><span class="p">,</span> <span class="n">charge_at_ph</span> <span class="o">=</span> <span class="n">charge_series</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">granularity</span><span class="p">)</span>
+    <span class="n">abs_charge_at_ph</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">charge_at_ph</span><span class="p">]</span>
+    <span class="n">pi_index</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">abs_charge_at_ph</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ph_range</span><span class="p">[</span><span class="n">pi_index</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="measure_sidechain_torsion_angles"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.measure_sidechain_torsion_angles">[docs]</a><span class="k">def</span> <span class="nf">measure_sidechain_torsion_angles</span><span class="p">(</span><span class="n">residue</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates sidechain dihedral angles for a residue</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    residue : [ampal.Residue]</span>
+<span class="sd">        `Residue` object.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        If `true`, tells you when a residue does not have any known</span>
+<span class="sd">        dihedral angles to measure.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    chi_angles: [float]</span>
+<span class="sd">        Length depends on residue type, in range [-pi, pi]</span>
+
+<span class="sd">        [0] = chi1 [if applicable]</span>
+<span class="sd">        [1] = chi2 [if applicable]</span>
+<span class="sd">        [2] = chi3 [if applicable]</span>
+<span class="sd">        [3] = chi4 [if applicable]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chi_angles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">residue</span><span class="o">.</span><span class="n">mol_code</span>
+    <span class="k">if</span> <span class="n">aa</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">side_chain_dihedrals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Amino acid </span><span class="si">{}</span><span class="s2"> has no known side-chain dihedral&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aa</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">set_atoms</span> <span class="ow">in</span> <span class="n">side_chain_dihedrals</span><span class="p">[</span><span class="n">aa</span><span class="p">]:</span>
+            <span class="n">required_for_dihedral</span> <span class="o">=</span> <span class="n">set_atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+                    <span class="n">residue</span><span class="p">[</span><span class="n">required_for_dihedral</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                    <span class="n">residue</span><span class="p">[</span><span class="n">required_for_dihedral</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                    <span class="n">residue</span><span class="p">[</span><span class="n">required_for_dihedral</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                    <span class="n">residue</span><span class="p">[</span><span class="n">required_for_dihedral</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+                <span class="n">chi_angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">k</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> atom missing from residue </span><span class="si">{1}</span><span class="s2"> </span><span class="si">{2}</span><span class="s2"> &quot;</span>
+                      <span class="s2">&quot;- can&#39;t assign dihedral&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                          <span class="n">k</span><span class="p">,</span> <span class="n">residue</span><span class="o">.</span><span class="n">mol_code</span><span class="p">,</span> <span class="n">residue</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                <span class="n">chi_angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">chi_angles</span></div>
+
+
+<div class="viewcode-block" id="measure_torsion_angles"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.measure_torsion_angles">[docs]</a><span class="k">def</span> <span class="nf">measure_torsion_angles</span><span class="p">(</span><span class="n">residues</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the dihedral angles for a list of backbone atoms.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    residues : [ampal.Residue]</span>
+<span class="sd">        List of `Residue` objects.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    torsion_angles : (float, float, float)</span>
+<span class="sd">        One triple for each residue, containing torsion angles in</span>
+<span class="sd">        the range [-pi, pi].</span>
+<span class="sd">            [0] omega</span>
+<span class="sd">            [1] phi</span>
+<span class="sd">            [2] psi</span>
+<span class="sd">        For the first residue, omega and phi are not defined. For</span>
+<span class="sd">        the final residue, psi is not defined.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the number of input residues is less than 2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">residues</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">torsion_angles</span> <span class="o">=</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">residues</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">torsion_angles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">residues</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">res1</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">res2</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">omega</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">phi</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">psi</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+                        <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                        <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> atom missing - can&#39;t assign psi&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                    <span class="n">psi</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">torsion_angles</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">omega</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">psi</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">residues</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">res1</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">res2</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">omega</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+                        <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                        <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> atom missing - can&#39;t assign omega&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                    <span class="n">omega</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">phi</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+                        <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                        <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> atom missing - can&#39;t assign phi&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                    <span class="n">phi</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">psi</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">torsion_angles</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">omega</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">psi</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res1</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">res2</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">res3</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">omega</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+                        <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                        <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> atom missing - can&#39;t assign omega&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                    <span class="n">omega</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">phi</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+                        <span class="n">res1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                        <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> atom missing - can&#39;t assign phi&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                    <span class="n">phi</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">psi</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+                        <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span>
+                        <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">,</span> <span class="n">res3</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> atom missing - can&#39;t assign psi&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                    <span class="n">psi</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">torsion_angles</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">omega</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">psi</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">torsion_angles</span></div>
+
+
+<span class="c1"># TODO: Find a home for this</span>
+<div class="viewcode-block" id="cc_to_local_params"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.cc_to_local_params">[docs]</a><span class="k">def</span> <span class="nf">cc_to_local_params</span><span class="p">(</span><span class="n">pitch</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">oligo</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns local parameters for an oligomeric assembly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pitch : float</span>
+<span class="sd">        Pitch of assembly</span>
+<span class="sd">    radius : float</span>
+<span class="sd">        Radius of assembly</span>
+<span class="sd">    oligo : int</span>
+<span class="sd">        Oligomeric state of assembly</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pitchloc : float</span>
+<span class="sd">        Local pitch of assembly (between 2 adjacent component helices)</span>
+<span class="sd">    rloc : float</span>
+<span class="sd">        Local radius of assembly</span>
+<span class="sd">    alphaloc : float</span>
+<span class="sd">        Local pitch-angle of assembly</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rloc</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">oligo</span><span class="p">)</span> <span class="o">*</span> <span class="n">radius</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arctan</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">radius</span><span class="p">)</span> <span class="o">/</span> <span class="n">pitch</span><span class="p">)</span>
+    <span class="n">alphaloc</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="n">oligo</span><span class="p">))</span> <span class="o">*</span> <span class="n">alpha</span>
+    <span class="n">pitchloc</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rloc</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">alphaloc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pitchloc</span><span class="p">,</span> <span class="n">rloc</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">alphaloc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="residues_per_turn"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.residues_per_turn">[docs]</a><span class="k">def</span> <span class="nf">residues_per_turn</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The number of residues per turn at each Monomer in the Polymer.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Each element of the returned list is the number of residues</span>
+<span class="sd">    per turn, at a point on the Polymer primitive. Calculated using</span>
+<span class="sd">    the relative positions of the CA atoms and the primitive of the</span>
+<span class="sd">    Polymer. Element i is the calculated from the dihedral angle using</span>
+<span class="sd">    the CA atoms of the Monomers with indices [i, i+1] and the</span>
+<span class="sd">    corresponding atoms of the primitive. The final value is None.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : ampal.Polypeptide</span>
+<span class="sd">        `Polypeptide` from which residues per turn will be calculated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rpts : [float]</span>
+<span class="sd">        Residue per turn values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cas</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_reference_coords</span><span class="p">()</span>
+    <span class="n">prim_cas</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span>
+    <span class="n">dhs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">dihedral</span><span class="p">(</span><span class="n">cas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prim_cas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prim_cas</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">cas</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prim_cas</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">rpts</span> <span class="o">=</span> <span class="p">[</span><span class="mf">360.0</span> <span class="o">/</span> <span class="n">dh</span> <span class="k">for</span> <span class="n">dh</span> <span class="ow">in</span> <span class="n">dhs</span><span class="p">]</span>
+    <span class="n">rpts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rpts</span></div>
+
+
+<div class="viewcode-block" id="polymer_to_reference_axis_distances"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.polymer_to_reference_axis_distances">[docs]</a><span class="k">def</span> <span class="nf">polymer_to_reference_axis_distances</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">reference_axis</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reference_axis_name</span><span class="o">=</span><span class="s1">&#39;ref_axis&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns distances between the primitive of a Polymer and a reference_axis.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Distances are calculated between each point of the Polymer primitive</span>
+<span class="sd">    and the corresponding point in reference_axis. In the special case</span>
+<span class="sd">    of the helical barrel, if the Polymer is a helix and the reference_axis</span>
+<span class="sd">    represents the centre of the barrel, then this function returns the</span>
+<span class="sd">    radius of the barrel at each point on the helix primitive. The points</span>
+<span class="sd">    of the primitive and the reference_axis are run through in the same</span>
+<span class="sd">    order, so take care with the relative orientation of the reference</span>
+<span class="sd">    axis when defining it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : ampal.Polymer</span>
+<span class="sd">    reference_axis : list(numpy.array or tuple or list)</span>
+<span class="sd">        Length of reference_axis must equal length of the Polymer.</span>
+<span class="sd">        Each element of reference_axis represents a point in R^3.</span>
+<span class="sd">    tag : bool, optional</span>
+<span class="sd">        If True, tags the Chain with the reference axis coordinates</span>
+<span class="sd">        and each Residue with its distance to the ref axis.</span>
+<span class="sd">        Distances are stored at the Residue level, but refer to</span>
+<span class="sd">        distances from the CA atom.</span>
+<span class="sd">    reference_axis_name : str, optional</span>
+<span class="sd">        Used to name the keys in tags at Chain and Residue level.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    distances : list(float)</span>
+<span class="sd">        Distance values between corresponding points on the</span>
+<span class="sd">        reference axis and the `Polymer` `Primitive`.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the Polymer and the reference_axis have unequal length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference_axis</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The reference axis must contain the same number of points &quot;</span>
+            <span class="s2">&quot;as the Polymer primitive.&quot;</span><span class="p">)</span>
+    <span class="n">prim_cas</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span>
+    <span class="n">ref_points</span> <span class="o">=</span> <span class="n">reference_axis</span><span class="o">.</span><span class="n">coordinates</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="n">prim_cas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ref_points</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prim_cas</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="n">tag</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">reference_axis_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_axis</span>
+        <span class="n">monomer_tag_name</span> <span class="o">=</span> <span class="s1">&#39;distance_to_</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reference_axis_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">_monomers</span><span class="p">,</span> <span class="n">distances</span><span class="p">):</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">monomer_tag_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+    <span class="k">return</span> <span class="n">distances</span></div>
+
+
+<div class="viewcode-block" id="crick_angles"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.crick_angles">[docs]</a><span class="k">def</span> <span class="nf">crick_angles</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">reference_axis</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reference_axis_name</span><span class="o">=</span><span class="s1">&#39;ref_axis&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the Crick angle for each CA atom in the `Polymer`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The final value is in the returned list is `None`, since the angle</span>
+<span class="sd">    calculation requires pairs of points on both the primitive and</span>
+<span class="sd">    reference_axis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : ampal.Polymer</span>
+<span class="sd">        Reference `Polymer`.</span>
+<span class="sd">    reference_axis : list(numpy.array or tuple or list)</span>
+<span class="sd">        Length of reference_axis must equal length of the Polymer.</span>
+<span class="sd">        Each element of reference_axis represents a point in R^3.</span>
+<span class="sd">    tag : bool, optional</span>
+<span class="sd">        If `True`, tags the `Polymer` with the reference axis coordinates</span>
+<span class="sd">        and each Residue with its Crick angle. Crick angles are stored</span>
+<span class="sd">        at the Residue level, but are calculated using the CA atom.</span>
+<span class="sd">    reference_axis_name : str, optional</span>
+<span class="sd">        Used to name the keys in tags at Chain and Residue level.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cr_angles : list(float)</span>
+<span class="sd">        The crick angles in degrees for each CA atom of the Polymer.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the Polymer and the reference_axis have unequal length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference_axis</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The reference axis must contain the same number of points&quot;</span>
+            <span class="s2">&quot; as the Polymer primitive.&quot;</span><span class="p">)</span>
+    <span class="n">prim_cas</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span>
+    <span class="n">p_cas</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_reference_coords</span><span class="p">()</span>
+    <span class="n">ref_points</span> <span class="o">=</span> <span class="n">reference_axis</span><span class="o">.</span><span class="n">coordinates</span>
+    <span class="n">cr_angles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">dihedral</span><span class="p">(</span><span class="n">ref_points</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prim_cas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prim_cas</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p_cas</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prim_cas</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">cr_angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tag</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">reference_axis_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_axis</span>
+        <span class="n">monomer_tag_name</span> <span class="o">=</span> <span class="s1">&#39;crick_angle_</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reference_axis_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">_monomers</span><span class="p">,</span> <span class="n">cr_angles</span><span class="p">):</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">monomer_tag_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+    <span class="k">return</span> <span class="n">cr_angles</span></div>
+
+
+<div class="viewcode-block" id="alpha_angles"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.alpha_angles">[docs]</a><span class="k">def</span> <span class="nf">alpha_angles</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">reference_axis</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reference_axis_name</span><span class="o">=</span><span class="s1">&#39;ref_axis&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Alpha angle calculated using points on the primitive of helix and axis.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The final value is None, since the angle calculation requires pairs</span>
+<span class="sd">    of points along the primitive and axis. This is a generalisation</span>
+<span class="sd">    of the calculation used to measure the tilt of a helix in a</span>
+<span class="sd">    coiled-coil with respect to the central axis of the coiled coil.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : ampal.Polymer</span>
+<span class="sd">        Reference `Polymer`.</span>
+<span class="sd">    reference_axis : list(numpy.array or tuple or list)</span>
+<span class="sd">        Length of reference_axis must equal length of the Polymer.</span>
+<span class="sd">        Each element of reference_axis represents a point in R^3.</span>
+<span class="sd">    tag : bool, optional</span>
+<span class="sd">        If `True`, tags the Chain with the reference axis coordinates</span>
+<span class="sd">        and each Residue with its alpha angle. Alpha angles are stored</span>
+<span class="sd">        at the Residue level, but are calculated using the CA atom.</span>
+<span class="sd">    reference_axis_name : str, optional</span>
+<span class="sd">        Used to name the keys in tags at Chain and Residue level.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    alphas : list of float</span>
+<span class="sd">        The alpha angle for the Polymer at each point of its primitive,</span>
+<span class="sd">        in degrees.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the Polymer and the reference_axis have unequal length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference_axis</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The reference axis must contain the same number of points &quot;</span>
+            <span class="s2">&quot;as the Polymer primitive.&quot;</span><span class="p">)</span>
+    <span class="n">prim_cas</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span>
+    <span class="n">ref_points</span> <span class="o">=</span> <span class="n">reference_axis</span><span class="o">.</span><span class="n">coordinates</span>
+    <span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">dihedral</span><span class="p">(</span><span class="n">ref_points</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ref_points</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prim_cas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prim_cas</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+              <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prim_cas</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">alphas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tag</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">reference_axis_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_axis</span>
+        <span class="n">monomer_tag_name</span> <span class="o">=</span> <span class="s1">&#39;alpha_angle_</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reference_axis_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">_monomers</span><span class="p">,</span> <span class="n">alphas</span><span class="p">):</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">monomer_tag_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="k">return</span> <span class="n">alphas</span></div>
+
+
+<div class="viewcode-block" id="polypeptide_vector"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.polypeptide_vector">[docs]</a><span class="k">def</span> <span class="nf">polypeptide_vector</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end_index</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Vector along the Chain primitive (default is from N-terminus to C-terminus).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    `start_index` and `end_index` can be changed to examine smaller</span>
+<span class="sd">    sections of the Chain, or reversed to change the direction of</span>
+<span class="sd">    the vector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : ampal.Polymer</span>
+<span class="sd">        Reference `Polymer`.</span>
+<span class="sd">    start_index : int, optional</span>
+<span class="sd">        Default is 0 (start at the N-terminus of the Chain)</span>
+<span class="sd">    end_index : int, optional</span>
+<span class="sd">        Default is -1 (start at the C-terminus of the Chain)</span>
+<span class="sd">    unit : bool</span>
+<span class="sd">        If True, the vector returned has a magnitude of 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vector : a numpy.array</span>
+<span class="sd">        vector has shape (1, 3)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Polymer should have length greater than 1. Polymer length = </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prim_cas</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span>
+        <span class="n">direction_vector</span> <span class="o">=</span> <span class="n">prim_cas</span><span class="p">[</span><span class="n">end_index</span><span class="p">]</span> <span class="o">-</span> <span class="n">prim_cas</span><span class="p">[</span><span class="n">start_index</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">direction_vector</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">end_index</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span> \
+            <span class="n">p</span><span class="p">[</span><span class="n">start_index</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span>
+    <span class="k">if</span> <span class="n">unit</span><span class="p">:</span>
+        <span class="n">direction_vector</span> <span class="o">=</span> <span class="n">unit_vector</span><span class="p">(</span><span class="n">direction_vector</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">direction_vector</span></div>
+
+
+<span class="c1"># TODO Change functionality so that a Primitive object is returned.</span>
+<span class="c1"># (e.g. all CA ALA atoms like with primitives).</span>
+<div class="viewcode-block" id="reference_axis_from_chains"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.reference_axis_from_chains">[docs]</a><span class="k">def</span> <span class="nf">reference_axis_from_chains</span><span class="p">(</span><span class="n">chains</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Average coordinates from a set of primitives calculated from Chains.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    chains : list(Chain)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    reference_axis : numpy.array</span>
+<span class="sd">        The averaged (x, y, z) coordinates of the primitives for</span>
+<span class="sd">        the list of Chains. In the case of a coiled coil barrel,</span>
+<span class="sd">        this would give the central axis for calculating e.g. Crick</span>
+<span class="sd">        angles.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError :</span>
+<span class="sd">        If the Chains are not all of the same length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All chains must be of the same length&quot;</span><span class="p">)</span>
+
+    <span class="c1"># First array in coords is the primitive coordinates of the first chain.</span>
+    <span class="c1"># The orientation of the first chain orients the reference_axis.</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)]</span>
+    <span class="n">orient_vector</span> <span class="o">=</span> <span class="n">polypeptide_vector</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># Append the coordinates for the remaining chains, reversing the</span>
+    <span class="c1"># direction in antiparallel arrangements.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="k">if</span> <span class="n">is_acute</span><span class="p">(</span><span class="n">polypeptide_vector</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">orient_vector</span><span class="p">):</span>
+            <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)))</span>
+
+    <span class="c1"># Average across the x, y and z coordinates to get the reference_axis</span>
+    <span class="c1"># coordinates</span>
+    <span class="n">reference_axis</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Primitive</span><span class="o">.</span><span class="n">from_coordinates</span><span class="p">(</span><span class="n">reference_axis</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="flip_reference_axis_if_antiparallel"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.flip_reference_axis_if_antiparallel">[docs]</a><span class="k">def</span> <span class="nf">flip_reference_axis_if_antiparallel</span><span class="p">(</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">reference_axis</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end_index</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Flips reference axis if direction opposes the direction of the `Polymer`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If the angle between the vector for the Polymer and the vector</span>
+<span class="sd">    for the reference_axis is &gt; 90 degrees, then the reference axis</span>
+<span class="sd">    is reversed. This is useful to run before running</span>
+<span class="sd">    polymer_to_reference_axis_distances, crick_angles, or alpha_angles.</span>
+<span class="sd">    For more information on the start and end indices, see chain_vector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : ampal.Polymer</span>
+<span class="sd">        Reference `Polymer`.</span>
+<span class="sd">    reference_axis : list(numpy.array or tuple or list)</span>
+<span class="sd">        Length of reference_axis must equal length of the Polymer.</span>
+<span class="sd">        Each element of reference_axis represents a point in R^3.</span>
+<span class="sd">    start_index : int, optional</span>
+<span class="sd">        Default is 0 (start at the N-terminus of the Polymer)</span>
+<span class="sd">    end_index : int, optional</span>
+<span class="sd">        Default is -1 (start at the C-terminus of the Polymer)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    reference_axis : list(numpy.array or tuple or list)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p_vector</span> <span class="o">=</span> <span class="n">polypeptide_vector</span><span class="p">(</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="n">start_index</span><span class="p">,</span> <span class="n">end_index</span><span class="o">=</span><span class="n">end_index</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_acute</span><span class="p">(</span><span class="n">p_vector</span><span class="p">,</span>
+                <span class="n">reference_axis</span><span class="p">[</span><span class="n">end_index</span><span class="p">]</span> <span class="o">-</span> <span class="n">reference_axis</span><span class="p">[</span><span class="n">start_index</span><span class="p">]):</span>
+        <span class="n">reference_axis</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">reference_axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reference_axis</span></div>
+
+
+<div class="viewcode-block" id="make_primitive"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.make_primitive">[docs]</a><span class="k">def</span> <span class="nf">make_primitive</span><span class="p">(</span><span class="n">cas_coords</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates running average of cas_coords with a fixed averaging window_length.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cas_coords : list(numpy.array or float or tuple)</span>
+<span class="sd">        Each element of the list must have length 3.</span>
+<span class="sd">    window_length : int, optional</span>
+<span class="sd">        The number of coordinate sets to average each time.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    s_primitive : list(numpy.array)</span>
+<span class="sd">        Each array has length 3.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the length of cas_coords is smaller than the window_length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cas_coords</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">window_length</span><span class="p">:</span>
+        <span class="n">primitive</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">cas_coords</span><span class="p">[:</span><span class="o">-</span><span class="p">(</span><span class="n">window_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]:</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="n">cas_coords</span><span class="p">[</span><span class="n">count</span><span class="p">:</span><span class="n">count</span> <span class="o">+</span> <span class="n">window_length</span><span class="p">]</span>
+            <span class="n">average_x</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">group</span><span class="p">])</span> <span class="o">/</span> <span class="n">window_length</span>
+            <span class="n">average_y</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">group</span><span class="p">])</span> <span class="o">/</span> <span class="n">window_length</span>
+            <span class="n">average_z</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">group</span><span class="p">])</span> <span class="o">/</span> <span class="n">window_length</span>
+            <span class="n">primitive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">average_x</span><span class="p">,</span> <span class="n">average_y</span><span class="p">,</span> <span class="n">average_z</span><span class="p">]))</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;A primitive cannot be generated for </span><span class="si">{0}</span><span class="s1"> atoms using a (too large) &#39;</span>
+            <span class="s1">&#39;averaging window_length of </span><span class="si">{1}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">cas_coords</span><span class="p">),</span> <span class="n">window_length</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">primitive</span></div>
+
+
+<div class="viewcode-block" id="make_primitive_smoothed"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.make_primitive_smoothed">[docs]</a><span class="k">def</span> <span class="nf">make_primitive_smoothed</span><span class="p">(</span><span class="n">cas_coords</span><span class="p">,</span> <span class="n">smoothing_level</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Generates smoothed primitive from a list of coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cas_coords : list(numpy.array or float or tuple)</span>
+<span class="sd">        Each element of the list must have length 3.</span>
+<span class="sd">    smoothing_level : int, optional</span>
+<span class="sd">        Number of times to run the averaging.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    s_primitive : list(numpy.array)</span>
+<span class="sd">        Each array has length 3.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the smoothing level is too great compared to the length</span>
+<span class="sd">        of cas_coords.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s_primitive</span> <span class="o">=</span> <span class="n">make_primitive</span><span class="p">(</span><span class="n">cas_coords</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">smoothing_level</span><span class="p">):</span>
+            <span class="n">s_primitive</span> <span class="o">=</span> <span class="n">make_primitive</span><span class="p">(</span><span class="n">s_primitive</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Smoothing level </span><span class="si">{0}</span><span class="s1"> too high, try reducing the number of rounds&#39;</span>
+            <span class="s1">&#39; or give a longer Chain (curent length = </span><span class="si">{1}</span><span class="s1">).&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">smoothing_level</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cas_coords</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">s_primitive</span></div>
+
+
+<div class="viewcode-block" id="make_primitive_extrapolate_ends"><a class="viewcode-back" href="../../../isambard.ampal.analyse_protein.html#isambard.ampal.analyse_protein.make_primitive_extrapolate_ends">[docs]</a><span class="k">def</span> <span class="nf">make_primitive_extrapolate_ends</span><span class="p">(</span><span class="n">cas_coords</span><span class="p">,</span> <span class="n">smoothing_level</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates smoothed helix primitives and extrapolates lost ends.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    From an input list of CA coordinates, the running average is</span>
+<span class="sd">    calculated to form a primitive. The smoothing_level dictates how</span>
+<span class="sd">    many times to calculate the running average. A higher</span>
+<span class="sd">    smoothing_level generates a &#39;smoother&#39; primitive - i.e. the</span>
+<span class="sd">    points on the primitive more closely fit a smooth curve in R^3.</span>
+<span class="sd">    Each time the smoothing level is increased by 1, a point is lost</span>
+<span class="sd">    from either end of the primitive. To correct for this, the primitive</span>
+<span class="sd">    is extrapolated at the ends to approximate the lost values. There</span>
+<span class="sd">    is a trade-off then between the smoothness of the primitive and</span>
+<span class="sd">    its accuracy at the ends.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cas_coords : list(numpy.array or float or tuple)</span>
+<span class="sd">        Each element of the list must have length 3.</span>
+<span class="sd">    smoothing_level : int</span>
+<span class="sd">        Number of times to run the averaging.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    final_primitive : list(numpy.array)</span>
+<span class="sd">        Each array has length 3.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">smoothed_primitive</span> <span class="o">=</span> <span class="n">make_primitive_smoothed</span><span class="p">(</span>
+            <span class="n">cas_coords</span><span class="p">,</span> <span class="n">smoothing_level</span><span class="o">=</span><span class="n">smoothing_level</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">smoothed_primitive</span> <span class="o">=</span> <span class="n">make_primitive_smoothed</span><span class="p">(</span>
+            <span class="n">cas_coords</span><span class="p">,</span> <span class="n">smoothing_level</span><span class="o">=</span><span class="n">smoothing_level</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># if returned smoothed primitive is too short, lower the smoothing</span>
+    <span class="c1"># level and try again.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">smoothed_primitive</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">smoothed_primitive</span> <span class="o">=</span> <span class="n">make_primitive_smoothed</span><span class="p">(</span>
+            <span class="n">cas_coords</span><span class="p">,</span> <span class="n">smoothing_level</span><span class="o">=</span><span class="n">smoothing_level</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">final_primitive</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ca</span> <span class="ow">in</span> <span class="n">cas_coords</span><span class="p">:</span>
+        <span class="n">prim_dists</span> <span class="o">=</span> <span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">smoothed_primitive</span><span class="p">]</span>
+        <span class="n">closest_indices</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="nb">enumerate</span><span class="p">(</span><span class="n">prim_dists</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">3</span><span class="p">]])</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="n">smoothed_primitive</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">closest_indices</span><span class="p">]</span>
+        <span class="n">ab_foot</span> <span class="o">=</span> <span class="n">find_foot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">ca</span><span class="p">)</span>
+        <span class="n">bc_foot</span> <span class="o">=</span> <span class="n">find_foot</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">ca</span><span class="p">)</span>
+        <span class="n">ca_foot</span> <span class="o">=</span> <span class="p">(</span><span class="n">ab_foot</span> <span class="o">+</span> <span class="n">bc_foot</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">final_primitive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ca_foot</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_primitive</span></div>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Jack W. Heal, Christopher W. Wood, Gail J. Bartlett, &#39;</span>
+              <span class="s1">&#39;Derek N. Woolfson, Kieran L. Hudson&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

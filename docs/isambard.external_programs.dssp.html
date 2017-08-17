@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.external_programs.dssp module &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>isambard.external_programs.dssp module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/isambard.external_programs.dssp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-isambard.external_programs.dssp">
+<span id="isambard-external-programs-dssp-module"></span><h1>isambard.external_programs.dssp module<a class="headerlink" href="#module-isambard.external_programs.dssp" title="Permalink to this headline">¶</a></h1>
+<p>This module provides an interface to the program DSSP.</p>
+<p>For more information on DSSP see [1].</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) “Dictionary of protein
+secondary structure: pattern recognition of hydrogen-bonded
+and geometrical features”, Biopolymers, 22, 2577-637.</td></tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="isambard.external_programs.dssp.extract_all_ss_dssp">
+<code class="descname">extract_all_ss_dssp</code><span class="sig-paren">(</span><em>in_dssp</em>, <em>path=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/external_programs/dssp.html#extract_all_ss_dssp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.external_programs.dssp.extract_all_ss_dssp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses DSSP to extract secondary structure information on every residue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_dssp</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to DSSP file.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Indicates if pdb is a path or a string.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>dssp_residues</strong> –</p>
+<dl class="docutils">
+<dt>Each internal list contains:</dt>
+<dd><p class="first last">[0] int Residue number
+[1] str Secondary structure type
+[2] str Chain identifier
+[3] str Residue type
+[4] float Phi torsion angle
+[5] float Psi torsion angle</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">[list]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.external_programs.dssp.extract_helices_dssp">
+<code class="descname">extract_helices_dssp</code><span class="sig-paren">(</span><em>in_pdb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/external_programs/dssp.html#extract_helices_dssp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.external_programs.dssp.extract_helices_dssp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses DSSP to find alpha-helices and extracts helices from a pdb file.</p>
+<p>Returns a length 3 list with a helix id, the chain id and a dict
+containing the coordinates of each residues CA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>in_pdb</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – Path to a PDB file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.external_programs.dssp.extract_pp_helices">
+<code class="descname">extract_pp_helices</code><span class="sig-paren">(</span><em>in_pdb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/external_programs/dssp.html#extract_pp_helices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.external_programs.dssp.extract_pp_helices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses DSSP to find polyproline helices in a pdb file.</p>
+<p>Returns a length 3 list with a helix id, the chain id and a dict
+containing the coordinates of each residues CA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>in_pdb</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – Path to a PDB file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.external_programs.dssp.extract_solvent_accessibility_dssp">
+<code class="descname">extract_solvent_accessibility_dssp</code><span class="sig-paren">(</span><em>in_dssp</em>, <em>path=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/external_programs/dssp.html#extract_solvent_accessibility_dssp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.external_programs.dssp.extract_solvent_accessibility_dssp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses DSSP to extract solvent accessibilty information on every residue.</p>
+<p class="rubric">Notes</p>
+<p>For more information on the solvent accessibility metrics used in dssp, see:
+<a class="reference external" href="http://swift.cmbi.ru.nl/gv/dssp/HTML/descrip.html#ACC">http://swift.cmbi.ru.nl/gv/dssp/HTML/descrip.html#ACC</a>
+In the dssp files value is labeled ‘ACC’.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_dssp</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to DSSP file.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Indicates if in_dssp is a path or a string.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>dssp_residues</strong> –</p>
+<dl class="docutils">
+<dt>Each internal list contains:</dt>
+<dd><p class="first last">[0] int Residue number
+[1] str Chain identifier
+[2] str Residue type
+[3] int dssp solvent accessibilty</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.external_programs.dssp.find_ss_regions">
+<code class="descname">find_ss_regions</code><span class="sig-paren">(</span><em>dssp_residues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/external_programs/dssp.html#find_ss_regions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.external_programs.dssp.find_ss_regions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates parsed DSSP data into groups of secondary structure.</p>
+<p class="rubric">Notes</p>
+<p>Example: all residues in a single helix/loop/strand will be gathered
+into a list, then the next secondary structure element will be
+gathered into a separate list, and so on.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dssp_residues</strong> (<em>[</em><em>list</em><em>]</em>) – <dl class="docutils">
+<dt>Each internal list contains:</dt>
+<dd>[0] int Residue number
+[1] str Secondary structure type
+[2] str Chain identifier
+[3] str Residue type
+[4] float Phi torsion angle
+[5] float Psi torsion angle</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>fragments</strong> – Lists grouped in continuous regions of secondary structure.
+Innermost list has the same format as above.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">[[list]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.external_programs.dssp.run_dssp">
+<code class="descname">run_dssp</code><span class="sig-paren">(</span><em>pdb</em>, <em>path=True</em>, <em>outfile=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/external_programs/dssp.html#run_dssp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.external_programs.dssp.run_dssp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses DSSP to find helices and extracts helices from a pdb file or string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pdb</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to pdb file or string.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Indicates if pdb is a path or a string.</li>
+<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Filepath for storing the dssp output.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dssp_out</strong> – Std out from DSSP.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.external_programs.dssp.test_dssp">
+<code class="descname">test_dssp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/external_programs/dssp.html#test_dssp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.external_programs.dssp.test_dssp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>True</cite> if DSSP is available.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

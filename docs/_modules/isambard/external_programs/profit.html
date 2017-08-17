@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.external_programs.profit &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>isambard.external_programs.profit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for isambard.external_programs.profit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module provides an interface to the program ProFit.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+<span class="kn">from</span> <span class="nn">settings</span> <span class="k">import</span> <span class="n">global_settings</span>
+
+
+<div class="viewcode-block" id="run_profit"><a class="viewcode-back" href="../../../isambard.external_programs.profit.html#isambard.external_programs.profit.run_profit">[docs]</a><span class="k">def</span> <span class="nf">run_profit</span><span class="p">(</span><span class="n">pdb1</span><span class="p">,</span> <span class="n">pdb2</span><span class="p">,</span> <span class="n">path1</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">path2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">path_to_cmd_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">return_pdb_string</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">align_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes 2 PDB strings, carries out rmsd superposition using ProFit.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pdb1 : str</span>
+<span class="sd">        PDB as string or path</span>
+<span class="sd">    pdb2 : str</span>
+<span class="sd">        PDB as string or path</span>
+<span class="sd">    path1 : bool, optional</span>
+<span class="sd">        Whether pdb1 is a string or filepath</span>
+<span class="sd">    path2 : bool, optional</span>
+<span class="sd">        Whether pdb2 is a string or filepath</span>
+<span class="sd">    path_to_cmd_file : None, optional</span>
+<span class="sd">        Optional custom command file for ProFit. Do not use if you want</span>
+<span class="sd">        to use return_pdb_string=True</span>
+<span class="sd">    return_pdb_string : bool, optional</span>
+<span class="sd">        Returns fitted pdb structure as a string</span>
+<span class="sd">    align_type : None, optional</span>
+<span class="sd">        Used in conjunction with return_pdb_string=True and should be</span>
+<span class="sd">        set to one of &#39;all&#39;, &#39;bb&#39;, or &#39;ca to specify alignment of all</span>
+<span class="sd">        atoms, backbone atoms or just c-alpha atoms respectively</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rmsds : []</span>
+<span class="sd">        list of ca, bb and all-atom rmsds from superposition</span>
+<span class="sd">    output_pdb : str</span>
+<span class="sd">        (Optional) PDB string of overlaid, fitted structure (i.e.,</span>
+<span class="sd">        pdb2 superposed onto pdb1)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised if ProFit is ran with both a custom command file and an</span>
+<span class="sd">        output PDB string.</span>
+<span class="sd">        Raised if align method invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">alignments</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;bb&#39;</span><span class="p">:</span> <span class="s1">&#39;n,ca,c,o&#39;</span><span class="p">,</span> <span class="s1">&#39;ca&#39;</span><span class="p">:</span> <span class="s1">&#39;ca&#39;</span><span class="p">}</span>
+    <span class="n">output_pdb</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">output_file_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">path_to_cmd_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">return_pdb_string</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Cannot run ProFit with a custom command file and output &quot;</span>
+            <span class="s2">&quot;a PDB string at the same time&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pdb1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">pdb1</span> <span class="o">=</span> <span class="n">pdb1</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+            <span class="n">pdb1_tmp</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">pdb1_tmp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pdb1</span><span class="p">)</span>
+            <span class="n">pdb1_tmp</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">pdb1</span> <span class="o">=</span> <span class="n">pdb1_tmp</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pdb2</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">pdb2</span> <span class="o">=</span> <span class="n">pdb2</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+            <span class="n">pdb2_tmp</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">pdb2_tmp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pdb2</span><span class="p">)</span>
+            <span class="n">pdb2_tmp</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">pdb2</span> <span class="o">=</span> <span class="n">pdb2_tmp</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">if</span> <span class="n">path_to_cmd_file</span><span class="p">:</span>
+            <span class="n">cmd_file_path</span> <span class="o">=</span> <span class="n">path_to_cmd_file</span>
+        <span class="k">elif</span> <span class="n">return_pdb_string</span><span class="p">:</span>
+            <span class="n">cmd_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ignoremissing&#39;</span><span class="p">,</span> <span class="s1">&#39;align&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">align_type</span><span class="p">:</span>
+                <span class="n">cmd_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;atoms *&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">align_type</span> <span class="ow">in</span> <span class="n">alignments</span><span class="p">:</span>
+                    <span class="n">cmd_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;atoms </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">alignments</span><span class="p">[</span><span class="n">align_type</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;align_type should be one of &#39;ca&#39;,&#39;bb&#39; or &#39;all&#39;&quot;</span><span class="p">)</span>
+            <span class="n">cmd_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;fit&#39;</span><span class="p">)</span>
+            <span class="n">output_file_path</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">cmd_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;write </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_file_path</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">cmd_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;quit&quot;</span><span class="p">)</span>
+            <span class="n">tmp_cmd_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">tmp_cmd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd_list</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="n">tmp_cmd_file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">cmd_file_path</span> <span class="o">=</span> <span class="n">tmp_cmd_file</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmd_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">global_settings</span><span class="p">[</span><span class="s1">&#39;package_path&#39;</span><span class="p">],</span>
+                                         <span class="s1">&#39;external_programs&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;profit_cmd_files&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;all_atom_cmds.txt&#39;</span><span class="p">)</span>
+        <span class="n">profit_out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">global_settings</span><span class="p">[</span><span class="s1">&#39;profit&#39;</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">],</span>
+             <span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="n">cmd_file_path</span><span class="p">,</span> <span class="n">pdb1</span><span class="p">,</span> <span class="n">pdb2</span><span class="p">])</span>
+        <span class="n">rmsd_strs</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;RMS: ([0-9.]+)&#39;</span><span class="p">,</span> <span class="n">profit_out</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rmsd_strs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_pdb_string</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;ProFit did not return an RMS value, check command file. &#39;</span>
+                <span class="s1">&#39;See ProFit output:</span><span class="se">\n\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="s1">&#39;PROFIT FAILED TO RUN: SEE LOG ABOVE&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">profit_out</span><span class="p">))</span>
+        <span class="c1"># RMSDs should contain the CA, backbone and all atom scores</span>
+
+        <span class="k">if</span> <span class="n">return_pdb_string</span> <span class="ow">and</span> <span class="p">(</span><span class="n">output_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">output_pdb</span> <span class="o">=</span> <span class="n">output_file_path</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="n">rmsds</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rmsd_strs</span><span class="p">]</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path1</span><span class="p">:</span>
+            <span class="n">pdb1_tmp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pdb1_tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path2</span><span class="p">:</span>
+            <span class="n">pdb2_tmp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pdb2_tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_pdb_string</span> <span class="ow">and</span> <span class="p">(</span><span class="n">output_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">output_file_path</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">tmp_cmd_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">output_file_path</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmp_cmd_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_pdb_string</span> <span class="ow">and</span> <span class="p">(</span><span class="n">output_pdb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rmsds</span><span class="p">,</span> <span class="n">output_pdb</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rmsds</span></div>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Gail J. Bartlett&quot;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>An Introduction to the AMPAL Framework &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="../index.html"/>
+        <link rel="up" title="Tutorial" href="tutorial.html"/>
+        <link rel="next" title="Advanced Selections and Analysis" href="2_Advanced_Selections_and_Analysis.html"/>
+        <link rel="prev" title="Tutorial" href="tutorial.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">An Introduction to the AMPAL Framework</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#converting-pdb-files-to-ampal-objects">1. Converting PDB files to AMPAL Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basic-analysis">2. Basic Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selecting-chains">3. Selecting Chains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selecting-residues">4. Selecting Residues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selecting-atoms">5. Selecting Atoms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ampal-parents">6. AMPAL Parents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ligands">7. Ligands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#summary-and-activities">8. Summary and activities</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="2_Advanced_Selections_and_Analysis.html">Advanced Selections and Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakingModels.html">Making Models With Isambard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AMPALTagging.html">Tagging in the AMPAL framework</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="tutorial.html">Tutorial</a> &raquo;</li>
+        
+      <li>An Introduction to the AMPAL Framework</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorial/1_AMPAL_Introduction_and_Selections.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="an-introduction-to-the-ampal-framework">
+<h1>An Introduction to the AMPAL Framework<a class="headerlink" href="#an-introduction-to-the-ampal-framework" title="Permalink to this headline">¶</a></h1>
+<p>ISAMBARD represents proteins with Python objects that are part of the
+AMPAL module. AMPAL stands for Atom, Monomer, Polymer, Assembly, Ligand;
+which are the main functional elements of the framework. These objects
+are designed to represent the hierarchical nature of proteins in an
+intuitive way.</p>
+<p>All protein models produced by ISAMBARD are AMPAL objects, but you can
+also load in crystal structures.</p>
+<blockquote>
+<div><p><strong>Q. So why aren’t these objects just called Protein, Chain and
+Residue?</strong></p>
+<p>Well, there are <code class="docutils literal"><span class="pre">Polypeptide</span></code>, and <code class="docutils literal"><span class="pre">Residue</span></code> objects, but they
+are just protein-specific versions of <code class="docutils literal"><span class="pre">Polymer</span></code> and <code class="docutils literal"><span class="pre">Monomer</span></code>.
+We wanted to keep the base objects as generic as possible to allow
+other biomolecules (like DNA or RNA), or even unnatural polymers
+(like <span class="math">\(\beta\)</span>-amino acids) to be represented using this
+architecture. While some these features are not currently
+implemented in ISAMBARD, this will lead to more scalable code with
+reduced duplication in the future.</p>
+</div></blockquote>
+<div class="section" id="converting-pdb-files-to-ampal-objects">
+<h2>1. Converting PDB files to AMPAL Objects<a class="headerlink" href="#converting-pdb-files-to-ampal-objects" title="Permalink to this headline">¶</a></h2>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">isambard</span>
+</pre></div>
+</div>
+<p>Any PDB file can be parsed into an AMPAL object, which allows you to
+easily analyse the structure. The only function you need for this is
+<code class="docutils literal"><span class="pre">isambard.ampal.convert_pdb_to_ampal</span></code>. It takes a file path string as
+the input argument:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">isambard</span><span class="o">.</span><span class="n">ampal</span><span class="o">.</span><span class="n">convert_pdb_to_ampal</span><span class="p">(</span><span class="s1">&#39;3qy1.pdb&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Assembly</span> <span class="p">(</span><span class="mi">3</span><span class="n">qy1</span><span class="p">)</span> <span class="n">containing</span> <span class="mi">2</span> <span class="n">Polypeptides</span><span class="p">,</span> <span class="mi">449</span> <span class="n">Ligands</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The object that is returned is an <code class="docutils literal"><span class="pre">Assembly</span></code>. We can assign it to a
+variable and look inside it.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">ampal</span><span class="o">.</span><span class="n">convert_pdb_to_ampal</span><span class="p">(</span><span class="s1">&#39;3qy1.pdb&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Remember if you are using the object in Jupyter Notebook once it’s
+assigned to a variable, you can have a look at its attributes and
+methods by typing <code class="docutils literal"><span class="pre">my_protein.</span></code> and then pressing tab.</p>
+</div>
+<div class="section" id="basic-analysis">
+<h2>2. Basic Analysis<a class="headerlink" href="#basic-analysis" title="Permalink to this headline">¶</a></h2>
+<p>This <code class="docutils literal"><span class="pre">Assembly</span></code> contains two <code class="docutils literal"><span class="pre">Polypeptides</span></code>, and 449 <code class="docutils literal"><span class="pre">Ligands</span></code>. It
+is easy to check the amino acid sequences of the <code class="docutils literal"><span class="pre">Polypeptides</span></code>:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="o">.</span><span class="n">sequences</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;DIDTLISNNALWSKMLVEEDPGFFEKLAQAQKPRFLWIGCSDSRVPAERLTGLEPGELFVHRNVANLVIHTDLNCLSVVQYAVDVLEVEHIIICGHSGCGGIKAAVENPELGLINNWLLHIRDIWLKHSSLLGKMPEEQRLDALYELNVMEQVYNLGHSTIMQSAWKRGQNVTIHGWAYSINDGLLRDLDVTATNRETLENGYHKGISALSLKYI&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;KDIDTLISNNALWSKMLVEEDPGFFEKLAQAQKPRFLWIGCSDSRVPAERLTGLEPGELFVHRNVANLVIHTDLNCLSVVQYAVDVLEVEHIIICGHSGCGGIKAAVENPELGLINNWLLHIRDIWLKHSSLLGKMPEEQRLDALYELNVMEQVYNLGHSTIMQSAWKRGQNVTIHGWAYSINDGLLRDLDVTATNRETLENGYHKGISALSLKYI&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">.sequences</span></code> attribute is a list of sequence strings, one for each
+<code class="docutils literal"><span class="pre">Polymer</span></code>. We can determine other basic properties of the
+<code class="docutils literal"><span class="pre">Assembly</span></code>:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="o">.</span><span class="n">molecular_weight</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">48508.93158</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="o">.</span><span class="n">molar_extinction_280</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">83640</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="o">.</span><span class="n">isoelectric_point</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">5.4000000000000039</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="o">.</span><span class="n">id</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="s1">&#39;3qy1&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selecting-chains">
+<h2>3. Selecting Chains<a class="headerlink" href="#selecting-chains" title="Permalink to this headline">¶</a></h2>
+<p>Items inside each <code class="docutils literal"><span class="pre">Assembly</span></code> object can be accessed analogously to
+accessing items in a standard Python list:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># The first chain</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Polypeptide</span> <span class="n">containing</span> <span class="mi">215</span> <span class="n">Residues</span><span class="o">.</span> <span class="n">Sequence</span><span class="p">:</span> <span class="n">DIDTLISNNALW</span><span class="o">...&gt;</span>
+</pre></div>
+</div>
+<p>You can also select a <code class="docutils literal"><span class="pre">Polymer</span></code> using a string of the chain id from
+the PDB file. In this case there are two chains ‘A’ and ‘B’.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Polypeptide</span> <span class="n">containing</span> <span class="mi">215</span> <span class="n">Residues</span><span class="o">.</span> <span class="n">Sequence</span><span class="p">:</span> <span class="n">DIDTLISNNALW</span><span class="o">...&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Polypeptide</span> <span class="n">containing</span> <span class="mi">216</span> <span class="n">Residues</span><span class="o">.</span> <span class="n">Sequence</span><span class="p">:</span> <span class="n">KDIDTLISNNAL</span><span class="o">...&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">Polypeptide</span></code> object has a lot of the same functionality as the
+<code class="docutils literal"><span class="pre">Assembly</span></code>:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span> <span class="o">=</span> <span class="n">my_protein</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="o">.</span><span class="n">molecular_weight</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">24199.38728</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="o">.</span><span class="n">molar_extinction_280</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">41820</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="o">.</span><span class="n">isoelectric_point</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">5.4000000000000039</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="o">.</span><span class="n">id</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="s1">&#39;A&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selecting-residues">
+<h2>4. Selecting Residues<a class="headerlink" href="#selecting-residues" title="Permalink to this headline">¶</a></h2>
+<p>Each <code class="docutils literal"><span class="pre">Polypeptide</span></code> object is made from one or more <code class="docutils literal"><span class="pre">Residue</span></code>
+objects. You can access the <code class="docutils literal"><span class="pre">Residues</span></code> using square brackets:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Residue</span> <span class="n">containing</span> <span class="mi">8</span> <span class="n">Atoms</span><span class="o">.</span> <span class="n">Residue</span> <span class="n">code</span><span class="p">:</span> <span class="n">ASP</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Residue</span> <span class="n">containing</span> <span class="mi">8</span> <span class="n">Atoms</span><span class="o">.</span> <span class="n">Residue</span> <span class="n">code</span><span class="p">:</span> <span class="n">LEU</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Residue</span> <span class="n">containing</span> <span class="mi">7</span> <span class="n">Atoms</span><span class="o">.</span> <span class="n">Residue</span> <span class="n">code</span><span class="p">:</span> <span class="n">PRO</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>You can use a string of a residue id from the PDB file to select a
+<code class="docutils literal"><span class="pre">Residue</span></code>:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="p">[</span><span class="s1">&#39;23&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Residue</span> <span class="n">containing</span> <span class="mi">7</span> <span class="n">Atoms</span><span class="o">.</span> <span class="n">Residue</span> <span class="n">code</span><span class="p">:</span> <span class="n">PRO</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="p">[</span><span class="s1">&#39;40&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Residue</span> <span class="n">containing</span> <span class="mi">8</span> <span class="n">Atoms</span><span class="o">.</span> <span class="n">Residue</span> <span class="n">code</span><span class="p">:</span> <span class="n">ILE</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>If you use a residue number that isn’t defined in the PDB a <code class="docutils literal"><span class="pre">KeyError</span></code>
+will be raised:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
+
+<span class="ne">KeyError</span>                                  <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="n">e01d62d6ac3a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">my_chain_a</span><span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">]</span>
+
+
+<span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">jackheal</span><span class="o">/</span><span class="n">Projects</span><span class="o">/</span><span class="n">isambard</span><span class="o">/</span><span class="n">isambard</span><span class="o">/</span><span class="n">ampal</span><span class="o">/</span><span class="n">protein</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="mi">169</span>         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="mi">170</span>             <span class="n">id_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">id</span><span class="p">):</span> <span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">}</span>
+<span class="o">--&gt;</span> <span class="mi">171</span>             <span class="k">return</span> <span class="n">id_dict</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+    <span class="mi">172</span>         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="mi">173</span>             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+
+<span class="ne">KeyError</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span> <span class="o">=</span> <span class="n">my_chain_a</span><span class="p">[</span><span class="s1">&#39;23&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Residues</span></code> contain an <code class="docutils literal"><span class="pre">OrderedDict</span></code> (a special type of
+<code class="docutils literal"><span class="pre">dictionary</span></code> that retains the order you add elements) which has atom
+identifiers and <code class="docutils literal"><span class="pre">Atom</span></code> objects all the atoms that make up the
+<code class="docutils literal"><span class="pre">Residue</span></code>.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span><span class="o">.</span><span class="n">atoms</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span>
+              <span class="o">&lt;</span><span class="n">Nitrogen</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">22.124</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.140</span><span class="p">,</span> <span class="o">-</span><span class="mf">35.654</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+             <span class="p">(</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span>
+              <span class="o">&lt;</span><span class="n">Carbon</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">CA</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">22.664</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.954</span><span class="p">,</span> <span class="o">-</span><span class="mf">34.292</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+             <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">Carbon</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">21.911</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.875</span><span class="p">,</span> <span class="o">-</span><span class="mf">33.515</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+             <span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">Oxygen</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">O</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">21.863</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.926</span><span class="p">,</span> <span class="o">-</span><span class="mf">32.283</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+             <span class="p">(</span><span class="s1">&#39;CB&#39;</span><span class="p">,</span>
+              <span class="o">&lt;</span><span class="n">Carbon</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">CB</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">24.120</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.555</span><span class="p">,</span> <span class="o">-</span><span class="mf">34.534</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+             <span class="p">(</span><span class="s1">&#39;CG&#39;</span><span class="p">,</span>
+              <span class="o">&lt;</span><span class="n">Carbon</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">CG</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">24.124</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.964</span><span class="p">,</span> <span class="o">-</span><span class="mf">35.917</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+             <span class="p">(</span><span class="s1">&#39;CD&#39;</span><span class="p">,</span>
+              <span class="o">&lt;</span><span class="n">Carbon</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">CD</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">23.118</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.764</span><span class="p">,</span> <span class="o">-</span><span class="mf">36.681</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selecting-atoms">
+<h2>5. Selecting Atoms<a class="headerlink" href="#selecting-atoms" title="Permalink to this headline">¶</a></h2>
+<p>Atoms can be selected using a string of their PDB atom type, for example
+the C<span class="math">\(\alpha\)</span> atom of the residue can be selected like this:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Carbon</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">CA</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">22.664</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.954</span><span class="p">,</span> <span class="o">-</span><span class="mf">34.292</span><span class="p">)</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span><span class="p">[</span><span class="s1">&#39;CG&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Carbon</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">CG</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">24.124</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.964</span><span class="p">,</span> <span class="o">-</span><span class="mf">35.917</span><span class="p">)</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Nitrogen</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="mf">22.124</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.140</span><span class="p">,</span> <span class="o">-</span><span class="mf">35.654</span><span class="p">)</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span> <span class="o">=</span> <span class="n">my_residue_A23</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The individual coordinates can be selected using square brackets:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">22.664000000000001</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">34.292000000000002</span>
+</pre></div>
+</div>
+<p>Or with the <code class="docutils literal"><span class="pre">x</span></code>, <code class="docutils literal"><span class="pre">y</span></code> and <code class="docutils literal"><span class="pre">z</span></code> properties:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">22.664000000000001</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">y</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">3.9540000000000002</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">z</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">34.292000000000002</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">Atom</span></code> object contains some useful attributes:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># The atom number from the PDB file</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">162</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">element</span>  <span class="c1"># The element of the atom</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="s1">&#39;C&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ampal-parents">
+<h2>6. AMPAL Parents<a class="headerlink" href="#ampal-parents" title="Permalink to this headline">¶</a></h2>
+<p>Hopefully you can see that it’s easy to traverse down the AMPAL
+framework from <code class="docutils literal"><span class="pre">Assembly</span></code> level to the <code class="docutils literal"><span class="pre">Atom</span></code> level, but it’s just
+as easy to work your way back up. With any AMPAL object you can use the
+<code class="docutils literal"><span class="pre">ampal_parent</span></code> attribute to find the AMPAL object that it is contained
+inside.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">ampal_parent</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Residue</span> <span class="n">containing</span> <span class="mi">7</span> <span class="n">Atoms</span><span class="o">.</span> <span class="n">Residue</span> <span class="n">code</span><span class="p">:</span> <span class="n">PRO</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span><span class="o">.</span><span class="n">ampal_parent</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Polypeptide</span> <span class="n">containing</span> <span class="mi">215</span> <span class="n">Residues</span><span class="o">.</span> <span class="n">Sequence</span><span class="p">:</span> <span class="n">DIDTLISNNALW</span><span class="o">...&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="o">.</span><span class="n">ampal_parent</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Assembly</span> <span class="p">(</span><span class="mi">3</span><span class="n">qy1</span><span class="p">)</span> <span class="n">containing</span> <span class="mi">2</span> <span class="n">Polypeptides</span><span class="p">,</span> <span class="mi">449</span> <span class="n">Ligands</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>This attribute returns the original object itself, meaning you can
+access all its methods and functions, including its own
+<code class="docutils literal"><span class="pre">ampal_parent</span></code>!</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">==</span> <span class="n">my_residue_A23</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kc">True</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span><span class="o">.</span><span class="n">ampal_parent</span> <span class="o">==</span> <span class="n">my_chain_a</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kc">True</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">ampal_parent</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Polypeptide</span> <span class="n">containing</span> <span class="mi">215</span> <span class="n">Residues</span><span class="o">.</span> <span class="n">Sequence</span><span class="p">:</span> <span class="n">DIDTLISNNALW</span><span class="o">...&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">ampal_parent</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Assembly</span> <span class="p">(</span><span class="mi">3</span><span class="n">qy1</span><span class="p">)</span> <span class="n">containing</span> <span class="mi">2</span> <span class="n">Polypeptides</span><span class="p">,</span> <span class="mi">449</span> <span class="n">Ligands</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">ampal_parent</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Assembly</span> <span class="p">(</span><span class="mi">3</span><span class="n">qy1</span><span class="p">)</span> <span class="n">containing</span> <span class="mi">2</span> <span class="n">Polypeptides</span><span class="p">,</span> <span class="mi">449</span> <span class="n">Ligands</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_atom_A23ca</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">id</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="s1">&#39;23&#39;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_residue_A23</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">sequence</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="s1">&#39;DIDTLISNNALWSKMLVEEDPGFFEKLAQAQKPRFLWIGCSDSRVPAERLTGLEPGELFVHRNVANLVIHTDLNCLSVVQYAVDVLEVEHIIICGHSGCGGIKAAVENPELGLINNWLLHIRDIWLKHSSLLGKMPEEQRLDALYELNVMEQVYNLGHSTIMQSAWKRGQNVTIHGWAYSINDGLLRDLDVTATNRETLENGYHKGISALSLKYI&#39;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="o">.</span><span class="n">ampal_parent</span><span class="o">.</span><span class="n">sequences</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;DIDTLISNNALWSKMLVEEDPGFFEKLAQAQKPRFLWIGCSDSRVPAERLTGLEPGELFVHRNVANLVIHTDLNCLSVVQYAVDVLEVEHIIICGHSGCGGIKAAVENPELGLINNWLLHIRDIWLKHSSLLGKMPEEQRLDALYELNVMEQVYNLGHSTIMQSAWKRGQNVTIHGWAYSINDGLLRDLDVTATNRETLENGYHKGISALSLKYI&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;KDIDTLISNNALWSKMLVEEDPGFFEKLAQAQKPRFLWIGCSDSRVPAERLTGLEPGELFVHRNVANLVIHTDLNCLSVVQYAVDVLEVEHIIICGHSGCGGIKAAVENPELGLINNWLLHIRDIWLKHSSLLGKMPEEQRLDALYELNVMEQVYNLGHSTIMQSAWKRGQNVTIHGWAYSINDGLLRDLDVTATNRETLENGYHKGISALSLKYI&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ligands">
+<h2>7. Ligands<a class="headerlink" href="#ligands" title="Permalink to this headline">¶</a></h2>
+<p>The last AMPAL objects to discuss are <code class="docutils literal"><span class="pre">Ligand</span></code> and <code class="docutils literal"><span class="pre">Ligands</span></code>. These
+are intended to store non-protein elements from the PDB file. The
+ligands can be extracted from the <code class="docutils literal"><span class="pre">Assembly</span></code>:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="o">.</span><span class="n">get_ligands</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Ligands</span> <span class="n">chain</span> <span class="n">containing</span> <span class="mi">449</span> <span class="n">Ligands</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Ligands</span></code> is a special <code class="docutils literal"><span class="pre">Polymer</span></code> object, with none of the
+protein-specific <code class="docutils literal"><span class="pre">Polypeptide</span></code> functionality. It contains one or more
+<code class="docutils literal"><span class="pre">Ligand</span></code> objects which you can select in exactly the same way as
+selecting <code class="docutils literal"><span class="pre">Residues</span></code> from <code class="docutils literal"><span class="pre">Polypeptides</span></code>:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ligands</span> <span class="o">=</span> <span class="n">my_protein</span><span class="o">.</span><span class="n">get_ligands</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ligands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Ligand</span> <span class="n">containing</span> <span class="mi">1</span> <span class="n">Atom</span><span class="o">.</span> <span class="n">Ligand</span> <span class="n">code</span><span class="p">:</span> <span class="n">ZN</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ligands</span><span class="p">[</span><span class="s1">&#39;221&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Ligand</span> <span class="n">containing</span> <span class="mi">1</span> <span class="n">Atom</span><span class="o">.</span> <span class="n">Ligand</span> <span class="n">code</span><span class="p">:</span> <span class="n">ZN</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">Ligand</span></code> objects are <code class="docutils literal"><span class="pre">Monomer</span></code> objects, without the
+protein-specific functionality that is present for <code class="docutils literal"><span class="pre">Residues</span></code>. Since
+<code class="docutils literal"><span class="pre">Ligand</span></code> and <code class="docutils literal"><span class="pre">Residue</span></code> are both examples of <code class="docutils literal"><span class="pre">Monomer</span></code>, they have a
+lot of the same functionality:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ligand_zinc</span> <span class="o">=</span> <span class="n">my_ligands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ligand_zinc</span><span class="o">.</span><span class="n">atoms</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s1">&#39;ZN&#39;</span><span class="p">,</span>
+              <span class="o">&lt;</span><span class="n">Zinc</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">ZN</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">5.817</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.172</span><span class="p">,</span> <span class="o">-</span><span class="mf">18.798</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ligand_zinc</span><span class="p">[</span><span class="s1">&#39;ZN&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Zinc</span> <span class="n">Atom</span> <span class="p">(</span><span class="n">ZN</span><span class="p">)</span><span class="o">.</span> <span class="n">Coordinates</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">5.817</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.172</span><span class="p">,</span> <span class="o">-</span><span class="mf">18.798</span><span class="p">)</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>This zinc atom is associated with one of the <code class="docutils literal"><span class="pre">Polypeptide</span></code> chains, and
+this is reflected in its <code class="docutils literal"><span class="pre">ampal_parent</span></code>.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ligand_zinc</span><span class="o">.</span><span class="n">ampal_parent</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Polypeptide</span> <span class="n">containing</span> <span class="mi">215</span> <span class="n">Residues</span><span class="o">.</span> <span class="n">Sequence</span><span class="p">:</span> <span class="n">DIDTLISNNALW</span><span class="o">...&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="summary-and-activities">
+<h2>8. Summary and activities<a class="headerlink" href="#summary-and-activities" title="Permalink to this headline">¶</a></h2>
+<p>With these simple methods you can load in a PDB file and select various
+different parts of the protein. Please try playing around with the
+example code and try to select different parts of the protein.</p>
+<ol class="arabic simple">
+<li>Try loading in a PDB file of your own and select various parts of the
+protein and ligands.</li>
+<li>Find the other builtin functions either by:<ol class="arabic">
+<li>Tabbing the object in Jupyter Notebook</li>
+<li>Looking at the documentation</li>
+<li>Finding the <code class="docutils literal"><span class="pre">base_ampal</span></code> code in the ISAMBARD folder and looking
+through it (tip: you can do this with the IPython file browser)</li>
+</ol>
+</li>
+</ol>
+<p>In the next section we’ll look at how we can perform more complex
+selections and more detailed analysis on these objects.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="2_Advanced_Selections_and_Analysis.html" class="btn btn-neutral float-right" title="Advanced Selections and Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorial.html" class="btn btn-neutral" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

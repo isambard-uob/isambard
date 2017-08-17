@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.ampal.pdb_parser module &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="index.html"/>
+        <link rel="up" title="isambard.ampal package" href="isambard.ampal.html"/>
+        <link rel="next" title="isambard.ampal.protein module" href="isambard.ampal.protein.html"/>
+        <link rel="prev" title="isambard.ampal.nucleic_acid module" href="isambard.ampal.nucleic_acid.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api_reference.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="isambard.ampal.html">isambard.ampal package</a> &raquo;</li>
+        
+      <li>isambard.ampal.pdb_parser module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/isambard.ampal.pdb_parser.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-isambard.ampal.pdb_parser">
+<span id="isambard-ampal-pdb-parser-module"></span><h1>isambard.ampal.pdb_parser module<a class="headerlink" href="#module-isambard.ampal.pdb_parser" title="Permalink to this headline">¶</a></h1>
+<p>Contains code for parsing PDB files.</p>
+<dl class="class">
+<dt id="isambard.ampal.pdb_parser.PDBColFormat">
+<em class="property">class </em><code class="descname">PDBColFormat</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PDBColFormat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PDBColFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
+<p>Database handler for <cite>ampal_database.py</cite>.</p>
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PDBColFormat.atom_col">
+<code class="descname">atom_col</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PDBColFormat.atom_col" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PDBColFormat.atom_name">
+<code class="descname">atom_name</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PDBColFormat.atom_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PDBColFormat.id">
+<code class="descname">id</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PDBColFormat.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.ampal.pdb_parser.PdbParser">
+<em class="property">class </em><code class="descname">PdbParser</code><span class="sig-paren">(</span><em>pdb</em>, <em>path=True</em>, <em>pdb_id=''</em>, <em>ignore_end=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Parses a PDB file and produces and AMPAL Assembly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pdb</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Either a path to a PDB file or a string containing PDB
+format structural data.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>true</cite>, flags <cite>pdb</cite> as a path and not a PDB string.</li>
+<li><strong>pdb_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Identifier for the <cite>Assembly</cite>.</li>
+<li><strong>ignore_end</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>false</cite>, parsing of the file will stop when an “END”
+record is encountered.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PdbParser.proc_functions">
+<code class="descname">proc_functions</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.proc_functions" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – Keys are PDB labels i.e. “ATOM” or “END”, values are the
+function that processes that specific line.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PdbParser.id">
+<code class="descname">id</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Identifier for the <cite>Assembly</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PdbParser.pdb_lines">
+<code class="descname">pdb_lines</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.pdb_lines" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>[str]</em> – Input PDB split into line.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PdbParser.new_labels">
+<code class="descname">new_labels</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.new_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – Indicates if new atom or residue labels have been found while
+parsing the PDB file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PdbParser.state">
+<code class="descname">state</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.state" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Current state being appended to. This is used on multi-state
+files like NMR structures.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PdbParser.pdb_parse_tree">
+<code class="descname">pdb_parse_tree</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.pdb_parse_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – This dictionary represents the parse tree of the PDB file.
+Each line of the structure is broken down into a key, the
+entry label, and a value, the data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PdbParser.current_line">
+<code class="descname">current_line</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.current_line" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – The line that is currently being parsed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.ampal.pdb_parser.PdbParser.ignore_end">
+<code class="descname">ignore_end</code><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.ignore_end" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool, optional</em> – If <cite>false</cite>, parsing of the file will stop when an “END”
+record is encountered.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.change_state">
+<code class="descname">change_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.change_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.change_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments current state and adds a new dict to the parse tree.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="isambard.ampal.pdb_parser.PdbParser.check_for_non_canonical">
+<em class="property">static </em><code class="descname">check_for_non_canonical</code><span class="sig-paren">(</span><em>residue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.check_for_non_canonical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.check_for_non_canonical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if the residue is non-canonical.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.end">
+<code class="descname">end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes an “END” record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.gen_states">
+<code class="descname">gen_states</code><span class="sig-paren">(</span><em>monomer_data</em>, <em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.gen_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.gen_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the <cite>states</cite> dictionary for a <cite>Monomer</cite>.</p>
+<dl class="docutils">
+<dt>monomer_data <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>A list of atom data parsed from the input PDB.</dd>
+<dt>parent <span class="classifier-delimiter">:</span> <span class="classifier">ampal.Monomer</span></dt>
+<dd><cite>Monomer</cite> used to assign <cite>ampal_parent</cite> on created
+<cite>Atoms</cite>.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.make_ampal">
+<code class="descname">make_ampal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.make_ampal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.make_ampal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates an AMPAL object from the parse tree.</p>
+<p class="rubric">Notes</p>
+<p>Will create an <cite>Assembly</cite> if there is a single state in the
+parese tree or an <cite>AmpalContainer</cite> if there is more than one.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.parse_pdb_file">
+<code class="descname">parse_pdb_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.parse_pdb_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.parse_pdb_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the PDB parser.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.proc_atom">
+<code class="descname">proc_atom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.proc_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.proc_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes an “ATOM” or “HETATM” record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.proc_chain">
+<code class="descname">proc_chain</code><span class="sig-paren">(</span><em>chain_info</em>, <em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.proc_chain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.proc_chain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a chain into a <cite>Polymer</cite> type object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>chain_info</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a><em>, </em><em>OrderedDict</em><em>)</em>) – Contains a set of chain labels and atom records.</li>
+<li><strong>parent</strong> (<em>ampal.Assembly</em>) – <cite>Assembly</cite> used to assign <cite>ampal_parent</cite> on created
+<cite>Polymer</cite>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if multiple or unknown atom types found
+within the same chain.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> – Raised if unknown <cite>Monomer</cite> type encountered.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.proc_line_coordinate">
+<code class="descname">proc_line_coordinate</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.proc_line_coordinate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.proc_line_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts data from columns in ATOM/HETATM record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.proc_monomer">
+<code class="descname">proc_monomer</code><span class="sig-paren">(</span><em>monomer_info</em>, <em>parent</em>, <em>mon_cls=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.proc_monomer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.proc_monomer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes a records into a <cite>Monomer</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>monomer_info</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a><em>, </em><em>OrderedDict</em><em>)</em>) – Labels and data for a monomer.</li>
+<li><strong>parent</strong> (<em>ampal.Polymer</em>) – <cite>Polymer</cite> used to assign <cite>ampal_parent</cite> on created
+<cite>Monomer</cite>.</li>
+<li><strong>mon_cls</strong> (<cite>Monomer class or subclass</cite>, optional) – A <cite>Monomer</cite> class can be defined explicitly.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.ampal.pdb_parser.PdbParser.proc_state">
+<code class="descname">proc_state</code><span class="sig-paren">(</span><em>state_data</em>, <em>state_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#PdbParser.proc_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.PdbParser.proc_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes a state into an <cite>Assembly</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>state_data</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Contains information about the state, including all
+the per line structural data.</li>
+<li><strong>state_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – ID given to <cite>Assembly</cite> that represents the state.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.ampal.pdb_parser.convert_pdb_to_ampal">
+<code class="descname">convert_pdb_to_ampal</code><span class="sig-paren">(</span><em>pdb</em>, <em>path=True</em>, <em>pdb_id=''</em>, <em>ignore_end=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/pdb_parser.html#convert_pdb_to_ampal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.pdb_parser.convert_pdb_to_ampal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a PDB file into an AMPAL object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pdb</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Either a path to a PDB file or a string containing PDB
+format structural data.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>true</cite>, flags <cite>pdb</cite> as a path and not a PDB string.</li>
+<li><strong>pdb_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Identifier for the <cite>Assembly</cite>.</li>
+<li><strong>ignore_end</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>false</cite>, parsing of the file will stop when an “END”
+record is encountered.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ampal</strong> – AMPAL object that contains the structural information from
+the PDB file provided. If the PDB file has a single state
+then an <cite>Assembly</cite> will be returned, otherwise an
+<cite>AmpalContainer</cite> will be returned.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ampal.Assembly or ampal.AmpalContainer</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="isambard.ampal.protein.html" class="btn btn-neutral float-right" title="isambard.ampal.protein module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="isambard.ampal.nucleic_acid.html" class="btn btn-neutral" title="isambard.ampal.nucleic_acid module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on August 17, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
