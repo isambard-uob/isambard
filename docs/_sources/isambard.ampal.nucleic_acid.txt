@@ -1,7 +1,0 @@
-isambard.ampal.nucleic_acid module
-==================================
-
-.. automodule:: isambard.ampal.nucleic_acid
-    :members:
-    :undoc-members:
-    :show-inheritance:
