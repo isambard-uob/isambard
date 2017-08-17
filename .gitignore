@@ -92,9 +92,9 @@ ENV/
 *.db-journal
 
 # Compiled Cython files
-isambard_dev/ampal/specifications/polymer_specs/ta_polypeptide.c
-isambard_dev/buff/calculate_energy.cpp
-isambard_dev/tools/geometry.c
+isambard/ampal/specifications/polymer_specs/ta_polypeptide.c
+isambard/buff/calculate_energy.cpp
+isambard/tools/geometry.c
 
 # Editor Gubbinz
 .vscode/
