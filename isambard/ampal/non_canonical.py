@@ -1,5 +1,6 @@
 """Contains tools for working with non-canonical animo acids."""
 
+import os
 import pathlib
 import pickle
 
@@ -8,7 +9,7 @@ import numpy
 from tools.geometry import dihedral, find_transformations
 
 
-FILE_PATH = pathlib.Path(__file__).parent
+FILE_PATH = pathlib.Path(os.path.abspath(__file__)).parent
 REF_PATH = FILE_PATH / 'reference_ampals' / 'non_canonical_amino_acids'
 
 
