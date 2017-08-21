@@ -1,5 +1,5 @@
 recursive-include isambard *.db *.json *.md *.pyx *.pyxbld *.cpp *.hpp *.txt
-recursive-include isambard/ampal/reference_ampals/ *.pickle
+recursive-include isambard/ampal/reference_ampals *.pickle
 recursive-include unit_tests *.mmol *.pdb
 include README.md
 exclude isambard_dev/settings.json

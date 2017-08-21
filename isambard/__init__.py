@@ -24,4 +24,4 @@ try:
 finally:
     _os.chdir(_starting_dir)
 
-__version__ = "2017.2.2"
+__version__ = "2017.2.3"

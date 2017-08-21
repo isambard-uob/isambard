@@ -2,7 +2,7 @@
 
 ### Intelligent System for Analysis, Model Building And Rational Design.
 
-### Version 2017.2.2 (Aug 16th, 2017), Woolfson Group, University of Bristol.
+### Version 2017.2.3 (Aug 16th, 2017), Woolfson Group, University of Bristol.
 
 [![Python Version](https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg)](https://woolfson-group.github.io/isambard/)
 [![Documentation](https://img.shields.io/badge/docs-master-orange.svg)](https://woolfson-group.github.io/isambard/)
@@ -73,6 +73,9 @@ To ensure that the package is correctly installed unit tests can be run by:
 `python -m unittest discover unit_tests/`
 
 ## Releases
+
+### 2017.2.3
+Fixes issue with files excluded from module.
 
 ### 2017.2.2
 Improved error handling for `Residue.backbone`.

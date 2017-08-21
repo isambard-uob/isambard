@@ -28,7 +28,7 @@ setuptools.setup(
                "ta_polypeptide.pyx")]),
          ]),
     include_package_data=True,
-    version='2017.2.2',
+    version='2017.2.3',
     description=(
         'ISAMBARD: An open-source computational environment for'
         ' biomolecular analysis, modelling and design'),
@@ -36,7 +36,7 @@ setuptools.setup(
     author='Woolfson Group, University of Bristol',
     author_email='isambardinfo@gmail.com',
     url='https://github.com/woolfson-group/isambard/',
-    download_url='https://github.com/woolfson-group/isambard/tarball/2017.2.2',
+    download_url='https://github.com/woolfson-group/isambard/tarball/2017.2.3',
     keywords=['isambard', 'biomolecule', 'parametric',
               'modelling', 'bristol', 'woolfson'],
     install_requires=[
