@@ -31,13 +31,13 @@ def convert_pro_to_hyp(pro):
     residue to hydroxyproline:
 
     >>> import isambard_dev
-    >>> col = isambard.specifications.CoiledCoil.tropocollagen(aa=21)
+    >>> col = isambard_dev.specifications.CoiledCoil.tropocollagen(aa=21)
     >>> col.pack_new_sequences(['GPPGPPGPPGPPGPPGPPGPP']*3)
     >>> to_convert = [
     ...     res for (i, res) in enumerate(col.get_monomers())
     ...     if not (i + 1) % 3]
     >>> for pro in to_convert:
-    ...     isambard.ampal.non_canonical.convert_pro_to_hyp(pro)
+    ...     isambard_dev.ampal.non_canonical.convert_pro_to_hyp(pro)
     >>> col.sequences
     ['GPXGPXGPXGPXGPXGPXGPX', 'GPXGPXGPXGPXGPXGPXGPX', 'GPXGPXGPXGPXGPXGPXGPX']
     """
