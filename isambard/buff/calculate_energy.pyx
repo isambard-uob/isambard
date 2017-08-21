@@ -246,7 +246,8 @@ class BuffScore(object):
     """
 
     def __init__(self, interactions, scores):
-        self.inter_scores = list(zip(interactions, scores))
+        self.inter_scores = [isc for isc in zip(interactions, scores)
+                             if sum(isc[1])]
         self.steric = 0
         self.desolvation = 0
         self.charge = 0
