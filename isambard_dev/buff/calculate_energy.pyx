@@ -97,16 +97,19 @@ cpdef score_interactions(interactions, ff):
     cdef PyAtomData a_params, b_params
     cdef double dist, ffco
     scores = []
+    interactions_in_co = []
     ffco = ff.distance_cutoff
     ffpsd = ff.parameter_struct_dict
-    for a, b in interactions:
+    for interaction in interactions:
+        a, b = interaction
         a_params = ffpsd[a._ff_id[0]][a._ff_id[1]]
         b_params = ffpsd[b._ff_id[0]][b._ff_id[1]]
         dist = distance(a._vector, b._vector)
         if dist <= ffco:
             scores.append(calculatePairEnergy(
                 a_params.thisptr, b_params.thisptr, dist))
-    buff_score = BuffScore(interactions, scores)
+            interactions_in_co.append(interaction)
+    buff_score = BuffScore(interactions_in_co, scores)
     return buff_score
 
 
@@ -243,11 +246,19 @@ class BuffScore(object):
         within covalent bond distance.
     scores: [(float, float, float)]
         List of component BUFF scores
+
+    Raises
+    ------
+    AssertionError
+        Raised if the interaction and score list used to create the
+        `BuffScore` are not the same length.
     """
 
     def __init__(self, interactions, scores):
+        assert(len(interactions) == len(scores))
+        # Keep only non-zero interactions.
         self.inter_scores = [isc for isc in zip(interactions, scores)
-                             if sum(isc[1])]
+                             if all(not x for x in isc[1])]
         self.steric = 0
         self.desolvation = 0
         self.charge = 0
