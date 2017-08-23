@@ -2,7 +2,7 @@
 
 ### Intelligent System for Analysis, Model Building And Rational Design.
 
-### Version 2017.2.3 (Aug 16th, 2017), Woolfson Group, University of Bristol.
+### Version 2017.2.4 (Aug 23th, 2017), Woolfson Group, University of Bristol.
 
 [![Python Version](https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg)](https://woolfson-group.github.io/isambard/)
 [![Documentation](https://img.shields.io/badge/docs-master-orange.svg)](https://woolfson-group.github.io/isambard/)
@@ -33,7 +33,7 @@ pip install isambard
 Or if you want to try an experimental build, download from GitHub either by downloading the zipped file or cloning, then navigate to the ISAMBARD folder and type:
 
 ```
-pip install .
+python setup.py install
 ```
 
 ISAMBARD has a few Python package requirements, just install them through pip if it asks for them. We recommend using the [Anaconda Python 3 distribution](https://www.continuum.io/downloads), it contains most of the dependencies. 
@@ -73,6 +73,11 @@ To ensure that the package is correctly installed unit tests can be run by:
 `python -m unittest discover unit_tests/`
 
 ## Releases
+
+### 2017.2.4
+Fixes a bug with `BuffScore.inter_scores` returned from `score_interactions`
+where the interactions did not match the score. _This bug had no impact on the
+absolute value of the `BuffScore` or any of the component scores._
 
 ### 2017.2.3
 Fixes issue with files excluded from module.
