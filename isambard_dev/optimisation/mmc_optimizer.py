@@ -25,14 +25,7 @@ class MMCParameterType(enum.Enum):
     DISCRETE_RANGE = 2
     LIST = 3
     UNIFORM_DIST = 4
-    BETA_DIST = 5
-    EXPO_DIST = 6
-    GAMMA_DIST = 7
-    NORMAL_DIST = 8
-    LOG_NORM_DIST = 9
-    PARETO_DIST = 10
-    VON_MISES_DIST = 11
-    WEIBULL_DIST = 12
+    NORMAL_DIST = 5
 
 
 class MMCParameter:
@@ -102,32 +95,11 @@ class MMCParameter:
             Raised if the parameter type is unknown.
         """
         if self.parameter_type is MMCParameterType.UNIFORM_DIST:
-            (mu, sigma) = self.static_dist_or_list
-            self.proposed_value = random.uniform(mu, sigma)
-        elif self.parameter_type is MMCParameterType.BETA_DIST:
-            (alpha, beta) = self.static_dist_or_list
-            self.proposed_value = random.betavariate(alpha, beta)
-        elif self.parameter_type is MMCParameterType.EXPO_DIST:
-            lambd = self.static_dist_or_list
-            self.proposed_value = random.expovariate(lambd)
-        elif self.parameter_type is MMCParameterType.GAMMA_DIST:
-            (alpha, beta) = self.static_dist_or_list
-            self.proposed_value = random.gammavariate(alpha, beta)
+            (a, b) = self.static_dist_or_list
+            self.proposed_value = random.uniform(a, b)
         elif self.parameter_type is MMCParameterType.NORMAL_DIST:
             (mu, sigma) = self.static_dist_or_list
             self.proposed_value = random.normalvariate(mu, sigma)
-        elif self.parameter_type is MMCParameterType.LOG_NORM_DIST:
-            (mu, sigma) = self.static_dist_or_list
-            self.proposed_value = random.lognormvariate(mu, sigma)
-        elif self.parameter_type is MMCParameterType.PARETO_DIST:
-            alpha = self.static_dist_or_list
-            self.proposed_value = random.paretovariate(alpha)
-        elif self.parameter_type is MMCParameterType.VON_MISES_DIST:
-            (mu, kappa) = self.static_dist_or_list
-            self.proposed_value = random.vonmisesvariate(mu, kappa)
-        elif self.parameter_type is MMCParameterType.WEIBULL_DIST:
-            (alpha, beta) = self.static_dist_or_list
-            self.proposed_value = random.weibullvariate(alpha, beta)
         elif self.parameter_type is MMCParameterType.DISCRETE_RANGE:
             (min_v, max_v, step) = self.static_dist_or_list
             self.proposed_value = random.choice(
