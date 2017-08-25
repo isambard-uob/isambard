@@ -292,7 +292,9 @@ class MMCParameterOptimisation:
     def check_move(new, old, t):
         """Determines if a model will be accepted.
 
-        Uses Boltzmann distribution scaled by temperature."""
+        Uses Boltzmann distribution scaled by temperature in Kelvin."""
+        if t <= 0:
+            return False
         K_BOLTZ = 8.3144621E-003  # kJa/mol.K
         if new < old:
             return True
