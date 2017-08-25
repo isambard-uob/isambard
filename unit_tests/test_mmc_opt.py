@@ -18,9 +18,12 @@ class TestMMCParameter(unittest.TestCase):
         uniform = MMCParameter('Uniform', MMCParameterType.UNIFORM_DIST,
                                (val_a, val_b))
         uniform.randomise_proposed_value()
-        if val_a < val_b:
+        if ((val_a - val_b) == float('inf')) or (
+                (val_a - val_b) == float('-inf')):
+            pass
+        elif val_a < val_b:
             self.assertTrue(val_a <= uniform.proposed_value <= val_b)
-        if val_a > val_b:
+        else:
             self.assertTrue(val_a >= uniform.proposed_value >= val_b)
 
     @given(floats(allow_nan=False, allow_infinity=False),
