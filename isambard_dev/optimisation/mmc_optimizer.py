@@ -293,7 +293,7 @@ class MMCParameterOptimisation:
         """Determines if a model will be accepted.
 
         Uses Boltzmann distribution scaled by temperature in Kelvin."""
-        if t <= 0:
+        if (t <= 0) or numpy.isclose(t, 0.0, 1e-9, 0.0):
             return False
         K_BOLTZ = 8.3144621E-003  # kJa/mol.K
         if new < old:
