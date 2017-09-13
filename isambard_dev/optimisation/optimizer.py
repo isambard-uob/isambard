@@ -1,3 +1,5 @@
+"""Bio-inspired optimisation algorithms."""
+
 from concurrent import futures
 import datetime
 import operator
@@ -173,10 +175,12 @@ class BaseOptimizer:
         for i, entry in enumerate(self.halloffame[0]):
             if entry > 0.95:
                 print(
-                    "Warning! Parameter {0} is at or near maximum allowed value\n".format(i + 1))
+                    "Warning! Parameter {0} is at or near maximum allowed "
+                    "value\n".format(i + 1))
             elif entry < -0.95:
                 print(
-                    "Warning! Parameter {0} is at or near minimum allowed value\n".format(i + 1))
+                    "Warning! Parameter {0} is at or near minimum allowed "
+                    "value\n".format(i + 1))
         if self._params['log']:
             self.log_results()
         if self._params['plot']:
@@ -218,15 +222,18 @@ class BaseOptimizer:
         for i in range(len(self._params['value_means'])):
             self._params['variable_parameters'].append(
                 "".join(['var', str(i)]))
-        if len(set(arrangement).intersection(self._params['variable_parameters'])) != \
-                len(self._params['value_means']):
+        if len(set(arrangement).intersection(
+                self._params['variable_parameters'])) != len(
+                    self._params['value_means']):
             raise ValueError("argument mismatch!")
-        if len(self._params['value_ranges']) != len(self._params['value_means']):
+        if len(self._params['value_ranges']) != len(
+                self._params['value_means']):
             raise ValueError("argument mismatch!")
 
     def assign_fitnesses(self):
         raise NotImplementedError("Will depend on evaluation subclass")
-        # must always operate on whole population- bounds checking etc to be done internally
+        # must always operate on whole population- bounds checking etc
+        # to be done internally
 
     def generate(self):
         raise NotImplementedError("Will depend on optimizer type")
@@ -248,8 +255,10 @@ class BaseOptimizer:
         best_ind = self.halloffame[0]
         model_params = self.parse_individual(
             best_ind)  # need to change name of 'params'
-        with open('{0}{1}_log.txt'.format(self._params['output_path'],
-                                          self._params['run_id']), 'a+') as log_file:
+        with open(
+                '{0}{1}_log.txt'.format(
+                    self._params['output_path'],
+                    self._params['run_id']), 'a+') as log_file:
             log_file.write('\nEvaluated {0} models in total\n'.format(
                 self._params['model_count']))
             log_file.write('Run ID is {0}\n'.format(self._params['run_id']))
@@ -262,13 +271,16 @@ class BaseOptimizer:
             for i, entry in enumerate(self.halloffame[0]):
                 if entry > 0.95:
                     log_file.write(
-                        "Warning! Parameter {0} is at or near maximum allowed value\n".format(i + 1))
+                        "Warning! Parameter {0} is at or near maximum allowed "
+                        "value\n".format(i + 1))
                 elif entry < -0.95:
                     log_file.write(
-                        "Warning! Parameter {0} is at or near minimum allowed value\n".format(i + 1))
+                        "Warning! Parameter {0} is at or near minimum allowed "
+                        "value\n".format(i + 1))
             log_file.write('Minimization history: \n{0}'.format(self.logbook))
         with open('{0}{1}_bestmodel.pdb'.format(
-                self._params['output_path'], self._params['run_id']), 'w') as output_file:
+                self._params['output_path'],
+                self._params['run_id']), 'w') as output_file:
             model = self._params['specification'](*model_params)
             model.build()
             model.pack_new_sequences(self._params['sequence'])
@@ -334,7 +346,8 @@ class BaseScore(BaseOptimizer):
         """
         if not self.parameter_log:
             raise AttributeError(
-                'No parameter log data to make funnel, have you ran the optimiser?')
+                'No parameter log data to make funnel, have you ran the '
+                'optimiser?')
         model_cls = self._params['specification']
         gen_tagged = []
         for gen, models in enumerate(self.parameter_log):
@@ -349,10 +362,12 @@ class BaseScore(BaseOptimizer):
                 [(x, top_result_model,
                   self._params['specification']) for x in sorted_pps[1:]])
         else:
-            with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
+            with futures.ProcessPoolExecutor(
+                    max_workers=self._params['processors']) as executor:
                 energy_rmsd_gen = executor.map(
                     self.funnel_rebuild,
-                    [(x, top_result_model, self._params['specification']) for x in sorted_pps[1:]])
+                    [(x, top_result_model, self._params['specification'])
+                     for x in sorted_pps[1:]])
         return list(energy_rmsd_gen)
 
     @staticmethod
@@ -472,7 +487,8 @@ class BaseComparator(BaseOptimizer):
                 self._params['variable_parameters'])) != len(
                 self._params['value_means']):
             raise ValueError("argument mismatch!")
-        if len(self._params['value_ranges']) != len(self._params['value_means']):
+        if len(self._params['value_ranges']) != len(
+                self._params['value_means']):
             raise ValueError("argument mismatch!")
 
 
@@ -687,7 +703,8 @@ class OptPSO:
             operator.sub, best_neighbour.best, part))
         chi_list = [chi] * len(part)
         chi_list2 = [1 - chi] * len(part)
-        a = map(operator.sub, map(operator.mul, chi_list, map(operator.add, ce1_p, ce2_g)),
+        a = map(operator.sub,
+                map(operator.mul, chi_list, map(operator.add, ce1_p, ce2_g)),
                 map(operator.mul, chi_list2, part.speed))
         part.speed = list(map(operator.add, part.speed, a))
         for i, speed in enumerate(part.speed):
@@ -754,7 +771,8 @@ class OptGA:
         self.toolbox.register("select", tools.selTournament)
 
     def generate(self):
-        """Generates individual with random parameters within allowed bounds."""
+        """Generates individual with random parameters within allowed bounds.
+        """
         ind = creator.Individual(
             [random.uniform(-1, 1)
              for _ in range(len(self._params['value_means']))])
@@ -815,7 +833,7 @@ class OptGA:
 
 
 class OptCMAES:
-    """Covariance matrix adaptation evolutionary strategy optimization algorithm.
+    """Covariance matrix adaptation evolutionary strategy optimizer.
 
     Notes
     -----
@@ -881,44 +899,44 @@ class OptCMAES:
 
         Notes
         -----
-        +-------------+---------------------------+----------------------------+
-        | Parameter   | Default                   | Details                    |
-        +=============+===========================+============================+
-        | ``lambda_`` | ``int(4 + 3 * log(N))``   | Number of children to      |
-        |             |                           | produce at each generation,|
-        |             |                           | ``N`` is the individual's  |
-        |             |                           | size (integer).            |
-        +-------------+---------------------------+----------------------------+
-        | ``mu``      | ``int(lambda_ / 2)``      | The number of parents to   |
-        |             |                           | keep from the              |
-        |             |                           | lambda children (integer). |
-        +-------------+---------------------------+----------------------------+
-        | ``cmatrix`` | ``identity(N)``           | The initial covariance     |
-        |             |                           | matrix of the distribution |
-        |             |                           | that will be sampled.      |
-        +-------------+---------------------------+----------------------------+
-        | ``weights`` | ``"superlinear"``         | Decrease speed, can be     |
-        |             |                           | ``"superlinear"``,         |
-        |             |                           | ``"linear"`` or            |
-        |             |                           | ``"equal"``.               |
-        +-------------+---------------------------+----------------------------+
-        | ``cs``      | ``(mueff + 2) /           | Cumulation constant for    |
-        |             | (N + mueff + 3)``         | step-size.                 |
-        +-------------+---------------------------+----------------------------+
-        | ``damps``   | ``1 + 2 * max(0, sqrt((   | Damping for step-size.     |
-        |             | mueff - 1) / (N + 1)) - 1)|                            |
-        |             | + cs``                    |                            |
-        +-------------+---------------------------+----------------------------+
-        | ``ccum``    | ``4 / (N + 4)``           | Cumulation constant for    |
-        |             |                           | covariance matrix.         |
-        +-------------+---------------------------+----------------------------+
-        | ``ccov1``   | ``2 / ((N + 1.3)^2 +      | Learning rate for rank-one |
-        |             | mueff)``                  | update.                    |
-        +-------------+---------------------------+----------------------------+
-        | ``ccovmu``  | ``2 * (mueff - 2 + 1 /    | Learning rate for rank-mu  |
-        |             | mueff) / ((N + 2)^2 +     | update.                    |
-        |             | mueff)``                  |                            |
-        +-------------+---------------------------+----------------------------+
+        +------------+---------------------------+----------------------------+
+        | Parameter  | Default                   | Details                    |
+        +============+===========================+============================+
+        | ``lambda_``| ``int(4 + 3 * log(N))``   | Number of children to      |
+        |            |                           | produce at each generation,|
+        |            |                           | ``N`` is the individual's  |
+        |            |                           | size (integer).            |
+        +------------+---------------------------+----------------------------+
+        | ``mu``     | ``int(lambda_ / 2)``      | The number of parents to   |
+        |            |                           | keep from the              |
+        |            |                           | lambda children (integer). |
+        +------------+---------------------------+----------------------------+
+        | ``cmatrix``| ``identity(N)``           | The initial covariance     |
+        |            |                           | matrix of the distribution |
+        |            |                           | that will be sampled.      |
+        +------------+---------------------------+----------------------------+
+        | ``weights``| ``"superlinear"``         | Decrease speed, can be     |
+        |            |                           | ``"superlinear"``,         |
+        |            |                           | ``"linear"`` or            |
+        |            |                           | ``"equal"``.               |
+        +------------+---------------------------+----------------------------+
+        | ``cs``     | ``(mueff + 2) /           | Cumulation constant for    |
+        |            | (N + mueff + 3)``         | step-size.                 |
+        +------------+---------------------------+----------------------------+
+        | ``damps``  | ``1 + 2 * max(0, sqrt((   | Damping for step-size.     |
+        |            | mueff - 1) / (N + 1)) - 1)|                            |
+        |            | + cs``                    |                            |
+        +------------+---------------------------+----------------------------+
+        | ``ccum``   | ``4 / (N + 4)``           | Cumulation constant for    |
+        |            |                           | covariance matrix.         |
+        +------------+---------------------------+----------------------------+
+        | ``ccov1``  | ``2 / ((N + 1.3)^2 +      | Learning rate for rank-one |
+        |            | mueff)``                  | update.                    |
+        +------------+---------------------------+----------------------------+
+        | ``ccovmu`` | ``2 * (mueff - 2 + 1 /    | Learning rate for rank-mu  |
+        |            | mueff) / ((N + 2)^2 +     | update.                    |
+        |            | mueff)``                  |                            |
+        +------------+---------------------------+----------------------------+
 
         Parameters
         ----------
@@ -1063,11 +1081,13 @@ class OptCMAES:
                              (self.dim + self.mueff + 3.))
         self.ccov1 = params.get(
             "ccov1", 2. / ((self.dim + 1.3) ** 2 + self.mueff))
-        self.ccovmu = params.get("ccovmu", 2. * (self.mueff - 2. + 1. / self.mueff) /
-                                 ((self.dim + 2.) ** 2 + self.mueff))
+        self.ccovmu = params.get("ccovmu", 2. * (
+            self.mueff - 2. + 1. / self.mueff) / (
+            (self.dim + 2.) ** 2 + self.mueff))
         self.ccovmu = min(1 - self.ccov1, self.ccovmu)
         self.damps = 1. + 2. * \
-            max(0, numpy.sqrt((self.mueff - 1.) / (self.dim + 1.)) - 1.) + self.cs
+            max(0, numpy.sqrt((self.mueff - 1.) / (self.dim + 1.)) - 1.) + \
+            self.cs
         self.damps = params.get("damps", self.damps)
         return
 
@@ -1102,9 +1122,7 @@ class DE_RMSD(OptDE, BaseRMSD):
 
 
 class DE_Comparator(OptDE, BaseComparator):
-    """
-    Class for DE algorithm optimizing BUFF fitness change on docking two AMPAL objects.
-    """
+    """Class for DE algorithm optimizing docking of two AMPAL objects."""
 
     def __init__(self, top1, top2, params1, params2, seq1, seq2, **kwargs):
         super().__init__(**kwargs)
