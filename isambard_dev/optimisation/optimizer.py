@@ -3,9 +3,7 @@ import datetime
 import operator
 import random
 import sys
-import tempfile
-import os
-from pathlib import Path
+
 from deap import base, creator, tools
 import numpy
 import matplotlib.pylab as plt
@@ -269,8 +267,8 @@ class BaseOptimizer:
                     log_file.write(
                         "Warning! Parameter {0} is at or near minimum allowed value\n".format(i + 1))
             log_file.write('Minimization history: \n{0}'.format(self.logbook))
-        with open('{0}{1}_bestmodel.pdb'.format(self._params['output_path'], self._params['run_id']),
-                  'w') as output_file:
+        with open('{0}{1}_bestmodel.pdb'.format(
+                self._params['output_path'], self._params['run_id']), 'w') as output_file:
             model = self._params['specification'](*model_params)
             model.build()
             model.pack_new_sequences(self._params['sequence'])
@@ -405,10 +403,14 @@ class BaseRMSD(BaseOptimizer):
 
 
 class BaseComparator(BaseOptimizer):
-    """
-    Assigns individual fitness to be change in BUFF score on positioning two predefined models according to parameters
-     from individual. Allows basic rigid body docking between two AMPAL objects with side chain repacking in order to
-     estimate interactions.
+    """Optimises BUFF score for two rigidbody models.
+
+    Notes
+    -----
+    Assigns individual fitness to be change in BUFF score on positioning
+    two predefined models according to parameters from individual.
+    Allows basic rigid body docking between two AMPAL objects with side
+    chain repacking in order to estimate interactions.
     """
 
     def assign_fitnesses(self, targets):
@@ -423,29 +425,39 @@ class BaseComparator(BaseOptimizer):
         if (self._params['processors'] == 1) or (sys.platform == 'win32'):
             fitnesses = map(comparator_eval, px_parameters)
         else:
-            with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
+            with futures.ProcessPoolExecutor(
+                    max_workers=self._params['processors']) as executor:
                 fitnesses = executor.map(comparator_eval, px_parameters)
         for ind, fit in zip(targets, fitnesses):
             ind.fitness.values = (
                 fit - (self._params['ref1'] + self._params['ref2']),)
 
     def parameters(self, value_means, value_ranges, arrangement):
-        """Relates the individual to be evolved to the full parameter string for building the specification object.
-        Special version for comparator type optimizers that doesn't require sequence. Should take up to six parameters
-        defining the x, y, z rotations and x, y, z translations in that order. For example testing rotation of 60 +/- 20
-        degrees around the z axis at a displacement of 20 +/- 10 Angstrom would require:
-        value_means = [60, 20], value_ranges = [20, 10], arrangement = ['var0', 0, 0, 'var1', 0, 0]
+        """Creates full parameter string for building the specification object.
+
+        Notes
+        -----
+        Special version for comparator type optimizers that doesn't
+        require sequence. Should take up to six parameters defining
+        the x, y, z rotations and x, y, z translations in that order.
+        For example testing rotation of 60 +/- 20 degrees around the
+        z axis at a displacement of 20 +/- 10 Angstrom would require:
+        value_means = [60, 20], value_ranges = [20, 10],
+        arrangement = ['var0', 0, 0, 'var1', 0, 0]
 
         Parameters
         ----------
         value_means: list
             List containing mean values for parameters to be optimized.
         value_ranges: list
-            List containing ranges for parameters to be optimized. Values must be positive.
+            List containing ranges for parameters to be optimized.
+            Values must be positive.
         arrangement: list
-            Full list of fixed and variable parameters for model building. Fixed values are the appropriate value.
-            Values to be varied should be listed as 'var0', 'var1' etc, and must be in ascending numerical order.
-            Variables can be repeated if required.
+            Full list of fixed and variable parameters for model building.
+            Fixed values are the appropriate value. Values to be varied
+            should be listed as 'var0', 'var1' etc, and must be in
+            ascending numerical order. Variables can be repeated if
+            required.
         """
         self._params['value_means'] = value_means
         self._params['value_ranges'] = value_ranges
@@ -456,17 +468,22 @@ class BaseComparator(BaseOptimizer):
         for i in range(len(self._params['value_means'])):
             self._params['variable_parameters'].append(
                 "".join(['var', str(i)]))
-        if len(set(arrangement).intersection(self._params['variable_parameters'])) != \
-                len(self._params['value_means']):
+        if len(set(arrangement).intersection(
+                self._params['variable_parameters'])) != len(
+                self._params['value_means']):
             raise ValueError("argument mismatch!")
         if len(self._params['value_ranges']) != len(self._params['value_means']):
             raise ValueError("argument mismatch!")
 
 
 class OptDE:
-    """
-    A differential evolution algorithm. Can use neighbourhood model to reduce chance of getting stuck in local optima.
-    This is a very versatile algorithm, and its use is recommended.
+    """Differential evolution optimisation algorithm.
+
+    Notes
+    -----
+    Can use neighbourhood model to reduce chance of getting stuck
+    in local optima. This is a very versatile algorithm, and its use
+    is recommended.
     """
 
     def __init__(self, **kwargs):
@@ -479,21 +496,27 @@ class OptDE:
         creator.create("Individual", list, fitness=creator.FitnessMin)
 
     def generate(self):
-        """Generates a particle using the creator function. Position and speed are uniformly randomly seeded within
-        allowed bounds. The particle also has speed limit settings taken from global values.
+        """Generates a particle using the creator function.
+
+        Notes
+        -----
+        Position and speed are uniformly randomly seeded within
+        allowed bounds. The particle also has speed limit settings
+        taken from global values.
 
         Returns
         -------
         particle object
         """
-        ind = creator.Individual([random.uniform(-1, 1)
-                                  for _ in range(len(self._params['value_means']))])
+        ind = creator.Individual(
+            [random.uniform(-1, 1)
+             for _ in range(len(self._params['value_means']))])
         ind.ident = None
         ind.neighbours = None
         return ind
 
     def initialize_pop(self):
-        """Assigns indices to individuals in population where neighbourhood model is used and assigns initial fitness"""
+        """Assigns indices to individuals in population."""
         self.toolbox.register("individual", self.generate)
         self.toolbox.register("population", tools.initRepeat,
                               list, self.toolbox.individual)
@@ -501,16 +524,24 @@ class OptDE:
         if self._params['neighbours']:
             for i in range(len(self.population)):
                 self.population[i].ident = i
-                self.population[i].neighbours = list(set([(i - x) % len(self.population)
-                                                          for x in range(1, self._params['neighbours'] + 1)] +
-                                                         [(i + x) % len(self.population)
-                                                          for x in range(1, self._params['neighbours'] + 1)]))
+                self.population[i].neighbours = list(
+                    set(
+                        [(i - x) % len(self.population)
+                         for x in range(1, self._params['neighbours'] + 1)] +
+                        [(i + x) % len(self.population)
+                         for x in range(1, self._params['neighbours'] + 1)]
+                    ))
         self.assign_fitnesses(self.population)
 
     def crossover(self, ind):
-        """Used by the evolution process to generate a new individual. This is a tweaked version of the classical DE
-        crossover algorithm, the main difference that candidate parameters are generated using a lognormal distribution.
-        Bound handling is achieved by resampling where the candidate solution exceeds +/-1
+        """Used by the evolution process to generate a new individual.
+
+        Notes
+        -----
+        This is a tweaked version of the classical DE crossover
+        algorithm, the main difference that candidate parameters are
+        generated using a lognormal distribution. Bound handling is
+        achieved by resampling where the candidate solution exceeds +/-1
 
         Parameters
         ----------
@@ -518,7 +549,8 @@ class OptDE:
         Returns
         -------
         y: deap individual
-            An individual representing a candidate solution, to be assigned a fitness.
+            An individual representing a candidate solution, to be
+            assigned a fitness.
         """
         if self._params['neighbours']:
             a, b, c = random.sample([self.population[i]
@@ -546,9 +578,7 @@ class OptDE:
         return y
 
     def update_pop(self):
-        """
-        Updates the population according to crossover and fitness criteria
-        :return:
+        """Updates the population according to crossover and fitness criteria.
         """
         candidates = []
         for ind in self.population:
@@ -561,11 +591,15 @@ class OptDE:
 
 
 class OptPSO:
-    """
-    A particle swarm optimization algorithm, using the constriction factor method.
-    This is good for avoiding bias and premature minimization, though it may struggle to find the ultimate optimum
-    solution. Supports the neighbourhood model. Bound handling is achieved by allowing particles to exceed permitted
-    bounds, but not assigning them a fitness in this case.
+    """A particle swarm optimization algorithm.
+
+    Notes
+    -----
+    This is good for avoiding bias and premature minimization, though
+    it may struggle to find the ultimate optimum solution. Supports
+    the neighbourhood model. Bound handling is achieved by allowing
+    particles to exceed permitted bounds, but not assigning them a
+    fitness in this case.
     """
 
     def __init__(self, **kwargs):
@@ -584,18 +618,19 @@ class OptPSO:
                               creator.Swarm, self.toolbox.particle)
 
     def initialize_pop(self):
-        """
-        Generates initial population with random positions and speeds.
-        :return:
-        """
+        """Generates initial population with random positions and speeds."""
         self.population = self.toolbox.swarm(n=self._params['popsize'])
         if self._params['neighbours']:
             for i in range(len(self.population)):
                 self.population[i].ident = i
-                self.population[i].neighbours = list(set([(i - x) % len(self.population)
-                                                          for x in range(1, self._params['neighbours'] + 1)] + [i] +
-                                                         [(i + x) % len(self.population)
-                                                          for x in range(1, self._params['neighbours'] + 1)]))
+                self.population[i].neighbours = list(
+                    set(
+                        [(i - x) % len(self.population)
+                         for x in range(1, self._params['neighbours'] + 1)] +
+                        [i] +
+                        [(i + x) % len(self.population)
+                         for x in range(1, self._params['neighbours'] + 1)]
+                    ))
         else:
             for i in range(len(self.population)):
                 self.population[i].ident = i
@@ -606,20 +641,28 @@ class OptPSO:
             part.best = creator.Particle(part)
             part.best.fitness.values = part.fitness.values
         # self.pop.gbestfit = max(part.fitness for part in self.pop)
-        # self.pop.gbest = max(enumerate(self.pop), key=lambda x: self.pop[x[0]].fitness)[1]
+        # self.pop.gbest = max(enumerate(self.pop),
+        #                      key=lambda x: self.pop[x[0]].fitness)[1]
 
     def generate(self):
-        """Generates a particle using the creator function. Position and speed are uniformly randomly seeded within
-        allowed bounds. The particle also has speed limit settings taken from global values.
+        """Generates a particle using the creator function.
+        Notes
+        -----
+        Position and speed are uniformly randomly seeded within
+        allowed bounds. The particle also has speed limit settings
+        taken from global values.
 
         Returns
         -------
         particle object
         """
-        part = creator.Particle([random.uniform(-1, 1)
-                                 for _ in range(len(self._params['value_means']))])
-        part.speed = [random.uniform(-self._params['max_speed'], self._params['max_speed'])
-                      for _ in range(len(self._params['value_means']))]
+        part = creator.Particle(
+            [random.uniform(-1, 1)
+             for _ in range(len(self._params['value_means']))])
+        part.speed = [
+            random.uniform(-self._params['max_speed'],
+                           self._params['max_speed'])
+            for _ in range(len(self._params['value_means']))]
         part.smin = -self._params['max_speed']
         part.smax = self._params['max_speed']
         part.ident = None
@@ -627,8 +670,13 @@ class OptPSO:
         return part
 
     def update_particle(self, part, chi=0.729843788, c=2.05):
-        """Constriction factor update particle method that looks for a list of neighbours attached to a particle and
-        uses the particle's best position and that of the best neighbour.
+        """Constriction factor update particle method.
+
+        Notes
+        -----
+        Looks for a list of neighbours attached to a particle and
+        uses the particle's best position and that of the best
+        neighbour.
         """
         neighbour_pool = [self.population[i] for i in part.neighbours]
         best_neighbour = max(neighbour_pool, key=lambda x: x.best.fitness)
@@ -650,10 +698,7 @@ class OptPSO:
         part[:] = list(map(operator.add, part, part.speed))
 
     def update_pop(self):
-        """
-        Assigns fitnesses to particles that are within bounds.
-        :return:
-        """
+        """Assigns fitnesses to particles that are within bounds."""
         valid_particles = []
         invalid_particles = []
         for part in self.population:
@@ -677,16 +722,23 @@ class OptPSO:
         #     if part.best.fitness < part.fitness:
         #         part.best = creator.Particle(part)
         #         part.best.fitness.values = part.fitness.values
-        # self.pop.gbestfit = max(part.fitness for part in self.pop) #this is the current best, not the all time best
-        # self.pop.gbest = max(enumerate(self.pop), key=lambda x: self.pop[x[0]].fitness)[1]  #but these aren't used anyway
+        # self.pop.gbestfit = max(part.fitness for part in self.pop)
+        # this is the current best, not the all time best
+        # self.pop.gbest = max(enumerate(self.pop),
+        #                      key=lambda x: self.pop[x[0]].fitness)[1]
+        # but these aren't used anyway
 
 
 class OptGA:
-    """
-    A classic genetic algorithm optimization algorithm. Arguably the weakest of the algorithms available, but very good
-    for eliminating unfavourable regions of the search space. Can be heavily customized in terms of mutation and
-    crossover operators etc. Bound handling is achieved simply by amending any out of bounds parameters to the boundary
-    value.
+    """A classic genetic algorithm optimization algorithm.
+
+    Notes
+    -----
+    Arguably the weakest of the algorithms available, but very good
+    for eliminating unfavourable regions of the search space. Can be
+    heavily customized in terms of mutation and crossover operators
+    etc. Bound handling is achieved simply by amending any out of
+    bounds parameters to the boundary value.
     """
 
     def __init__(self, **kwargs):
@@ -702,18 +754,14 @@ class OptGA:
         self.toolbox.register("select", tools.selTournament)
 
     def generate(self):
-        """
-        Generates an individual with random parameters within allowed bounds
-        """
-        ind = creator.Individual([random.uniform(-1, 1)
-                                  for _ in range(len(self._params['value_means']))])
+        """Generates individual with random parameters within allowed bounds."""
+        ind = creator.Individual(
+            [random.uniform(-1, 1)
+             for _ in range(len(self._params['value_means']))])
         return ind
 
     def initialize_pop(self):
-        """
-        Assigns initial fitnesses
-        :return:
-        """
+        """Assigns initial fitnesses."""
         self.toolbox.register("individual", self.generate)
         self.toolbox.register("population", tools.initRepeat,
                               list, self.toolbox.individual)
@@ -767,11 +815,16 @@ class OptGA:
 
 
 class OptCMAES:
-    """
-    A covariance matrix adaptation evolutionary strategy optimization algorithm. Basically uses a covariance matrix
-    at each step to identify the 'direction' of the optimal solution in the search space, and generates new individuals
-    accordingly. Bound handling is achieved by moving any out of bounds parameters to the boundary condition. Other than
-    that the implementation used here is as in the originating code from the deap module.
+    """Covariance matrix adaptation evolutionary strategy optimization algorithm.
+
+    Notes
+    -----
+    Basically uses a covariance matrix at each step to identify the
+    'direction' of the optimal solution in the search space, and
+    generates new individuals accordingly. Bound handling is achieved
+    by moving any out of bounds parameters to the boundary condition.
+    Other than that the implementation used here is as in the
+    originating code from the deap module.
     """
 
     def __init__(self, **kwargs):
@@ -782,12 +835,11 @@ class OptCMAES:
         creator.create("Individual", list, fitness=creator.FitnessMin)
 
     def initialize_pop(self):
-        """
-        Generates the initial population and assigns fitnesses
-        :return:
-        """
-        self.initialize_cma_es(sigma=self._params['sigma'], weights=self._params['weights'],
-                               lambda_=self._params['popsize'], centroid=[0] * len(self._params['value_means']))
+        """Generates the initial population and assigns fitnesses."""
+        self.initialize_cma_es(
+            sigma=self._params['sigma'], weights=self._params['weights'],
+            lambda_=self._params['popsize'],
+            centroid=[0] * len(self._params['value_means']))
         self.toolbox.register("individual", self.make_individual)
         self.toolbox.register("generate", self.generate,
                               self.toolbox.individual)
@@ -799,12 +851,10 @@ class OptCMAES:
         self._params['model_count'] += len(self.population)
 
     def initial_individual(self):
-        """
-        Generates an individual with random parameters within bounds
-        :return:
-        """
-        ind = creator.Individual([random.uniform(-1, 1)
-                                  for _ in range(len(self._params['value_means']))])
+        """Generates an individual with random parameters within bounds."""
+        ind = creator.Individual(
+            [random.uniform(-1, 1)
+             for _ in range(len(self._params['value_means']))])
         return ind
 
     def update_pop(self):
@@ -819,6 +869,7 @@ class OptCMAES:
         self.assign_fitnesses(self.population)
         self.toolbox.update(self.population)
         self._params['model_count'] += len(self.population)
+        return
 
     def make_individual(self, paramlist):
         part = creator.Individual(paramlist)
@@ -826,52 +877,59 @@ class OptCMAES:
         return part
 
     def initialize_cma_es(self, **kwargs):
-        """
-        A strategy that will keep track of the basic parameters of the CMA-ES
-        algorithm.
-        :param centroid: An iterable object that indicates where to start the
-                         evolution.
-        :param sigma: The initial standard deviation of the distribution.
-        :param parameter: One or more parameter to pass to the strategy as
-                          described in the following table, optional.
-        +----------------+---------------------------+----------------------------+
-        | Parameter      | Default                   | Details                    |
-        +================+===========================+============================+
-        | ``lambda_``    | ``int(4 + 3 * log(N))``   | Number of children to      |
-        |                |                           | produce at each generation,|
-        |                |                           | ``N`` is the individual's  |
-        |                |                           | size (integer).            |
-        +----------------+---------------------------+----------------------------+
-        | ``mu``         | ``int(lambda_ / 2)``      | The number of parents to   |
-        |                |                           | keep from the              |
-        |                |                           | lambda children (integer). |
-        +----------------+---------------------------+----------------------------+
-        | ``cmatrix``    | ``identity(N)``           | The initial covariance     |
-        |                |                           | matrix of the distribution |
-        |                |                           | that will be sampled.      |
-        +----------------+---------------------------+----------------------------+
-        | ``weights``    | ``"superlinear"``         | Decrease speed, can be     |
-        |                |                           | ``"superlinear"``,         |
-        |                |                           | ``"linear"`` or            |
-        |                |                           | ``"equal"``.               |
-        +----------------+---------------------------+----------------------------+
-        | ``cs``         | ``(mueff + 2) /           | Cumulation constant for    |
-        |                | (N + mueff + 3)``         | step-size.                 |
-        +----------------+---------------------------+----------------------------+
-        | ``damps``      | ``1 + 2 * max(0, sqrt((   | Damping for step-size.     |
-        |                | mueff - 1) / (N + 1)) - 1)|                            |
-        |                | + cs``                    |                            |
-        +----------------+---------------------------+----------------------------+
-        | ``ccum``       | ``4 / (N + 4)``           | Cumulation constant for    |
-        |                |                           | covariance matrix.         |
-        +----------------+---------------------------+----------------------------+
-        | ``ccov1``      | ``2 / ((N + 1.3)^2 +      | Learning rate for rank-one |
-        |                | mueff)``                  | update.                    |
-        +----------------+---------------------------+----------------------------+
-        | ``ccovmu``     | ``2 * (mueff - 2 + 1 /    | Learning rate for rank-mu  |
-        |                | mueff) / ((N + 2)^2 +     | update.                    |
-        |                | mueff)``                  |                            |
-        +----------------+---------------------------+----------------------------+
+        """A strategy that will keep track of the basic parameters.
+
+        Notes
+        -----
+        +-------------+---------------------------+----------------------------+
+        | Parameter   | Default                   | Details                    |
+        +=============+===========================+============================+
+        | ``lambda_`` | ``int(4 + 3 * log(N))``   | Number of children to      |
+        |             |                           | produce at each generation,|
+        |             |                           | ``N`` is the individual's  |
+        |             |                           | size (integer).            |
+        +-------------+---------------------------+----------------------------+
+        | ``mu``      | ``int(lambda_ / 2)``      | The number of parents to   |
+        |             |                           | keep from the              |
+        |             |                           | lambda children (integer). |
+        +-------------+---------------------------+----------------------------+
+        | ``cmatrix`` | ``identity(N)``           | The initial covariance     |
+        |             |                           | matrix of the distribution |
+        |             |                           | that will be sampled.      |
+        +-------------+---------------------------+----------------------------+
+        | ``weights`` | ``"superlinear"``         | Decrease speed, can be     |
+        |             |                           | ``"superlinear"``,         |
+        |             |                           | ``"linear"`` or            |
+        |             |                           | ``"equal"``.               |
+        +-------------+---------------------------+----------------------------+
+        | ``cs``      | ``(mueff + 2) /           | Cumulation constant for    |
+        |             | (N + mueff + 3)``         | step-size.                 |
+        +-------------+---------------------------+----------------------------+
+        | ``damps``   | ``1 + 2 * max(0, sqrt((   | Damping for step-size.     |
+        |             | mueff - 1) / (N + 1)) - 1)|                            |
+        |             | + cs``                    |                            |
+        +-------------+---------------------------+----------------------------+
+        | ``ccum``    | ``4 / (N + 4)``           | Cumulation constant for    |
+        |             |                           | covariance matrix.         |
+        +-------------+---------------------------+----------------------------+
+        | ``ccov1``   | ``2 / ((N + 1.3)^2 +      | Learning rate for rank-one |
+        |             | mueff)``                  | update.                    |
+        +-------------+---------------------------+----------------------------+
+        | ``ccovmu``  | ``2 * (mueff - 2 + 1 /    | Learning rate for rank-mu  |
+        |             | mueff) / ((N + 2)^2 +     | update.                    |
+        |             | mueff)``                  |                            |
+        +-------------+---------------------------+----------------------------+
+
+        Parameters
+        ----------
+        centroid:
+            An iterable object that indicates where to start the
+            evolution.
+        sigma:
+            The initial standard deviation of the distribution.
+        parameter:
+            One or more parameter to pass to the strategy as
+            described in the following table, optional.
         """
         self.params = kwargs
 
@@ -882,8 +940,8 @@ class OptCMAES:
         self.sigma = self.params.get("sigma", 0.5)
         self.pc = numpy.zeros(self.dim)
         self.ps = numpy.zeros(self.dim)
-        self.chiN = numpy.sqrt(self.dim) * (1 - 1. /
-                                            (4. * self.dim) + 1. / (21. * self.dim ** 2))
+        self.chiN = numpy.sqrt(self.dim) * (
+            1 - 1. / (4. * self.dim) + 1. / (21. * self.dim ** 2))
 
         self.C = self.params.get("cmatrix", numpy.identity(self.dim))
         self.diagD, self.B = numpy.linalg.eigh(self.C)
@@ -899,23 +957,34 @@ class OptCMAES:
             "lambda_", int(4 + 3 * numpy.log(self.dim)))
         self.update_count = 0
         self.computeParams(self.params)
+        return
 
     def generate(self, func):
-        """Generate a population of :math:`\lambda` individuals of type
-        *ind_init* from the current strategy.
-        :param ind_init: A function object that is able to initialize an
-                         individual from a list.
-        :returns: A list of individuals.
+        """Generate a population of :math:`\lambda` individuals.
+
+        Notes
+        -----
+        Individuals are of type *ind_init* from the current strategy.
+
+        Parameters
+        ----------
+        ind_init:
+            A function object that is able to initialize an
+            individual from a list.
         """
         arz = numpy.random.standard_normal((self.lambda_, self.dim))
         arz = self.centroid + self.sigma * numpy.dot(arz, self.BD.T)
         self.population = list(map(func, arz))
+        return
 
     def update(self, population):
-        """Update the current covariance matrix strategy from the
-        *population*.
-        :param population: A list of individuals from which to update the
-                           parameters.
+        """Update the covariance matrix strategy from the *population*.
+
+        Parameters
+        ----------
+        population:
+            A list of individuals from which to update the
+            parameters.
         """
         population.sort(key=lambda ind: ind.fitness, reverse=True)
 
@@ -962,9 +1031,17 @@ class OptCMAES:
         self.BD = self.B * self.diagD
 
     def computeParams(self, params):
-        """Computes the parameters depending on :math:`\lambda`. It needs to
-        be called again if :math:`\lambda` changes during evolution.
-        :param params: A dictionary of the manually set parameters.
+        """Computes the parameters depending on :math:`\lambda`.
+
+        Notes
+        -----
+        It needs to be called again if :math:`\lambda` changes during
+        evolution.
+
+        Parameters
+        ----------
+        params:
+            A dictionary of the manually set parameters.
         """
         self.mu = params.get("mu", int(self.lambda_ / 2))
         rweights = params.get("weights", "superlinear")
@@ -992,12 +1069,11 @@ class OptCMAES:
         self.damps = 1. + 2. * \
             max(0, numpy.sqrt((self.mueff - 1.) / (self.dim + 1.)) - 1.) + self.cs
         self.damps = params.get("damps", self.damps)
+        return
 
 
 class DE_Opt(OptDE, BaseScore):
-    """
-    Class for DE algorithm optimizing BUFF fitness
-    """
+    """Class for DE algorithm optimizing BUFF fitness."""
 
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
@@ -1047,9 +1123,7 @@ class DE_Comparator(OptDE, BaseComparator):
 
 
 class PSO_Opt(OptPSO, BaseScore):
-    """
-    Class for PSO algorithm optimizing BUFF fitness
-    """
+    """Class for PSO algorithm optimizing BUFF fitness."""
 
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
@@ -1057,9 +1131,7 @@ class PSO_Opt(OptPSO, BaseScore):
 
 
 class PSO_RMSD(OptPSO, BaseRMSD):
-    """
-    Class for PSO algorithm optimizing RMSD against target model
-    """
+    """Class for PSO algorithm optimizing RMSD against target model."""
 
     def __init__(self, specification, ref_pdb, **kwargs):
         super().__init__(**kwargs)
@@ -1068,9 +1140,7 @@ class PSO_RMSD(OptPSO, BaseRMSD):
 
 
 class PSO_Comparator(OptPSO, BaseComparator):
-    """
-    Class for PSO algorithm optimizing BUFF fitness change on docking two AMPAL objects.
-    """
+    """Class for PSO algorithm optimizing docking of two AMPAL objects."""
 
     def __init__(self, top1, top2, params1, params2, seq1, seq2, **kwargs):
         super().__init__(**kwargs)
@@ -1089,9 +1159,7 @@ class PSO_Comparator(OptPSO, BaseComparator):
 
 
 class GA_Opt(OptGA, BaseScore):
-    """
-    Class for GA algorithm optimizing BUFF fitness
-    """
+    """Class for GA algorithm optimizing BUFF fitness."""
 
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
@@ -1099,9 +1167,7 @@ class GA_Opt(OptGA, BaseScore):
 
 
 class GA_Opt_Internal(OptGA, BaseInternalScore):
-    """
-    Class for GA algorithm optimizing BUFF internal energy
-    """
+    """Class for GA algorithm optimizing BUFF internal energy."""
 
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
@@ -1109,9 +1175,7 @@ class GA_Opt_Internal(OptGA, BaseInternalScore):
 
 
 class GA_RMSD(OptGA, BaseRMSD):
-    """
-    Class for GA algorithm optimizing RMSD against target model
-    """
+    """Class for GA algorithm optimizing RMSD against target model."""
 
     def __init__(self, specification, ref_pdb, **kwargs):
         super().__init__(**kwargs)
@@ -1120,9 +1184,7 @@ class GA_RMSD(OptGA, BaseRMSD):
 
 
 class GA_Comparator(OptGA, BaseComparator):
-    """
-    Class for GA algorithm optimizing BUFF fitness change on docking two AMPAL objects.
-    """
+    """Class for GA algorithm optimizing docking of two AMPAL objects."""
 
     def __init__(self, top1, top2, params1, params2, seq1, seq2, **kwargs):
         super().__init__(**kwargs)
@@ -1141,9 +1203,7 @@ class GA_Comparator(OptGA, BaseComparator):
 
 
 class CMAES_Opt(OptCMAES, BaseScore):
-    """
-    Class for CMAES algorithm optimizing BUFF fitness
-    """
+    """Class for CMAES algorithm optimizing BUFF fitness."""
 
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
@@ -1151,9 +1211,7 @@ class CMAES_Opt(OptCMAES, BaseScore):
 
 
 class CMAES_RMSD(OptCMAES, BaseRMSD):
-    """
-    Class for CMAES algorithm optimizing RMSD against target model
-    """
+    """Class for CMAES algorithm optimizing RMSD against target model."""
 
     def __init__(self, specification, ref_pdb, **kwargs):
         super().__init__(**kwargs)
@@ -1162,9 +1220,7 @@ class CMAES_RMSD(OptCMAES, BaseRMSD):
 
 
 class CMAES_Comparator(OptCMAES, BaseComparator):
-    """
-    Class for CMAES algorithm optimizing BUFF fitness change on docking two AMPAL objects.
-    """
+    """Class for CMAES algorithm optimizing docking of two AMPAL objects."""
 
     def __init__(self, top1, top2, params1, params2, seq1, seq2, **kwargs):
         super().__init__(**kwargs)
