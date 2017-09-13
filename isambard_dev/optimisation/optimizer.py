@@ -19,7 +19,8 @@ def buff_eval(params):
     Parameters
     ----------
     params: list
-        Tuple containing the specification to be built, the sequence, and the parameters for model building.
+        Tuple containing the specification to be built, the sequence,
+        and the parameters for model building.
 
     Returns
     -------
@@ -39,12 +40,14 @@ def buff_internal_eval(params):
     Parameters
     ----------
     params: list
-        Tuple containing the specification to be built, the sequence and the parameters for model building.
+        Tuple containing the specification to be built, the sequence
+        and the parameters for model building.
 
     Returns
     -------
     model.bude_score: float
-        BUFF internal energy score to be assigned to particle fitness value
+        BUFF internal energy score to be assigned to particle fitness
+        value.
     """
 
     specification, sequence, parsed_ind = params
@@ -55,8 +58,7 @@ def buff_internal_eval(params):
 
 
 def rmsd_eval(rmsd_params):
-    """
-    Builds a model based on an individual from the optimizer and runs profit against a reference model.
+    """Builds a model and runs profit against a reference model.
 
     Parameters
     ----------
@@ -101,12 +103,14 @@ class BaseOptimizer:
         self.parameter_log = []
 
     def parse_individual(self, individual):
-        """Converts a deap individual into a full list of parameters for building the specification object.
+        """Converts a deap individual into a full list of parameters.
         Parameters
         ----------
-        individual: deap individual from optimization. Details vary according to type of optimization, but parameters
-        within deap individual are always between -1 and 1. This function converts them into the values used to
-        actually build the model
+        individual: deap individual from optimization
+            Details vary according to type of optimization, but
+            parameters within deap individual are always between -1
+            and 1. This function converts them into the values used to
+            actually build the model
 
         Returns
         -------
@@ -115,7 +119,8 @@ class BaseOptimizer:
         """
         scaled_ind = []
         for i in range(len(self._params['value_means'])):
-            scaled_ind.append(self._params['value_means'][i] + (individual[i] * self._params['value_ranges'][i]))
+            scaled_ind.append(self._params['value_means'][i] + (
+                individual[i] * self._params['value_ranges'][i]))
         fullpars = list(self._params['arrangement'])
         for k in range(len(self._params['variable_parameters'])):
             for j in range(len(fullpars)):
@@ -123,7 +128,8 @@ class BaseOptimizer:
                     fullpars[j] = scaled_ind[k]
         return fullpars
 
-    def run_opt(self, popsize, numgen, processors, plot=False, log=False, **kwargs):
+    def run_opt(self, popsize, numgen, processors,
+                plot=False, log=False, **kwargs):
         """
         Runs the optimizer.
         :param popsize:
@@ -139,7 +145,8 @@ class BaseOptimizer:
         self._params['processors'] = processors
         self._params['plot'] = plot
         self._params['log'] = log
-        self._params.update(**kwargs)  # allows us to pass in additional arguments e.g. neighbours
+        # allows us to pass in additional arguments e.g. neighbours
+        self._params.update(**kwargs)
         self.halloffame = tools.HallOfFame(1)
         self.stats = tools.Statistics(lambda thing: thing.fitness.values)
         self.stats.register("avg", numpy.mean)
@@ -154,43 +161,53 @@ class BaseOptimizer:
         for g in range(self._params['numgen']):
             self.update_pop()
             self.halloffame.update(self.population)
-            self.logbook.record(gen=g, evals=self._params['evals'], **self.stats.compile(self.population))
+            self.logbook.record(gen=g, evals=self._params['evals'],
+                                **self.stats.compile(self.population))
             print(self.logbook.stream)
         end_time = datetime.datetime.now()
         time_taken = end_time - start_time
         self._params['time_taken'] = time_taken
-        print("Evaluated {0} models in total".format(self._params['model_count']))
+        print("Evaluated {0} models in total".format(
+            self._params['model_count']))
         print("Best fitness is {0}".format(self.halloffame[0].fitness))
-        print("Best parameters are {0}".format(self.parse_individual(self.halloffame[0])))
+        print("Best parameters are {0}".format(self.parse_individual(
+            self.halloffame[0])))
         for i, entry in enumerate(self.halloffame[0]):
             if entry > 0.95:
-                print("Warning! Parameter {0} is at or near maximum allowed value\n".format(i+1))
+                print(
+                    "Warning! Parameter {0} is at or near maximum allowed value\n".format(i + 1))
             elif entry < -0.95:
-                print("Warning! Parameter {0} is at or near minimum allowed value\n".format(i+1))
+                print(
+                    "Warning! Parameter {0} is at or near minimum allowed value\n".format(i + 1))
         if self._params['log']:
             self.log_results()
         if self._params['plot']:
             print('----Minimisation plot:')
             plt.figure(figsize=(5, 5))
-            plt.plot(range(len(self.logbook.select('min'))), self.logbook.select('min'))
+            plt.plot(range(len(self.logbook.select('min'))),
+                     self.logbook.select('min'))
             plt.xlabel('Iteration', fontsize=20)
             plt.ylabel('Score', fontsize=20)
 
     def parameters(self, sequence, value_means, value_ranges, arrangement):
-        """Relates the individual to be evolved to the full parameter string for building the specification object
+        """Relates the individual to be evolved to the full parameter string.
 
         Parameters
         ----------
         sequence: str
-            Full amino acid sequence for specification object to be optimized. Must be equal to the number of residues in the
+            Full amino acid sequence for specification object to be
+            optimized. Must be equal to the number of residues in the
             model.
         value_means: list
             List containing mean values for parameters to be optimized.
         value_ranges: list
-            List containing ranges for parameters to be optimized. Values must be positive.
+            List containing ranges for parameters to be optimized.
+            Values must be positive.
         arrangement: list
-            Full list of fixed and variable parameters for model building. Fixed values are the appropriate value.
-            Values to be varied should be listed as 'var0', 'var1' etc, and must be in ascending numerical order.
+            Full list of fixed and variable parameters for model
+            building. Fixed values are the appropriate value. Values
+            to be varied should be listed as 'var0', 'var1' etc,
+            and must be in ascending numerical order.
             Variables can be repeated if required.
         """
         self._params['sequence'] = sequence
@@ -201,7 +218,8 @@ class BaseOptimizer:
             raise ValueError("range values must be greater than zero")
         self._params['variable_parameters'] = []
         for i in range(len(self._params['value_means'])):
-            self._params['variable_parameters'].append("".join(['var', str(i)]))
+            self._params['variable_parameters'].append(
+                "".join(['var', str(i)]))
         if len(set(arrangement).intersection(self._params['variable_parameters'])) != \
                 len(self._params['value_means']):
             raise ValueError("argument mismatch!")
@@ -222,21 +240,34 @@ class BaseOptimizer:
         raise NotImplementedError("Will depend on optimizer type")
 
     def log_results(self):
-        """Saves files for the minimization. Currently saves a logfile with best individual and a pdb of the best model
+        """Saves files for the minimization.
+
+        Notes
+        -----
+        Currently saves a logfile with best individual and a pdb of
+        the best model.
         """
         best_ind = self.halloffame[0]
-        model_params = self.parse_individual(best_ind)  # need to change name of 'params'
-        with open('{0}{1}_log.txt'.format(self._params['output_path'], self._params['run_id']), 'a+') as log_file:
-            log_file.write('\nEvaluated {0} models in total\n'.format(self._params['model_count']))
+        model_params = self.parse_individual(
+            best_ind)  # need to change name of 'params'
+        with open('{0}{1}_log.txt'.format(self._params['output_path'],
+                                          self._params['run_id']), 'a+') as log_file:
+            log_file.write('\nEvaluated {0} models in total\n'.format(
+                self._params['model_count']))
             log_file.write('Run ID is {0}\n'.format(self._params['run_id']))
-            log_file.write('Best fitness is {0}\n'.format(self.halloffame[0].fitness))
-            log_file.write('Parameters of best model are {0}\n'.format(model_params))
-            log_file.write('Best individual is {0}\n'.format(self.halloffame[0]))
+            log_file.write('Best fitness is {0}\n'.format(
+                self.halloffame[0].fitness))
+            log_file.write(
+                'Parameters of best model are {0}\n'.format(model_params))
+            log_file.write(
+                'Best individual is {0}\n'.format(self.halloffame[0]))
             for i, entry in enumerate(self.halloffame[0]):
                 if entry > 0.95:
-                    log_file.write("Warning! Parameter {0} is at or near maximum allowed value\n".format(i+1))
+                    log_file.write(
+                        "Warning! Parameter {0} is at or near maximum allowed value\n".format(i + 1))
                 elif entry < -0.95:
-                    log_file.write("Warning! Parameter {0} is at or near minimum allowed value\n".format(i+1))
+                    log_file.write(
+                        "Warning! Parameter {0} is at or near minimum allowed value\n".format(i + 1))
             log_file.write('Minimization history: \n{0}'.format(self.logbook))
         with open('{0}{1}_bestmodel.pdb'.format(self._params['output_path'], self._params['run_id']),
                   'w') as output_file:
@@ -260,7 +291,8 @@ class BaseOptimizer:
             Raises a name error if the optimiser has not been run.
         """
         if hasattr(self, 'halloffame'):
-            model = self._params['specification'](*self.parse_individual(self.halloffame[0]))
+            model = self._params['specification'](
+                *self.parse_individual(self.halloffame[0]))
             model.pack_new_sequences(self._params['sequence'])
             return model
         else:
@@ -268,9 +300,7 @@ class BaseOptimizer:
 
 
 class BaseScore(BaseOptimizer):
-    """
-    Assigns BUFF score as fitness to individuals in optimization
-    """
+    """ Assigns BUFF score as fitness to individuals in optimization."""
 
     evaluation_function = staticmethod(buff_eval)
 
@@ -282,26 +312,31 @@ class BaseScore(BaseOptimizer):
         if (self._params['processors'] == 1) or (sys.platform == 'win32'):
             fitnesses = map(self.evaluation_function, px_parameters)
         else:
-            with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
-                fitnesses = executor.map(self.evaluation_function, px_parameters)
+            with futures.ProcessPoolExecutor(
+                    max_workers=self._params['processors']) as executor:
+                fitnesses = executor.map(
+                    self.evaluation_function, px_parameters)
         tars_fits = list(zip(targets, fitnesses))
         if 'log_params' in self._params:
             if self._params['log_params']:
-                self.parameter_log.append([(self.parse_individual(x[0]), x[1]) for x in tars_fits])
+                self.parameter_log.append(
+                    [(self.parse_individual(x[0]), x[1]) for x in tars_fits])
         for ind, fit in tars_fits:
             ind.fitness.values = (fit,)
 
     def make_energy_funnel_data(self, cores=1):
-        """Compares models created during the minimisation relates to the best model.
+        """Compares models created during the minimisation to the best model.
 
         Returns
         -------
         energy_rmsd_gen: [(float, float, int)]
-            A list of triples containing the BUFF score, RMSD to the top model
-            and generation of a model generated during the minimisation.
+            A list of triples containing the BUFF score, RMSD to the
+            top model and generation of a model generated during the
+            minimisation.
         """
         if not self.parameter_log:
-            raise AttributeError('No parameter log data to make funnel, have you ran the optimiser?')
+            raise AttributeError(
+                'No parameter log data to make funnel, have you ran the optimiser?')
         model_cls = self._params['specification']
         gen_tagged = []
         for gen, models in enumerate(self.parameter_log):
@@ -313,7 +348,8 @@ class BaseScore(BaseOptimizer):
         if (cores == 1) or (sys.platform == 'win32'):
             energy_rmsd_gen = map(
                 self.funnel_rebuild,
-                [(x, top_result_model, self._params['specification']) for x in sorted_pps[1:]])
+                [(x, top_result_model,
+                  self._params['specification']) for x in sorted_pps[1:]])
         else:
             with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
                 energy_rmsd_gen = executor.map(
@@ -323,7 +359,7 @@ class BaseScore(BaseOptimizer):
 
     @staticmethod
     def funnel_rebuild(psg_trm_spec):
-        """Rebuilds a model from a set of parameters and compares it to a reference model.
+        """Rebuilds a model and compares it to a reference model.
 
         Parameters
         ----------
@@ -345,16 +381,12 @@ class BaseScore(BaseOptimizer):
 
 
 class BaseInternalScore(BaseScore):
-    """
-    Assigns BUFF score as fitness to individuals in optimization
-    """
+    """Assigns BUFF score as fitness to individuals in optimization."""
     evaluation_function = staticmethod(buff_internal_eval)
 
 
 class BaseRMSD(BaseOptimizer):
-    """
-    Assigns RMSD as fitness to individuals in optimization. Allows optimization of parameters to best fit a target model
-    """
+    """Assigns RMSD as fitness to individuals in optimization."""
 
     def assign_fitnesses(self, targets):
         self._params['evals'] = len(targets)
@@ -365,7 +397,8 @@ class BaseRMSD(BaseOptimizer):
         if (self._params['processors'] == 1) or (sys.platform == 'win32'):
             fitnesses = map(rmsd_eval, px_parameters)
         else:
-            with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
+            with futures.ProcessPoolExecutor(
+                    max_workers=self._params['processors']) as executor:
                 fitnesses = executor.map(rmsd_eval, px_parameters)
         for ind, fit in zip(targets, fitnesses):
             ind.fitness.values = (fit,)
@@ -393,7 +426,8 @@ class BaseComparator(BaseOptimizer):
             with futures.ProcessPoolExecutor(max_workers=self._params['processors']) as executor:
                 fitnesses = executor.map(comparator_eval, px_parameters)
         for ind, fit in zip(targets, fitnesses):
-            ind.fitness.values = (fit - (self._params['ref1'] + self._params['ref2']),)
+            ind.fitness.values = (
+                fit - (self._params['ref1'] + self._params['ref2']),)
 
     def parameters(self, value_means, value_ranges, arrangement):
         """Relates the individual to be evolved to the full parameter string for building the specification object.
@@ -420,7 +454,8 @@ class BaseComparator(BaseOptimizer):
             raise ValueError("range values must be greater than zero")
         self._params['variable_parameters'] = []
         for i in range(len(self._params['value_means'])):
-            self._params['variable_parameters'].append("".join(['var', str(i)]))
+            self._params['variable_parameters'].append(
+                "".join(['var', str(i)]))
         if len(set(arrangement).intersection(self._params['variable_parameters'])) != \
                 len(self._params['value_means']):
             raise ValueError("argument mismatch!")
@@ -433,6 +468,7 @@ class OptDE:
     A differential evolution algorithm. Can use neighbourhood model to reduce chance of getting stuck in local optima.
     This is a very versatile algorithm, and its use is recommended.
     """
+
     def __init__(self, **kwargs):
         super().__init__()
         self._params.update(**kwargs)
@@ -450,7 +486,8 @@ class OptDE:
         -------
         particle object
         """
-        ind = creator.Individual([random.uniform(-1, 1) for _ in range(len(self._params['value_means']))])
+        ind = creator.Individual([random.uniform(-1, 1)
+                                  for _ in range(len(self._params['value_means']))])
         ind.ident = None
         ind.neighbours = None
         return ind
@@ -458,15 +495,16 @@ class OptDE:
     def initialize_pop(self):
         """Assigns indices to individuals in population where neighbourhood model is used and assigns initial fitness"""
         self.toolbox.register("individual", self.generate)
-        self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
+        self.toolbox.register("population", tools.initRepeat,
+                              list, self.toolbox.individual)
         self.population = self.toolbox.population(n=self._params['popsize'])
         if self._params['neighbours']:
             for i in range(len(self.population)):
                 self.population[i].ident = i
-                self.population[i].neighbours = list(set([(i-x) % len(self.population)
-                                                   for x in range(1, self._params['neighbours']+1)] +
-                                                  [(i+x) % len(self.population)
-                                                   for x in range(1, self._params['neighbours']+1)]))
+                self.population[i].neighbours = list(set([(i - x) % len(self.population)
+                                                          for x in range(1, self._params['neighbours'] + 1)] +
+                                                         [(i + x) % len(self.population)
+                                                          for x in range(1, self._params['neighbours'] + 1)]))
         self.assign_fitnesses(self.population)
 
     def crossover(self, ind):
@@ -483,7 +521,8 @@ class OptDE:
             An individual representing a candidate solution, to be assigned a fitness.
         """
         if self._params['neighbours']:
-            a, b, c = random.sample([self.population[i] for i in ind.neighbours], 3)
+            a, b, c = random.sample([self.population[i]
+                                     for i in ind.neighbours], 3)
         else:
             a, b, c = random.sample(self.population, 3)
         y = self.toolbox.clone(a)
@@ -494,11 +533,13 @@ class OptDE:
         ident = random.randrange(len(self._params['value_means']))
         for i, value in enumerate(y):
             if i == ident or random.random() < self._params['cxpb']:
-                entry = a[i] + random.lognormvariate(-1.2, 0.5)*self._params['diff_weight']*(b[i]-c[i])
+                entry = a[i] + random.lognormvariate(-1.2, 0.5) * \
+                    self._params['diff_weight'] * (b[i] - c[i])
                 tries = 0
                 while abs(entry) > 1.0:
                     tries += 1
-                    entry = a[i] + random.lognormvariate(-1.2, 0.5)*self._params['diff_weight']*(b[i]-c[i])
+                    entry = a[i] + random.lognormvariate(-1.2, 0.5) * \
+                        self._params['diff_weight'] * (b[i] - c[i])
                     if tries > 10000:
                         entry = a[i]
                 y[i] = entry
@@ -526,6 +567,7 @@ class OptPSO:
     solution. Supports the neighbourhood model. Bound handling is achieved by allowing particles to exceed permitted
     bounds, but not assigning them a fitness in this case.
     """
+
     def __init__(self, **kwargs):
         self.population = None
         super().__init__()
@@ -533,10 +575,13 @@ class OptPSO:
         self._params.setdefault('output_path', None)
         self._params.setdefault('max_speed', 0.75)
         self._params.setdefault('neighbours', None)
-        creator.create("Particle", list, fitness=creator.FitnessMin, speed=list, smin=None, smax=None, best=None)
+        creator.create("Particle", list, fitness=creator.FitnessMin,
+                       speed=list, smin=None, smax=None, best=None)
         self.toolbox.register("particle", self.generate)
-        creator.create("Swarm", list, gbest=None, gbestfit=creator.FitnessMin)  # can this pick up the global fitness?
-        self.toolbox.register("swarm", tools.initRepeat, creator.Swarm, self.toolbox.particle)
+        # can this pick up the global fitness?
+        creator.create("Swarm", list, gbest=None, gbestfit=creator.FitnessMin)
+        self.toolbox.register("swarm", tools.initRepeat,
+                              creator.Swarm, self.toolbox.particle)
 
     def initialize_pop(self):
         """
@@ -548,13 +593,14 @@ class OptPSO:
             for i in range(len(self.population)):
                 self.population[i].ident = i
                 self.population[i].neighbours = list(set([(i - x) % len(self.population)
-                                                          for x in range(1, self._params['neighbours']+1)] + [i] +
-                                                         [(i+x) % len(self.population)
-                                                   for x in range(1, self._params['neighbours']+1)]))
+                                                          for x in range(1, self._params['neighbours'] + 1)] + [i] +
+                                                         [(i + x) % len(self.population)
+                                                          for x in range(1, self._params['neighbours'] + 1)]))
         else:
             for i in range(len(self.population)):
                 self.population[i].ident = i
-                self.population[i].neighbours = [x for x in range(len(self.population))]
+                self.population[i].neighbours = [
+                    x for x in range(len(self.population))]
         self.assign_fitnesses(self.population)
         for part in self.population:
             part.best = creator.Particle(part)
@@ -570,7 +616,8 @@ class OptPSO:
         -------
         particle object
         """
-        part = creator.Particle([random.uniform(-1, 1) for _ in range(len(self._params['value_means']))])
+        part = creator.Particle([random.uniform(-1, 1)
+                                 for _ in range(len(self._params['value_means']))])
         part.speed = [random.uniform(-self._params['max_speed'], self._params['max_speed'])
                       for _ in range(len(self._params['value_means']))]
         part.smin = -self._params['max_speed']
@@ -588,9 +635,10 @@ class OptPSO:
         ce1 = (c * random.uniform(0, 1) for _ in range(len(part)))
         ce2 = (c * random.uniform(0, 1) for _ in range(len(part)))
         ce1_p = map(operator.mul, ce1, map(operator.sub, part.best, part))
-        ce2_g = map(operator.mul, ce2, map(operator.sub, best_neighbour.best, part))
-        chi_list = [chi]*len(part)
-        chi_list2 = [1 - chi]*len(part)
+        ce2_g = map(operator.mul, ce2, map(
+            operator.sub, best_neighbour.best, part))
+        chi_list = [chi] * len(part)
+        chi_list2 = [1 - chi] * len(part)
         a = map(operator.sub, map(operator.mul, chi_list, map(operator.add, ce1_p, ce2_g)),
                 map(operator.mul, chi_list2, part.speed))
         part.speed = list(map(operator.add, part.speed, a))
@@ -640,6 +688,7 @@ class OptGA:
     crossover operators etc. Bound handling is achieved simply by amending any out of bounds parameters to the boundary
     value.
     """
+
     def __init__(self, **kwargs):
         super().__init__()
         self._params.update(**kwargs)
@@ -648,14 +697,16 @@ class OptGA:
         self._params.setdefault('mutpb', 0.2)
         creator.create("Individual", list, fitness=creator.FitnessMin)
         self.toolbox.register("mate", tools.cxBlend, alpha=0.2)
-        self.toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=0.2, indpb=0.4)
+        self.toolbox.register("mutate", tools.mutGaussian,
+                              mu=0, sigma=0.2, indpb=0.4)
         self.toolbox.register("select", tools.selTournament)
 
     def generate(self):
         """
         Generates an individual with random parameters within allowed bounds
         """
-        ind = creator.Individual([random.uniform(-1, 1) for _ in range(len(self._params['value_means']))])
+        ind = creator.Individual([random.uniform(-1, 1)
+                                  for _ in range(len(self._params['value_means']))])
         return ind
 
     def initialize_pop(self):
@@ -664,7 +715,8 @@ class OptGA:
         :return:
         """
         self.toolbox.register("individual", self.generate)
-        self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
+        self.toolbox.register("population", tools.initRepeat,
+                              list, self.toolbox.individual)
         self.population = self.toolbox.population(n=self._params['popsize'])
         self.assign_fitnesses(self.population)
         self._params['model_count'] += len(self.population)
@@ -673,7 +725,7 @@ class OptGA:
         offspring = list(map(self.toolbox.clone, self.population))
         # offspring.sort(reverse=True, key=lambda x: x.fitness)
 
-        for _ in range(self._params['popsize']//2):
+        for _ in range(self._params['popsize'] // 2):
             if random.random() < self._params['cxpb']:
                 child1, child2 = self.toolbox.select(self.population, 2, 6)
                 temp1 = self.toolbox.clone(child1)
@@ -695,18 +747,21 @@ class OptGA:
                 self.toolbox.mutate(mutant)
                 del mutant.fitness.values
 
-        #simple bound checking
+        # simple bound checking
         for i in range(len(offspring)):
             for j in range(len(offspring[i])):
                 if offspring[i][j] > 1:
                     offspring[i][j] = 1
                 if offspring[i][j] < -1:
                     offspring[i][j] = -1
-        self._params['model_count'] += len([ind for ind in offspring if not ind.fitness.values])
-        self.assign_fitnesses([ind for ind in offspring if not ind.fitness.valid])
+        self._params['model_count'] += len(
+            [ind for ind in offspring if not ind.fitness.values])
+        self.assign_fitnesses(
+            [ind for ind in offspring if not ind.fitness.valid])
         offspring.sort(reverse=True, key=lambda x: x.fitness)
         if len(self.halloffame) != 0:
-            if offspring[0].fitness < self.halloffame[0].fitness:  # elitism- if none beat best so far it is reinserted
+            # elitism- if none beat best so far it is reinserted
+            if offspring[0].fitness < self.halloffame[0].fitness:
                 offspring.insert(0, self.halloffame[0])
         self.population[:] = offspring[:self._params['popsize']]
 
@@ -718,6 +773,7 @@ class OptCMAES:
     accordingly. Bound handling is achieved by moving any out of bounds parameters to the boundary condition. Other than
     that the implementation used here is as in the originating code from the deap module.
     """
+
     def __init__(self, **kwargs):
         super().__init__()
         self._params.update(**kwargs)
@@ -731,10 +787,12 @@ class OptCMAES:
         :return:
         """
         self.initialize_cma_es(sigma=self._params['sigma'], weights=self._params['weights'],
-                               lambda_=self._params['popsize'], centroid=[0]*len(self._params['value_means']))
+                               lambda_=self._params['popsize'], centroid=[0] * len(self._params['value_means']))
         self.toolbox.register("individual", self.make_individual)
-        self.toolbox.register("generate", self.generate, self.toolbox.individual)
-        self.toolbox.register("population", tools.initRepeat, list, self.initial_individual)
+        self.toolbox.register("generate", self.generate,
+                              self.toolbox.individual)
+        self.toolbox.register("population", tools.initRepeat,
+                              list, self.initial_individual)
         self.toolbox.register("update", self.update)
         self.population = self.toolbox.population(n=self._params['popsize'])
         self.assign_fitnesses(self.population)
@@ -745,12 +803,13 @@ class OptCMAES:
         Generates an individual with random parameters within bounds
         :return:
         """
-        ind = creator.Individual([random.uniform(-1, 1) for _ in range(len(self._params['value_means']))])
+        ind = creator.Individual([random.uniform(-1, 1)
+                                  for _ in range(len(self._params['value_means']))])
         return ind
 
     def update_pop(self):
         self.toolbox.generate()
-        #simple bound checking
+        # simple bound checking
         for i in range(len(self.population)):
             for j in range(len(self.population[i])):
                 if self.population[i][j] > 1:
@@ -817,13 +876,14 @@ class OptCMAES:
         self.params = kwargs
 
         # Create a centroid as a numpy array
-        self.centroid = numpy.array([0]*len(self._params['value_means']))
+        self.centroid = numpy.array([0] * len(self._params['value_means']))
 
         self.dim = len(self.centroid)
         self.sigma = self.params.get("sigma", 0.5)
         self.pc = numpy.zeros(self.dim)
         self.ps = numpy.zeros(self.dim)
-        self.chiN = numpy.sqrt(self.dim) * (1 - 1. / (4. * self.dim) + 1. / (21. * self.dim ** 2))
+        self.chiN = numpy.sqrt(self.dim) * (1 - 1. /
+                                            (4. * self.dim) + 1. / (21. * self.dim ** 2))
 
         self.C = self.params.get("cmatrix", numpy.identity(self.dim))
         self.diagD, self.B = numpy.linalg.eigh(self.C)
@@ -835,7 +895,8 @@ class OptCMAES:
 
         self.cond = self.diagD[indx[-1]] / self.diagD[indx[0]]
 
-        self.lambda_ = self.params.get("lambda_", int(4 + 3 * numpy.log(self.dim)))
+        self.lambda_ = self.params.get(
+            "lambda_", int(4 + 3 * numpy.log(self.dim)))
         self.update_count = 0
         self.computeParams(self.params)
 
@@ -870,7 +931,8 @@ class OptCMAES:
                         * numpy.dot(self.B.T, c_diff))
 
         hsig = float((numpy.linalg.norm(self.ps) /
-                      numpy.sqrt(1. - (1. - self.cs) ** (2. * (self.update_count + 1.))) / self.chiN
+                      numpy.sqrt(1. - (1. - self.cs) **
+                                 (2. * (self.update_count + 1.))) / self.chiN
                       < (1.4 + 2. / (self.dim + 1.))))
 
         self.update_count += 1
@@ -907,7 +969,8 @@ class OptCMAES:
         self.mu = params.get("mu", int(self.lambda_ / 2))
         rweights = params.get("weights", "superlinear")
         if rweights == "superlinear":
-            self.weights = numpy.log(self.mu + 0.5) - numpy.log(numpy.arange(1, self.mu + 1))
+            self.weights = numpy.log(self.mu + 0.5) - \
+                numpy.log(numpy.arange(1, self.mu + 1))
         elif rweights == "linear":
             self.weights = self.mu + 0.5 - numpy.arange(1, self.mu + 1)
         elif rweights == "equal":
@@ -919,12 +982,15 @@ class OptCMAES:
         self.mueff = 1. / sum(self.weights ** 2)
 
         self.cc = params.get("ccum", 4. / (self.dim + 4.))
-        self.cs = params.get("cs", (self.mueff + 2.) / (self.dim + self.mueff + 3.))
-        self.ccov1 = params.get("ccov1", 2. / ((self.dim + 1.3) ** 2 + self.mueff))
+        self.cs = params.get("cs", (self.mueff + 2.) /
+                             (self.dim + self.mueff + 3.))
+        self.ccov1 = params.get(
+            "ccov1", 2. / ((self.dim + 1.3) ** 2 + self.mueff))
         self.ccovmu = params.get("ccovmu", 2. * (self.mueff - 2. + 1. / self.mueff) /
                                  ((self.dim + 2.) ** 2 + self.mueff))
         self.ccovmu = min(1 - self.ccov1, self.ccovmu)
-        self.damps = 1. + 2. * max(0, numpy.sqrt((self.mueff - 1.) / (self.dim + 1.)) - 1.) + self.cs
+        self.damps = 1. + 2. * \
+            max(0, numpy.sqrt((self.mueff - 1.) / (self.dim + 1.)) - 1.) + self.cs
         self.damps = params.get("damps", self.damps)
 
 
@@ -932,6 +998,7 @@ class DE_Opt(OptDE, BaseScore):
     """
     Class for DE algorithm optimizing BUFF fitness
     """
+
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -941,6 +1008,7 @@ class DE_Opt_Internal(OptDE, BaseInternalScore):
     """
     Class for DE algorithm optimizing BUFF internal enegyfitness
     """
+
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -950,6 +1018,7 @@ class DE_RMSD(OptDE, BaseRMSD):
     """
     Class for DE algorithm optimizing RMSD against target model
     """
+
     def __init__(self, specification, ref_pdb, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -960,6 +1029,7 @@ class DE_Comparator(OptDE, BaseComparator):
     """
     Class for DE algorithm optimizing BUFF fitness change on docking two AMPAL objects.
     """
+
     def __init__(self, top1, top2, params1, params2, seq1, seq2, **kwargs):
         super().__init__(**kwargs)
         self._params['top1'] = top1
@@ -980,6 +1050,7 @@ class PSO_Opt(OptPSO, BaseScore):
     """
     Class for PSO algorithm optimizing BUFF fitness
     """
+
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -989,6 +1060,7 @@ class PSO_RMSD(OptPSO, BaseRMSD):
     """
     Class for PSO algorithm optimizing RMSD against target model
     """
+
     def __init__(self, specification, ref_pdb, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -999,6 +1071,7 @@ class PSO_Comparator(OptPSO, BaseComparator):
     """
     Class for PSO algorithm optimizing BUFF fitness change on docking two AMPAL objects.
     """
+
     def __init__(self, top1, top2, params1, params2, seq1, seq2, **kwargs):
         super().__init__(**kwargs)
         self._params['top1'] = top1
@@ -1019,6 +1092,7 @@ class GA_Opt(OptGA, BaseScore):
     """
     Class for GA algorithm optimizing BUFF fitness
     """
+
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -1028,6 +1102,7 @@ class GA_Opt_Internal(OptGA, BaseInternalScore):
     """
     Class for GA algorithm optimizing BUFF internal energy
     """
+
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -1037,6 +1112,7 @@ class GA_RMSD(OptGA, BaseRMSD):
     """
     Class for GA algorithm optimizing RMSD against target model
     """
+
     def __init__(self, specification, ref_pdb, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -1047,6 +1123,7 @@ class GA_Comparator(OptGA, BaseComparator):
     """
     Class for GA algorithm optimizing BUFF fitness change on docking two AMPAL objects.
     """
+
     def __init__(self, top1, top2, params1, params2, seq1, seq2, **kwargs):
         super().__init__(**kwargs)
         self._params['top1'] = top1
@@ -1067,6 +1144,7 @@ class CMAES_Opt(OptCMAES, BaseScore):
     """
     Class for CMAES algorithm optimizing BUFF fitness
     """
+
     def __init__(self, specification, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -1076,6 +1154,7 @@ class CMAES_RMSD(OptCMAES, BaseRMSD):
     """
     Class for CMAES algorithm optimizing RMSD against target model
     """
+
     def __init__(self, specification, ref_pdb, **kwargs):
         super().__init__(**kwargs)
         self._params['specification'] = specification
@@ -1086,6 +1165,7 @@ class CMAES_Comparator(OptCMAES, BaseComparator):
     """
     Class for CMAES algorithm optimizing BUFF fitness change on docking two AMPAL objects.
     """
+
     def __init__(self, top1, top2, params1, params2, seq1, seq2, **kwargs):
         super().__init__(**kwargs)
         self._params['top1'] = top1
