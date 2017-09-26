@@ -54,7 +54,7 @@ import isambard
 isambard.settings.configure()
 ```
 
-`.isambard_settings` is simple JSON config file, if you're having any trouble with your settings, you can tinker with it manually. You can find an example `.isambard_settings` file [here].
+`.isambard_settings` is simple JSON config file, if you're having any trouble with your settings, you can tinker with it manually. You can find an example `.isambard_settings` file [here](https://github.com/woolfson-group/isambard/wiki/Example-%60.isambard_settings%60-file).
 
 Chat with us on Gitter if you get stuck (link above), or raise an issue!
 
