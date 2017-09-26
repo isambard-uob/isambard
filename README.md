@@ -36,7 +36,9 @@ Or if you want to try an experimental build, download from GitHub either by down
 python setup.py install
 ```
 
-ISAMBARD has a few Python package requirements, just install them through pip if it asks for them. We recommend using the [Anaconda Python 3 distribution](https://www.continuum.io/downloads), it contains most of the dependencies. 
+ISAMBARD has a few Python package requirements, just install them through pip if it asks for them. We recommend using the [Anaconda Python 3 distribution](https://www.continuum.io/downloads), it contains most of the dependencies.
+
+If you're having trouble installing ISAMBARD take a look at the [troubleshooting](https://github.com/woolfson-group/isambard/wiki/Installation-Troubleshooting) section of the wiki, especially if you're on a bleeding-edge Linux distro like Arch.
 
 ### External Programs
 
@@ -51,6 +53,8 @@ When you first import ISAMBARD you'll be asked to give paths to the executables 
 import isambard
 isambard.settings.configure()
 ```
+
+`.isambard_settings` is simple JSON config file, if you're having any trouble with your settings, you can tinker with it manually. You can find an example `.isambard_settings` file [here].
 
 Chat with us on Gitter if you get stuck (link above), or raise an issue!
 
