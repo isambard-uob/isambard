@@ -1,6 +1,6 @@
 machine:
   python:
-    version: 3.6
+    version: 3.6-dev
 dependencies:
   pre:
     - git clone git@github.com:woolfson-group/dependencies_for_isambard.git
