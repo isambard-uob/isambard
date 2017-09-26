@@ -1,6 +1,6 @@
 machine:
   python:
-    version: 3.5.0
+    version: 3.6
 dependencies:
   pre:
     - git clone git@github.com:woolfson-group/dependencies_for_isambard.git
@@ -13,7 +13,6 @@ dependencies:
     - chmod +x /home/ubuntu/isambard/dependencies_for_isambard/dssp/dssp-2.0.4
     - pip install --upgrade pip
     - pip install --upgrade setuptools
-    - pip install Cython
     - pip install -r requirements.txt
   override:
     - python setup.py build_ext --inplace
