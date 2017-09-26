@@ -1,6 +1,8 @@
 machine:
-  python:
-    version: 3.5.2
+  pre:                                                                                                                                                                   
+    - cd /opt/circleci/.pyenv; git pull                                                                                                                                  
+  python:                                                                                                                                                                
+    version: 3.6.0
 dependencies:
   pre:
     - git clone git@github.com:woolfson-group/dependencies_for_isambard.git
