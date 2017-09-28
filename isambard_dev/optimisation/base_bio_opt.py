@@ -2,6 +2,7 @@
 
 from concurrent import futures
 import datetime
+import os
 import sys
 
 from deap import base, creator, tools
@@ -22,7 +23,7 @@ def buff_interaction_eval(ampal):
 
 
 def buff_internal_eval(ampal):
-    return model.buff_internal_energy.total_energy
+    return ampal.buff_internal_energy.total_energy
 
 
 def make_rmsd_eval(reference_ampal):
@@ -46,7 +47,7 @@ class BaseOptimizer:
         self.parameter_log = []
 
     @classmethod
-    def buff_interaction_eval(cls, specification, log=True, **kwargs):
+    def buff_interaction_eval(cls, specification, **kwargs):
         instance = cls(build_fn=default_build,
                        eval_fn=buff_interaction_eval,
                        specification=specification,
@@ -54,7 +55,7 @@ class BaseOptimizer:
         return instance
 
     @classmethod
-    def buff_internal_eval(cls, specification, log=True, **kwargs):
+    def buff_internal_eval(cls, specification, **kwargs):
         instance = cls(build_fn=default_build,
                        eval_fn=buff_internal_eval,
                        specification=specification,
@@ -62,7 +63,7 @@ class BaseOptimizer:
         return instance
 
     @classmethod
-    def rmsd_eval(cls, specification, reference_ampal, log=True, **kwargs):
+    def rmsd_eval(cls, specification, reference_ampal, **kwargs):
         eval_fn = make_rmsd_eval(reference_ampal)
         instance = cls(build_fn=default_build,
                        eval_fn=eval_fn,
@@ -97,7 +98,7 @@ class BaseOptimizer:
         return fullpars
 
     def run_opt(self, popsize, numgen, processors,
-                plot=False, log=False, **kwargs):
+                plot=False, log=False, store_params=True, **kwargs):
         """
         Runs the optimizer.
         :param popsize:
@@ -113,6 +114,7 @@ class BaseOptimizer:
         self._params['processors'] = processors
         self._params['plot'] = plot
         self._params['log'] = log
+        self._params['store_params'] = store_params
         # allows us to pass in additional arguments e.g. neighbours
         self._params.update(**kwargs)
         self.halloffame = tools.HallOfFame(1)
@@ -212,8 +214,8 @@ class BaseOptimizer:
                 models = executor.map(self.build_fn, px_parameters)
                 fitnesses = executor.map(self.eval_fn, models)
         tars_fits = list(zip(targets, fitnesses))
-        if 'log_params' in self._params:
-            if self._params['log_params']:
+        if 'store_params' in self._params:
+            if self._params['store_params']:
                 self.parameter_log.append(
                     [(self.parse_individual(x[0]), x[1]) for x in tars_fits])
         for ind, fit in tars_fits:
@@ -239,13 +241,21 @@ class BaseOptimizer:
         best_ind = self.halloffame[0]
         model_params = self.parse_individual(
             best_ind)  # need to change name of 'params'
-        with open(
-                '{0}{1}_log.txt'.format(
-                    self._params['output_path'],
-                    self._params['run_id']), 'a+') as log_file:
+        if 'output_path' in self._params:
+            output_path = self._params['output_path']
+        else:
+            output_path = os.getcwd()
+        if 'run_id' in self._params:
+            run_id = self._params['run_id']
+        else:
+
+            run_id = '{:%Y%m%d-%H%M%S}'.format(
+                datetime.datetime.now())
+        with open('{0}/{1}_opt_log.txt'.format(
+                output_path, run_id), 'w') as log_file:
             log_file.write('\nEvaluated {0} models in total\n'.format(
                 self._params['model_count']))
-            log_file.write('Run ID is {0}\n'.format(self._params['run_id']))
+            log_file.write('Run ID is {0}\n'.format(run_id))
             log_file.write('Best fitness is {0}\n'.format(
                 self.halloffame[0].fitness))
             log_file.write(
@@ -262,13 +272,10 @@ class BaseOptimizer:
                         "Warning! Parameter {0} is at or near minimum allowed "
                         "value\n".format(i + 1))
             log_file.write('Minimization history: \n{0}'.format(self.logbook))
-        with open('{0}{1}_bestmodel.pdb'.format(
-                self._params['output_path'],
-                self._params['run_id']), 'w') as output_file:
-            model = self._params['specification'](*model_params)
-            model.build()
-            model.pack_new_sequences(self._params['sequence'])
-            output_file.write(model.pdb)
+        with open('{0}/{1}_opt_best_model.pdb'.format(
+                output_path, run_id), 'w') as output_file:
+            output_file.write(self.best_model.pdb)
+        return
 
     @property
     def best_model(self):
