@@ -2,6 +2,7 @@
 
 from concurrent import futures
 import datetime
+import sys
 
 from deap import base, creator, tools
 import numpy
@@ -34,8 +35,9 @@ def make_rmsd_eval(reference_ampal):
 
 class BaseOptimizer:
 
-    def __init__(self, build_fn=None, eval_fn=None, **kwargs):
+    def __init__(self, specification, build_fn=None, eval_fn=None, **kwargs):
         self._params = {}
+        self._params['specification'] = specification
         self._params.update(**kwargs)
         self.build_fn = build_fn
         self.eval_fn = eval_fn
@@ -44,7 +46,7 @@ class BaseOptimizer:
         self.parameter_log = []
 
     @classmethod
-    def buff_interaction_eval(cls, specification, **kwargs):
+    def buff_interaction_eval(cls, specification, log=True, **kwargs):
         instance = cls(build_fn=default_build,
                        eval_fn=buff_interaction_eval,
                        specification=specification,
@@ -52,7 +54,7 @@ class BaseOptimizer:
         return instance
 
     @classmethod
-    def buff_internal_eval(cls, specification, **kwargs):
+    def buff_internal_eval(cls, specification, log=True, **kwargs):
         instance = cls(build_fn=default_build,
                        eval_fn=buff_internal_eval,
                        specification=specification,
@@ -60,7 +62,7 @@ class BaseOptimizer:
         return instance
 
     @classmethod
-    def rmsd_eval(cls, specification, reference_ampal, **kwargs):
+    def rmsd_eval(cls, specification, reference_ampal, log=True, **kwargs):
         eval_fn = make_rmsd_eval(reference_ampal)
         instance = cls(build_fn=default_build,
                        eval_fn=eval_fn,
@@ -208,7 +210,7 @@ class BaseOptimizer:
             with futures.ProcessPoolExecutor(
                     max_workers=self._params['processors']) as executor:
                 models = executor.map(self.build_fn, px_parameters)
-                fitnesses = executor.map(self.eval_fn, px_parameters)
+                fitnesses = executor.map(self.eval_fn, models)
         tars_fits = list(zip(targets, fitnesses))
         if 'log_params' in self._params:
             if self._params['log_params']:

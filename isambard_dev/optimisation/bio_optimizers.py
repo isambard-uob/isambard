@@ -19,8 +19,11 @@ class OptDE(BaseOptimizer):
     is recommended.
     """
 
-    def __init__(self, build_fn=None, eval_fn=None, **kwargs):
-        super().__init__(build_fn=None, eval_fn=None, **kwargs)
+    def __init__(self, specification, build_fn=None, eval_fn=None, log=True,
+                 **kwargs):
+        super().__init__(
+            specification, build_fn=build_fn, eval_fn=eval_fn, log=True,
+            **kwargs)
         self._params.setdefault('cxpb', 0.75)
         self._params.setdefault('diff_weight', 1)
         self._params.setdefault('output_path', None)
@@ -134,8 +137,11 @@ class OptPSO(BaseOptimizer):
     fitness in this case.
     """
 
-    def __init__(self, build_fn=None, eval_fn=None, **kwargs):
-        super().__init__(build_fn=None, eval_fn=None, **kwargs)
+    def __init__(self, specification, build_fn=None, eval_fn=None, log=True,
+                 **kwargs):
+        super().__init__(
+            specification, build_fn=build_fn, eval_fn=eval_fn, log=True,
+            **kwargs)
         self.population = None
         self._params.setdefault('output_path', None)
         self._params.setdefault('max_speed', 0.75)
@@ -273,8 +279,11 @@ class OptGA(BaseOptimizer):
     bounds parameters to the boundary value.
     """
 
-    def __init__(self, build_fn=None, eval_fn=None, **kwargs):
-        super().__init__(build_fn=None, eval_fn=None, **kwargs)
+    def __init__(self, specification, build_fn=None, eval_fn=None, log=True,
+                 **kwargs):
+        super().__init__(
+            specification, build_fn=build_fn, eval_fn=eval_fn, log=True,
+            **kwargs)
         self._params.setdefault('output_path', None)
         self._params.setdefault('cxpb', 0.5)
         self._params.setdefault('mutpb', 0.2)
@@ -359,8 +368,11 @@ class OptCMAES(BaseOptimizer):
     originating code from the deap module.
     """
 
-    def __init__(self, build_fn=None, eval_fn=None, **kwargs):
-        super().__init__(build_fn=None, eval_fn=None, **kwargs)
+    def __init__(self, specification, build_fn=None, eval_fn=None, log=True,
+                 **kwargs):
+        super().__init__(
+            specification, build_fn=build_fn, eval_fn=eval_fn, log=True,
+            **kwargs)
         self._params.setdefault('sigma', 0.3)
         self._params.setdefault('weights', 'superlinear')
         creator.create("Individual", list, fitness=creator.FitnessMin)
