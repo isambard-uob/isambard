@@ -37,11 +37,22 @@ def make_rmsd_eval(reference_ampal):
 
 
 class BaseOptimizer:
+    """Abstract base class for the evolutionary optimizers.
+
+    Notes
+    -----
+    Not intended to be used directly, see the evolutionary
+    optimizers for full documentation.
+    """
 
     def __init__(self, specification, build_fn=None, eval_fn=None, **kwargs):
         self._params = {}
         self._params['specification'] = specification
         self._params.update(**kwargs)
+        if sys.platform == 'win32':
+            self._params['mp_disabled'] = True
+            print('Multiprocessing for this module is currently unavailable'
+                  'on Windows, only a single process will be used.')
         self.build_fn = build_fn
         self.eval_fn = eval_fn
         self.population = None
@@ -51,6 +62,17 @@ class BaseOptimizer:
 
     @classmethod
     def buff_interaction_eval(cls, specification, **kwargs):
+        """Creates optimizer with default build and BUFF interaction eval.
+
+        Notes
+        -----
+        Any keyword arguments will be propagated down to BaseOptimizer.
+
+        Parameters
+        ----------
+        specification: ampal.assembly.specification
+            Any assembly level specification.
+        """
         instance = cls(build_fn=default_build,
                        eval_fn=buff_interaction_eval,
                        specification=specification,
@@ -59,6 +81,17 @@ class BaseOptimizer:
 
     @classmethod
     def buff_internal_eval(cls, specification, **kwargs):
+        """Creates optimizer with default build and BUFF interaction eval.
+        
+        Notes
+        -----
+        Any keyword arguments will be propagated down to BaseOptimizer.
+
+        Parameters
+        ----------
+        specification: ampal.assembly.specification
+            Any assembly level specification.
+        """
         instance = cls(build_fn=default_build,
                        eval_fn=buff_internal_eval,
                        specification=specification,
@@ -67,10 +100,22 @@ class BaseOptimizer:
 
     @classmethod
     def rmsd_eval(cls, specification, reference_ampal, **kwargs):
+        """Creates optimizer with default build and RMSD eval.
+        
+        Notes
+        -----
+        Any keyword arguments will be propagated down to BaseOptimizer.
+
+        Parameters
+        ----------
+        specification: ampal.assembly.specification
+            Any assembly level specification.
+        """
         eval_fn = make_rmsd_eval(reference_ampal)
         instance = cls(build_fn=default_build,
                        eval_fn=eval_fn,
                        specification=specification,
+                       mp_disabled=True,
                        **kwargs)
         return instance
 
@@ -210,7 +255,7 @@ class BaseOptimizer:
         px_parameters = zip([self._params['specification']] * len(targets),
                             [self._params['sequence']] * len(targets),
                             [self.parse_individual(x) for x in targets])
-        if (self._params['processors'] == 1) or (sys.platform == 'win32'):
+        if (self._params['processors'] == 1) or (self._params['mp_disabled']):
             models = map(self.build_fn, px_parameters)
             fitnesses = map(self.eval_fn, models)
         else:
