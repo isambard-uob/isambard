@@ -65,6 +65,7 @@ class OptDE(BaseOptimizer):
                          for x in range(1, self._params['neighbours'] + 1)]
                     ))
         self.assign_fitnesses(self.population)
+        return
 
     def crossover(self, ind):
         """Used by the evolution process to generate a new individual.
@@ -121,6 +122,7 @@ class OptDE(BaseOptimizer):
         for i in range(len(self.population)):
             if candidates[i].fitness > self.population[i].fitness:
                 self.population[i] = candidates[i]
+        return
 
 
 class OptPSO(BaseOptimizer):
@@ -173,9 +175,7 @@ class OptPSO(BaseOptimizer):
         for part in self.population:
             part.best = creator.Particle(part)
             part.best.fitness.values = part.fitness.values
-        # self.pop.gbestfit = max(part.fitness for part in self.pop)
-        # self.pop.gbest = max(enumerate(self.pop),
-        #                      key=lambda x: self.pop[x[0]].fitness)[1]
+        return
 
     def generate(self):
         """Generates a particle using the creator function.
@@ -230,6 +230,7 @@ class OptPSO(BaseOptimizer):
             elif speed > part.smax:
                 part.speed[i] = part.smax
         part[:] = list(map(operator.add, part, part.speed))
+        return
 
     def update_pop(self):
         """Assigns fitnesses to particles that are within bounds."""
@@ -252,15 +253,7 @@ class OptPSO(BaseOptimizer):
             self.update_particle(part)
         self.population[:] = valid_particles + invalid_particles
         self.population.sort(key=lambda x: x.ident)  # shouldn't need to sort?
-        # for part in self.population:
-        #     if part.best.fitness < part.fitness:
-        #         part.best = creator.Particle(part)
-        #         part.best.fitness.values = part.fitness.values
-        # self.pop.gbestfit = max(part.fitness for part in self.pop)
-        # this is the current best, not the all time best
-        # self.pop.gbest = max(enumerate(self.pop),
-        #                      key=lambda x: self.pop[x[0]].fitness)[1]
-        # but these aren't used anyway
+        return
 
 
 class OptGA(BaseOptimizer):
@@ -303,11 +296,10 @@ class OptGA(BaseOptimizer):
         self.population = self.toolbox.population(n=self._params['popsize'])
         self.assign_fitnesses(self.population)
         self._params['model_count'] += len(self.population)
+        return
 
     def update_pop(self):
         offspring = list(map(self.toolbox.clone, self.population))
-        # offspring.sort(reverse=True, key=lambda x: x.fitness)
-
         for _ in range(self._params['popsize'] // 2):
             if random.random() < self._params['cxpb']:
                 child1, child2 = self.toolbox.select(self.population, 2, 6)
@@ -318,18 +310,10 @@ class OptGA(BaseOptimizer):
                 del temp2.fitness.values
                 offspring.append(temp1)
                 offspring.append(temp2)
-
-        # for child1, child2 in zip(offspring[::2], offspring[1::2]):
-        #     if random.random() < self._params['cxpb']:
-        #         self.toolbox.mate(child1, child2)
-        #         del child1.fitness.values
-        #         del child2.fitness.values
-
         for mutant in offspring:
             if random.random() < self._params['mutpb']:
                 self.toolbox.mutate(mutant)
                 del mutant.fitness.values
-
         # simple bound checking
         for i in range(len(offspring)):
             for j in range(len(offspring[i])):
@@ -347,6 +331,7 @@ class OptGA(BaseOptimizer):
             if offspring[0].fitness < self.halloffame[0].fitness:
                 offspring.insert(0, self.halloffame[0])
         self.population[:] = offspring[:self._params['popsize']]
+        return
 
 
 class OptCMAES(BaseOptimizer):
@@ -384,6 +369,7 @@ class OptCMAES(BaseOptimizer):
         self.population = self.toolbox.population(n=self._params['popsize'])
         self.assign_fitnesses(self.population)
         self._params['model_count'] += len(self.population)
+        return
 
     def initial_individual(self):
         """Generates an individual with random parameters within bounds."""
@@ -467,7 +453,6 @@ class OptCMAES(BaseOptimizer):
             described in the following table, optional.
         """
         self.params = kwargs
-
         # Create a centroid as a numpy array
         self.centroid = numpy.array([0] * len(self._params['value_means']))
 

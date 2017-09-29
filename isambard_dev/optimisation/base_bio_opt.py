@@ -18,6 +18,7 @@ def default_build(spec_seq_params):
     model.pack_new_sequences(sequence)
     return model
 
+
 def buff_interaction_eval(ampal):
     return ampal.buff_interaction_energy.total_energy
 
@@ -34,6 +35,7 @@ def make_rmsd_eval(reference_ampal):
         return bb
     return rmsd_eval
 
+
 class BaseOptimizer:
 
     def __init__(self, specification, build_fn=None, eval_fn=None, **kwargs):
@@ -42,6 +44,7 @@ class BaseOptimizer:
         self._params.update(**kwargs)
         self.build_fn = build_fn
         self.eval_fn = eval_fn
+        self.population = None
         creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
         self.toolbox = base.Toolbox()
         self.parameter_log = []
@@ -160,6 +163,7 @@ class BaseOptimizer:
                      self.logbook.select('min'))
             plt.xlabel('Iteration', fontsize=20)
             plt.ylabel('Score', fontsize=20)
+        return
 
     def parameters(self, sequence, value_means, value_ranges, arrangement):
         """Relates the individual to be evolved to the full parameter string.
@@ -199,6 +203,7 @@ class BaseOptimizer:
         if len(self._params['value_ranges']) != len(
                 self._params['value_means']):
             raise ValueError("argument mismatch!")
+        return
 
     def assign_fitnesses(self, targets):
         self._params['evals'] = len(targets)
@@ -220,6 +225,7 @@ class BaseOptimizer:
                     [(self.parse_individual(x[0]), x[1]) for x in tars_fits])
         for ind, fit in tars_fits:
             ind.fitness.values = (fit,)
+        return
 
     def generate(self):
         raise NotImplementedError("Will depend on optimizer type")
@@ -248,7 +254,6 @@ class BaseOptimizer:
         if 'run_id' in self._params:
             run_id = self._params['run_id']
         else:
-
             run_id = '{:%Y%m%d-%H%M%S}'.format(
                 datetime.datetime.now())
         with open('{0}/{1}_opt_log.txt'.format(
@@ -291,13 +296,11 @@ class BaseOptimizer:
         NameError:
             Raises a name error if the optimiser has not been run.
         """
-        if hasattr(self, 'halloffame'):
-            model = self._params['specification'](
-                *self.parse_individual(self.halloffame[0]))
-            model.pack_new_sequences(self._params['sequence'])
-            return model
-        else:
+        if not hasattr(self, 'halloffame'):
             raise NameError('No best model found, have you ran the optimiser?')
+        model = self.build_fn(*self.parse_individual(self.halloffame[0]))
+        model.pack_new_sequences(self._params['sequence'])
+        return model
 
     def make_energy_funnel_data(self, cores=1):
         """Compares models created during the minimisation to the best model.
