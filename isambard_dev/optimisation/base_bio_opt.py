@@ -106,6 +106,9 @@ class BaseOptimizer:
         -----
         Any keyword arguments will be propagated down to BaseOptimizer.
 
+        RMSD eval is restricted to a single core only, due to restrictions
+        on closure pickling.
+
         Parameters
         ----------
         specification: ampal.assembly.specification
@@ -121,6 +124,7 @@ class BaseOptimizer:
 
     def parse_individual(self, individual):
         """Converts a deap individual into a full list of parameters.
+
         Parameters
         ----------
         individual: deap individual from optimization
@@ -145,21 +149,39 @@ class BaseOptimizer:
                     fullpars[j] = scaled_ind[k]
         return fullpars
 
-    def run_opt(self, popsize, numgen, processors,
-                plot=False, log=False, store_params=True, **kwargs):
+    def run_opt(self, pop_size, generations, cores, plot=False, log=False,
+                store_params=True, **kwargs):
+        """Runs the optimizer.
+
+        Parameters
+        ----------
+        pop_size: int
+            Size of the population each generation.
+        generation: int
+            Number of generations in optimisation.
+        cores: int
+            Number of CPU cores used to run the optimisation.
+            If the 'mp_disabled' keyword is passed to the
+            optimizer, this will be ignored and one core will
+            be used.
+        plot: bool, optional
+            If true, matplotlib will be used to plot information
+            about the minimisation.
+        log: bool, optional
+            If true, a log file describing the optimisation will
+            be created. By default it will be written to the
+            current directory and named according to the time the
+            minimisation finished. This can be manually specified
+            by passing the 'output_path' and 'run_id' keyword
+            arguments.
+        store_params: bool, optional
+            If true, the parameters for each model created during
+            the optimisation will be stored. This can be used to
+            create funnel data later on.
         """
-        Runs the optimizer.
-        :param popsize:
-        :param numgen:
-        :param processors:
-        :param plot:
-        :param log:
-        :param kwargs:
-        :return:
-        """
-        self._params['popsize'] = popsize
-        self._params['numgen'] = numgen
-        self._params['processors'] = processors
+        self._params['pop_size'] = pop_size
+        self._params['generations'] = generations
+        self._params['cores'] = cores
         self._params['plot'] = plot
         self._params['log'] = log
         self._params['store_params'] = store_params
@@ -176,7 +198,7 @@ class BaseOptimizer:
         self._params['model_count'] = 0
         start_time = datetime.datetime.now()
         self.initialize_pop()
-        for g in range(self._params['numgen']):
+        for g in range(self._params['generations']):
             self.update_pop()
             self.halloffame.update(self.population)
             self.logbook.record(gen=g, evals=self._params['evals'],
@@ -251,16 +273,27 @@ class BaseOptimizer:
         return
 
     def assign_fitnesses(self, targets):
+        """Assigns fitnesses to parameters.
+        
+        Notes
+        -----
+        Uses `self.eval_fn` to evaluate each member of target.
+        Parameters
+        ---------
+
+        targets
+            Parameter values for each member of the population.
+        """
         self._params['evals'] = len(targets)
         px_parameters = zip([self._params['specification']] * len(targets),
                             [self._params['sequence']] * len(targets),
                             [self.parse_individual(x) for x in targets])
-        if (self._params['processors'] == 1) or (self._params['mp_disabled']):
+        if (self._params['cores'] == 1) or (self._params['mp_disabled']):
             models = map(self.build_fn, px_parameters)
             fitnesses = map(self.eval_fn, models)
         else:
             with futures.ProcessPoolExecutor(
-                    max_workers=self._params['processors']) as executor:
+                    max_workers=self._params['cores']) as executor:
                 models = executor.map(self.build_fn, px_parameters)
                 fitnesses = executor.map(self.eval_fn, models)
         tars_fits = list(zip(targets, fitnesses))
@@ -376,7 +409,7 @@ class BaseOptimizer:
                   self._params['specification']) for x in sorted_pps[1:]])
         else:
             with futures.ProcessPoolExecutor(
-                    max_workers=self._params['processors']) as executor:
+                    max_workers=self._params['cores']) as executor:
                 energy_rmsd_gen = executor.map(
                     self.funnel_rebuild,
                     [(x, top_result_model, self._params['specification'])
