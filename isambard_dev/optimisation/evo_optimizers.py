@@ -6,7 +6,7 @@ import random
 from deap import creator, tools
 import numpy
 
-from optimisation.base_bio_opt import BaseOptimizer
+from optimisation.base_evo_opt import BaseOptimizer
 
 
 class OptDE(BaseOptimizer):
@@ -17,18 +17,40 @@ class OptDE(BaseOptimizer):
     Can use neighbourhood model to reduce chance of getting stuck
     in local optima. This is a very versatile algorithm, and its use
     is recommended.
+
+    Parameters
+    ----------
+    specification : ampal.specification.assembly_specification
+        An `Assembly` level specification to be optimised.
+    build_fn : function((spec, seq, params)) -> ampal
+        A function for building a model using parameters supplied
+        by the optimizer.
+    eval_fn : function(ampal) -> float
+        An evaluation function that assesses an AMPAL object and
+        returns a float. This float will be used to compare models.
+        The optimizer uses the thermodynamic convention that lower
+        numbers are better.
+    cxpb : float
+        The probability of crossing two individuals.
+    diff_weight : float
+        A scaling factor for crossing.
+    neighbours : int or None
+        If not `None`, uses a neighbourhood model to reduce the
+        likelihood of the optimisation getting stuck in a local
+        optima. The number of particles to use as neighbours can
+        be provided as an int.
     """
 
-    def __init__(self, specification, build_fn=None, eval_fn=None, **kwargs):
+    def __init__(self, specification, build_fn, eval_fn, cxpb=0.75,
+                 diff_weight=1, neighbours=None, **kwargs):
         super().__init__(
             specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
-        self._params.setdefault('cxpb', 0.75)
-        self._params.setdefault('diff_weight', 1)
-        self._params.setdefault('output_path', None)
-        self._params.setdefault('neighbours', None)
+        self._params['cxpb'] = cxpb
+        self._params['diff_weight'] = diff_weight
+        self._params['neighbours'] = neighbours
         creator.create("Individual", list, fitness=creator.FitnessMin)
 
-    def generate(self):
+    def _generate(self):
         """Generates a particle using the creator function.
 
         Notes
@@ -48,12 +70,12 @@ class OptDE(BaseOptimizer):
         ind.neighbours = None
         return ind
 
-    def initialize_pop(self):
+    def _initialize_pop(self):
         """Assigns indices to individuals in population."""
-        self.toolbox.register("individual", self.generate)
+        self.toolbox.register("individual", self._generate)
         self.toolbox.register("population", tools.initRepeat,
                               list, self.toolbox.individual)
-        self.population = self.toolbox.population(n=self._params['popsize'])
+        self.population = self.toolbox.population(n=self._params['pop_size'])
         if self._params['neighbours']:
             for i in range(len(self.population)):
                 self.population[i].ident = i
@@ -67,7 +89,7 @@ class OptDE(BaseOptimizer):
         self.assign_fitnesses(self.population)
         return
 
-    def crossover(self, ind):
+    def _crossover(self, ind):
         """Used by the evolution process to generate a new individual.
 
         Notes
@@ -79,10 +101,11 @@ class OptDE(BaseOptimizer):
 
         Parameters
         ----------
+        ind : deap individual
 
         Returns
         -------
-        y: deap individual
+        y : deap individual
             An individual representing a candidate solution, to be
             assigned a fitness.
         """
@@ -111,12 +134,11 @@ class OptDE(BaseOptimizer):
                 y[i] = entry
         return y
 
-    def update_pop(self):
-        """Updates the population according to crossover and fitness criteria.
-        """
+    def _update_pop(self):
+        """Updates population according to crossover and fitness criteria."""
         candidates = []
         for ind in self.population:
-            candidates.append(self.crossover(ind))
+            candidates.append(self._crossover(ind))
         self._params['model_count'] += len(candidates)
         self.assign_fitnesses(candidates)
         for i in range(len(self.population)):
@@ -135,26 +157,45 @@ class OptPSO(BaseOptimizer):
     the neighbourhood model. Bound handling is achieved by allowing
     particles to exceed permitted bounds, but not assigning them a
     fitness in this case.
+
+    Parameters
+    ----------
+    specification : ampal.specification.assembly_specification
+        An `Assembly` level specification to be optimised.
+    build_fn : function((spec, seq, params)) -> ampal
+        A function for building a model using parameters supplied
+        by the optimizer.
+    eval_fn : function(ampal) -> float
+        An evaluation function that assesses an AMPAL object and
+        returns a float. This float will be used to compare models.
+        The optimizer uses the thermodynamic convention that lower
+        numbers are better.
+    max_speed : float
+        The maximum speed that a particle can have in the swarm.
+    neighbours : int or None
+        If not `None`, uses a neighbourhood model to reduce the
+        likelihood of the optimisation getting stuck in a local
+        optima. The number of particles to use as neighbours can
+        be provided as an int.
     """
 
-    def __init__(self, specification, build_fn=None, eval_fn=None, **kwargs):
+    def __init__(self, specification, build_fn, eval_fn, max_speed=0.75,
+                 neighbours=None, **kwargs):
         super().__init__(
             specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
-        self.population = None
-        self._params.setdefault('output_path', None)
-        self._params.setdefault('max_speed', 0.75)
-        self._params.setdefault('neighbours', None)
+        self._params['max_speed'] = 0.75
+        self._params['neighbours'] = None
         creator.create("Particle", list, fitness=creator.FitnessMin,
                        speed=list, smin=None, smax=None, best=None)
-        self.toolbox.register("particle", self.generate)
+        self.toolbox.register("particle", self._generate)
         # can this pick up the global fitness?
         creator.create("Swarm", list, gbest=None, gbestfit=creator.FitnessMin)
         self.toolbox.register("swarm", tools.initRepeat,
                               creator.Swarm, self.toolbox.particle)
 
-    def initialize_pop(self):
+    def _initialize_pop(self):
         """Generates initial population with random positions and speeds."""
-        self.population = self.toolbox.swarm(n=self._params['popsize'])
+        self.population = self.toolbox.swarm(n=self._params['pop_size'])
         if self._params['neighbours']:
             for i in range(len(self.population)):
                 self.population[i].ident = i
@@ -177,8 +218,9 @@ class OptPSO(BaseOptimizer):
             part.best.fitness.values = part.fitness.values
         return
 
-    def generate(self):
+    def _generate(self):
         """Generates a particle using the creator function.
+
         Notes
         -----
         Position and speed are uniformly randomly seeded within
@@ -187,7 +229,8 @@ class OptPSO(BaseOptimizer):
 
         Returns
         -------
-        particle object
+        part : particle object
+            A particle used during optimisation.
         """
         part = creator.Particle(
             [random.uniform(-1, 1)
@@ -232,7 +275,7 @@ class OptPSO(BaseOptimizer):
         part[:] = list(map(operator.add, part, part.speed))
         return
 
-    def update_pop(self):
+    def _update_pop(self):
         """Assigns fitnesses to particles that are within bounds."""
         valid_particles = []
         invalid_particles = []
@@ -261,46 +304,62 @@ class OptGA(BaseOptimizer):
 
     Notes
     -----
-    Arguably the weakest of the algorithms available, but very good
-    for eliminating unfavourable regions of the search space. Can be
-    heavily customized in terms of mutation and crossover operators
+    Very good for eliminating unfavourable regions of the search space.
+    Can be heavily customized in terms of mutation and crossover operators
     etc. Bound handling is achieved simply by amending any out of
     bounds parameters to the boundary value.
+
+    Parameters
+    ----------
+    specification : ampal.specification.assembly_specification
+        An `Assembly` level specification to be optimised.
+    build_fn : function((spec, seq, params)) -> ampal
+        A function for building a model using parameters supplied
+        by the optimizer.
+    eval_fn : function(ampal) -> float
+        An evaluation function that assesses an AMPAL object and
+        returns a float. This float will be used to compare models.
+        The optimizer uses the thermodynamic convention that lower
+        numbers are better.
+    cxpb : float
+        The probability of crossing two individuals.
+    mutpb : float
+        Probability of mutating an individual.
     """
 
-    def __init__(self, specification, build_fn=None, eval_fn=None, **kwargs):
+    def __init__(self, specification, build_fn, eval_fn, cxpb=0.5, mutpb=0.2,
+                 **kwargs):
         super().__init__(
             specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
-        self._params.setdefault('output_path', None)
-        self._params.setdefault('cxpb', 0.5)
-        self._params.setdefault('mutpb', 0.2)
+        self._params['cxpb'] = cxpb
+        self._params['mutpb'] = mutpb
         creator.create("Individual", list, fitness=creator.FitnessMin)
         self.toolbox.register("mate", tools.cxBlend, alpha=0.2)
         self.toolbox.register("mutate", tools.mutGaussian,
                               mu=0, sigma=0.2, indpb=0.4)
         self.toolbox.register("select", tools.selTournament)
 
-    def generate(self):
-        """Generates individual with random parameters within allowed bounds.
-        """
+    def _generate(self):
+        """Generates a particle using the creator function."""
         ind = creator.Individual(
             [random.uniform(-1, 1)
              for _ in range(len(self._params['value_means']))])
         return ind
 
-    def initialize_pop(self):
-        """Assigns initial fitnesses."""
-        self.toolbox.register("individual", self.generate)
+    def _initialize_pop(self):
+        """Assigns indices to individuals in population."""
+        self.toolbox.register("individual", self._generate)
         self.toolbox.register("population", tools.initRepeat,
                               list, self.toolbox.individual)
-        self.population = self.toolbox.population(n=self._params['popsize'])
+        self.population = self.toolbox.population(n=self._params['pop_size'])
         self.assign_fitnesses(self.population)
         self._params['model_count'] += len(self.population)
         return
 
-    def update_pop(self):
+    def _update_pop(self):
+        """Updates population according to crossover and fitness criteria."""
         offspring = list(map(self.toolbox.clone, self.population))
-        for _ in range(self._params['popsize'] // 2):
+        for _ in range(self._params['pop_size'] // 2):
             if random.random() < self._params['cxpb']:
                 child1, child2 = self.toolbox.select(self.population, 2, 6)
                 temp1 = self.toolbox.clone(child1)
@@ -330,7 +389,7 @@ class OptGA(BaseOptimizer):
             # elitism- if none beat best so far it is reinserted
             if offspring[0].fitness < self.halloffame[0].fitness:
                 offspring.insert(0, self.halloffame[0])
-        self.population[:] = offspring[:self._params['popsize']]
+        self.population[:] = offspring[:self._params['pop_size']]
         return
 
 
@@ -345,40 +404,60 @@ class OptCMAES(BaseOptimizer):
     by moving any out of bounds parameters to the boundary condition.
     Other than that the implementation used here is as in the
     originating code from the deap module.
+
+    Parameters
+    ----------
+    specification : ampal.specification.assembly_specification
+        An `Assembly` level specification to be optimised.
+    build_fn : function((spec, seq, params)) -> ampal
+        A function for building a model using parameters supplied
+        by the optimizer.
+    eval_fn : function(ampal) -> float
+        An evaluation function that assesses an AMPAL object and
+        returns a float. This float will be used to compare models.
+        The optimizer uses the thermodynamic convention that lower
+        numbers are better.
+    sigma : float
+        Initial standard deviation of the distribution.
+    weights : str
+        Can be 'linear', 'superlinear' or 'equal'. Used to decrease
+        speed of particles.
     """
 
-    def __init__(self, specification, build_fn=None, eval_fn=None, **kwargs):
+    def __init__(self, specification, build_fn, eval_fn, sigma=0.3,
+                 weights='superlinear', **kwargs):
         super().__init__(
             specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
-        self._params.setdefault('sigma', 0.3)
-        self._params.setdefault('weights', 'superlinear')
+        self._params['sigma'] = sigma
+        self._params['weights'] = weights
         creator.create("Individual", list, fitness=creator.FitnessMin)
 
-    def initialize_pop(self):
+    def _initialize_pop(self):
         """Generates the initial population and assigns fitnesses."""
         self.initialize_cma_es(
             sigma=self._params['sigma'], weights=self._params['weights'],
-            lambda_=self._params['popsize'],
+            lambda_=self._params['pop_size'],
             centroid=[0] * len(self._params['value_means']))
-        self.toolbox.register("individual", self.make_individual)
-        self.toolbox.register("generate", self.generate,
+        self.toolbox.register("individual", self._make_individual)
+        self.toolbox.register("generate", self._generate,
                               self.toolbox.individual)
         self.toolbox.register("population", tools.initRepeat,
-                              list, self.initial_individual)
+                              list, self._initial_individual)
         self.toolbox.register("update", self.update)
-        self.population = self.toolbox.population(n=self._params['popsize'])
+        self.population = self.toolbox.population(n=self._params['pop_size'])
         self.assign_fitnesses(self.population)
         self._params['model_count'] += len(self.population)
         return
 
-    def initial_individual(self):
+    def _initial_individual(self):
         """Generates an individual with random parameters within bounds."""
         ind = creator.Individual(
             [random.uniform(-1, 1)
              for _ in range(len(self._params['value_means']))])
         return ind
 
-    def update_pop(self):
+    def _update_pop(self):
+        """Updates population according to crossover and fitness criteria."""
         self.toolbox.generate()
         # simple bound checking
         for i in range(len(self.population)):
@@ -392,54 +471,14 @@ class OptCMAES(BaseOptimizer):
         self._params['model_count'] += len(self.population)
         return
 
-    def make_individual(self, paramlist):
+    def _make_individual(self, paramlist):
+        """Makes an individual particle."""
         part = creator.Individual(paramlist)
         part.ident = None
         return part
 
     def initialize_cma_es(self, **kwargs):
         """A strategy that will keep track of the basic parameters.
-
-        Notes
-        -----
-        +------------+---------------------------+----------------------------+
-        | Parameter  | Default                   | Details                    |
-        +============+===========================+============================+
-        | ``lambda_``| ``int(4 + 3 * log(N))``   | Number of children to      |
-        |            |                           | produce at each generation,|
-        |            |                           | ``N`` is the individual's  |
-        |            |                           | size (integer).            |
-        +------------+---------------------------+----------------------------+
-        | ``mu``     | ``int(lambda_ / 2)``      | The number of parents to   |
-        |            |                           | keep from the              |
-        |            |                           | lambda children (integer). |
-        +------------+---------------------------+----------------------------+
-        | ``cmatrix``| ``identity(N)``           | The initial covariance     |
-        |            |                           | matrix of the distribution |
-        |            |                           | that will be sampled.      |
-        +------------+---------------------------+----------------------------+
-        | ``weights``| ``"superlinear"``         | Decrease speed, can be     |
-        |            |                           | ``"superlinear"``,         |
-        |            |                           | ``"linear"`` or            |
-        |            |                           | ``"equal"``.               |
-        +------------+---------------------------+----------------------------+
-        | ``cs``     | ``(mueff + 2) /           | Cumulation constant for    |
-        |            | (N + mueff + 3)``         | step-size.                 |
-        +------------+---------------------------+----------------------------+
-        | ``damps``  | ``1 + 2 * max(0, sqrt((   | Damping for step-size.     |
-        |            | mueff - 1) / (N + 1)) - 1)|                            |
-        |            | + cs``                    |                            |
-        +------------+---------------------------+----------------------------+
-        | ``ccum``   | ``4 / (N + 4)``           | Cumulation constant for    |
-        |            |                           | covariance matrix.         |
-        +------------+---------------------------+----------------------------+
-        | ``ccov1``  | ``2 / ((N + 1.3)^2 +      | Learning rate for rank-one |
-        |            | mueff)``                  | update.                    |
-        +------------+---------------------------+----------------------------+
-        | ``ccovmu`` | ``2 * (mueff - 2 + 1 /    | Learning rate for rank-mu  |
-        |            | mueff) / ((N + 2)^2 +     | update.                    |
-        |            | mueff)``                  |                            |
-        +------------+---------------------------+----------------------------+
 
         Parameters
         ----------
@@ -479,7 +518,7 @@ class OptCMAES(BaseOptimizer):
         self.computeParams(self.params)
         return
 
-    def generate(self, func):
+    def _generate(self, func):
         """Generate a population of :math:`\lambda` individuals.
 
         Notes

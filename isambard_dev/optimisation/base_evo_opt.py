@@ -53,6 +53,8 @@ class BaseOptimizer:
             self._params['mp_disabled'] = True
             print('Multiprocessing for this module is currently unavailable'
                   'on Windows, only a single process will be used.')
+        else:
+            self._params['mp_disabled'] = False
         self.build_fn = build_fn
         self.eval_fn = eval_fn
         self.population = None
@@ -197,9 +199,9 @@ class BaseOptimizer:
         self.logbook.header = ["gen", "evals"] + self.stats.fields
         self._params['model_count'] = 0
         start_time = datetime.datetime.now()
-        self.initialize_pop()
+        self._initialize_pop()
         for g in range(self._params['generations']):
-            self.update_pop()
+            self._update_pop()
             self.halloffame.update(self.population)
             self.logbook.record(gen=g, evals=self._params['evals'],
                                 **self.stats.compile(self.population))
@@ -305,13 +307,16 @@ class BaseOptimizer:
             ind.fitness.values = (fit,)
         return
 
-    def generate(self):
+    def _generate(self):
+        """Generates a particle using the creator function."""
         raise NotImplementedError("Will depend on optimizer type")
 
-    def initialize_pop(self):
+    def _initialize_pop(self):
+        """Assigns indices to individuals in population."""
         raise NotImplementedError("Will depend on optimizer type")
 
-    def update_pop(self):
+    def _update_pop(self):
+        """Updates population according to crossover and fitness criteria."""
         raise NotImplementedError("Will depend on optimizer type")
 
     def log_results(self):
