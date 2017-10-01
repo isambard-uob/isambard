@@ -45,9 +45,9 @@ class DE(BaseOptimizer):
                  diff_weight=1, neighbours=None, **kwargs):
         super().__init__(
             specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
-        self._params['cxpb'] = cxpb
-        self._params['diff_weight'] = diff_weight
-        self._params['neighbours'] = neighbours
+        self.cxpb = cxpb
+        self.diff_weight = diff_weight
+        self.neighbours = neighbours
         creator.create("Individual", list, fitness=creator.FitnessMin)
 
     def _generate(self):
@@ -65,26 +65,26 @@ class DE(BaseOptimizer):
         """
         ind = creator.Individual(
             [random.uniform(-1, 1)
-             for _ in range(len(self._params['value_means']))])
+             for _ in range(len(self.value_means))])
         ind.ident = None
         ind.neighbours = None
         return ind
 
-    def _initialize_pop(self):
+    def _initialize_pop(self, pop_size):
         """Assigns indices to individuals in population."""
         self.toolbox.register("individual", self._generate)
         self.toolbox.register("population", tools.initRepeat,
                               list, self.toolbox.individual)
-        self.population = self.toolbox.population(n=self._params['pop_size'])
-        if self._params['neighbours']:
+        self.population = self.toolbox.population(n=pop_size)
+        if self.neighbours:
             for i in range(len(self.population)):
                 self.population[i].ident = i
                 self.population[i].neighbours = list(
                     set(
                         [(i - x) % len(self.population)
-                         for x in range(1, self._params['neighbours'] + 1)] +
+                         for x in range(1, self.neighbours + 1)] +
                         [(i + x) % len(self.population)
-                         for x in range(1, self._params['neighbours'] + 1)]
+                         for x in range(1, self.neighbours + 1)]
                     ))
         self.assign_fitnesses(self.population)
         return
@@ -109,7 +109,7 @@ class DE(BaseOptimizer):
             An individual representing a candidate solution, to be
             assigned a fitness.
         """
-        if self._params['neighbours']:
+        if self.neighbours:
             a, b, c = random.sample([self.population[i]
                                      for i in ind.neighbours], 3)
         else:
@@ -119,27 +119,27 @@ class DE(BaseOptimizer):
         y.neighbours = ind.neighbours
         del y.fitness.values
         # y should now be a copy of ind with the vector elements from a
-        ident = random.randrange(len(self._params['value_means']))
+        ident = random.randrange(len(self.value_means))
         for i, value in enumerate(y):
-            if i == ident or random.random() < self._params['cxpb']:
+            if i == ident or random.random() < self.cxpb:
                 entry = a[i] + random.lognormvariate(-1.2, 0.5) * \
-                    self._params['diff_weight'] * (b[i] - c[i])
+                    self.diff_weight * (b[i] - c[i])
                 tries = 0
                 while abs(entry) > 1.0:
                     tries += 1
                     entry = a[i] + random.lognormvariate(-1.2, 0.5) * \
-                        self._params['diff_weight'] * (b[i] - c[i])
+                        self.diff_weight * (b[i] - c[i])
                     if tries > 10000:
                         entry = a[i]
                 y[i] = entry
         return y
 
-    def _update_pop(self):
+    def _update_pop(self, pop_size):
         """Updates population according to crossover and fitness criteria."""
         candidates = []
         for ind in self.population:
             candidates.append(self._crossover(ind))
-        self._params['model_count'] += len(candidates)
+        self._model_count += len(candidates)
         self.assign_fitnesses(candidates)
         for i in range(len(self.population)):
             if candidates[i].fitness > self.population[i].fitness:
@@ -183,8 +183,8 @@ class PSO(BaseOptimizer):
                  neighbours=None, **kwargs):
         super().__init__(
             specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
-        self._params['max_speed'] = 0.75
-        self._params['neighbours'] = None
+        self.max_speed = 0.75
+        self.neighbours = None
         creator.create("Particle", list, fitness=creator.FitnessMin,
                        speed=list, smin=None, smax=None, best=None)
         self.toolbox.register("particle", self._generate)
@@ -193,19 +193,19 @@ class PSO(BaseOptimizer):
         self.toolbox.register("swarm", tools.initRepeat,
                               creator.Swarm, self.toolbox.particle)
 
-    def _initialize_pop(self):
+    def _initialize_pop(self, pop_size):
         """Generates initial population with random positions and speeds."""
-        self.population = self.toolbox.swarm(n=self._params['pop_size'])
-        if self._params['neighbours']:
+        self.population = self.toolbox.swarm(n=pop_size)
+        if self.neighbours:
             for i in range(len(self.population)):
                 self.population[i].ident = i
                 self.population[i].neighbours = list(
                     set(
                         [(i - x) % len(self.population)
-                         for x in range(1, self._params['neighbours'] + 1)] +
+                         for x in range(1, self.neighbours + 1)] +
                         [i] +
                         [(i + x) % len(self.population)
-                         for x in range(1, self._params['neighbours'] + 1)]
+                         for x in range(1, self.neighbours + 1)]
                     ))
         else:
             for i in range(len(self.population)):
@@ -234,13 +234,12 @@ class PSO(BaseOptimizer):
         """
         part = creator.Particle(
             [random.uniform(-1, 1)
-             for _ in range(len(self._params['value_means']))])
+             for _ in range(len(self.value_means))])
         part.speed = [
-            random.uniform(-self._params['max_speed'],
-                           self._params['max_speed'])
-            for _ in range(len(self._params['value_means']))]
-        part.smin = -self._params['max_speed']
-        part.smax = self._params['max_speed']
+            random.uniform(-self.max_speed, self.max_speed)
+            for _ in range(len(self.value_means))]
+        part.smin = -self.max_speed
+        part.smax = self.max_speed
         part.ident = None
         part.neighbours = None
         return part
@@ -275,7 +274,7 @@ class PSO(BaseOptimizer):
         part[:] = list(map(operator.add, part, part.speed))
         return
 
-    def _update_pop(self):
+    def _update_pop(self, pop_size):
         """Assigns fitnesses to particles that are within bounds."""
         valid_particles = []
         invalid_particles = []
@@ -284,7 +283,7 @@ class PSO(BaseOptimizer):
                 invalid_particles.append(part)
             else:
                 valid_particles.append(part)
-        self._params['model_count'] += len(valid_particles)
+        self._model_count += len(valid_particles)
         for part in valid_particles:
             self.update_particle(part)
         self.assign_fitnesses(valid_particles)
@@ -331,8 +330,8 @@ class GA(BaseOptimizer):
                  **kwargs):
         super().__init__(
             specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
-        self._params['cxpb'] = cxpb
-        self._params['mutpb'] = mutpb
+        self.cxpb = cxpb
+        self.mutpb = mutpb
         creator.create("Individual", list, fitness=creator.FitnessMin)
         self.toolbox.register("mate", tools.cxBlend, alpha=0.2)
         self.toolbox.register("mutate", tools.mutGaussian,
@@ -343,24 +342,24 @@ class GA(BaseOptimizer):
         """Generates a particle using the creator function."""
         ind = creator.Individual(
             [random.uniform(-1, 1)
-             for _ in range(len(self._params['value_means']))])
+             for _ in range(len(self.value_means))])
         return ind
 
-    def _initialize_pop(self):
+    def _initialize_pop(self, pop_size):
         """Assigns indices to individuals in population."""
         self.toolbox.register("individual", self._generate)
         self.toolbox.register("population", tools.initRepeat,
                               list, self.toolbox.individual)
-        self.population = self.toolbox.population(n=self._params['pop_size'])
+        self.population = self.toolbox.population(n=pop_size)
         self.assign_fitnesses(self.population)
-        self._params['model_count'] += len(self.population)
+        self._model_count += len(self.population)
         return
 
-    def _update_pop(self):
+    def _update_pop(self, pop_size):
         """Updates population according to crossover and fitness criteria."""
         offspring = list(map(self.toolbox.clone, self.population))
-        for _ in range(self._params['pop_size'] // 2):
-            if random.random() < self._params['cxpb']:
+        for _ in range(pop_size // 2):
+            if random.random() < self.cxpb:
                 child1, child2 = self.toolbox.select(self.population, 2, 6)
                 temp1 = self.toolbox.clone(child1)
                 temp2 = self.toolbox.clone(child2)
@@ -370,7 +369,7 @@ class GA(BaseOptimizer):
                 offspring.append(temp1)
                 offspring.append(temp2)
         for mutant in offspring:
-            if random.random() < self._params['mutpb']:
+            if random.random() < self.mutpb:
                 self.toolbox.mutate(mutant)
                 del mutant.fitness.values
         # simple bound checking
@@ -380,7 +379,7 @@ class GA(BaseOptimizer):
                     offspring[i][j] = 1
                 if offspring[i][j] < -1:
                     offspring[i][j] = -1
-        self._params['model_count'] += len(
+        self._model_count += len(
             [ind for ind in offspring if not ind.fitness.values])
         self.assign_fitnesses(
             [ind for ind in offspring if not ind.fitness.valid])
@@ -389,7 +388,7 @@ class GA(BaseOptimizer):
             # elitism- if none beat best so far it is reinserted
             if offspring[0].fitness < self.halloffame[0].fitness:
                 offspring.insert(0, self.halloffame[0])
-        self.population[:] = offspring[:self._params['pop_size']]
+        self.population[:] = offspring[:pop_size]
         return
 
 
@@ -419,44 +418,41 @@ class CMAES(BaseOptimizer):
         numbers are better.
     sigma : float
         Initial standard deviation of the distribution.
-    weights : str
+    weight_type : str
         Can be 'linear', 'superlinear' or 'equal'. Used to decrease
         speed of particles.
     """
 
     def __init__(self, specification, build_fn, eval_fn, sigma=0.3,
-                 weights='superlinear', **kwargs):
+                 weight_type='superlinear', **kwargs):
         super().__init__(
             specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
-        self._params['sigma'] = sigma
-        self._params['weights'] = weights
+        self.sigma = sigma
+        self.weight_type = weight_type
         creator.create("Individual", list, fitness=creator.FitnessMin)
 
-    def _initialize_pop(self):
+    def _initialize_pop(self, pop_size):
         """Generates the initial population and assigns fitnesses."""
-        self.initialize_cma_es(
-            sigma=self._params['sigma'], weights=self._params['weights'],
-            lambda_=self._params['pop_size'],
-            centroid=[0] * len(self._params['value_means']))
+        self.initialize_cma_es(pop_size)
         self.toolbox.register("individual", self._make_individual)
         self.toolbox.register("generate", self._generate,
                               self.toolbox.individual)
         self.toolbox.register("population", tools.initRepeat,
                               list, self._initial_individual)
         self.toolbox.register("update", self.update)
-        self.population = self.toolbox.population(n=self._params['pop_size'])
+        self.population = self.toolbox.population(n=pop_size)
         self.assign_fitnesses(self.population)
-        self._params['model_count'] += len(self.population)
+        self._model_count += len(self.population)
         return
 
     def _initial_individual(self):
         """Generates an individual with random parameters within bounds."""
         ind = creator.Individual(
             [random.uniform(-1, 1)
-             for _ in range(len(self._params['value_means']))])
+             for _ in range(len(self.value_means))])
         return ind
 
-    def _update_pop(self):
+    def _update_pop(self, pop_size):
         """Updates population according to crossover and fitness criteria."""
         self.toolbox.generate()
         # simple bound checking
@@ -468,7 +464,7 @@ class CMAES(BaseOptimizer):
                     self.population[i][j] = -1
         self.assign_fitnesses(self.population)
         self.toolbox.update(self.population)
-        self._params['model_count'] += len(self.population)
+        self._model_count += len(self.population)
         return
 
     def _make_individual(self, paramlist):
@@ -477,7 +473,7 @@ class CMAES(BaseOptimizer):
         part.ident = None
         return part
 
-    def initialize_cma_es(self, **kwargs):
+    def initialize_cma_es(self, lambda_):
         """A strategy that will keep track of the basic parameters.
 
         Parameters
@@ -485,24 +481,20 @@ class CMAES(BaseOptimizer):
         centroid:
             An iterable object that indicates where to start the
             evolution.
-        sigma:
-            The initial standard deviation of the distribution.
         parameter:
             One or more parameter to pass to the strategy as
             described in the following table, optional.
         """
-        self.params = kwargs
         # Create a centroid as a numpy array
-        self.centroid = numpy.array([0] * len(self._params['value_means']))
+        self.centroid = numpy.array([0] * len(self.value_means))
 
         self.dim = len(self.centroid)
-        self.sigma = self.params.get("sigma", 0.5)
         self.pc = numpy.zeros(self.dim)
         self.ps = numpy.zeros(self.dim)
         self.chiN = numpy.sqrt(self.dim) * (
             1 - 1. / (4. * self.dim) + 1. / (21. * self.dim ** 2))
 
-        self.C = self.params.get("cmatrix", numpy.identity(self.dim))
+        self.C = numpy.identity(self.dim)
         self.diagD, self.B = numpy.linalg.eigh(self.C)
 
         indx = numpy.argsort(self.diagD)
@@ -512,10 +504,9 @@ class CMAES(BaseOptimizer):
 
         self.cond = self.diagD[indx[-1]] / self.diagD[indx[0]]
 
-        self.lambda_ = self.params.get(
-            "lambda_", int(4 + 3 * numpy.log(self.dim)))
+        self.lambda_ = lambda_
         self.update_count = 0
-        self.computeParams(self.params)
+        self.compute_params()
         return
 
     def _generate(self, func):
@@ -589,27 +580,21 @@ class CMAES(BaseOptimizer):
         self.B = self.B[:, indx]
         self.BD = self.B * self.diagD
 
-    def computeParams(self, params):
+    def compute_params(self):
         """Computes the parameters depending on :math:`\lambda`.
 
         Notes
         -----
         It needs to be called again if :math:`\lambda` changes during
         evolution.
-
-        Parameters
-        ----------
-        params:
-            A dictionary of the manually set parameters.
         """
-        self.mu = params.get("mu", int(self.lambda_ / 2))
-        rweights = params.get("weights", "superlinear")
-        if rweights == "superlinear":
+        self.mu = int(self.lambda_ / 2)
+        if self.weight_type == "superlinear":
             self.weights = numpy.log(self.mu + 0.5) - \
                 numpy.log(numpy.arange(1, self.mu + 1))
-        elif rweights == "linear":
+        elif self.weight_type == "linear":
             self.weights = self.mu + 0.5 - numpy.arange(1, self.mu + 1)
-        elif rweights == "equal":
+        elif self.weight_type == "equal":
             self.weights = numpy.ones(self.mu)
         else:
             raise RuntimeError("Unknown weights : %s" % rweights)
@@ -617,19 +602,15 @@ class CMAES(BaseOptimizer):
         self.weights /= sum(self.weights)
         self.mueff = 1. / sum(self.weights ** 2)
 
-        self.cc = params.get("ccum", 4. / (self.dim + 4.))
-        self.cs = params.get("cs", (self.mueff + 2.) /
-                             (self.dim + self.mueff + 3.))
-        self.ccov1 = params.get(
-            "ccov1", 2. / ((self.dim + 1.3) ** 2 + self.mueff))
-        self.ccovmu = params.get("ccovmu", 2. * (
-            self.mueff - 2. + 1. / self.mueff) / (
-            (self.dim + 2.) ** 2 + self.mueff))
+        self.cc = 4. / (self.dim + 4.)
+        self.cs = (self.mueff + 2.) /  (self.dim + self.mueff + 3.)
+        self.ccov1 = 2. / ((self.dim + 1.3) ** 2 + self.mueff)
+        self.ccovmu = (2. * (self.mueff - 2. + 1. / self.mueff)) / (
+            (self.dim + 2.) ** 2 + self.mueff)
         self.ccovmu = min(1 - self.ccov1, self.ccovmu)
         self.damps = 1. + 2. * \
             max(0, numpy.sqrt((self.mueff - 1.) / (self.dim + 1.)) - 1.) + \
             self.cs
-        self.damps = params.get("damps", self.damps)
         return
 
 
