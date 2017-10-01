@@ -139,7 +139,7 @@ class MMCParameterOptimisation:
     .. [0] Metropolis N, Rosenbluth AW, Rosenbluth MN, Teller AH and
        Teller E (1953) Equations of State Calculations by Fast
        Computing Machines, Journal of Chemical Physics. 21 (6),
-       1087–1092.
+       1087-1092.
 
     Parameters
     ----------
