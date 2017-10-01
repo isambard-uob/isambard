@@ -444,4 +444,27 @@ class BaseOptimizer:
         return rmsd, score, gen
 
 
+class ParameterType(enum.Enum):
+    """Type of parameter used in evolutionary optimizers."""
+    STATIC_VALUE = 1
+    DYNAMIC = 2
+
+
+class Parameter:
+    """Defines a parameter used in the evolutionary optimizers."""
+
+    def __init__(self, label, parameter_type, value):
+        self.label = label
+        self.type = parameter_type
+        self.value = value
+
+    @classmethod
+    def static(cls, label, value):
+        return cls(label, Parameter.STATIC_VALUE, value)
+
+    @classmethod
+    def dynamic(cls, label, val_mean, val_range):
+        return cls(label, Parameter.DISTRIBUTION, (val_mean, val_range))
+
+
 __author__ = 'Andrew R. Thomson, Christopher W. Wood, Gail J. Bartlett'
