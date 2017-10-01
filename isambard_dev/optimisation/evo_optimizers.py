@@ -9,7 +9,7 @@ import numpy
 from optimisation.base_evo_opt import BaseOptimizer
 
 
-class OptDE(BaseOptimizer):
+class DE(BaseOptimizer):
     """Differential evolution optimisation algorithm.
 
     Notes
@@ -147,7 +147,7 @@ class OptDE(BaseOptimizer):
         return
 
 
-class OptPSO(BaseOptimizer):
+class PSO(BaseOptimizer):
     """A particle swarm optimization algorithm.
 
     Notes
@@ -299,7 +299,7 @@ class OptPSO(BaseOptimizer):
         return
 
 
-class OptGA(BaseOptimizer):
+class GA(BaseOptimizer):
     """A classic genetic algorithm optimization algorithm.
 
     Notes
@@ -393,7 +393,7 @@ class OptGA(BaseOptimizer):
         return
 
 
-class OptCMAES(BaseOptimizer):
+class CMAES(BaseOptimizer):
     """Covariance matrix adaptation evolutionary strategy optimizer.
 
     Notes
