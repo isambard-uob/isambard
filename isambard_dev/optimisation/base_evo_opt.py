@@ -53,7 +53,10 @@ class BaseOptimizer:
             print('Multiprocessing for this module is currently unavailable'
                   'on Windows, only a single process will be used.')
         else:
-            self.mp_disabled = False
+            if 'mp_disabled' in kwargs:
+                self.mp_disabled = kwargs['mp_disabled']
+            else:
+                self.mp_disabled = False
         self.build_fn = build_fn
         self.eval_fn = eval_fn
         self.population = None
@@ -188,6 +191,7 @@ class BaseOptimizer:
         self._cores = cores
         self._store_params = store_params
         self.parameter_log = []
+        self._model_count = 0
         self.halloffame = tools.HallOfFame(1)
         self.stats = tools.Statistics(lambda thing: thing.fitness.values)
         self.stats.register("avg", numpy.mean)
