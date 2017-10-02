@@ -41,10 +41,11 @@ class DE(BaseOptimizer):
         be provided as an int.
     """
 
-    def __init__(self, specification, build_fn, eval_fn, cxpb=0.75,
-                 diff_weight=1, neighbours=None, **kwargs):
+    def __init__(self, specification, sequence, parameters, build_fn, eval_fn,
+                 cxpb=0.75, diff_weight=1, neighbours=None, **kwargs):
         super().__init__(
-            specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
+            specification, sequence, parameters,
+            build_fn=build_fn, eval_fn=eval_fn, **kwargs)
         self.cxpb = cxpb
         self.diff_weight = diff_weight
         self.neighbours = neighbours
@@ -179,10 +180,11 @@ class PSO(BaseOptimizer):
         be provided as an int.
     """
 
-    def __init__(self, specification, build_fn, eval_fn, max_speed=0.75,
-                 neighbours=None, **kwargs):
+    def __init__(self, specification, sequence, parameters, build_fn, eval_fn,
+                 max_speed=0.75, neighbours=None, **kwargs):
         super().__init__(
-            specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
+            specification, sequence, parameters,
+            build_fn=build_fn, eval_fn=eval_fn, **kwargs)
         self.max_speed = 0.75
         self.neighbours = None
         creator.create("Particle", list, fitness=creator.FitnessMin,
@@ -326,10 +328,11 @@ class GA(BaseOptimizer):
         Probability of mutating an individual.
     """
 
-    def __init__(self, specification, build_fn, eval_fn, cxpb=0.5, mutpb=0.2,
-                 **kwargs):
+    def __init__(self, specification, sequence, parameters, build_fn, eval_fn,
+                 cxpb=0.5, mutpb=0.2, **kwargs):
         super().__init__(
-            specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
+            specification, sequence, parameters,
+            build_fn=build_fn, eval_fn=eval_fn, **kwargs)
         self.cxpb = cxpb
         self.mutpb = mutpb
         creator.create("Individual", list, fitness=creator.FitnessMin)
@@ -423,10 +426,11 @@ class CMAES(BaseOptimizer):
         speed of particles.
     """
 
-    def __init__(self, specification, build_fn, eval_fn, sigma=0.3,
-                 weight_type='superlinear', **kwargs):
+    def __init__(self, specification, sequence, parameters, build_fn, eval_fn,
+                 sigma=0.3, weight_type='superlinear', **kwargs):
         super().__init__(
-            specification, build_fn=build_fn, eval_fn=eval_fn, **kwargs)
+            specification, sequence, parameters,
+            build_fn=build_fn, eval_fn=eval_fn, **kwargs)
         self.sigma = sigma
         self.weight_type = weight_type
         creator.create("Individual", list, fitness=creator.FitnessMin)

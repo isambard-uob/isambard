@@ -46,8 +46,12 @@ class BaseOptimizer:
     optimizers for full documentation.
     """
 
-    def __init__(self, specification, build_fn=None, eval_fn=None, **kwargs):
+    def __init__(self, specification, sequence, parameters,
+                 build_fn=None, eval_fn=None, **kwargs):
         self.specification = specification
+        self.sequence = sequence
+        self.parameters = parameters
+        self._make_parameters()
         if sys.platform == 'win32':
             self.mp_disabled = True
             print('Multiprocessing for this module is currently unavailable'
@@ -69,7 +73,8 @@ class BaseOptimizer:
         self._store_params = True
 
     @classmethod
-    def buff_interaction_eval(cls, specification, **kwargs):
+    def buff_interaction_eval(cls, specification, sequence, parameters,
+                              **kwargs):
         """Creates optimizer with default build and BUFF interaction eval.
 
         Notes
@@ -81,14 +86,16 @@ class BaseOptimizer:
         specification: ampal.assembly.specification
             Any assembly level specification.
         """
-        instance = cls(build_fn=default_build,
+        instance = cls(specification,
+                       sequence,
+                       parameters,
+                       build_fn=default_build,
                        eval_fn=buff_interaction_eval,
-                       specification=specification,
                        **kwargs)
         return instance
 
     @classmethod
-    def buff_internal_eval(cls, specification, **kwargs):
+    def buff_internal_eval(cls, specification, sequence, parameters, **kwargs):
         """Creates optimizer with default build and BUFF interaction eval.
         
         Notes
@@ -100,14 +107,17 @@ class BaseOptimizer:
         specification: ampal.assembly.specification
             Any assembly level specification.
         """
-        instance = cls(build_fn=default_build,
+        instance = cls(specification,
+                       sequence,
+                       parameters,
+                       build_fn=default_build,
                        eval_fn=buff_internal_eval,
-                       specification=specification,
                        **kwargs)
         return instance
 
     @classmethod
-    def rmsd_eval(cls, specification, reference_ampal, **kwargs):
+    def rmsd_eval(cls, specification, sequence, parameters, reference_ampal,
+                  **kwargs):
         """Creates optimizer with default build and RMSD eval.
         
         Notes
@@ -123,9 +133,11 @@ class BaseOptimizer:
             Any assembly level specification.
         """
         eval_fn = make_rmsd_eval(reference_ampal)
-        instance = cls(build_fn=default_build,
+        instance = cls(specification,
+                       sequence,
+                       parameters,
+                       build_fn=default_build,
                        eval_fn=eval_fn,
-                       specification=specification,
                        mp_disabled=True,
                        **kwargs)
         return instance
@@ -235,44 +247,31 @@ class BaseOptimizer:
             plt.ylabel('Score', fontsize=20)
         return
 
-    def parameters(self, sequence, value_means, value_ranges, arrangement):
-        """Relates the individual to be evolved to the full parameter string.
-
-        Parameters
-        ----------
-        sequence: str
-            Full amino acid sequence for specification object to be
-            optimized. Must be equal to the number of residues in the
-            model.
-        value_means: list
-            List containing mean values for parameters to be optimized.
-        value_ranges: list
-            List containing ranges for parameters to be optimized.
-            Values must be positive.
-        arrangement: list
-            Full list of fixed and variable parameters for model
-            building. Fixed values are the appropriate value. Values
-            to be varied should be listed as 'var0', 'var1' etc,
-            and must be in ascending numerical order.
-            Variables can be repeated if required.
-        """
-        self.sequence = sequence
-        self.value_means = value_means
-        self.value_ranges = value_ranges
-        self.arrangement = arrangement
-        if any(x <= 0 for x in self.value_ranges):
-            raise ValueError("range values must be greater than zero")
+    def _make_parameters(self):
+        """Converts Parameters into DEAP format."""
+        self.value_means = []
+        self.value_ranges = []
+        self.arrangement = []
         self.variable_parameters = []
-        for i in range(len(self.value_means)):
-            self.variable_parameters.append(
-                "".join(['var', str(i)]))
-        if len(set(arrangement).intersection(
-                self.variable_parameters)) != len(
-                    self.value_means):
-            raise ValueError("argument mismatch!")
-        if len(self.value_ranges) != len(
-                self.value_means):
-            raise ValueError("argument mismatch!")
+        current_var = 0
+        for parameter in self.parameters:
+            if parameter.type == ParameterType.DYNAMIC:
+                self.value_means.append(parameter.value[0])
+                if parameter.value[1] < 0:
+                    raise AttributeError(
+                        '"{}" parameter has an invalid range. Range values '
+                        'must be greater than zero'.format(parameter.label))
+                self.value_ranges.append(parameter.value[1])
+                var_label = 'var{}'.format(current_var)
+                self.arrangement.append(var_label)
+                self.variable_parameters.append(var_label)
+                current_var += 1
+            elif parameter.type == ParameterType.STATIC:
+                self.arrangement.append(parameter.value)
+            else:
+                raise AttributeError(
+                    '"{}"Unknown parameter type ({}). Parameters can be STATIC or'
+                    ' DYNAMIC.'.format(parameter.type))
         return
 
     def assign_fitnesses(self, targets):
@@ -439,9 +438,9 @@ class BaseOptimizer:
         return rmsd, score, gen
 
 
-class ParameterType(enum.Enum):
+class ParameterType(enum.IntEnum):
     """Type of parameter used in evolutionary optimizers."""
-    STATIC_VALUE = 1
+    STATIC = 1
     DYNAMIC = 2
 
 
@@ -453,13 +452,16 @@ class Parameter:
         self.type = parameter_type
         self.value = value
 
+    def __repr__(self):
+        return "<Parameter: {}, {}>".format(self.label, str(self.type))
+
     @classmethod
     def static(cls, label, value):
-        return cls(label, Parameter.STATIC_VALUE, value)
+        return cls(label, ParameterType.STATIC, value)
 
     @classmethod
     def dynamic(cls, label, val_mean, val_range):
-        return cls(label, Parameter.DISTRIBUTION, (val_mean, val_range))
+        return cls(label, ParameterType.DYNAMIC, (val_mean, val_range))
 
 
 __author__ = 'Andrew R. Thomson, Christopher W. Wood, Gail J. Bartlett'
