@@ -6,7 +6,7 @@ import random
 from deap import creator, tools
 import numpy
 
-from optimisation.base_evo_opt import BaseOptimizer
+from optimisation.base_evo_opt import BaseOptimizer, Parameter, default_build
 
 
 class DE(BaseOptimizer):
@@ -41,10 +41,10 @@ class DE(BaseOptimizer):
         be provided as an int.
     """
 
-    def __init__(self, specification, sequence, parameters, build_fn, eval_fn,
+    def __init__(self, specification, sequences, parameters, build_fn, eval_fn,
                  cxpb=0.75, diff_weight=1, neighbours=None, **kwargs):
         super().__init__(
-            specification, sequence, parameters,
+            specification, sequences, parameters,
             build_fn=build_fn, eval_fn=eval_fn, **kwargs)
         self.cxpb = cxpb
         self.diff_weight = diff_weight
@@ -180,10 +180,10 @@ class PSO(BaseOptimizer):
         be provided as an int.
     """
 
-    def __init__(self, specification, sequence, parameters, build_fn, eval_fn,
+    def __init__(self, specification, sequences, parameters, build_fn, eval_fn,
                  max_speed=0.75, neighbours=None, **kwargs):
         super().__init__(
-            specification, sequence, parameters,
+            specification, sequences, parameters,
             build_fn=build_fn, eval_fn=eval_fn, **kwargs)
         self.max_speed = 0.75
         self.neighbours = None
@@ -328,10 +328,10 @@ class GA(BaseOptimizer):
         Probability of mutating an individual.
     """
 
-    def __init__(self, specification, sequence, parameters, build_fn, eval_fn,
+    def __init__(self, specification, sequences, parameters, build_fn, eval_fn,
                  cxpb=0.5, mutpb=0.2, **kwargs):
         super().__init__(
-            specification, sequence, parameters,
+            specification, sequences, parameters,
             build_fn=build_fn, eval_fn=eval_fn, **kwargs)
         self.cxpb = cxpb
         self.mutpb = mutpb
@@ -426,10 +426,10 @@ class CMAES(BaseOptimizer):
         speed of particles.
     """
 
-    def __init__(self, specification, sequence, parameters, build_fn, eval_fn,
+    def __init__(self, specification, sequences, parameters, build_fn, eval_fn,
                  sigma=0.3, weight_type='superlinear', **kwargs):
         super().__init__(
-            specification, sequence, parameters,
+            specification, sequences, parameters,
             build_fn=build_fn, eval_fn=eval_fn, **kwargs)
         self.sigma = sigma
         self.weight_type = weight_type

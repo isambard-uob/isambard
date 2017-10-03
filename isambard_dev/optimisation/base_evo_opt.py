@@ -14,9 +14,9 @@ from external_programs.profit import run_profit
 
 
 def default_build(spec_seq_params):
-    specification, sequence, params = spec_seq_params
+    specification, sequences, params = spec_seq_params
     model = specification(*params)
-    model.pack_new_sequences(sequence)
+    model.pack_new_sequences(sequences)
     return model
 
 
@@ -46,10 +46,10 @@ class BaseOptimizer:
     optimizers for full documentation.
     """
 
-    def __init__(self, specification, sequence, parameters,
+    def __init__(self, specification, sequences, parameters,
                  build_fn=None, eval_fn=None, **kwargs):
         self.specification = specification
-        self.sequence = sequence
+        self.sequences = sequences
         self.parameters = parameters
         self._make_parameters()
         if sys.platform == 'win32':
@@ -73,7 +73,7 @@ class BaseOptimizer:
         self._store_params = True
 
     @classmethod
-    def buff_interaction_eval(cls, specification, sequence, parameters,
+    def buff_interaction_eval(cls, specification, sequences, parameters,
                               **kwargs):
         """Creates optimizer with default build and BUFF interaction eval.
 
@@ -87,7 +87,7 @@ class BaseOptimizer:
             Any assembly level specification.
         """
         instance = cls(specification,
-                       sequence,
+                       sequences,
                        parameters,
                        build_fn=default_build,
                        eval_fn=buff_interaction_eval,
@@ -95,9 +95,9 @@ class BaseOptimizer:
         return instance
 
     @classmethod
-    def buff_internal_eval(cls, specification, sequence, parameters, **kwargs):
+    def buff_internal_eval(cls, specification, sequences, parameters, **kwargs):
         """Creates optimizer with default build and BUFF interaction eval.
-        
+
         Notes
         -----
         Any keyword arguments will be propagated down to BaseOptimizer.
@@ -108,7 +108,7 @@ class BaseOptimizer:
             Any assembly level specification.
         """
         instance = cls(specification,
-                       sequence,
+                       sequences,
                        parameters,
                        build_fn=default_build,
                        eval_fn=buff_internal_eval,
@@ -116,10 +116,10 @@ class BaseOptimizer:
         return instance
 
     @classmethod
-    def rmsd_eval(cls, specification, sequence, parameters, reference_ampal,
+    def rmsd_eval(cls, specification, sequences, parameters, reference_ampal,
                   **kwargs):
         """Creates optimizer with default build and RMSD eval.
-        
+
         Notes
         -----
         Any keyword arguments will be propagated down to BaseOptimizer.
@@ -134,7 +134,7 @@ class BaseOptimizer:
         """
         eval_fn = make_rmsd_eval(reference_ampal)
         instance = cls(specification,
-                       sequence,
+                       sequences,
                        parameters,
                        build_fn=default_build,
                        eval_fn=eval_fn,
@@ -276,7 +276,7 @@ class BaseOptimizer:
 
     def assign_fitnesses(self, targets):
         """Assigns fitnesses to parameters.
-        
+
         Notes
         -----
         Uses `self.eval_fn` to evaluate each member of target.
@@ -288,7 +288,7 @@ class BaseOptimizer:
         """
         self._evals = len(targets)
         px_parameters = zip([self.specification] * len(targets),
-                            [self.sequence] * len(targets),
+                            [self.sequences] * len(targets),
                             [self.parse_individual(x) for x in targets])
         if (self._cores == 1) or (self.mp_disabled):
             models = map(self.build_fn, px_parameters)
@@ -301,7 +301,7 @@ class BaseOptimizer:
         tars_fits = list(zip(targets, fitnesses))
         if self._store_params:
             self.parameter_log.append(
-                    [(self.parse_individual(x[0]), x[1]) for x in tars_fits])
+                [(self.parse_individual(x[0]), x[1]) for x in tars_fits])
         for ind, fit in tars_fits:
             ind.fitness.values = (fit,)
         return
@@ -377,7 +377,7 @@ class BaseOptimizer:
         if not hasattr(self, 'halloffame'):
             raise NameError('No best model found, have you ran the optimiser?')
         model = self.build_fn(*self.parse_individual(self.halloffame[0]))
-        model.pack_new_sequences(self.sequence)
+        model.pack_new_sequences(self.sequences)
         return model
 
     def make_energy_funnel_data(self, cores=1):
@@ -462,6 +462,15 @@ class Parameter:
     @classmethod
     def dynamic(cls, label, val_mean, val_range):
         return cls(label, ParameterType.DYNAMIC, (val_mean, val_range))
+
+    @property
+    def default_value(self):
+        if self.type == ParameterType.STATIC:
+            return self.value
+        elif self.type == ParameterType.DYNAMIC:
+            return self.value[0]
+        else:
+            raise AttributeError('"{}" is an unknown parameter type.')
 
 
 __author__ = 'Andrew R. Thomson, Christopher W. Wood, Gail J. Bartlett'
