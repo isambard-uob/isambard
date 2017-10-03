@@ -376,8 +376,7 @@ class BaseOptimizer:
         """
         if not hasattr(self, 'halloffame'):
             raise NameError('No best model found, have you ran the optimiser?')
-        model = self.build_fn(*self.parse_individual(self.halloffame[0]))
-        model.pack_new_sequences(self.sequences)
+        model = self.specification(*self.parse_individual(self.halloffame[0]))
         return model
 
     def make_energy_funnel_data(self, cores=1):
