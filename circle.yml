@@ -21,11 +21,11 @@ test:
     - cd /home/ubuntu/isambard_dev
     - python isambard_dev/configure.py -C
     - nosetests unit_tests/ --with-coverage \
-        --cover-package=isambard_dev/add_ons \
-        --cover-package=isambard_dev/ampal \
-        --cover-package=isambard/buff \
-        --cover-package=isambard/external_programs \
-        --cover-package=isambard/optimisation \
-        --cover-package=isambard/tools
+        --cover-package=add_ons \
+        --cover-package=ampal \
+        --cover-package=buff \
+        --cover-package=external_programs \
+        --cover-package=optimisation \
+        --cover-package=tools
   post:
     - bash <(curl -s https://codecov.io/bash) -t dbf3a333-e731-4885-ba4e-84514bc993c0
