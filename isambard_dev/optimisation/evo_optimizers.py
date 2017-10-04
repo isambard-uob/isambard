@@ -22,6 +22,11 @@ class DE(BaseOptimizer):
     ----------
     specification : ampal.specification.assembly_specification
         An `Assembly` level specification to be optimised.
+    sequences : [str]
+        A list of sequences, one for each polymer.
+    parameters : [base_ev_opt.Parameter]
+        A list of `Parameter` objects in the same order as the
+        function signature expects.
     build_fn : function((spec, seq, params)) -> ampal
         A function for building a model using parameters supplied
         by the optimizer.
@@ -163,6 +168,11 @@ class PSO(BaseOptimizer):
     ----------
     specification : ampal.specification.assembly_specification
         An `Assembly` level specification to be optimised.
+    sequences : [str]
+        A list of sequences, one for each polymer.
+    parameters : [base_ev_opt.Parameter]
+        A list of `Parameter` objects in the same order as the
+        function signature expects.
     build_fn : function((spec, seq, params)) -> ampal
         A function for building a model using parameters supplied
         by the optimizer.
@@ -314,6 +324,11 @@ class GA(BaseOptimizer):
     ----------
     specification : ampal.specification.assembly_specification
         An `Assembly` level specification to be optimised.
+    sequences : [str]
+        A list of sequences, one for each polymer.
+    parameters : [base_ev_opt.Parameter]
+        A list of `Parameter` objects in the same order as the
+        function signature expects.
     build_fn : function((spec, seq, params)) -> ampal
         A function for building a model using parameters supplied
         by the optimizer.
@@ -411,6 +426,11 @@ class CMAES(BaseOptimizer):
     ----------
     specification : ampal.specification.assembly_specification
         An `Assembly` level specification to be optimised.
+    sequences : [str]
+        A list of sequences, one for each polymer.
+    parameters : [base_ev_opt.Parameter]
+        A list of `Parameter` objects in the same order as the
+        function signature expects.
     build_fn : function((spec, seq, params)) -> ampal
         A function for building a model using parameters supplied
         by the optimizer.
