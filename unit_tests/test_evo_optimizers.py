@@ -3,9 +3,6 @@
 import unittest
 import warnings
 
-from hypothesis import given
-from hypothesis.strategies import floats
-
 import isambard_dev
 import isambard_dev.optimisation.evo_optimizers as ev_opts
 from isambard_dev.optimisation.evo_optimizers import Parameter
