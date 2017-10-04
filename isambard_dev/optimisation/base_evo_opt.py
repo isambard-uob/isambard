@@ -376,7 +376,11 @@ class BaseOptimizer:
         """
         if not hasattr(self, 'halloffame'):
             raise NameError('No best model found, have you ran the optimiser?')
-        model = self.specification(*self.parse_individual(self.halloffame[0]))
+        model = self.build_fn(
+            (self.specification,
+             self.sequences,
+             self.parse_individual(self.halloffame[0])
+             ))
         return model
 
     def make_energy_funnel_data(self, cores=1):
@@ -405,13 +409,13 @@ class BaseOptimizer:
             energy_rmsd_gen = map(
                 self.funnel_rebuild,
                 [(x, top_result_model, self.specification)
-                 for x in sorted_pps[1:]])
+                 for x in gen_tagged])
         else:
             with futures.ProcessPoolExecutor(max_workers=cores) as executor:
                 energy_rmsd_gen = executor.map(
                     self.funnel_rebuild,
                     [(x, top_result_model, self.specification)
-                     for x in sorted_pps[1:]])
+                     for x in gen_tagged])
         return list(energy_rmsd_gen)
 
     @staticmethod
