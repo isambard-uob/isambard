@@ -83,8 +83,13 @@ class BaseOptimizer:
 
         Parameters
         ----------
-        specification: ampal.assembly.specification
+        specification : ampal.assembly.specification
             Any assembly level specification.
+        sequences : [str]
+            A list of sequences, one for each polymer.
+        parameters : [base_ev_opt.Parameter]
+            A list of `Parameter` objects in the same order as the
+            function signature expects.
         """
         instance = cls(specification,
                        sequences,
@@ -104,8 +109,13 @@ class BaseOptimizer:
 
         Parameters
         ----------
-        specification: ampal.assembly.specification
+        specification : ampal.assembly.specification
             Any assembly level specification.
+        sequences : [str]
+            A list of sequences, one for each polymer.
+        parameters : [base_ev_opt.Parameter]
+            A list of `Parameter` objects in the same order as the
+            function signature expects.
         """
         instance = cls(specification,
                        sequences,
@@ -129,8 +139,15 @@ class BaseOptimizer:
 
         Parameters
         ----------
-        specification: ampal.assembly.specification
+        specification : ampal.assembly.specification
             Any assembly level specification.
+        sequences : [str]
+            A list of sequences, one for each polymer.
+        parameters : [base_ev_opt.Parameter]
+            A list of `Parameter` objects in the same order as the
+            function signature expects.
+        reference_ampal : ampal.Assembly
+            The target structure of the optimisation.
         """
         eval_fn = make_rmsd_eval(reference_ampal)
         instance = cls(specification,
@@ -194,12 +211,15 @@ class BaseOptimizer:
             minimisation finished. This can be manually specified
             by passing the 'output_path' and 'run_id' keyword
             arguments.
+        log_path : str
+            Path to write output file.
+        run_id : str
+            An identifier used as the name of your log file.
         store_params: bool, optional
             If true, the parameters for each model created during
             the optimisation will be stored. This can be used to
             create funnel data later on.
         """
-        # allows us to pass in additional arguments e.g. neighbours
         self._cores = cores
         self._store_params = store_params
         self.parameter_log = []
@@ -248,7 +268,7 @@ class BaseOptimizer:
         return
 
     def _make_parameters(self):
-        """Converts Parameters into DEAP format."""
+        """Converts a list of Parameters into DEAP format."""
         self.value_means = []
         self.value_ranges = []
         self.arrangement = []
@@ -371,20 +391,26 @@ class BaseOptimizer:
 
         Raises
         ------
-        NameError:
+        AttributeError
             Raises a name error if the optimiser has not been run.
         """
         if not hasattr(self, 'halloffame'):
-            raise NameError('No best model found, have you ran the optimiser?')
+            raise AttributeError(
+                'No best model found, have you ran the optimiser?')
         model = self.build_fn(
             (self.specification,
              self.sequences,
              self.parse_individual(self.halloffame[0])
-             ))
+            ))
         return model
 
     def make_energy_funnel_data(self, cores=1):
         """Compares models created during the minimisation to the best model.
+
+        Parameters
+        ----------
+        cores : int
+            Number of CPU cores to rebuild models and measure RMSD.
 
         Returns
         -------
@@ -460,10 +486,31 @@ class Parameter:
 
     @classmethod
     def static(cls, label, value):
+        """Creates a static parameter.
+
+        Parameters
+        ----------
+        label : str
+            A human-readable label for the parameter.
+        value
+            The static value to be used.
+        """
         return cls(label, ParameterType.STATIC, value)
 
     @classmethod
     def dynamic(cls, label, val_mean, val_range):
+        """Creates a static parameter.
+
+        Parameters
+        ----------
+        label : str
+            A human-readable label for the parameter.
+        val_mean : float
+            The mean value of the parameter.
+        val_range : float
+            The minimum and maximum variance from the mean allowed for
+            parameter.
+        """
         return cls(label, ParameterType.DYNAMIC, (val_mean, val_range))
 
     @property
