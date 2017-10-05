@@ -37,3 +37,4 @@ class DependencyNotFoundWarning(RuntimeWarning):
 
 
 warnings.simplefilter('always', DependencyNotFoundWarning)
+warnings.simplefilter('once', PendingDeprecationWarning)

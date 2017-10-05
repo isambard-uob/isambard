@@ -4,6 +4,7 @@ from concurrent import futures
 import datetime
 import operator
 import random
+import warnings
 import sys
 
 from deap import base, creator, tools
@@ -11,6 +12,15 @@ import numpy
 import matplotlib.pylab as plt
 
 from external_programs.profit import run_profit
+
+warning_string = """
+optimizers.py is now deprecated and will be removed in a future version.
+All the optimizers contained in this module are available through the
+evo_optmizers.py module, with enhanced functionality and a more consistent
+interface. See
+https://gist.github.com/ChrisWellsWood/8647d965de2e3c68620daa2dc64de42a for
+information on usage.
+"""
 
 
 def buff_eval(params):
@@ -96,6 +106,7 @@ def comparator_eval(comparator_params):
 class BaseOptimizer:
 
     def __init__(self, **kwargs):
+        warnings.warn(warning_string, PendingDeprecationWarning)
         self._params = {}
         self._params.update(**kwargs)
         creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
