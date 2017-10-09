@@ -4,8 +4,8 @@ import unittest
 
 from hypothesis import given
 from hypothesis.strategies import floats
-import isambard_dev as isambard
-from isambard_dev.optimisation.mmc_optimizer import (
+import isambard
+from isambard.optimisation.mmc_optimizer import (
     MMCParameter, MMCParameterType, MMCParameterOptimisation)
 
 

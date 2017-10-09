@@ -3,20 +3,20 @@
 import unittest
 import warnings
 
-import isambard_dev
-import isambard_dev.optimisation.evo_optimizers as ev_opts
-from isambard_dev.optimisation.evo_optimizers import Parameter
+import isambard
+import isambard.optimisation.evo_optimizers as ev_opts
+from isambard.optimisation.evo_optimizers import Parameter
 
 warnings.filterwarnings("ignore")
 
 
-@unittest.skipUnless('scwrl' in isambard_dev.settings.global_settings,
+@unittest.skipUnless('scwrl' in isambard.settings.global_settings,
                      "External program not detected.")
 class TestOptimizers(unittest.TestCase):
     """Tests the GA optimizer."""
     def tiny_opt_run(self, optimizer):
         """Perform a tiny run of an optimizer."""
-        specification = isambard_dev.specifications.CoiledCoil.from_parameters
+        specification = isambard.specifications.CoiledCoil.from_parameters
         sequences = ['EIAALKQEIAALKK'] * 2
         parameters = [
             Parameter.static('Oligomeric State', 2),
