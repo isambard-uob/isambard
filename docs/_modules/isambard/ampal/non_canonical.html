@@ -162,6 +162,7 @@
   <h1>Source code for isambard.ampal.non_canonical</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Contains tools for working with non-canonical animo acids.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 
@@ -170,7 +171,7 @@
 <span class="kn">from</span> <span class="nn">tools.geometry</span> <span class="k">import</span> <span class="n">dihedral</span><span class="p">,</span> <span class="n">find_transformations</span>
 
 
-<span class="n">FILE_PATH</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">FILE_PATH</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">REF_PATH</span> <span class="o">=</span> <span class="n">FILE_PATH</span> <span class="o">/</span> <span class="s1">&#39;reference_ampals&#39;</span> <span class="o">/</span> <span class="s1">&#39;non_canonical_amino_acids&#39;</span>
 
 
@@ -269,7 +270,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -301,7 +302,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

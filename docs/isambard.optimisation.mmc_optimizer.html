@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>isambard.optimisation.mmc_optimizer module &mdash; ISAMBARD 1.4.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ISAMBARD 1.4.1 documentation" href="index.html"/>
+        <link rel="up" title="isambard.optimisation package" href="isambard.optimisation.html"/>
+        <link rel="next" title="isambard.optimisation.optimizer module" href="isambard.optimisation.optimizer.html"/>
+        <link rel="prev" title="isambard.optimisation.evo_optimizers module" href="isambard.optimisation.evo_optimizers.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ISAMBARD
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2016.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing_isambard.html">Citing ISAMBARD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ISAMBARD</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api_reference.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="isambard.optimisation.html">isambard.optimisation package</a> &raquo;</li>
+        
+      <li>isambard.optimisation.mmc_optimizer module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/isambard.optimisation.mmc_optimizer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-isambard.optimisation.mmc_optimizer">
+<span id="isambard-optimisation-mmc-optimizer-module"></span><h1>isambard.optimisation.mmc_optimizer module<a class="headerlink" href="#module-isambard.optimisation.mmc_optimizer" title="Permalink to this headline">¶</a></h1>
+<p>Provides optimisation of structure using Metropolis Monte Carlo.</p>
+<dl class="class">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter">
+<em class="property">class </em><code class="descname">MMCParameter</code><span class="sig-paren">(</span><em>label</em>, <em>parameter_type</em>, <em>static_dist_or_list</em>, <em>starting_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Defines parameters used in the MMC optimizer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>label</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The name of the parameter.</li>
+<li><strong>parameter_type</strong> (<a class="reference internal" href="#isambard.optimisation.mmc_optimizer.MMCParameterType" title="isambard.optimisation.mmc_optimizer.MMCParameterType"><em>MMCParameterType</em></a>) &#8211; The type of the parameter.</li>
+<li><strong>static_dist_or_list</strong> &#8211; The values used to create the parameter. For example, if the
+parameter types is &#8220;STATIC_VALUE&#8221; then this can be any object,
+if it is &#8220;LIST&#8221; then it should be a list of values and if it
+is &#8220;UNIFORM_DIST&#8221; then it should be (mu, sigma) etc.</li>
+<li><strong>optional</strong> (<a class="reference internal" href="#isambard.optimisation.mmc_optimizer.MMCParameter.starting_value" title="isambard.optimisation.mmc_optimizer.MMCParameter.starting_value"><em>starting_value</em></a><em>,</em>) &#8211; The initial value of the parameter.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.label">
+<code class="descname">label</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.label" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The name of the parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.parameter_type">
+<code class="descname">parameter_type</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.parameter_type" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>MMCParameterType</em> &#8211; The type of the parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.static_dist_or_list">
+<code class="descname">static_dist_or_list</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.static_dist_or_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>The values used to create the parameter. For example, if the
+parameter types is &#8220;STATIC_VALUE&#8221; then this can be any object,
+if it is &#8220;LIST&#8221; then it should be a list of values and if it
+is &#8220;UNIFORM_DIST&#8221; then it should be (mu, sigma) etc.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.starting_value">
+<code class="descname">starting_value</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.starting_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initial value of the parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.current_value">
+<code class="descname">current_value</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.current_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently accepted value for the parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.proposed_value">
+<code class="descname">proposed_value</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.proposed_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>A new value proposed for the parameter that has not been
+accepted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.accept_proposed_value">
+<code class="descname">accept_proposed_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameter.accept_proposed_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.accept_proposed_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the current value to the proposed value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.randomise_proposed_value">
+<code class="descname">randomise_proposed_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameter.randomise_proposed_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.randomise_proposed_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a randomly the proposed value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; Raised if this method is called on a static value.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; Raised if the parameter type is unknown.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.reject_proposed_value">
+<code class="descname">reject_proposed_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameter.reject_proposed_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.reject_proposed_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the proposed value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation">
+<em class="property">class </em><code class="descname">MMCParameterOptimisation</code><span class="sig-paren">(</span><em>specification</em>, <em>parameters</em>, <em>sequences</em>, <em>eval_function=&lt;function default_eval_function&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameterOptimisation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Performs Metropolis Monte Carlo opimisation on a specification.</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[0]</td><td>Metropolis N, Rosenbluth AW, Rosenbluth MN, Teller AH and
+Teller E (1953) Equations of State Calculations by Fast
+Computing Machines, Journal of Chemical Physics. 21 (6),
+1087-1092.</td></tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>specification</strong> (<em>isambard.Specification</em>) &#8211; Any ISAMBARD specification. This will be used to create models
+during the optimisation.</li>
+<li><strong>parameters</strong> (<em>[</em><a class="reference internal" href="#isambard.optimisation.mmc_optimizer.MMCParameter" title="isambard.optimisation.mmc_optimizer.MMCParameter"><em>MMCParameter</em></a><em>]</em>) &#8211; Parameters to be optimised. The order of the parameters should
+match the init signiture of the specification.</li>
+<li><strong>sequences</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>]</em>) &#8211; The sequences to be used during the optimisation.</li>
+<li><strong>eval_function</strong> (<em>f</em><em>(</em><a class="reference internal" href="isambard.ampal.html#module-isambard.ampal" title="isambard.ampal"><em>ampal</em></a><em>) </em><em>-&gt; float</em><em>, </em><em>optional</em>) &#8211; A function that takes an AMPAL object as an input and returns
+a float. By default the <cite>buff_interaction_energy</cite> will be
+used to evaluate the structure.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.specification">
+<code class="descname">specification</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.specification" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>isambard.Specification</em> &#8211; Any ISAMBARD specification. This will be used to create models
+during the optimisation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.parameters">
+<code class="descname">parameters</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>[MMCParameter]</em> &#8211; Parameters to be optimised. The order of the parameters should
+match the init signiture of the specification.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.sequences">
+<code class="descname">sequences</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>[str]</em> &#8211; The sequences to be used during the optimisation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.eval_function">
+<code class="descname">eval_function</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.eval_function" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>f(ampal) -&gt; float</em> &#8211; A function that takes an AMPAL object as an input and returns
+a float. By default the <cite>buff_interaction_energy</cite> will be
+used to evaluate the structure.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.current_energy">
+<code class="descname">current_energy</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.current_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The energy of the current structure.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_energy">
+<code class="descname">best_energy</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The best energy observed for any model.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_parameters">
+<code class="descname">best_parameters</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>[MMCParameter]</em> &#8211; The parameters associated with the <cite>best_energy</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_model">
+<code class="descname">best_model</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>AMPAL Object</em> &#8211; The model associated with the <cite>best_energy</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">best_energy</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">best_model</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">best_parameters</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.check_move">
+<em class="property">static </em><code class="descname">check_move</code><span class="sig-paren">(</span><em>new</em>, <em>old</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameterOptimisation.check_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.check_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines if a model will be accepted.</p>
+<p>Uses Boltzmann distribution scaled by temperature in Kelvin.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">current_energy</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.start_optimisation">
+<code class="descname">start_optimisation</code><span class="sig-paren">(</span><em>rounds</em>, <em>temp=298.15</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameterOptimisation.start_optimisation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.start_optimisation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin the optimisation run.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rounds</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of rounds of optimisation to perform.</li>
+<li><strong>temp</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; The temperature (in K) used during the optimisation.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterType">
+<em class="property">class </em><code class="descname">MMCParameterType</code><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameterType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Defines the types of parameters that can be used for Monte Carlo.</p>
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterType.DISCRETE_RANGE">
+<code class="descname">DISCRETE_RANGE</code><em class="property"> = 2</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterType.DISCRETE_RANGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterType.LIST">
+<code class="descname">LIST</code><em class="property"> = 3</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterType.LIST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterType.NORMAL_DIST">
+<code class="descname">NORMAL_DIST</code><em class="property"> = 5</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterType.NORMAL_DIST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterType.STATIC_VALUE">
+<code class="descname">STATIC_VALUE</code><em class="property"> = 1</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterType.STATIC_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterType.UNIFORM_DIST">
+<code class="descname">UNIFORM_DIST</code><em class="property"> = 4</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterType.UNIFORM_DIST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.optimisation.mmc_optimizer.default_eval_function">
+<code class="descname">default_eval_function</code><span class="sig-paren">(</span><em>ampal</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#default_eval_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.default_eval_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the total BUDE energy for an AMPAL object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.optimisation.mmc_optimizer.float_f">
+<code class="descname">float_f</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#float_f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.float_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats a float for printing to std out.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="isambard.optimisation.optimizer.html" class="btn btn-neutral float-right" title="isambard.optimisation.optimizer module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="isambard.optimisation.evo_optimizers.html" class="btn btn-neutral" title="isambard.optimisation.evo_optimizers module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Woolfson Group.
+      Last updated on October 09, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

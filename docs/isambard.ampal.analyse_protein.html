@@ -182,24 +182,24 @@ coiled-coil with respect to the central axis of the coiled coil.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>p</strong> (<em>ampal.Polymer</em>) – Reference <cite>Polymer</cite>.</li>
-<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em>) – Length of reference_axis must equal length of the Polymer.
+<li><strong>p</strong> (<em>ampal.Polymer</em>) &#8211; Reference <cite>Polymer</cite>.</li>
+<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em>) &#8211; Length of reference_axis must equal length of the Polymer.
 Each element of reference_axis represents a point in R^3.</li>
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, tags the Chain with the reference axis coordinates
+<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, tags the Chain with the reference axis coordinates
 and each Residue with its alpha angle. Alpha angles are stored
 at the Residue level, but are calculated using the CA atom.</li>
-<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Used to name the keys in tags at Chain and Residue level.</li>
+<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Used to name the keys in tags at Chain and Residue level.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>alphas</strong> – The alpha angle for the Polymer at each point of its primitive,
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>alphas</strong> &#8211; The alpha angle for the Polymer at each point of its primitive,
 in degrees.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list of float</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If the Polymer and the reference_axis have unequal length.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the Polymer and the reference_axis have unequal length.</p>
 </td>
 </tr>
 </tbody>
@@ -215,16 +215,16 @@ in degrees.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pitch</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Pitch of assembly</li>
-<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Radius of assembly</li>
-<li><strong>oligo</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Oligomeric state of assembly</li>
+<li><strong>pitch</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Pitch of assembly</li>
+<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Radius of assembly</li>
+<li><strong>oligo</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Oligomeric state of assembly</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>pitchloc</strong> (<em>float</em>) – Local pitch of assembly (between 2 adjacent component helices)</li>
-<li><strong>rloc</strong> (<em>float</em>) – Local radius of assembly</li>
-<li><strong>alphaloc</strong> (<em>float</em>) – Local pitch-angle of assembly</li>
+<li><strong>pitchloc</strong> (<em>float</em>) &#8211; Local pitch of assembly (between 2 adjacent component helices)</li>
+<li><strong>rloc</strong> (<em>float</em>) &#8211; Local radius of assembly</li>
+<li><strong>alphaloc</strong> (<em>float</em>) &#8211; Local pitch-angle of assembly</li>
 </ul>
 </p>
 </td>
@@ -242,8 +242,8 @@ in degrees.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Sequence of amino acids.</li>
-<li><strong>granularity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Granularity of pH values i.e. if 0.1 pH = [1.0, 1.1, 1.2…]</li>
+<li><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Sequence of amino acids.</li>
+<li><strong>granularity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Granularity of pH values i.e. if 0.1 pH = [1.0, 1.1, 1.2...]</li>
 </ul>
 </td>
 </tr>
@@ -264,23 +264,23 @@ reference_axis.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>p</strong> (<em>ampal.Polymer</em>) – Reference <cite>Polymer</cite>.</li>
-<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em>) – Length of reference_axis must equal length of the Polymer.
+<li><strong>p</strong> (<em>ampal.Polymer</em>) &#8211; Reference <cite>Polymer</cite>.</li>
+<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em>) &#8211; Length of reference_axis must equal length of the Polymer.
 Each element of reference_axis represents a point in R^3.</li>
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, tags the <cite>Polymer</cite> with the reference axis coordinates
+<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, tags the <cite>Polymer</cite> with the reference axis coordinates
 and each Residue with its Crick angle. Crick angles are stored
 at the Residue level, but are calculated using the CA atom.</li>
-<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Used to name the keys in tags at Chain and Residue level.</li>
+<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Used to name the keys in tags at Chain and Residue level.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cr_angles</strong> – The crick angles in degrees for each CA atom of the Polymer.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cr_angles</strong> &#8211; The crick angles in degrees for each CA atom of the Polymer.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list(<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a>)</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If the Polymer and the reference_axis have unequal length.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the Polymer and the reference_axis have unequal length.</p>
 </td>
 </tr>
 </tbody>
@@ -302,11 +302,11 @@ For more information on the start and end indices, see chain_vector.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>p</strong> (<em>ampal.Polymer</em>) – Reference <cite>Polymer</cite>.</li>
-<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em>) – Length of reference_axis must equal length of the Polymer.
+<li><strong>p</strong> (<em>ampal.Polymer</em>) &#8211; Reference <cite>Polymer</cite>.</li>
+<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em>) &#8211; Length of reference_axis must equal length of the Polymer.
 Each element of reference_axis represents a point in R^3.</li>
-<li><strong>start_index</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Default is 0 (start at the N-terminus of the Polymer)</li>
-<li><strong>end_index</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Default is -1 (start at the C-terminus of the Polymer)</li>
+<li><strong>start_index</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Default is 0 (start at the N-terminus of the Polymer)</li>
+<li><strong>end_index</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Default is -1 (start at the C-terminus of the Polymer)</li>
 </ul>
 </td>
 </tr>
@@ -329,18 +329,18 @@ Each element of reference_axis represents a point in R^3.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cas_coords</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>)</em>) – Each element of the list must have length 3.</li>
-<li><strong>window_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of coordinate sets to average each time.</li>
+<li><strong>cas_coords</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>)</em>) &#8211; Each element of the list must have length 3.</li>
+<li><strong>window_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; The number of coordinate sets to average each time.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s_primitive</strong> – Each array has length 3.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s_primitive</strong> &#8211; Each array has length 3.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list(numpy.array)</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If the length of cas_coords is smaller than the window_length.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the length of cas_coords is smaller than the window_length.</p>
 </td>
 </tr>
 </tbody>
@@ -355,7 +355,7 @@ Each element of reference_axis represents a point in R^3.</li>
 <p>From an input list of CA coordinates, the running average is
 calculated to form a primitive. The smoothing_level dictates how
 many times to calculate the running average. A higher
-smoothing_level generates a ‘smoother’ primitive - i.e. the
+smoothing_level generates a &#8216;smoother&#8217; primitive - i.e. the
 points on the primitive more closely fit a smooth curve in R^3.
 Each time the smoothing level is increased by 1, a point is lost
 from either end of the primitive. To correct for this, the primitive
@@ -367,12 +367,12 @@ its accuracy at the ends.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cas_coords</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>)</em>) – Each element of the list must have length 3.</li>
-<li><strong>smoothing_level</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of times to run the averaging.</li>
+<li><strong>cas_coords</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>)</em>) &#8211; Each element of the list must have length 3.</li>
+<li><strong>smoothing_level</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of times to run the averaging.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>final_primitive</strong> – Each array has length 3.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>final_primitive</strong> &#8211; Each array has length 3.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(numpy.array)</p>
@@ -391,18 +391,18 @@ its accuracy at the ends.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cas_coords</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>)</em>) – Each element of the list must have length 3.</li>
-<li><strong>smoothing_level</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of times to run the averaging.</li>
+<li><strong>cas_coords</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>)</em>) &#8211; Each element of the list must have length 3.</li>
+<li><strong>smoothing_level</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Number of times to run the averaging.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s_primitive</strong> – Each array has length 3.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s_primitive</strong> &#8211; Each array has length 3.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list(numpy.array)</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If the smoothing level is too great compared to the length
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the smoothing level is too great compared to the length
 of cas_coords.</p>
 </td>
 </tr>
@@ -419,13 +419,13 @@ of cas_coords.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>residue</strong> (<em>[</em><em>ampal.Residue</em><em>]</em>) – <cite>Residue</cite> object.</li>
-<li><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>true</cite>, tells you when a residue does not have any known
+<li><strong>residue</strong> (<em>[</em><em>ampal.Residue</em><em>]</em>) &#8211; <cite>Residue</cite> object.</li>
+<li><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>true</cite>, tells you when a residue does not have any known
 dihedral angles to measure.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>chi_angles</strong> – Length depends on residue type, in range [-pi, pi]</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>chi_angles</strong> &#8211; Length depends on residue type, in range [-pi, pi]</p>
 <p>[0] = chi1 [if applicable]
 [1] = chi2 [if applicable]
 [2] = chi3 [if applicable]
@@ -448,9 +448,9 @@ dihedral angles to measure.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>residues</strong> (<em>[</em><em>ampal.Residue</em><em>]</em>) – List of <cite>Residue</cite> objects.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>residues</strong> (<em>[</em><em>ampal.Residue</em><em>]</em>) &#8211; List of <cite>Residue</cite> objects.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>torsion_angles</strong> – One triple for each residue, containing torsion angles in
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>torsion_angles</strong> &#8211; One triple for each residue, containing torsion angles in
 the range [-pi, pi].<blockquote>
 <div>[0] omega
 [1] phi
@@ -461,7 +461,7 @@ the final residue, psi is not defined.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a>, <a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a>, <a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a>)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If the number of input residues is less than 2.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the number of input residues is less than 2.</td>
 </tr>
 </tbody>
 </table>
@@ -476,8 +476,8 @@ the final residue, psi is not defined.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>aa</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Amino acid single-letter code.</li>
-<li><strong>pH</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – pH of interest.</li>
+<li><strong>aa</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Amino acid single-letter code.</li>
+<li><strong>pH</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; pH of interest.</li>
 </ul>
 </td>
 </tr>
@@ -503,25 +503,25 @@ axis when defining it.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>p</strong> (<em>ampal.Polymer</em>) – </li>
-<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em>) – Length of reference_axis must equal length of the Polymer.
+<li><strong>p</strong> (<em>ampal.Polymer</em>) &#8211; </li>
+<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em>) &#8211; Length of reference_axis must equal length of the Polymer.
 Each element of reference_axis represents a point in R^3.</li>
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, tags the Chain with the reference axis coordinates
+<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If True, tags the Chain with the reference axis coordinates
 and each Residue with its distance to the ref axis.
 Distances are stored at the Residue level, but refer to
 distances from the CA atom.</li>
-<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Used to name the keys in tags at Chain and Residue level.</li>
+<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Used to name the keys in tags at Chain and Residue level.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>distances</strong> – Distance values between corresponding points on the
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>distances</strong> &#8211; Distance values between corresponding points on the
 reference axis and the <cite>Polymer</cite> <cite>Primitive</cite>.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list(<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a>)</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If the Polymer and the reference_axis have unequal length.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the Polymer and the reference_axis have unequal length.</p>
 </td>
 </tr>
 </tbody>
@@ -541,14 +541,14 @@ the vector.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>p</strong> (<em>ampal.Polymer</em>) – Reference <cite>Polymer</cite>.</li>
-<li><strong>start_index</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Default is 0 (start at the N-terminus of the Chain)</li>
-<li><strong>end_index</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Default is -1 (start at the C-terminus of the Chain)</li>
-<li><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, the vector returned has a magnitude of 1.</li>
+<li><strong>p</strong> (<em>ampal.Polymer</em>) &#8211; Reference <cite>Polymer</cite>.</li>
+<li><strong>start_index</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Default is 0 (start at the N-terminus of the Chain)</li>
+<li><strong>end_index</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Default is -1 (start at the C-terminus of the Chain)</li>
+<li><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True, the vector returned has a magnitude of 1.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>vector</strong> – vector has shape (1, 3)</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>vector</strong> &#8211; vector has shape (1, 3)</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a numpy.array</p>
@@ -566,16 +566,16 @@ the vector.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>chains</strong> (<em>list</em><em>(</em><em>Chain</em><em>)</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>chains</strong> (<em>list</em><em>(</em><em>Chain</em><em>)</em>) &#8211; </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>reference_axis</strong> – The averaged (x, y, z) coordinates of the primitives for
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>reference_axis</strong> &#8211; The averaged (x, y, z) coordinates of the primitives for
 the list of Chains. In the case of a coiled coil barrel,
 this would give the central axis for calculating e.g. Crick
 angles.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.array</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><em>ValueError :</em> – If the Chains are not all of the same length.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><em>ValueError :</em> &#8211; If the Chains are not all of the same length.</td>
 </tr>
 </tbody>
 </table>
@@ -596,9 +596,9 @@ corresponding atoms of the primitive. The final value is None.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> (<em>ampal.Polypeptide</em>) – <cite>Polypeptide</cite> from which residues per turn will be calculated.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> (<em>ampal.Polypeptide</em>) &#8211; <cite>Polypeptide</cite> from which residues per turn will be calculated.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>rpts</strong> – Residue per turn values.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>rpts</strong> &#8211; Residue per turn values.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">[<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a>]</td>
 </tr>
@@ -615,8 +615,8 @@ corresponding atoms of the primitive. The final value is None.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Sequence of amino acids.</li>
-<li><strong>pH</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – pH of interest.</li>
+<li><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Sequence of amino acids.</li>
+<li><strong>pH</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; pH of interest.</li>
 </ul>
 </td>
 </tr>
@@ -633,8 +633,8 @@ corresponding atoms of the primitive. The final value is None.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Sequence of amino acids.</li>
-<li><strong>granularity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Granularity of pH values i.e. if 0.1 pH = [1.0, 1.1, 1.2…]</li>
+<li><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Sequence of amino acids.</li>
+<li><strong>granularity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Granularity of pH values i.e. if 0.1 pH = [1.0, 1.1, 1.2...]</li>
 </ul>
 </td>
 </tr>
@@ -652,7 +652,7 @@ corresponding atoms of the primitive. The final value is None.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Sequence of amino acids.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Sequence of amino acids.</td>
 </tr>
 </tbody>
 </table>
@@ -668,7 +668,7 @@ corresponding atoms of the primitive. The final value is None.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Sequence of amino acids.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Sequence of amino acids.</td>
 </tr>
 </tbody>
 </table>
@@ -699,7 +699,7 @@ corresponding atoms of the primitive. The final value is None.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -731,7 +731,7 @@ corresponding atoms of the primitive. The final value is None.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

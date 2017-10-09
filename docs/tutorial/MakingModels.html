@@ -191,8 +191,8 @@
 <div class="section" id="specifications">
 <h2>1. Specifications<a class="headerlink" href="#specifications" title="Permalink to this headline">¶</a></h2>
 <p>A number of specifications (the term is borrowed from the field of
-architecture, where a specification is defined as “a detailed
-description of the design and materials used to make something”) are
+architecture, where a specification is defined as &#8220;a detailed
+description of the design and materials used to make something&#8221;) are
 currently available through ISAMBARD. These include: <span class="math">\(\alpha\)</span>
 helices, coiled-coil assemblies of different flavours, and simple DNA
 duplexes. To make a structure based on a specification, you need to know
@@ -219,7 +219,7 @@ simple <span class="math">\(\alpha\)</span>-helical coiled-coil dimer.</p>
 <a class="reference external" href="https://drive.google.com/open?id=0B2sZ5She4fA2QzdsUENNa2hmTE0">4DZM.pdb</a>),
 into the AMPAL framework, and use tools within ISAMBARD to calculate the
 parameters we need. [N.B. This is a slightly modified form of 4DZM where
-we’ve converted iodo-phenylalanine to phenylalanine, and got rid of
+we&#8217;ve converted iodo-phenylalanine to phenylalanine, and got rid of
 water molecules to make life a bit easier, so take the linked copy
 rather than downloading from another source.]</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">isambard</span>
@@ -274,7 +274,7 @@ the chain object itself, or from the length of the sequence.</p>
 </pre></div>
 </div>
 <p>Before we extract parameters from the structure, we might want to know
-how ‘good’ the BUDE forcefield [BUFF] thinks the structure is, so that
+how &#8216;good&#8217; the BUDE forcefield [BUFF] thinks the structure is, so that
 when we build a structure <em>de novo</em> we have something to compare it to.
 BUFF provides two scores, one for the interaction between
 <code class="docutils literal"><span class="pre">Polypeptides</span></code> in the <code class="docutils literal"><span class="pre">Assembly</span></code>, and one for the internal energy of
@@ -412,7 +412,7 @@ mean value.</p>
 <h2>4. Building a model<a class="headerlink" href="#building-a-model" title="Permalink to this headline">¶</a></h2>
 <p>We now know all the parameters we need to rebuild this structure, and it
 can be done by generating a specification object from the <code class="docutils literal"><span class="pre">CoiledCoil</span></code>
-class. We will do this by ‘subclassing’, i.e. inheriting all the things
+class. We will do this by &#8216;subclassing&#8217;, i.e. inheriting all the things
 we need from the general <code class="docutils literal"><span class="pre">CoiledCoil</span></code> class, and adding specific
 parameters for our case, into a class called <code class="docutils literal"><span class="pre">SimpleDimer2Phi</span></code>.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleDimer2Phi</span><span class="p">(</span><span class="n">isambard</span><span class="o">.</span><span class="n">specifications</span><span class="o">.</span><span class="n">CoiledCoil</span><span class="p">):</span>
@@ -495,7 +495,7 @@ this back to an AMPAL object, write it out for viewing.</p>
 </pre></div>
 </div>
 <p>If you have a look closely at the asparagine pair at the middle of the
-dimeric structure (shown below), you’ll see that the rotamers that SCWRL
+dimeric structure (shown below), you&#8217;ll see that the rotamers that SCWRL
 has picked for asparagine (right-hand side, dark blue) are more sensible
 than those in the original structure (left-hand side, cyan). The
 original 4DZM structure has multiple occupancies for the asparagine
@@ -520,7 +520,7 @@ have a look at the models you produce on PyMOL.</p>
 structure. To do this, we need to modify the <code class="docutils literal"><span class="pre">SimpleDimer2Phi</span></code> class,
 two extra parameters to specify firstly that the orientation of the
 second helix is antiparallel, and secondly, the z-shift, how far the
-helices can slide past one another. We’ll make this using another
+helices can slide past one another. We&#8217;ll make this using another
 subclass of CoiledCoil:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleDimer2PhiAP</span><span class="p">(</span><span class="n">isambard</span><span class="o">.</span><span class="n">specifications</span><span class="o">.</span><span class="n">CoiledCoil</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">phica1</span><span class="p">,</span><span class="n">phica2</span><span class="p">,</span><span class="n">zshift</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
@@ -556,8 +556,8 @@ subclass of CoiledCoil:</p>
 </div>
 <div class="section" id="making-it-better-an-introduction-to-optimisation">
 <h2>5. Making it better - an introduction to optimisation<a class="headerlink" href="#making-it-better-an-introduction-to-optimisation" title="Permalink to this headline">¶</a></h2>
-<p>It’s not such a good score :-) (obviously?) We could improve this score
-by ‘minimizing’ the structure, i.e. trying to find new parameters for
+<p>It&#8217;s not such a good score :-) (obviously?) We could improve this score
+by &#8216;minimizing&#8217; the structure, i.e. trying to find new parameters for
 the sequence that improve the BUDE score. This is, in real life, a very
 bad idea, because we know that this sequence comes from a crystal
 structure of a parallel coiled-coil dimer, and it is highly unlikely
@@ -566,7 +566,7 @@ it so, as a good exercise in learning how an optimiser works. Hopefully
 this will also help to empahasise that although you can get an improved
 BUFF score through this process, if you make an unrealistic assumption
 at the beginning, BUFF and the optimiser will not help you out.</p>
-<p>We’ll carry out this optimisation using an algorithm called
+<p>We&#8217;ll carry out this optimisation using an algorithm called
 <a class="reference external" href="https://en.wikipedia.org/wiki/Differential_evolution">**differential
 evolution**</a>.
 This is a metaheuristic, which means it makes no assumptions about the
@@ -579,7 +579,7 @@ whichever candidate has the best score.</p>
 <p>The optimiser is actually quite easy to set up. You need to give it an
 ISAMBARD specification (in our case <code class="docutils literal"><span class="pre">SimpleDimer2PhiAP</span></code>) and an output
 path (which can be the current directory for the moment, as specified by
-‘.’)</p>
+&#8216;.&#8217;)</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">optimiser</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">optimisation</span><span class="o">.</span><span class="n">DE_Opt</span><span class="p">(</span><span class="n">SimpleDimer2PhiAP</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">run_id</span><span class="o">=</span><span class="s1">&#39;test_antiparallel&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -592,7 +592,7 @@ match the order required by <code class="docutils literal"><span class="pre">Sim
 <code class="docutils literal"><span class="pre">radius,</span> <span class="pre">pitch,</span> <span class="pre">phica1,</span> <span class="pre">phica2</span></code>. We will allow the radius to vary by
 up to 1 <span class="math">\(\unicode{x212B}\)</span> either side of 5
 <span class="math">\(\unicode{x212B}\)</span>, the pitch by 100 <span class="math">\(^\circ\)</span> and the
-Phi-C<span class="math">\(\alpha\)</span>s by a full circle. We’ll keep the z-shift to
+Phi-C<span class="math">\(\alpha\)</span>s by a full circle. We&#8217;ll keep the z-shift to
 zero for this instance.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">optimiser</span><span class="o">.</span><span class="n">parameters</span><span class="p">(</span><span class="n">my_ap_cc</span><span class="o">.</span><span class="n">sequences</span><span class="p">,</span> <span class="p">[</span><span class="mf">5.0</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">],</span>
                     <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">my_ap_cc</span><span class="o">.</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s1">&#39;var0&#39;</span><span class="p">,</span><span class="s1">&#39;var1&#39;</span><span class="p">,</span><span class="s1">&#39;var2&#39;</span><span class="p">,</span><span class="s1">&#39;var3&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
@@ -654,12 +654,12 @@ the optimisation directory for these.</p>
 <h3>Making bigger things<a class="headerlink" href="#making-bigger-things" title="Permalink to this headline">¶</a></h3>
 <p>Now you know how to subclass the <code class="docutils literal"><span class="pre">CoiledCoil</span></code> AMPAL specification
 object, see if you can make an <span class="math">\(\alpha\)</span>-helical barrel by
-increasing the value of <code class="docutils literal"><span class="pre">n</span></code>. Don’t worry about what sequence to use
+increasing the value of <code class="docutils literal"><span class="pre">n</span></code>. Don&#8217;t worry about what sequence to use
 initially, make some models and get comfortable with the parameters -
 for example try a few different radii, pitch and Phi-c<span class="math">\(\alpha\)</span>
 values. As an aide, here are some parameters for the coiled-coil barrels
 in &lt;a
-href=”<a class="reference external" href="http://www.sciencemag.org/cgi/rapidpdf/346/6208/485?ijkey=ysj8Y4h7WOYgo&amp;keytype=ref&amp;siteid=sci">http://www.sciencemag.org/cgi/rapidpdf/346/6208/485?ijkey=ysj8Y4h7WOYgo&amp;keytype=ref&amp;siteid=sci</a>”&gt;Thomson
+href=&#8221;<a class="reference external" href="http://www.sciencemag.org/cgi/rapidpdf/346/6208/485?ijkey=ysj8Y4h7WOYgo&amp;keytype=ref&amp;siteid=sci">http://www.sciencemag.org/cgi/rapidpdf/346/6208/485?ijkey=ysj8Y4h7WOYgo&amp;keytype=ref&amp;siteid=sci</a>&#8220;&gt;Thomson
 et. al. (Science 2014). Score the models you make using BUFF.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -737,7 +737,7 @@ et. al. (Science 2014). Score the models you make using BUFF.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -769,7 +769,7 @@ et. al. (Science 2014). Score the models you make using BUFF.</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

@@ -165,9 +165,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-isambard.tools.geometry">
-<span id="isambard-tools-geometry-module"></span><h1>isambard.tools.geometry module<a class="headerlink" href="#module-isambard.tools.geometry" title="Permalink to this headline">¶</a></h1>
-<p>Cythonised versions of basic geometric operations that ISAMBARD requires.</p>
+  <div class="section" id="isambard-tools-geometry-module">
+<h1>isambard.tools.geometry module<a class="headerlink" href="#isambard-tools-geometry-module" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-isambard.tools.geometry"></span><p>Cythonised versions of basic geometric operations that ISAMBARD requires.</p>
 <p>If Cython is not detected the geometry module falls back to the Python
 implementation. As a result, all functions that are available to the user MUST
 return the same type the Python version of the code.</p>
@@ -192,8 +192,8 @@ If t_ref &gt; t then the returned value is negative.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>t</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>t_ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – t and t_ref define points on curve (See self.point()).</li>
+<li><strong>t</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>t_ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; t and t_ref define points on curve (See self.point()).</li>
 </ul>
 </td>
 </tr>
@@ -220,13 +220,13 @@ If t_ref &gt; t then the returned value is negative.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of points to be returned.</li>
-<li><strong>spacing</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – arc-length spacing of points to be returned.</li>
-<li><strong>t_ref</strong> (<em>The value of t for specifying the first point in the coordinates list.</em>) – </li>
+<li><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of points to be returned.</li>
+<li><strong>spacing</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; arc-length spacing of points to be returned.</li>
+<li><strong>t_ref</strong> (<em>The value of t for specifying the first point in the coordinates list.</em>) &#8211; </li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>coords</strong> – 3D coordinates of evenly spaced points along the curve.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>coords</strong> &#8211; 3D coordinates of evenly spaced points along the curve.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of numpy.arrays</p>
@@ -265,8 +265,8 @@ If t_ref &gt; t then the returned value is negative.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>arc_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – distance along curve</li>
-<li><strong>t_ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
+<li><strong>arc_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; distance along curve</li>
+<li><strong>t_ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
 </ul>
 </td>
 </tr>
@@ -302,7 +302,7 @@ Here we have chosen to use the following convention:</p>
 </dl>
 <p>If the Axis is not parallel to the z-axis, then we can rotate the z-axis so it aligns with our Axis.
 The normal is the same rotation appled to the x-axis.
-It’s helpful here to think of the right-hand rule.
+It&#8217;s helpful here to think of the right-hand rule.
 <a class="reference external" href="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Right_hand_rule_cross_product.svg/2000px-Right_hand_rule_cross_product.svg.png">https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Right_hand_rule_cross_product.svg/2000px-Right_hand_rule_cross_product.svg.png</a>
 <a class="reference external" href="https://en.wikipedia.org/wiki/Cross_product#Definition">https://en.wikipedia.org/wiki/Cross_product#Definition</a>
 Using the right-hand rule, the Axis direction vector is your index finger,
@@ -345,12 +345,12 @@ the normal vector is the middle finger and the binormal is the thumb.</p>
 
 <dl class="classmethod">
 <dt id="isambard.tools.geometry.HelicalCurve.alpha_and_pitch">
-<em class="property">classmethod </em><code class="descname">alpha_and_pitch</code><span class="sig-paren">(</span><em>alpha</em>, <em>pitch</em>, <em>handedness='r'</em>, <em>t0=0</em>, <em>radians=False</em><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.HelicalCurve.alpha_and_pitch" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">alpha_and_pitch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.HelicalCurve.alpha_and_pitch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="classmethod">
 <dt id="isambard.tools.geometry.HelicalCurve.alpha_and_radius">
-<em class="property">classmethod </em><code class="descname">alpha_and_radius</code><span class="sig-paren">(</span><em>alpha</em>, <em>radius</em>, <em>handedness='r'</em>, <em>t0=0</em>, <em>radians=False</em><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.HelicalCurve.alpha_and_radius" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">alpha_and_radius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.HelicalCurve.alpha_and_radius" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -365,8 +365,8 @@ If t_ref &gt; t then the returned value is negative.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>t</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>t_ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – t and t_ref define points on curve (See self.point()).</li>
+<li><strong>t</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>t_ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; t and t_ref define points on curve (See self.point()).</li>
 </ul>
 </td>
 </tr>
@@ -393,15 +393,15 @@ If t_ref &gt; t then the returned value is negative.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of points to be returned.</li>
-<li><strong>spacing</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – arc-length spacing of points to be returned.</li>
-<li><strong>axis_start</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array of length 3</em>) – </li>
-<li><strong>axis_end</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array of length 3</em>) – Coordinates returned will be for a helical path winding around an axis specified by axis_end - axis_start.</li>
-<li><strong>t_ref</strong> (<em>The value of t for specifying the first point in the coordinates list.</em>) – </li>
+<li><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of points to be returned.</li>
+<li><strong>spacing</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; arc-length spacing of points to be returned.</li>
+<li><strong>axis_start</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array of length 3</em>) &#8211; </li>
+<li><strong>axis_end</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array of length 3</em>) &#8211; Coordinates returned will be for a helical path winding around an axis specified by axis_end - axis_start.</li>
+<li><strong>t_ref</strong> (<em>The value of t for specifying the first point in the coordinates list.</em>) &#8211; </li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>coords</strong> – 3D coordinates of evenly spaced points along the curve.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>coords</strong> &#8211; 3D coordinates of evenly spaced points along the curve.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of numpy.arrays</p>
@@ -418,7 +418,7 @@ If t_ref &gt; t then the returned value is negative.</p>
 
 <dl class="classmethod">
 <dt id="isambard.tools.geometry.HelicalCurve.pitch_and_radius">
-<em class="property">classmethod </em><code class="descname">pitch_and_radius</code><span class="sig-paren">(</span><em>pitch</em>, <em>radius</em>, <em>handedness='r'</em>, <em>t0=0</em><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.HelicalCurve.pitch_and_radius" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">pitch_and_radius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.HelicalCurve.pitch_and_radius" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -443,8 +443,8 @@ If t_ref &gt; t then the returned value is negative.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>arc_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – distance along curve</li>
-<li><strong>t_ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
+<li><strong>arc_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; distance along curve</li>
+<li><strong>t_ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
 </ul>
 </td>
 </tr>
@@ -507,7 +507,7 @@ defined by parameter t_ref.</p>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <dl class="classmethod">
 <dt id="isambard.tools.geometry.Quaternion.angle_and_axis">
-<em class="property">classmethod </em><code class="descname">angle_and_axis</code><span class="sig-paren">(</span><em>angle</em>, <em>axis</em>, <em>radians=False</em><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.Quaternion.angle_and_axis" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">angle_and_axis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.Quaternion.angle_and_axis" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -548,7 +548,7 @@ defined by parameter t_ref.</p>
 
 <dl class="classmethod">
 <dt id="isambard.tools.geometry.Quaternion.real_and_vector">
-<em class="property">classmethod </em><code class="descname">real_and_vector</code><span class="sig-paren">(</span><em>r</em>, <em>vector</em>, <em>is_rotation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.Quaternion.real_and_vector" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">real_and_vector</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.Quaternion.real_and_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -572,13 +572,13 @@ defined by parameter t_ref.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>vector</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) – 3D coordinate.</li>
-<li><strong>u_in</strong> (<em>double</em><em>[</em><em>3</em><em>]</em>) – Imaginary component of the unit quaternion.</li>
-<li><strong>s</strong> (<em>double</em>) – Real component of the quaternion.</li>
+<li><strong>vector</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) &#8211; 3D coordinate.</li>
+<li><strong>u_in</strong> (<em>double</em><em>[</em><em>3</em><em>]</em>) &#8211; Imaginary component of the unit quaternion.</li>
+<li><strong>s</strong> (<em>double</em>) &#8211; Real component of the quaternion.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>r</strong> – 3D coordinate.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>r</strong> &#8211; 3D coordinate.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">double[3]</p>
@@ -599,17 +599,17 @@ defined by parameter t_ref.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>y</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>z</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – True if returned azimuth is in radians instead of degrees.</li>
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>y</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>z</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; True if returned azimuth is in radians instead of degrees.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
 <li><strong>radius</strong> (<em>float</em>)</li>
 <li><strong>azimuth</strong> (<em>float</em>)</li>
-<li><strong>z</strong> (<em>float</em>) – Cylindrical coordinate parameters. See cylindrical_to_cartesian for more information.</li>
+<li><strong>z</strong> (<em>float</em>) &#8211; Cylindrical coordinate parameters. See cylindrical_to_cartesian for more information.</li>
 </ul>
 </p>
 </td>
@@ -629,17 +629,17 @@ defined by parameter t_ref.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>y</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>z</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – True if returned azimuth and zenith are in radians instead of degrees.</li>
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>y</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>z</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; True if returned azimuth and zenith are in radians instead of degrees.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
 <li><strong>radius</strong> (<em>float</em>)</li>
 <li><strong>azimuth</strong> (<em>float</em>)</li>
-<li><strong>zenith</strong> (<em>float</em>) – Spherical coordinate parameters. See spherical_to_cartesian for more information.</li>
+<li><strong>zenith</strong> (<em>float</em>) &#8211; Spherical coordinate parameters. See spherical_to_cartesian for more information.</li>
 </ul>
 </p>
 </td>
@@ -659,18 +659,18 @@ defined by parameter t_ref.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>points</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><em>list</em><em> or </em><em>numpy.array</em><em>)</em>) – </li>
-<li><strong>masses</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>)</em>) – </li>
+<li><strong>points</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em>, </em><em>list</em><em> or </em><em>numpy.array</em><em>)</em>) &#8211; </li>
+<li><strong>masses</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>)</em>) &#8211; </li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>com</strong> – Centre of mass of points.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>com</strong> &#8211; Centre of mass of points.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">numpy.array</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – if len(masses) != len(points)</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; if len(masses) != len(points)</p>
 </td>
 </tr>
 </tbody>
@@ -688,12 +688,12 @@ The minimum of all these distance values is returned.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>points1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array of triples.</em>) – A number of points in R^3.</li>
-<li><strong>points2</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array of triples.</em>) – A number of points in R^3.</li>
+<li><strong>points1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array of triples.</em>) &#8211; A number of points in R^3.</li>
+<li><strong>points2</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array of triples.</em>) &#8211; A number of points in R^3.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>min_dist</strong> – The minimum distance between any point from points1 and any point from point2.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>min_dist</strong> &#8211; The minimum distance between any point from points1 and any point from point2.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a></p>
@@ -717,11 +717,11 @@ Code adapted from <a class="reference external" href="http://geomalgorithms.com/
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>p1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>q0</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>q1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, the points returned must lie on line segments p0-&gt;p1 and q0-&gt;q1, rather than their infinite extensions.</li>
+<li><strong>p0</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>p1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>q0</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>q1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True, the points returned must lie on line segments p0-&gt;p1 and q0-&gt;q1, rather than their infinite extensions.</li>
 </ul>
 </td>
 </tr>
@@ -753,10 +753,10 @@ for more information.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>azimuth</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>z</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – True if azimuth is given in radians instead of degrees.</li>
+<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>azimuth</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>z</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; True if azimuth is given in radians instead of degrees.</li>
 </ul>
 </td>
 </tr>
@@ -781,20 +781,20 @@ This point is the perpendicular foot, and is returned by this function.</p>
 <p>See <a class="reference external" href="http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html</a> for a useful work-through of the maths.
 Parameterise the line ab by t, so that a point on the line is of the form: a + (b-a)*t.
 Define f(t) = [distance(t, p)]^2. Want t such that f(t) is at a minimum.
-Solve f’(t) = 0 for t.
+Solve f&#8217;(t) = 0 for t.
 Substituting this value of t into a + (b-a)*t yields the desired point q.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>b</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – Together, the points a and b define a line in R^3.</li>
-<li><strong>p</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – A point in R^3.</li>
+<li><strong>a</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>b</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; Together, the points a and b define a line in R^3.</li>
+<li><strong>p</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; A point in R^3.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>q</strong> – The point on the line between a and b that is closest to q.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>q</strong> &#8211; The point on the line between a and b that is closest to q.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list or <a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)">tuple</a> or numpy.array</p>
@@ -831,14 +831,14 @@ Then substitute lambda back in to get the solution for (x, y, z) = q.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>b</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>c</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – Together, the points a, b and c define a plane in R^3.</li>
-<li><strong>p</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – A point in R^3.</li>
+<li><strong>a</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>b</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>c</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; Together, the points a, b and c define a plane in R^3.</li>
+<li><strong>p</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; A point in R^3.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s</strong> – The point on the plane that is closest to q.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s</strong> &#8211; The point on the plane that is closest to q.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.array</p>
@@ -866,19 +866,19 @@ Apply the rotation (given by angle, axis and point) first and then the translati
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>s1</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) – 3D coordinate. Start of line 1</li>
-<li><strong>e1</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) – 3D coordinate. End of line 1</li>
-<li><strong>s2</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) – 3D coordinate. Start of line 2</li>
-<li><strong>e2</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) – 3D coordinate. End of line 2</li>
-<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, angle will be returned in radians.</li>
+<li><strong>s1</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) &#8211; 3D coordinate. Start of line 1</li>
+<li><strong>e1</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) &#8211; 3D coordinate. End of line 1</li>
+<li><strong>s2</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) &#8211; 3D coordinate. Start of line 2</li>
+<li><strong>e2</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) &#8211; 3D coordinate. End of line 2</li>
+<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True, angle will be returned in radians.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>translation</strong> (<em>numpy.array(3)</em>) – 3D vector. Translation to be applied to s1 to move it onto s2.</li>
-<li><strong>angle</strong> (<em>float</em>) – angle for rotation (default: degrees).</li>
-<li><strong>axis</strong> (<em>numpy.array(3)</em>) – axis about which to rotate line 1 to align it with line 2.</li>
-<li><strong>point</strong> (<em>numpy.array(3)</em>) – a point lying on the rotation axis.</li>
+<li><strong>translation</strong> (<em>numpy.array(3)</em>) &#8211; 3D vector. Translation to be applied to s1 to move it onto s2.</li>
+<li><strong>angle</strong> (<em>float</em>) &#8211; angle for rotation (default: degrees).</li>
+<li><strong>axis</strong> (<em>numpy.array(3)</em>) &#8211; axis about which to rotate line 1 to align it with line 2.</li>
+<li><strong>point</strong> (<em>numpy.array(3)</em>) &#8211; a point lying on the rotation axis.</li>
 </ul>
 </p>
 </td>
@@ -896,7 +896,7 @@ Apply the rotation (given by angle, axis and point) first and then the translati
 <dl class="function">
 <dt id="isambard.tools.geometry.intersection_start_and_end">
 <code class="descname">intersection_start_and_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.tools.geometry.intersection_start_and_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find start and end indices of the part of the list of points ‘subject’ that will intersect with ‘reference’</p>
+<dd><p>Find start and end indices of the part of the list of points &#8216;subject&#8217; that will intersect with &#8216;reference&#8217;</p>
 <p class="rubric">Notes</p>
 <p>This is a function designed to find assemblies from within bundles of helices.
 The idea here is to take two lists of points, a subject and a reference. We want to find the part of the subject
@@ -910,14 +910,14 @@ If the subject and reference for the above example were swapped around, however,
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>subject</strong> (<em>list of numpy.array</em>) – A list of points in R^3.</li>
-<li><strong>reference</strong> (<em>list of numpy.array</em>) – A list of points in R^3.</li>
+<li><strong>subject</strong> (<em>list of numpy.array</em>) &#8211; A list of points in R^3.</li>
+<li><strong>reference</strong> (<em>list of numpy.array</em>) &#8211; A list of points in R^3.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>start_index</strong> (<em>int</em>) – The index of the first point in subject that is part of the intersection described above.</li>
-<li><strong>end_index</strong> (<em>int</em>) – The index of the final point in subject that is part of the intersection described above.</li>
+<li><strong>start_index</strong> (<em>int</em>) &#8211; The index of the first point in subject that is part of the intersection described above.</li>
+<li><strong>end_index</strong> (<em>int</em>) &#8211; The index of the final point in subject that is part of the intersection described above.</li>
 </ul>
 </p>
 </td>
@@ -942,15 +942,15 @@ Also <a class="reference external" href="http://geomalgorithms.com/a07-_distance
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>p1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>q0</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>q1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, the points returned must lie on line segments p0-&gt;p1 and q0-&gt;q1, rather than their infinite extensions.</li>
+<li><strong>p0</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>p1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>q0</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>q1</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True, the points returned must lie on line segments p0-&gt;p1 and q0-&gt;q1, rather than their infinite extensions.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dist</strong> – The distance between the two lines.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dist</strong> &#8211; The distance between the two lines.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a></p>
@@ -969,16 +969,16 @@ Also <a class="reference external" href="http://geomalgorithms.com/a07-_distance
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of points to return.</li>
-<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>centre</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>rotation</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Angle in degrees by which all points will be rotated.
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of points to return.</li>
+<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>centre</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>rotation</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Angle in degrees by which all points will be rotated.
 rotation = 0 means that the line from the centre to the first point is parallel to the x-axis.
 rotation &gt; 0 =&gt; anti-clockwise rotation</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>points</strong> – (x, y) coordinates of uniformly distributed points on the circumference of the circle</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>points</strong> &#8211; (x, y) coordinates of uniformly distributed points on the circumference of the circle</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(2-tuples)</p>
@@ -1002,9 +1002,9 @@ The circumcircle is the circle that passes though these points.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>p</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>q</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
-<li><strong>r</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – </li>
+<li><strong>p</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>q</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
+<li><strong>r</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; </li>
 </ul>
 </td>
 </tr>
@@ -1027,8 +1027,8 @@ The circumcircle is the circle that passes though these points.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>points1</strong> (<em>list of</em><em> [</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) – </li>
-<li><strong>points2</strong> (<em>list of</em><em> [</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) – </li>
+<li><strong>points1</strong> (<em>list of</em><em> [</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) &#8211; </li>
+<li><strong>points2</strong> (<em>list of</em><em> [</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) &#8211; </li>
 </ul>
 </td>
 </tr>
@@ -1051,21 +1051,21 @@ The circumcircle is the circle that passes though these points.</p>
 <dd><p>Find rotation matrix for rotating about unit_vect by angle.</p>
 <p class="rubric">Notes</p>
 <p>See <a class="reference external" href="https://en.wikipedia.org/wiki/Rotation_matrix">https://en.wikipedia.org/wiki/Rotation_matrix</a> for more information.
-In particular, the section headed ‘Rotation matrix from axis and angle’.</p>
+In particular, the section headed &#8216;Rotation matrix from axis and angle&#8217;.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Angle about which to rotate.</li>
-<li><strong>unit_vect</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – Vector about which to rotate.</li>
-<li><strong>point</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em><em>, </em><em>optional.</em>) – Specify a point about which to rotate.
+<li><strong>angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Angle about which to rotate.</li>
+<li><strong>unit_vect</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; Vector about which to rotate.</li>
+<li><strong>point</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em><em>, </em><em>optional.</em>) &#8211; Specify a point about which to rotate.
 If point is None, then the rotation will be about the origin.
 Default value is None.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>m</strong> – A (4 x 4) rotation matrix.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>m</strong> &#8211; A (4 x 4) rotation matrix.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.array</p>
@@ -1095,10 +1095,10 @@ If azimuth = 0, then y is 0 regardless of zenith value.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>azimuth</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>zenith</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – </li>
-<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – True if azimuth and zenith are given in radians instead of degrees.</li>
+<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>azimuth</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>zenith</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>radians</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; True if azimuth and zenith are given in radians instead of degrees.</li>
 </ul>
 </td>
 </tr>
@@ -1120,13 +1120,13 @@ If azimuth = 0, then y is 0 regardless of zenith value.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>a</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) – The vector to be normalised.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>a</strong> (<em>list</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>numpy.array</em>) &#8211; The vector to be normalised.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>v_out</strong> – A numpy.array that is a unit vector.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>v_out</strong> &#8211; A numpy.array that is a unit vector.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.array</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ZeroDivisionError</span></code> – If the vector has length 0.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ZeroDivisionError</span></code> &#8211; If the vector has length 0.</td>
 </tr>
 </tbody>
 </table>
@@ -1157,7 +1157,7 @@ If azimuth = 0, then y is 0 regardless of zenith value.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -1189,7 +1189,7 @@ If azimuth = 0, then y is 0 regardless of zenith value.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

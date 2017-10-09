@@ -184,7 +184,7 @@
 most of them are baked into the AMPAL objects themselves.</p>
 <div class="section" id="selecting-secondary-structure">
 <h2>1. Selecting Secondary Structure<a class="headerlink" href="#selecting-secondary-structure" title="Permalink to this headline">¶</a></h2>
-<p>Let’s load-up a PDB file:</p>
+<p>Let&#8217;s load-up a PDB file:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">isambard</span>
 <span class="n">my_protein_3qy1</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">ampal</span><span class="o">.</span><span class="n">convert_pdb_to_ampal</span><span class="p">(</span><span class="s1">&#39;3qy1.pdb&#39;</span><span class="p">)</span>
 </pre></div>
@@ -298,7 +298,7 @@ helix refers to the <code class="docutils literal"><span class="pre">Polypeptide
 </div>
 <div class="section" id="selecting-all-residues-or-atoms">
 <h2>2. Selecting All Residues or Atoms<a class="headerlink" href="#selecting-all-residues-or-atoms" title="Permalink to this headline">¶</a></h2>
-<p>Sometimes it’s convinient to select all of the <code class="docutils literal"><span class="pre">Residues</span></code> or <code class="docutils literal"><span class="pre">Atoms</span></code>
+<p>Sometimes it&#8217;s convinient to select all of the <code class="docutils literal"><span class="pre">Residues</span></code> or <code class="docutils literal"><span class="pre">Atoms</span></code>
 in an <code class="docutils literal"><span class="pre">Assembly</span></code> or <code class="docutils literal"><span class="pre">Polypeptide</span></code> object:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein_3qy1</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">()</span>
 </pre></div>
@@ -313,12 +313,12 @@ in an <code class="docutils literal"><span class="pre">Assembly</span></code> or
 </pre></div>
 </div>
 <p>As you can see an itertools object is returned. This might be slightly
-confusing as you might expect a list, but this is what’s known as an
+confusing as you might expect a list, but this is what&#8217;s known as an
 <code class="docutils literal"><span class="pre">iterator</span></code>, you can loop over it like a list or string, but if you
-want to use it repeatedly or examine its contents you’ll need to convert
-it to a list. The advantage of returning an <code class="docutils literal"><span class="pre">iterator</span></code> is that it’s
+want to use it repeatedly or examine its contents you&#8217;ll need to convert
+it to a list. The advantage of returning an <code class="docutils literal"><span class="pre">iterator</span></code> is that it&#8217;s
 much more memory efficient, and these lists could potentially be very
-large. If you’d like to know more about <code class="docutils literal"><span class="pre">iterables</span></code> and <code class="docutils literal"><span class="pre">iterators</span></code>,
+large. If you&#8217;d like to know more about <code class="docutils literal"><span class="pre">iterables</span></code> and <code class="docutils literal"><span class="pre">iterators</span></code>,
 as well as related objects called <code class="docutils literal"><span class="pre">generators</span></code>, see the following link
 (this is quite advanced Python and is not essential for using any of the
 AMPAL framework: <a class="reference external" href="http://anandology.com/python-practice-book/iterators.html">Iterators and
@@ -416,7 +416,7 @@ acids in a sequence:</p>
 </pre></div>
 </div>
 <p>But as stated before, you can use Counters on any iterable, not just
-strings. Let’s make a list of all the pdb molecule codes of the ligands:</p>
+strings. Let&#8217;s make a list of all the pdb molecule codes of the ligands:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_ligands</span> <span class="o">=</span> <span class="n">my_protein_3qy1</span><span class="o">.</span><span class="n">get_ligands</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -433,7 +433,7 @@ strings. Let’s make a list of all the pdb molecule codes of the ligands:</p>
 </pre></div>
 </div>
 <p>There are two ways to generate a list of the codes, a <code class="docutils literal"><span class="pre">for</span></code> loop or a
-<code class="docutils literal"><span class="pre">list</span></code> comprehension, use whichever you are comfortable with. If you’d
+<code class="docutils literal"><span class="pre">list</span></code> comprehension, use whichever you are comfortable with. If you&#8217;d
 like to know more about <code class="docutils literal"><span class="pre">list</span></code> comprehensions, please see the
 following link (this is relatively advanced Python but while not
 essential for using any of the AMPAL framework, it is very useful: <a class="reference external" href="https://docs.python.org/3.5/tutorial/datastructures.html">List
@@ -461,7 +461,7 @@ Comprehensions</a>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;ZN&#39;</span><span class="p">,</span> <span class="s1">&#39;HOH&#39;</span><span class="p">,</span> <span class="s1">&#39;HOH&#39;</span><span class="p">,</span> <span class="s1">&#39;HOH&#39;</span><span class="p">,</span> <span class="s1">&#39;HOH&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>You can use either of these methods, use whichever one you’re more
+<p>You can use either of these methods, use whichever one you&#8217;re more
 comfortable with.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">mol_codes_1</span> <span class="o">==</span> <span class="n">mol_codes_2</span>  <span class="c1"># The lists that re produced are exactly the same</span>
 </pre></div>
@@ -481,7 +481,7 @@ comfortable with.</p>
 <div class="section" id="distance-analysis">
 <h2>4. Distance Analysis<a class="headerlink" href="#distance-analysis" title="Permalink to this headline">¶</a></h2>
 <p>Now we can select all atoms in the protein and understand the structures
-composition, we can perform some simple analysis. Let’s try and find all
+composition, we can perform some simple analysis. Let&#8217;s try and find all
 the residues that are close to the zinc ions.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">zinc_1</span> <span class="o">=</span> <span class="n">my_ligands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
@@ -562,7 +562,7 @@ use the <code class="docutils literal"><span class="pre">ligands=False</span></c
 </pre></div>
 </div>
 <p>Now there are 4 atoms within 3 Å of the zinc, 2 sulphur atoms, an oxygen
-and a nitrogen. Let’s find the residues that are coordinating the zinc:</p>
+and a nitrogen. Let&#8217;s find the residues that are coordinating the zinc:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">atoms_close_to_zinc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -698,13 +698,13 @@ This returns all <code class="docutils literal"><span class="pre">Monomers</span
 <div class="section" id="geometry-in-isambard">
 <h2>6. Geometry in ISAMBARD<a class="headerlink" href="#geometry-in-isambard" title="Permalink to this headline">¶</a></h2>
 <p>There are a range of tools in ISAMBARD for performing geometric
-operations. We’ve already covered distance, but other commonly used
+operations. We&#8217;ve already covered distance, but other commonly used
 functions include <code class="docutils literal"><span class="pre">angle_between_vectors</span></code>, <code class="docutils literal"><span class="pre">dihedral</span></code>,
 <code class="docutils literal"><span class="pre">unit_vector</span></code>, <code class="docutils literal"><span class="pre">find_foot</span></code>, <code class="docutils literal"><span class="pre">radius_of_circumcircle</span></code>. Be sure to
 check out the source code if you need a specific geometric function or
 have a look through the documentation.</p>
 <p>The <code class="docutils literal"><span class="pre">dihedral</span></code> function is probably the most useful of these for
-analysing proteins, so let’s use it to measure some torsion angles. It
+analysing proteins, so let&#8217;s use it to measure some torsion angles. It
 requires 4 3D vectors to calculate the dihedral, again these can be
 <code class="docutils literal"><span class="pre">lists</span></code>, <code class="docutils literal"><span class="pre">tuples</span></code>, <code class="docutils literal"><span class="pre">numpy.arrays</span></code> or <code class="docutils literal"><span class="pre">Atoms</span></code>. <strong>Note:</strong> This
 method of calculating torsion angles is only as an example, see the
@@ -806,7 +806,7 @@ on these selections.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -838,7 +838,7 @@ on these selections.</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

@@ -181,10 +181,10 @@ represents a protein model and an associated score or set of scores.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ampal_objects</strong> (<em>[</em><em>AMPAL</em><em>]</em><em>, </em><em>optional</em>) – A list of AMPAL objects with which to initialise the
+<li><strong>ampal_objects</strong> (<em>[</em><em>AMPAL</em><em>]</em><em>, </em><em>optional</em>) &#8211; A list of AMPAL objects with which to initialise the
 AMPAL container. This can be an <cite>Assembly</cite>, <cite>Polymer</cite>
 or <cite>Monomer</cite>.</li>
-<li><strong>id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Identifier for the AMPAL container.</li>
+<li><strong>id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Identifier for the AMPAL container.</li>
 </ul>
 </td>
 </tr>
@@ -193,7 +193,7 @@ or <cite>Monomer</cite>.</li>
 <dl class="attribute">
 <dt id="isambard.ampal.assembly.AmpalContainer.id">
 <code class="descname">id</code><a class="headerlink" href="#isambard.ampal.assembly.AmpalContainer.id" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Identifier for the AMPAL container.</p>
+<dd><p><em>str</em> &#8211; Identifier for the AMPAL container.</p>
 </dd></dl>
 
 <dl class="method">
@@ -230,7 +230,7 @@ or <cite>Monomer</cite>.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Key of tag used for sorting.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Key of tag used for sorting.</td>
 </tr>
 </tbody>
 </table>
@@ -251,13 +251,13 @@ which in turn contains one or more <cite>Monomer</cite>.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>molecules</strong> (<a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer" title="isambard.ampal.base_ampal.Polymer"><em>Polymer</em></a><em> or </em><em>[</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer" title="isambard.ampal.base_ampal.Polymer"><em>Polymer</em></a><em>]</em><em>, </em><em>optional</em>) – <cite>Polymer</cite> or list containing <cite>Polymer</cite> objects to be assembled.</li>
-<li><strong>assembly_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – An ID that the user can use to identify the <cite>Assembly</cite>. This
+<li><strong>molecules</strong> (<a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer" title="isambard.ampal.base_ampal.Polymer"><em>Polymer</em></a><em> or </em><em>[</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer" title="isambard.ampal.base_ampal.Polymer"><em>Polymer</em></a><em>]</em><em>, </em><em>optional</em>) &#8211; <cite>Polymer</cite> or list containing <cite>Polymer</cite> objects to be assembled.</li>
+<li><strong>assembly_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; An ID that the user can use to identify the <cite>Assembly</cite>. This
 is used when generating a pdb file using <cite>Assembly().pdb</cite>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – <cite>Assembly</cite> objects can only be initialised empty, using a <cite>Polymer</cite>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; <cite>Assembly</cite> objects can only be initialised empty, using a <cite>Polymer</cite>
 or a list of <cite>Polymers</cite>.</p>
 </td>
 </tr>
@@ -271,7 +271,7 @@ or a list of <cite>Polymers</cite>.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – Raised if other is any type other than <cite>Assembly</cite>.</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; Raised if other is any type other than <cite>Assembly</cite>.</td>
 </tr>
 </tbody>
 </table>
@@ -285,7 +285,7 @@ or a list of <cite>Polymers</cite>.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – Raised if other is any type other than <cite>Polymer</cite>.</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; Raised if other is any type other than <cite>Polymer</cite>.</td>
 </tr>
 </tbody>
 </table>
@@ -303,7 +303,7 @@ retained.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bb_assembly</strong> – <cite>Assembly</cite> containing only the backbone atoms of the original
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bb_assembly</strong> &#8211; <cite>Assembly</cite> containing only the backbone atoms of the original
 <cite>Assembly</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">ampal.Protein</td>
@@ -321,22 +321,22 @@ retained.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>assign_ff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the force field will be updated if required.</li>
-<li><strong>ff</strong> (<a class="reference internal" href="isambard.buff.force_field.html#isambard.buff.force_field.BuffForceField" title="isambard.buff.force_field.BuffForceField"><em>BuffForceField</em></a><em>, </em><em>optional</em>) – The force field to be used for scoring.</li>
-<li><strong>mol2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, mol2 style labels will also be used.</li>
-<li><strong>force_ff_assign</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, the force field will be completely reassigned,
+<li><strong>assign_ff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true the force field will be updated if required.</li>
+<li><strong>ff</strong> (<a class="reference internal" href="isambard.buff.force_field.html#isambard.buff.force_field.BuffForceField" title="isambard.buff.force_field.BuffForceField"><em>BuffForceField</em></a><em>, </em><em>optional</em>) &#8211; The force field to be used for scoring.</li>
+<li><strong>mol2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true, mol2 style labels will also be used.</li>
+<li><strong>force_ff_assign</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true, the force field will be completely reassigned,
 ignoring the cached parameters.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> – A BUFFScore object with information about each of the
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> &#8211; A BUFFScore object with information about each of the
 interactions and the <cite>Atoms</cite> involved.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">buff.BUFFScore</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> – Raise if a component molecule does not have an <cite>update_ff</cite>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; Raise if a component molecule does not have an <cite>update_ff</cite>
 method.</p>
 </td>
 </tr>
@@ -358,22 +358,22 @@ using the default arguments.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>assign_ff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the force field will be updated if required.</li>
-<li><strong>ff</strong> (<em>buff.BuffForceField</em><em>, </em><em>optional</em>) – The force field to be used for scoring.</li>
-<li><strong>mol2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, mol2 style labels will also be used.</li>
-<li><strong>force_ff_assign</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, the force field will be completely reassigned,
+<li><strong>assign_ff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true the force field will be updated if required.</li>
+<li><strong>ff</strong> (<em>buff.BuffForceField</em><em>, </em><em>optional</em>) &#8211; The force field to be used for scoring.</li>
+<li><strong>mol2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true, mol2 style labels will also be used.</li>
+<li><strong>force_ff_assign</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true, the force field will be completely reassigned,
 ignoring the cached parameters.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> – A BUFFScore object with information about each of the
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> &#8211; A BUFFScore object with information about each of the
 interactions and the atoms involved.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">buff.BUFFScore</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> – Raise if a component molecule does not have an <cite>update_ff</cite>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; Raise if a component molecule does not have an <cite>update_ff</cite>
 method.</p>
 </td>
 </tr>
@@ -389,7 +389,7 @@ method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – Raised if other is any type other than <cite>Assembly</cite>.</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; Raised if other is any type other than <cite>Assembly</cite>.</td>
 </tr>
 </tbody>
 </table>
@@ -410,7 +410,7 @@ Useful for feeding into cdhit and then running sequence clustering.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fasta_str</strong> – String of the fasta file for the <cite>Assembly</cite>.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fasta_str</strong> &#8211; String of the fasta file for the <cite>Assembly</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a></td>
 </tr>
@@ -432,13 +432,13 @@ Useful for feeding into cdhit and then running sequence clustering.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ligands</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Include ligand <cite>Atoms</cite>.</li>
-<li><strong>pseudo_group</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Include pseudo_group <cite>Atoms</cite>.</li>
-<li><strong>inc_alt_states</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Include alternate sidechain conformations.</li>
+<li><strong>ligands</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Include ligand <cite>Atoms</cite>.</li>
+<li><strong>pseudo_group</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Include pseudo_group <cite>Atoms</cite>.</li>
+<li><strong>inc_alt_states</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Include alternate sidechain conformations.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>atoms</strong> – All the <cite>Atoms</cite> as a iterator.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>atoms</strong> &#8211; All the <cite>Atoms</cite> as a iterator.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/itertools.html#itertools.chain" title="(in Python v2.7)">itertools.chain</a></p>
@@ -457,22 +457,22 @@ Useful for feeding into cdhit and then running sequence clustering.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>assign_ff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the force field will be updated if required.</li>
-<li><strong>ff</strong> (<a class="reference internal" href="isambard.buff.force_field.html#isambard.buff.force_field.BuffForceField" title="isambard.buff.force_field.BuffForceField"><em>BuffForceField</em></a><em>, </em><em>optional</em>) – The force field to be used for scoring.</li>
-<li><strong>mol2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, mol2 style labels will also be used.</li>
-<li><strong>force_ff_assign</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, the force field will be completely reassigned,
+<li><strong>assign_ff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true the force field will be updated if required.</li>
+<li><strong>ff</strong> (<a class="reference internal" href="isambard.buff.force_field.html#isambard.buff.force_field.BuffForceField" title="isambard.buff.force_field.BuffForceField"><em>BuffForceField</em></a><em>, </em><em>optional</em>) &#8211; The force field to be used for scoring.</li>
+<li><strong>mol2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true, mol2 style labels will also be used.</li>
+<li><strong>force_ff_assign</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true, the force field will be completely reassigned,
 ignoring the cached parameters.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> – A BUFFScore object with information about each of the
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> &#8211; A BUFFScore object with information about each of the
 interactions and the <cite>Atoms</cite> involved.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">buff.BUFFScore</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> – Raise if a component molecule does not have an <cite>update_ff</cite>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; Raise if a component molecule does not have an <cite>update_ff</cite>
 method.</p>
 </td>
 </tr>
@@ -494,22 +494,22 @@ using the default arguments.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>assign_ff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the force field will be updated if required.</li>
-<li><strong>ff</strong> (<em>buff.BuffForceField</em><em>, </em><em>optional</em>) – The force field to be used for scoring.</li>
-<li><strong>mol2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, mol2 style labels will also be used.</li>
-<li><strong>force_ff_assign</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, the force field will be completely reassigned,
+<li><strong>assign_ff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true the force field will be updated if required.</li>
+<li><strong>ff</strong> (<em>buff.BuffForceField</em><em>, </em><em>optional</em>) &#8211; The force field to be used for scoring.</li>
+<li><strong>mol2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true, mol2 style labels will also be used.</li>
+<li><strong>force_ff_assign</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true, the force field will be completely reassigned,
 ignoring the cached parameters.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> – A BUFFScore object with information about each of the
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> &#8211; A BUFFScore object with information about each of the
 interactions and the atoms involved.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">buff.BUFFScore</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> – Raise if a component molecule does not have an <cite>update_ff</cite>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; Raise if a component molecule does not have an <cite>update_ff</cite>
 method.</p>
 </td>
 </tr>
@@ -525,7 +525,7 @@ method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>solvent</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, solvent molecules will be included.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>solvent</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, solvent molecules will be included.</td>
 </tr>
 </tbody>
 </table>
@@ -540,8 +540,8 @@ method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ligands</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>true</cite>, will include ligand <cite>Monomers</cite>.</li>
-<li><strong>pseudo_group</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, will include pseudo atoms.</li>
+<li><strong>ligands</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>true</cite>, will include ligand <cite>Monomers</cite>.</li>
+<li><strong>pseudo_group</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, will include pseudo atoms.</li>
 </ul>
 </td>
 </tr>
@@ -559,7 +559,7 @@ method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>hel_assembly</strong> – <cite>Assembly</cite> containing only the α-helices of the original <cite>Assembly</cite>.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>hel_assembly</strong> &#8211; <cite>Assembly</cite> containing only the α-helices of the original <cite>Assembly</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">ampal.Protein</td>
 </tr>
@@ -588,15 +588,15 @@ method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ligands</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, will include ligands in the output.</li>
-<li><strong>alt_states</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, will include alternate conformations in the output.</li>
-<li><strong>pseudo_group</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, will include pseudo atoms in the output.</li>
-<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> will write a header for output.</li>
-<li><strong>footer</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> will write a footer for output.</li>
+<li><strong>ligands</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, will include ligands in the output.</li>
+<li><strong>alt_states</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, will include alternate conformations in the output.</li>
+<li><strong>pseudo_group</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, will include pseudo atoms in the output.</li>
+<li><strong>header</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite> will write a header for output.</li>
+<li><strong>footer</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite> will write a footer for output.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pdb_str</strong> – String of the pdb for the Assembly. Generated by collating
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pdb_str</strong> &#8211; String of the pdb for the Assembly. Generated by collating
 Polymer().pdb calls for the component Polymers.</p>
 </td>
 </tr>
@@ -624,7 +624,7 @@ Polymer().pdb calls for the component Polymers.</p>
 <code class="descname">pack_new_sequences</code><span class="sig-paren">(</span><em>sequences</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/assembly.html#Assembly.pack_new_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.assembly.Assembly.pack_new_sequences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Packs a new sequence onto each Polymer in the Assembly using Scwrl4.</p>
 <p class="rubric">Notes</p>
-<p>The Scwrl packing score is saved in <cite>Assembly.tags[‘scwrl_score’]</cite>
+<p>The Scwrl packing score is saved in <cite>Assembly.tags[&#8216;scwrl_score&#8217;]</cite>
 for reference.</p>
 <p>Scwrl must be available to call. Check by running
 <cite>isambard.external_programs.scwrl.test_scwrl</cite>. If Scwrl is not
@@ -635,8 +635,8 @@ available, please follow instruction here to add it:
 <table class="docutils footnote" frame="void" id="id1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td>Krivov GG, Shapovalov MV, and Dunbrack Jr RL (2009) “Improved
-prediction of protein side-chain conformations with SCWRL4.”,
+<tr><td class="label">[1]</td><td>Krivov GG, Shapovalov MV, and Dunbrack Jr RL (2009) &#8220;Improved
+prediction of protein side-chain conformations with SCWRL4.&#8221;,
 Proteins.</td></tr>
 </tbody>
 </table>
@@ -644,11 +644,11 @@ Proteins.</td></tr>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sequences</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>]</em>) – A list of strings containing the amino acid sequence of each
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sequences</strong> (<em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>]</em>) &#8211; A list of strings containing the amino acid sequence of each
 corresponding <cite>Polymer</cite>. These must be the same length as the
 <cite>Polymer</cite>.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if the sequence length does not match the number of
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; Raised if the sequence length does not match the number of
 monomers in the <cite>Polymer</cite>.</td>
 </tr>
 </tbody>
@@ -671,7 +671,7 @@ monomers in the <cite>Polymer</cite>.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>prim_assembly</strong> – <cite>Assembly</cite> containing only the primitives of the <cite>Polymers</cite>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>prim_assembly</strong> &#8211; <cite>Assembly</cite> containing only the primitives of the <cite>Polymers</cite>
 in the original <cite>Assembly</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">ampal.Protein</td>
@@ -694,7 +694,7 @@ in the original <cite>Assembly</cite>.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Defines an offset for the labelling.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Defines an offset for the labelling.</td>
 </tr>
 </tbody>
 </table>
@@ -714,9 +714,9 @@ in the original <cite>Assembly</cite>.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>labels</strong> (<em>list</em><em>, </em><em>optional</em>) – A list of new labels.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>labels</strong> (<em>list</em><em>, </em><em>optional</em>) &#8211; A list of new labels.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if the number of labels does not match the number of component Polymer objects.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; Raised if the number of labels does not match the number of component Polymer objects.</td>
 </tr>
 </tbody>
 </table>
@@ -736,7 +736,7 @@ in the original <cite>Assembly</cite>.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>sequences</strong> – List of sequences.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>sequences</strong> &#8211; List of sequences.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">[<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a>]</td>
 </tr>
@@ -754,7 +754,7 @@ in the original <cite>Assembly</cite>.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>strand_assembly</strong> – <cite>Assembly</cite> containing only the β-strands of the original <cite>Assembly</cite>.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>strand_assembly</strong> &#8211; <cite>Assembly</cite> containing only the β-strands of the original <cite>Assembly</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">ampal.Protein</td>
 </tr>
@@ -770,12 +770,12 @@ in the original <cite>Assembly</cite>.</td>
 <p>The unique_id for each atom is a tuple (a double). <cite>unique_id[0]</cite>
 is the unique_id for its parent <cite>Monomer</cite> (see <cite>Monomer.unique_id</cite>
 for more information). <cite>unique_id[1]</cite> is the atom_type in the
-<cite>Assembly</cite> as a string, e.g. ‘CA’, ‘CD2’.</p>
+<cite>Assembly</cite> as a string, e.g. &#8216;CA&#8217;, &#8216;CD2&#8217;.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True the tag will be run even if Atoms are already tagged.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If True the tag will be run even if Atoms are already tagged.
 If False, only runs if at least one Atom is not tagged.</td>
 </tr>
 </tbody>
@@ -791,10 +791,10 @@ If False, only runs if at least one Atom is not tagged.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True the tag will be run even if <cite>Monomers</cite> are already tagged.</li>
-<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em><em>, </em><em>optional</em>) – Coordinates to feed to geometry functions that depend on
+<li><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If True the tag will be run even if <cite>Monomers</cite> are already tagged.</li>
+<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em><em>, </em><em>optional</em>) &#8211; Coordinates to feed to geometry functions that depend on
 having a reference axis.</li>
-<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Used to name the keys in tags at <cite>Chain</cite> and <cite>Residue</cite> level.</li>
+<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Used to name the keys in tags at <cite>Chain</cite> and <cite>Residue</cite> level.</li>
 </ul>
 </td>
 </tr>
@@ -808,7 +808,7 @@ having a reference axis.</li>
 <dd><p>Tags each <cite>Monomer</cite> in the Assembly with its solvent accessibility.</p>
 <p class="rubric">Notes</p>
 <dl class="docutils">
-<dt>For more about DSSP’s solvent accessibilty metric, see:</dt>
+<dt>For more about DSSP&#8217;s solvent accessibilty metric, see:</dt>
 <dd><a class="reference external" href="http://swift.cmbi.ru.nl/gv/dssp/HTML/descrip.html#ACC">http://swift.cmbi.ru.nl/gv/dssp/HTML/descrip.html#ACC</a></dd>
 </dl>
 <p>DSSP must be available to call. Check by running
@@ -820,16 +820,16 @@ available, please follow instruction here to add it:
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) “Dictionary of protein
+<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) &#8220;Dictionary of protein
 secondary structure: pattern recognition of hydrogen-bonded
-and geometrical features”, Biopolymers, 22, 2577-637.</td></tr>
+and geometrical features&#8221;, Biopolymers, 22, 2577-637.</td></tr>
 </tbody>
 </table>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True the tag will be run even if Monomers are already tagged</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If True the tag will be run even if Monomers are already tagged</td>
 </tr>
 </tbody>
 </table>
@@ -846,14 +846,14 @@ and geometrical features”, Biopolymers, 22, 2577-637.</td></tr>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, the tag will be run even if <cite>Monomers</cite> are already
+<li><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, the tag will be run even if <cite>Monomers</cite> are already
 tagged.</li>
-<li><strong>tag_type</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Specifies the name of the tag. Defaults to
+<li><strong>tag_type</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Specifies the name of the tag. Defaults to
 <cite>residue_solvent_accessibility</cite>. Useful for specifying more
 than one tag, e.g. if the <cite>Polymer</cite> is part of an <cite>Assembly</cite></li>
-<li><strong>tag_total</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> then the total RSA of the <cite>Assembly</cite> will be tagged
+<li><strong>tag_total</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite> then the total RSA of the <cite>Assembly</cite> will be tagged
 in the <cite>total accessibility</cite> tag.</li>
-<li><strong>include_hetatms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, naccess will run with the -h flag. This means it
+<li><strong>include_hetatms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, naccess will run with the -h flag. This means it
 will correctly run on structures with MSE, although the
 accessibility will be set to -99.9 for these residues.
 Probably best to check if your structure has these before
@@ -868,7 +868,7 @@ using it.</li>
 <dl class="method">
 <dt id="isambard.ampal.assembly.Assembly.tag_secondary_structure">
 <code class="descname">tag_secondary_structure</code><span class="sig-paren">(</span><em>force=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/ampal/assembly.html#Assembly.tag_secondary_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.ampal.assembly.Assembly.tag_secondary_structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tags each <cite>Monomer</cite> in the <cite>Assembly</cite> with it’s secondary structure.</p>
+<dd><p>Tags each <cite>Monomer</cite> in the <cite>Assembly</cite> with it&#8217;s secondary structure.</p>
 <p class="rubric">Notes</p>
 <p>DSSP must be available to call. Check by running
 <cite>isambard.external_programs.dssp.test_dssp</cite>. If DSSP is not
@@ -879,16 +879,16 @@ available, please follow instruction here to add it:
 <table class="docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) “Dictionary of protein
+<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) &#8220;Dictionary of protein
 secondary structure: pattern recognition of hydrogen-bonded
-and geometrical features”, Biopolymers, 22, 2577-637.</td></tr>
+and geometrical features&#8221;, Biopolymers, 22, 2577-637.</td></tr>
 </tbody>
 </table>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True the tag will be run even if <cite>Monomers</cite> are already tagged</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If True the tag will be run even if <cite>Monomers</cite> are already tagged</td>
 </tr>
 </tbody>
 </table>
@@ -902,7 +902,7 @@ and geometrical features”, Biopolymers, 22, 2577-637.</td></tr>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, the tag will be run even if <cite>Monomers</cite> are already
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, the tag will be run even if <cite>Monomers</cite> are already
 tagged.</td>
 </tr>
 </tbody>
@@ -936,7 +936,7 @@ tagged.</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -968,7 +968,7 @@ tagged.</td>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
