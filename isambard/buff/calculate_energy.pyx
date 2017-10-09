@@ -258,7 +258,7 @@ class BuffScore(object):
         assert(len(interactions) == len(scores))
         # Keep only non-zero interactions.
         self.inter_scores = [isc for isc in zip(interactions, scores)
-                             if all(not x for x in isc[1])]
+                             if sum(isc[1])]
         self.steric = 0
         self.desolvation = 0
         self.charge = 0

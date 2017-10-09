@@ -20,7 +20,8 @@ test:
   override:
     - cd /home/ubuntu/isambard
     - python isambard/configure.py -C
-    - nosetests unit_tests/ --with-coverage  --cover-package=isambard
+    - nosetests unit_tests/ --with-coverage --cover-package=add_ons --cover-package=ampal --cover-package=buff --cover-package=external_programs --cover-package=optimisation --cover-package=tools
+>>>>>>> private_rep/release
     - nosetests isambard/ --with-doctest
   post:
     - bash <(curl -s https://codecov.io/bash)
