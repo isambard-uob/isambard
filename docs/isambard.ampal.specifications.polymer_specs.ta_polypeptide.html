@@ -169,9 +169,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-isambard.ampal.specifications.polymer_specs.ta_polypeptide">
-<span id="isambard-ampal-specifications-polymer-specs-ta-polypeptide-module"></span><h1>isambard.ampal.specifications.polymer_specs.ta_polypeptide module<a class="headerlink" href="#module-isambard.ampal.specifications.polymer_specs.ta_polypeptide" title="Permalink to this headline">¶</a></h1>
-<p>Contains functionality for builting protein structure from torsion angles.</p>
+  <div class="section" id="isambard-ampal-specifications-polymer-specs-ta-polypeptide-module">
+<h1>isambard.ampal.specifications.polymer_specs.ta_polypeptide module<a class="headerlink" href="#isambard-ampal-specifications-polymer-specs-ta-polypeptide-module" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-isambard.ampal.specifications.polymer_specs.ta_polypeptide"></span><p>Contains functionality for builting protein structure from torsion angles.</p>
 <dl class="class">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide">
 <em class="property">class </em><code class="descname">TAPolypeptide</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide" title="Permalink to this definition">¶</a></dt>
@@ -197,12 +197,12 @@ Structure. New York: Springer-Verlag, 1979.</td></tr>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>torsion_angles</strong> (<em>list of triples</em>) – Contains lists of torsion angles (omega, phi, psi) that will
+<li><strong>torsion_angles</strong> (<em>list of triples</em>) &#8211; Contains lists of torsion angles (omega, phi, psi) that will
 be used to create the polypeptide. The number of residues
 is equal to the length of this list. The first value of the
 first list (omega) and the last value of the last list (psi)
 will not be used to generate the polypeptide.</li>
-<li><strong>auto_build</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If <cite>true</cite>, the model will be built as part of instantiation.</li>
+<li><strong>auto_build</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <cite>true</cite>, the model will be built as part of instantiation.</li>
 </ul>
 </td>
 </tr>
@@ -211,7 +211,7 @@ will not be used to generate the polypeptide.</li>
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.torsion_angles">
 <code class="descname">torsion_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.torsion_angles" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of triples</em> – Contains lists of torsion angles (omega, phi, psi) that will
+<dd><p><em>list of triples</em> &#8211; Contains lists of torsion angles (omega, phi, psi) that will
 be used to create the polypeptide. The number of residues
 is equal to the length of this list. The first value of the
 first list (omega) and the last value of the last list (psi)
@@ -221,49 +221,49 @@ will not be used to generate the polypeptide.</p>
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.n_ca_bonds">
 <code class="descname">n_ca_bonds</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.n_ca_bonds" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of float</em> – Backbone N-CA bond distances in Angstroms.</p>
+<dd><p><em>list of float</em> &#8211; Backbone N-CA bond distances in Angstroms.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_bonds">
 <code class="descname">ca_c_bonds</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_bonds" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of float</em> – Backbone CA-C bond distances in Angstroms.</p>
+<dd><p><em>list of float</em> &#8211; Backbone CA-C bond distances in Angstroms.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_n_bonds">
 <code class="descname">c_n_bonds</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_n_bonds" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of float</em> – Backbone C-N (peptide) bond distances in Angstroms.</p>
+<dd><p><em>list of float</em> &#8211; Backbone C-N (peptide) bond distances in Angstroms.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_o_bonds">
 <code class="descname">c_o_bonds</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_o_bonds" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of float</em> – Backbone C=O bond distances in Angstroms.</p>
+<dd><p><em>list of float</em> &#8211; Backbone C=O bond distances in Angstroms.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.n_ca_c_angles">
 <code class="descname">n_ca_c_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.n_ca_c_angles" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of float</em> – Backbone N-CA-C bond angle in degrees.</p>
+<dd><p><em>list of float</em> &#8211; Backbone N-CA-C bond angle in degrees.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_o_angles">
 <code class="descname">ca_c_o_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_o_angles" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of float</em> – Backbone CA-C=O bond angle in degrees.</p>
+<dd><p><em>list of float</em> &#8211; Backbone CA-C=O bond angle in degrees.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_n_angles">
 <code class="descname">ca_c_n_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.ca_c_n_angles" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of float</em> – Backbone CA-C-N bond angle in degrees.</p>
+<dd><p><em>list of float</em> &#8211; Backbone CA-C-N bond angle in degrees.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_n_ca_angles">
 <code class="descname">c_n_ca_angles</code><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.c_n_ca_angles" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of float</em> – Backbone C-N-CA bond angle in degrees.</p>
+<dd><p><em>list of float</em> &#8211; Backbone C-N-CA bond angle in degrees.</p>
 </dd></dl>
 
 <dl class="method">
@@ -274,21 +274,21 @@ will not be used to generate the polypeptide.</p>
 
 <dl class="classmethod">
 <dt id="isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.from_polypeptide">
-<em class="property">classmethod </em><code class="descname">from_polypeptide</code><span class="sig-paren">(</span><em>polypeptide</em>, <em>align_model=True</em>, <em>auto_build=True</em><span class="sig-paren">)</span><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.from_polypeptide" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_polypeptide</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isambard.ampal.specifications.polymer_specs.ta_polypeptide.TAPolypeptide.from_polypeptide" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds input polypeptide as a TAPolypeptide</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>polypeptide</strong> (<a class="reference internal" href="isambard.ampal.protein.html#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) – </li>
-<li><strong>align_model</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, runs align() on the TAPolypeptide to align it with
+<li><strong>polypeptide</strong> (<a class="reference internal" href="isambard.ampal.protein.html#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) &#8211; </li>
+<li><strong>align_model</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True, runs align() on the TAPolypeptide to align it with
 the Polypeptide before returning.</li>
-<li><strong>auto_build</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If <cite>true</cite>, the model will be built as part of instantiation.</li>
+<li><strong>auto_build</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <cite>true</cite>, the model will be built as part of instantiation.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – Raised if <cite>polypeptide</cite> is not <cite>ampal.Polypeptide</cite>.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; Raised if <cite>polypeptide</cite> is not <cite>ampal.Polypeptide</cite>.</p>
 </td>
 </tr>
 </tbody>
@@ -320,11 +320,11 @@ The C and O coordinates are determined by input bond length and angles.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>n_ca</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – N-CA bond distance in Angstroms.</li>
-<li><strong>ca_c</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – CA-C bond distance in Angstroms.</li>
-<li><strong>c_o</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – C=O bond distances in Angstroms.</li>
-<li><strong>n_ca_c</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – N-CA-C bond angle in degrees.</li>
-<li><strong>ca_c_o</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – CA-C=O bond angle in degrees.</li>
+<li><strong>n_ca</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; N-CA bond distance in Angstroms.</li>
+<li><strong>ca_c</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; CA-C bond distance in Angstroms.</li>
+<li><strong>c_o</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; C=O bond distances in Angstroms.</li>
+<li><strong>n_ca_c</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; N-CA-C bond angle in degrees.</li>
+<li><strong>ca_c_o</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; CA-C=O bond angle in degrees.</li>
 </ul>
 </td>
 </tr>
@@ -363,7 +363,7 @@ The C and O coordinates are determined by input bond length and angles.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -395,7 +395,7 @@ The C and O coordinates are determined by input bond length and angles.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

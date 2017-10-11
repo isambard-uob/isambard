@@ -180,19 +180,19 @@
 This means that some of the data values are string representations of integers
 - parse these outside of this function if desired.
 An alternative approach to this can be found in Biopython (via the function Bio.PDB.MMCIF2Dict.MMCIF2Dict).
-mmcif files are subject to the usual “here be dragons” problems of the PDB and difficult file formats.
+mmcif files are subject to the usual &#8220;here be dragons&#8221; problems of the PDB and difficult file formats.
 As such, this function is likely to be in a permanent state of flux as more dragons are found.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>mmcif</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – mmcif string or a path to an mmcif file.</li>
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – True if mmcif is a path.</li>
+<li><strong>mmcif</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; mmcif string or a path to an mmcif file.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; True if mmcif is a path.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cif_data</strong> – Keys are cif data names, e.g. ‘_struct_keywords.text’.
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cif_data</strong> &#8211; Keys are cif data names, e.g. &#8216;_struct_keywords.text&#8217;.
 Values are str or list(str).</p>
 </td>
 </tr>
@@ -215,7 +215,7 @@ Values are str or list(str).</p>
 <dd><p>Parse cif_data dict for a subset of its data.</p>
 <p class="rubric">Notes</p>
 <p>cif_data dict contains all the data from the .cif file, with values as strings.
-This function returns a more ‘human readable’ dictionary of key-value pairs.
+This function returns a more &#8216;human readable&#8217; dictionary of key-value pairs.
 The keys have simpler (and still often more descriptive!) names, and the values are not restricted to being strings.
 To add more key-value pairs to the protein_dict, follow the patterns used in this function.
 Add the key and youre name for it to mmcif_data_names.
@@ -229,10 +229,10 @@ The keys of protein_dict MUST match the column names of the Protein model in the
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cif_data</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Key/value pairs taken directly from a .cif file.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cif_data</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Key/value pairs taken directly from a .cif file.
 Output of the function dict_from_mmcif.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>protein_dict</strong> – A dictionary containing a parsed subset of the data in cif_data.
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>protein_dict</strong> &#8211; A dictionary containing a parsed subset of the data in cif_data.
 The keys have the same name as fields in the Protein model.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></td>
@@ -257,13 +257,13 @@ See <a class="reference external" href="http://www.ebi.ac.uk/pdbe/nmr/olderado/"
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pdb_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – The 4-character PDB code for the NMR structure of interest.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pdb_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The 4-character PDB code for the NMR structure of interest.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>model_no</strong> – The conformation number of the most-representative conformation.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>model_no</strong> &#8211; The conformation number of the most-representative conformation.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)">int</a></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If the model number it finds is not an integer. This might indicate that the website format has changed.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the model number it finds is not an integer. This might indicate that the website format has changed.</td>
 </tr>
 </tbody>
 </table>
@@ -282,12 +282,12 @@ G. Wang and R. L. Dunbrack, Jr. PISCES: a protein sequence culling server. Bioin
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pisces_output</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em> or </em><em>path</em>) – Output list of non-redundant protein chains from PISCES, or path to text file.</li>
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – True if path given rather than string.</li>
+<li><strong>pisces_output</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em> or </em><em>path</em>) &#8211; Output list of non-redundant protein chains from PISCES, or path to text file.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; True if path given rather than string.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pisces_dict</strong> – Data output by PISCES in dictionary form.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pisces_dict</strong> &#8211; Data output by PISCES in dictionary form.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></p>
@@ -322,7 +322,7 @@ G. Wang and R. L. Dunbrack, Jr. PISCES: a protein sequence culling server. Bioin
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -354,7 +354,7 @@ G. Wang and R. L. Dunbrack, Jr. PISCES: a protein sequence culling server. Bioin
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

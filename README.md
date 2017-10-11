@@ -2,7 +2,7 @@
 
 ### Intelligent System for Analysis, Model Building And Rational Design.
 
-### Version 2017.2.4 (Aug 23th, 2017), Woolfson Group, University of Bristol.
+### Release 2017.3.0 (Oct 9th, 2017), Woolfson Group, University of Bristol.
 
 [![Python Version](https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg)](https://woolfson-group.github.io/isambard/)
 [![Documentation](https://img.shields.io/badge/docs-master-orange.svg)](https://woolfson-group.github.io/isambard/)
@@ -70,6 +70,14 @@ To ensure that the package is correctly installed unit tests can be run by:
 `python -m unittest discover unit_tests/`
 
 ## Releases
+
+### 2017.3.0
+Adds the `evo_optimizers.py` module, which is a reworked version of 
+`optimizers.py`. The aim was to create a flexible and consistent interface to
+the evolutionary optimizers. Usage is slightly different, see [this
+Gist](https://gist.github.com/ChrisWellsWood/8647d965de2e3c68620daa2dc64de42a)
+for examples. The old optimizer module still exists, but a `PendingDeprecation`
+warning has been added, as it will be removed in version 2.0.0.
 
 ### 2017.2.4
 Fixes a bug with `BuffScore.inter_scores` returned from `score_interactions`

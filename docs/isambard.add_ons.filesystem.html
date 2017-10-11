@@ -172,8 +172,8 @@ There are multiple mmol/dssp files generated.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A PDB code</li>
-<li><strong>data_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Main folder within which FileSystem attributes will be stored.
+<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A PDB code</li>
+<li><strong>data_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Main folder within which FileSystem attributes will be stored.
 Default is the database_dir referenced in settings.json</li>
 </ul>
 </td>
@@ -183,25 +183,25 @@ Default is the database_dir referenced in settings.json</li>
 <dl class="attribute">
 <dt id="isambard.add_ons.filesystem.FileSystem.code">
 <code class="descname">code</code><a class="headerlink" href="#isambard.add_ons.filesystem.FileSystem.code" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – PDB code</p>
+<dd><p><em>str</em> &#8211; PDB code</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.add_ons.filesystem.FileSystem.parent_dir">
 <code class="descname">parent_dir</code><a class="headerlink" href="#isambard.add_ons.filesystem.FileSystem.parent_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Filepath for folder in which all structural subfolders will be stored.</p>
+<dd><p><em>str</em> &#8211; Filepath for folder in which all structural subfolders will be stored.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.add_ons.filesystem.FileSystem.number_of_mmols">
 <code class="descname">number_of_mmols</code><a class="headerlink" href="#isambard.add_ons.filesystem.FileSystem.number_of_mmols" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of .mmol files associated with code in the PDBE.</p>
+<dd><p><em>int</em> &#8211; Number of .mmol files associated with code in the PDBE.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.add_ons.filesystem.FileSystem.preferred_mmol">
 <code class="descname">preferred_mmol</code><a class="headerlink" href="#isambard.add_ons.filesystem.FileSystem.preferred_mmol" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – The mmol number of preferred biological assembly as listed in the PDBe.</p>
+<dd><p><em>int</em> &#8211; The mmol number of preferred biological assembly as listed in the PDBe.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -221,7 +221,7 @@ Calls isambard.external_programs.dssp and so needs dssp to be installed.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>dssps_dict</strong> –<dl class="docutils">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>dssps_dict</strong> &#8211;<dl class="docutils">
 <dt>Keys <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
 <dd>mmol number</dd>
 <dt>Values <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
@@ -231,7 +231,7 @@ Calls isambard.external_programs.dssp and so needs dssp to be installed.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a>, or None.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">Warning</span></code> – If any of the dssp files are empty.</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">Warning</span></code> &#8211; If any of the dssp files are empty.</td>
 </tr>
 </tbody>
 </table>
@@ -245,7 +245,7 @@ Calls isambard.external_programs.dssp and so needs dssp to be installed.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>download</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, downloads the fasta file from the PDB.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>download</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True, downloads the fasta file from the PDB.
 If False, uses the ampal Protein.fasta property
 Defaults to False - this is definitely the recommended behaviour.</td>
 </tr>
@@ -258,7 +258,7 @@ See .fasta property of isambard.ampal.base_ampal.Protein for more information.</
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fastas_dict</strong> –<dl class="docutils">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fastas_dict</strong> &#8211;<dl class="docutils">
 <dt>Keys <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
 <dd>mmol number</dd>
 <dt>Values <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
@@ -282,7 +282,7 @@ See .fasta property of isambard.ampal.base_ampal.Protein for more information.</
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>mmcif_file</strong> – Filepath for the mmcif file.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>mmcif_file</strong> &#8211; Filepath for the mmcif file.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a></td>
 </tr>
@@ -300,7 +300,7 @@ See .fasta property of isambard.ampal.base_ampal.Protein for more information.</
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>mmols_dict</strong> –<dl class="docutils">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>mmols_dict</strong> &#8211;<dl class="docutils">
 <dt>Keys <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
 <dd>mmol number</dd>
 <dt>Values <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
@@ -324,7 +324,7 @@ See .fasta property of isambard.ampal.base_ampal.Protein for more information.</
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>pdb_codes</strong> – List of PDB codes (in lower case).</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>pdb_codes</strong> &#8211; List of PDB codes (in lower case).</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a>)</td>
 </tr>
@@ -340,14 +340,14 @@ See .fasta property of isambard.ampal.base_ampal.Protein for more information.</
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – PDB code.</li>
-<li><strong>mmol_number</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – mmol number (biological assembly number) of file to download. Numbers from PDBe.
+<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; PDB code.</li>
+<li><strong>mmol_number</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; mmol number (biological assembly number) of file to download. Numbers from PDBe.
 If None, defaults to the preferred biological assembly listed for code on the PDBe.</li>
-<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Filepath. Writes returned value to this file.</li>
+<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filepath. Writes returned value to this file.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cif_string</strong> – Content of the cif file as a string.
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cif_string</strong> &#8211; Content of the cif file as a string.
 None if unable to download the cif_file from the pdbe site.</p>
 </td>
 </tr>
@@ -367,12 +367,12 @@ None if unable to download the cif_file from the pdbe site.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – PDB code.</li>
-<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Filepath. Writes returned value to this file.</li>
+<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; PDB code.</li>
+<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filepath. Writes returned value to this file.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mmcif_file</strong> – Filepath to the mmcif file.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mmcif_file</strong> &#8211; Filepath to the mmcif file.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a></p>
@@ -391,14 +391,14 @@ None if unable to download the cif_file from the pdbe site.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – PDB code.</li>
-<li><strong>mmol_number</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – mmol number (biological assembly number) of file to download. Numbers from PDBe.
+<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; PDB code.</li>
+<li><strong>mmol_number</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; mmol number (biological assembly number) of file to download. Numbers from PDBe.
 If None, defaults to the preferred biological assembly listed for code on the PDBe.</li>
-<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Filepath. Writes returned value to this file.</li>
+<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filepath. Writes returned value to this file.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mmol_string</strong> – Content of the mmol file as a string.
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mmol_string</strong> &#8211; Content of the mmol file as a string.
 None if there are no pdbe files to download, as determined by pdbe_status_code().
 None if unable to download the mmol_file from the pdbe site.</p>
 </td>
@@ -406,7 +406,7 @@ None if unable to download the mmol_file from the pdbe site.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a>, or <a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)">None</a></p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If the number of mmols for code is stored in mmols_numbers and if mmol_number is larger than this value.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the number of mmols for code is stored in mmols_numbers and if mmol_number is larger than this value.</p>
 </td>
 </tr>
 </tbody>
@@ -427,9 +427,9 @@ None if unable to download the mmol_file from the pdbe site.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Filepath to a folder containing the PDB folder hierarchy (eg data_dir/eb/2ebo)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filepath to a folder containing the PDB folder hierarchy (eg data_dir/eb/2ebo)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>pdb_code_list</strong> – PDB codes present in data_dir.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>pdb_code_list</strong> &#8211; PDB codes present in data_dir.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a>)</td>
 </tr>
@@ -440,12 +440,12 @@ None if unable to download the mmol_file from the pdbe site.</p>
 <dl class="function">
 <dt id="isambard.add_ons.filesystem.make_code_obsolete">
 <code class="descname">make_code_obsolete</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/add_ons/filesystem.html#make_code_obsolete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.add_ons.filesystem.make_code_obsolete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Moves folders associated with PDB code to obsolete folder in global_settings[“database_dir”]</p>
+<dd><p>Moves folders associated with PDB code to obsolete folder in global_settings[&#8220;database_dir&#8221;]</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – PDB accession code</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; PDB accession code</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
@@ -465,13 +465,13 @@ None if unable to download the mmol_file from the pdbe site.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – PDB code.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; PDB code.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>num_mmols</strong></td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)">int</a></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If no .mmol files are found at all.
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If no .mmol files are found at all.
 Could be due to erroneous input argument, or a problem with connecting to the PDBE.</td>
 </tr>
 </tbody>
@@ -486,7 +486,7 @@ Could be due to erroneous input argument, or a problem with connecting to the PD
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>pdb_codes</strong> – List of PDB codes (in lower case).</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>pdb_codes</strong> &#8211; List of PDB codes (in lower case).</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a>)</td>
 </tr>
@@ -502,9 +502,9 @@ Could be due to erroneous input argument, or a problem with connecting to the PD
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – PDB code to check for on PDBE.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; PDB code to check for on PDBE.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>status_code</strong> – HTTP status code of PDBE url associated with input code.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>status_code</strong> &#8211; HTTP status code of PDBE url associated with input code.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)">int</a></td>
 </tr>
@@ -523,13 +523,13 @@ If code not yet in this json dictionary, uses requests module to scrape the PDBE
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A PDB code.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A PDB code.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>mmol</strong> – mmol number of preferred assembly.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>mmol</strong> &#8211; mmol number of preferred assembly.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)">int</a></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – If ‘mmol number’ scraped is not an integer.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; If &#8216;mmol number&#8217; scraped is not an integer.</td>
 </tr>
 </tbody>
 </table>
@@ -551,7 +551,7 @@ If code not yet in this json dictionary, uses requests module to scrape the PDBE
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -583,7 +583,7 @@ If code not yet in this json dictionary, uses requests module to scrape the PDBE
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

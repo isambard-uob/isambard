@@ -177,11 +177,15 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>interactions</strong> (<em>[</em><em>(</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom" title="isambard.ampal.base_ampal.Atom"><em>Atom</em></a><em>, </em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom" title="isambard.ampal.base_ampal.Atom"><em>Atom</em></a><em>)</em><em>]</em>) – All of the atom pairs in range of interacting in BUFF but not
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>interactions</strong> (<em>[</em><em>(</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom" title="isambard.ampal.base_ampal.Atom"><em>Atom</em></a><em>, </em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom" title="isambard.ampal.base_ampal.Atom"><em>Atom</em></a><em>)</em><em>]</em>) &#8211; All of the atom pairs in range of interacting in BUFF but not
 within covalent bond distance.</li>
-<li><strong>scores</strong> (<em>[</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>)</em><em>]</em>) – List of component BUFF scores</li>
+<li><strong>scores</strong> (<em>[</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>)</em><em>]</em>) &#8211; List of component BUFF scores</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></code> &#8211; Raised if the interaction and score list used to create the
+<cite>BuffScore</cite> are not the same length.</p>
 </td>
 </tr>
 </tbody>
@@ -209,13 +213,13 @@ within covalent bond distance.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ampal_objects</strong> (<a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly"><em>Assembly</em></a><em> or </em><em>[</em><em>AMPAL objects</em><em>]</em>) – Either an assembly or an iterable containing AMPAL objects
+<li><strong>ampal_objects</strong> (<a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly"><em>Assembly</em></a><em> or </em><em>[</em><em>AMPAL objects</em><em>]</em>) &#8211; Either an assembly or an iterable containing AMPAL objects
 that inherits from BaseAmpal.</li>
-<li><strong>distance_cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Distance (Å) to find interactions.</li>
+<li><strong>distance_cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Distance (Å) to find interactions.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>interactions</strong> – All of the atom pairs in range of interacting in BUFF but not within
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>interactions</strong> &#8211; All of the atom pairs in range of interacting in BUFF but not within
 covalent bond distance.</p>
 </td>
 </tr>
@@ -235,14 +239,14 @@ covalent bond distance.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ampal</strong> (<em>AMPAL object</em>) – Any AMPAL object that inherits from BaseAmpal.</li>
-<li><strong>distance_cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Distance (Å) to find interactions.</li>
-<li><strong>no_neighbour_backbone</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Ignore interactions between neighbouring backbone atoms.</li>
-<li><strong>backbone_atoms</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – A tuple containing labels for the backbone atoms in the polymer/s.</li>
+<li><strong>ampal</strong> (<em>AMPAL object</em>) &#8211; Any AMPAL object that inherits from BaseAmpal.</li>
+<li><strong>distance_cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Distance (Å) to find interactions.</li>
+<li><strong>no_neighbour_backbone</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Ignore interactions between neighbouring backbone atoms.</li>
+<li><strong>backbone_atoms</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) &#8211; A tuple containing labels for the backbone atoms in the polymer/s.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>interactions</strong> – All of the atom pairs in range of interacting in BUFF but not within
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>interactions</strong> &#8211; All of the atom pairs in range of interacting in BUFF but not within
 covalent bond distance.</p>
 </td>
 </tr>
@@ -264,12 +268,12 @@ and score_interactions.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ampal_objects</strong> (<a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly"><em>Assembly</em></a><em> or </em><em>[</em><em>AMPAL objects</em><em>]</em>) – Either an assembly or an iterable containing AMPAL objects that inherits from BaseAmpal.</li>
-<li><strong>ff</strong> (<em>buff.BuffForceField</em>) – The force field used for scoring.</li>
+<li><strong>ampal_objects</strong> (<a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly"><em>Assembly</em></a><em> or </em><em>[</em><em>AMPAL objects</em><em>]</em>) &#8211; Either an assembly or an iterable containing AMPAL objects that inherits from BaseAmpal.</li>
+<li><strong>ff</strong> (<em>buff.BuffForceField</em>) &#8211; The force field used for scoring.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> – A BuffScore object with information about each of the interactions and
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> &#8211; A BuffScore object with information about each of the interactions and
 the atoms involved.</p>
 </td>
 </tr>
@@ -291,12 +295,12 @@ and score_interactions.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ampal</strong> (<em>AMPAL Object</em>) – Any AMPAL object that inherits from BaseAmpal.</li>
-<li><strong>ff</strong> (<em>buff.BuffForceField</em>) – The force field used for scoring.</li>
+<li><strong>ampal</strong> (<em>AMPAL Object</em>) &#8211; Any AMPAL object that inherits from BaseAmpal.</li>
+<li><strong>ff</strong> (<em>buff.BuffForceField</em>) &#8211; The force field used for scoring.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> – A BuffScore object with information about each of the
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>buff_score</strong> &#8211; A BuffScore object with information about each of the
 interactions and the atoms involved.</p>
 </td>
 </tr>
@@ -332,7 +336,7 @@ interactions and the atoms involved.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -364,7 +368,7 @@ interactions and the atoms involved.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

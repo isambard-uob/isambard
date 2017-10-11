@@ -193,8 +193,8 @@
 <p>Tagging allows us to store information related to AMPAL objects and
 retrieve it easily later.</p>
 <p>All AMPAL objects have a <code class="docutils literal"><span class="pre">tags</span></code> attribute, which is a dictionary: a
-‘useful place to put stuff’. When we add items to the <code class="docutils literal"><span class="pre">tags</span></code>
-dictionary, we refer to it as ‘tagging’ the AMPAL object. Any Python
+&#8216;useful place to put stuff&#8217;. When we add items to the <code class="docutils literal"><span class="pre">tags</span></code>
+dictionary, we refer to it as &#8216;tagging&#8217; the AMPAL object. Any Python
 object can be stored in <code class="docutils literal"><span class="pre">tags</span></code>.</p>
 <p>The <code class="docutils literal"><span class="pre">tags</span></code> attribute is used to store information internally so that
 certain values only need to be calculated once.</p>
@@ -202,20 +202,20 @@ certain values only need to be calculated once.</p>
 <code class="docutils literal"><span class="pre">strands</span></code>, write to the <code class="docutils literal"><span class="pre">tags</span></code> attribute.</p>
 <p>When you use <code class="docutils literal"><span class="pre">convert_pdb_to_ampal</span></code>, you tag the <code class="docutils literal"><span class="pre">Atoms</span></code> of your
 <code class="docutils literal"><span class="pre">Protein</span></code> with information from the PDB file.</p>
-<p><code class="docutils literal"><span class="pre">BaseAmpal</span></code> has some in-built ‘tagging functions’ that calculate
+<p><code class="docutils literal"><span class="pre">BaseAmpal</span></code> has some in-built &#8216;tagging functions&#8217; that calculate
 things and add the results to the <code class="docutils literal"><span class="pre">tags</span></code> of the appropriate AMPAL
 object.</p>
 </div>
 <div class="section" id="getting-started">
 <h2>2. Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
-<p>First, let’s import some functions from <code class="docutils literal"><span class="pre">isambard</span></code> for making an
+<p>First, let&#8217;s import some functions from <code class="docutils literal"><span class="pre">isambard</span></code> for making an
 <code class="docutils literal"><span class="pre">Assembly</span></code> object.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">isambard</span>
 <span class="kn">from</span> <span class="nn">isambard.ampal</span> <span class="k">import</span> <span class="n">convert_pdb_to_ampal</span>
 </pre></div>
 </div>
-<p>We’ll use the structure
-<a class="reference external" href="http://www.ebi.ac.uk/pdbe/entry/pdb/2ebo">2ebo</a> for this. It’s a
+<p>We&#8217;ll use the structure
+<a class="reference external" href="http://www.ebi.ac.uk/pdbe/entry/pdb/2ebo">2ebo</a> for this. It&#8217;s a
 viral protein containing coiled-coil packing that is involved in fusing
 the membranes of the ebola virus and its host.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">convert_pdb_to_ampal</span><span class="p">(</span><span class="s1">&#39;2ebo.pdb&#39;</span><span class="p">)</span>
@@ -242,14 +242,14 @@ attribute is the pdb code we used to create it.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{}</span>
 </pre></div>
 </div>
-<p>The 3 <code class="docutils literal"><span class="pre">Polypeptides</span></code> in our <code class="docutils literal"><span class="pre">Assembly</span></code> are also AMPAL objects …</p>
+<p>The 3 <code class="docutils literal"><span class="pre">Polypeptides</span></code> in our <code class="docutils literal"><span class="pre">Assembly</span></code> are also AMPAL objects ...</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># The first Polypeptide</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Polypeptide</span> <span class="n">containing</span> <span class="mi">74</span> <span class="n">Residues</span><span class="o">.</span> <span class="n">Sequence</span><span class="p">:</span> <span class="n">GLRQLANETTQA</span><span class="o">...&gt;</span>
 </pre></div>
 </div>
-<p>… and therefore have their own <code class="docutils literal"><span class="pre">tags</span></code>:</p>
+<p>... and therefore have their own <code class="docutils literal"><span class="pre">tags</span></code>:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tags</span>
 </pre></div>
 </div>
@@ -272,7 +272,7 @@ objects with empty <code class="docutils literal"><span class="pre">tags</span><
 </div>
 <p>Each <code class="docutils literal"><span class="pre">Residue</span></code> in our <code class="docutils literal"><span class="pre">Assembly</span></code> is made from <code class="docutils literal"><span class="pre">Atoms</span></code>. Right down
 to the <code class="docutils literal"><span class="pre">Atoms</span></code>, AMPAL objects have <code class="docutils literal"><span class="pre">tags</span></code>.</p>
-<p>Let’s look at the <code class="docutils literal"><span class="pre">tags</span></code> of the backbone Nitrogen <code class="docutils literal"><span class="pre">Atom</span></code> of the
+<p>Let&#8217;s look at the <code class="docutils literal"><span class="pre">tags</span></code> of the backbone Nitrogen <code class="docutils literal"><span class="pre">Atom</span></code> of the
 first <code class="docutils literal"><span class="pre">Residue</span></code> of the first <code class="docutils literal"><span class="pre">Polypeptide</span></code> of our <code class="docutils literal"><span class="pre">Assembly</span></code>.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
 </pre></div>
@@ -288,19 +288,19 @@ first <code class="docutils literal"><span class="pre">Residue</span></code> of 
 </div>
 <div class="line-block">
 <div class="line">Not an empty dictionary!</div>
-<div class="line">That’s because we’ve used a pdb file to generate our <code class="docutils literal"><span class="pre">Protein</span></code>
+<div class="line">That&#8217;s because we&#8217;ve used a pdb file to generate our <code class="docutils literal"><span class="pre">Protein</span></code>
 object.</div>
 <div class="line">There was extra information in there at the <code class="docutils literal"><span class="pre">Atom</span></code> level that we did
-not want to throw away, so we’ve added it to <code class="docutils literal"><span class="pre">tags</span></code> automatically.</div>
+not want to throw away, so we&#8217;ve added it to <code class="docutils literal"><span class="pre">tags</span></code> automatically.</div>
 </div>
 <div class="line-block">
 <div class="line"><a href="#id1"><span class="problematic" id="id2">**</span></a>In summary: **</div>
 <div class="line">AMPAL objects come with <code class="docutils literal"><span class="pre">tags</span></code> dictionaries for us to use if we want
 to.</div>
 <div class="line">Many of these are empty on instantiation so that the AMPAL objects
-don’t carry unnecessary baggage and are lightweight to begin with.</div>
+don&#8217;t carry unnecessary baggage and are lightweight to begin with.</div>
 </div>
-<p>If you’re familiar with adding items to Python dictionaries, then you’re
+<p>If you&#8217;re familiar with adding items to Python dictionaries, then you&#8217;re
 already familiar with adding items to <code class="docutils literal"><span class="pre">tags</span></code>.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;protein_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;viral membrane fusion protein&#39;</span>
 </pre></div>
@@ -325,16 +325,16 @@ its <code class="docutils literal"><span class="pre">tags</span></code>.</p>
 or <a class="reference external" href="http://www.ebi.ac.uk/pdbe/entry/pdb/2ebo">PDBE</a>. Find the
 resolution of the structure and add that to <code class="docutils literal"><span class="pre">tags</span></code>.</li>
 <li>Add another tag to the <code class="docutils literal"><span class="pre">Assembly</span></code> object storing its
-‘<code class="docutils literal"><span class="pre">number_of_residues</span></code>’.
+&#8216;<code class="docutils literal"><span class="pre">number_of_residues</span></code>&#8216;.
 HINT: Use a similar expression to one used for <code class="docutils literal"><span class="pre">number_of_atoms</span></code>.</li>
 <li>Tag each <code class="docutils literal"><span class="pre">Polypeptide</span></code> in the <code class="docutils literal"><span class="pre">Assembly</span></code> with a
-‘<code class="docutils literal"><span class="pre">number_of_atoms</span></code>’ tag, like we did with the whole <code class="docutils literal"><span class="pre">Assembly</span></code>
+&#8216;<code class="docutils literal"><span class="pre">number_of_atoms</span></code>&#8216; tag, like we did with the whole <code class="docutils literal"><span class="pre">Assembly</span></code>
 earlier.</li>
 <li>Tag each <code class="docutils literal"><span class="pre">Residue</span></code> in the first <code class="docutils literal"><span class="pre">Polypeptide</span></code> with a
-‘<code class="docutils literal"><span class="pre">number_of_atoms</span></code>’ tag.</li>
-<li>Tag the second <code class="docutils literal"><span class="pre">Polypeptide</span></code> with a ‘number_of_tryptophans’ tag.
+&#8216;<code class="docutils literal"><span class="pre">number_of_atoms</span></code>&#8216; tag.</li>
+<li>Tag the second <code class="docutils literal"><span class="pre">Polypeptide</span></code> with a &#8216;number_of_tryptophans&#8217; tag.
 HINT: You may want to use <code class="docutils literal"><span class="pre">Counter</span></code> for this. Use
-“<code class="docutils literal"><span class="pre">from</span> <span class="pre">collections</span> <span class="pre">import</span> <span class="pre">Counter</span></code>” to bring this into your
+&#8220;<code class="docutils literal"><span class="pre">from</span> <span class="pre">collections</span> <span class="pre">import</span> <span class="pre">Counter</span></code>&#8221; to bring this into your
 namespace.</li>
 </ol>
 <p>After completing Exercise 1. and 2., you should have 4 items in your
@@ -373,7 +373,7 @@ convenient.</div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">.tags</span></code> dictionary for the first Residue now contains values for
 its <code class="docutils literal"><span class="pre">omega</span></code>, <code class="docutils literal"><span class="pre">phi</span></code> and <code class="docutils literal"><span class="pre">psi</span></code> angles.</p>
-<p>Since it’s the first <code class="docutils literal"><span class="pre">Residue</span></code> of the <code class="docutils literal"><span class="pre">Polypeptide</span></code>, its <code class="docutils literal"><span class="pre">omega</span></code>
+<p>Since it&#8217;s the first <code class="docutils literal"><span class="pre">Residue</span></code> of the <code class="docutils literal"><span class="pre">Polypeptide</span></code>, its <code class="docutils literal"><span class="pre">omega</span></code>
 and <code class="docutils literal"><span class="pre">phi</span></code> torsion angles are not defined and so are set to <code class="docutils literal"><span class="pre">None</span></code>.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tags</span>
 </pre></div>
@@ -395,7 +395,7 @@ their values are now stored in its <code class="docutils literal"><span class="p
  <span class="s1">&#39;tas&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">179.84483742099872</span><span class="p">,</span> <span class="o">-</span><span class="mf">173.24724224577457</span><span class="p">,</span> <span class="mf">119.68790084554132</span><span class="p">)}</span>
 </pre></div>
 </div>
-<p>If we look at a helical residue in the structure, we’ll see the torsion
+<p>If we look at a helical residue in the structure, we&#8217;ll see the torsion
 angles of the <span class="math">\(\alpha\)</span> helix with which we are familiar.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">tags</span>
 </pre></div>
@@ -418,7 +418,7 @@ angles of the <span class="math">\(\alpha\)</span> helix with which we are famil
 and <code class="docutils literal"><span class="pre">strands</span></code> attributes of <code class="docutils literal"><span class="pre">Assembly</span></code> and <code class="docutils literal"><span class="pre">Polypeptide</span></code> objects.</p>
 <p>Underlying these attributes is the tagging function
 <code class="docutils literal"><span class="pre">tag_secondary_structure</span></code>.</p>
-<p>Let’s look at the first <code class="docutils literal"><span class="pre">Residue</span></code> in the first helix of <code class="docutils literal"><span class="pre">a.helices</span></code>.</p>
+<p>Let&#8217;s look at the first <code class="docutils literal"><span class="pre">Residue</span></code> in the first helix of <code class="docutils literal"><span class="pre">a.helices</span></code>.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">helices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -436,9 +436,9 @@ and <code class="docutils literal"><span class="pre">strands</span></code> attri
  <span class="s1">&#39;tas&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">177.09798623768685</span><span class="p">,</span> <span class="o">-</span><span class="mf">75.1600178143756</span><span class="p">,</span> <span class="o">-</span><span class="mf">27.827696876562598</span><span class="p">)}</span>
 </pre></div>
 </div>
-<p>But there’s an additional tag there too.</p>
+<p>But there&#8217;s an additional tag there too.</p>
 <div class="line-block">
-<div class="line">That’s because the <code class="docutils literal"><span class="pre">helices</span></code> method calls the function
+<div class="line">That&#8217;s because the <code class="docutils literal"><span class="pre">helices</span></code> method calls the function
 <code class="docutils literal"><span class="pre">tag_secondary_structure</span></code>.</div>
 <div class="line">You can see this by looking for the <code class="docutils literal"><span class="pre">helices</span></code> property within the
 <code class="docutils literal"><span class="pre">Polypeptide</span></code> class in <code class="docutils literal"><span class="pre">isambard.ampal.protein</span></code>.</div>
@@ -456,7 +456,7 @@ character from the following list:</p>
 </li><li><p>E: Strand</p>
 </li><li><p>G: 3-10 helix</p>
 </li><div class="line-block">
-<div class="line">A blank character ‘ ‘ is used if no secondary structure can be
+<div class="line">A blank character &#8216; &#8216; is used if no secondary structure can be
 assigned.</div>
 <div class="line">I think there is an acronym to help you remember which 7 letters are
 used as one-letter secondary structure assignments.</div>
@@ -505,7 +505,7 @@ though:</div>
 </div>
 <p>We can use the <code class="docutils literal"><span class="pre">tag_secondary_structure</span></code> method to verify that all of
 the <code class="docutils literal"><span class="pre">Residues</span></code> in <code class="docutils literal"><span class="pre">a.helices</span></code> are indeed helical.</p>
-<p>Read the code in the cell below before running it…</p>
+<p>Read the code in the cell below before running it...</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">helices</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;secondary_structure&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> is not helical!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
@@ -515,12 +515,12 @@ the <code class="docutils literal"><span class="pre">Residues</span></code> in <
 <li>Make sure you understand what the code in the cell below is doing.
 Why does it not <code class="docutils literal"><span class="pre">print</span></code> anything?</li>
 <li>What happens when you delete the <code class="docutils literal"><span class="pre">.helices</span></code> part of the first line
-(so that it reads “<code class="docutils literal"><span class="pre">for</span> <span class="pre">res</span> <span class="pre">in</span> <span class="pre">a.get_monomers():</span></code>”?) Why?</li>
+(so that it reads &#8220;<code class="docutils literal"><span class="pre">for</span> <span class="pre">res</span> <span class="pre">in</span> <span class="pre">a.get_monomers():</span></code>&#8221;?) Why?</li>
 <li>Write a list comprehension that will give you a list of all the
 helical residues in an <code class="docutils literal"><span class="pre">Assembly</span></code>.</li>
 <li>Do the exercise above without using the <code class="docutils literal"><span class="pre">helices</span></code> method.</li>
 </ol>
-<p>Have a think about what is going on ‘behind the scenes’ when you run
+<p>Have a think about what is going on &#8216;behind the scenes&#8217; when you run
 <code class="docutils literal"><span class="pre">tag_secondary_structure</span></code>. - The program DSSP is run, using the
 <code class="docutils literal"><span class="pre">pdb</span></code> attribute of the <code class="docutils literal"><span class="pre">Assembly</span></code> object as its input. - The output
 from DSSP is collected and parsed it for its secondary structure
@@ -528,7 +528,7 @@ assignments. - These assignments are added back into the <code class="docutils l
 object in the appropriate place. - Here, the appropriate place is the
 <code class="docutils literal"><span class="pre">tags</span></code> attributes of the <code class="docutils literal"><span class="pre">Residue</span></code> objects.</p>
 <div class="line-block">
-<div class="line">Further, what is going on ‘behind the scenes’ when you use the
+<div class="line">Further, what is going on &#8216;behind the scenes&#8217; when you use the
 <code class="docutils literal"><span class="pre">helices</span></code> method?</div>
 <div class="line">- <code class="docutils literal"><span class="pre">tag_secondary_structure</span></code> is run (and therefore all of the steps
 above are carried out). - The <code class="docutils literal"><span class="pre">seconadary_structure</span></code> tag for each
@@ -548,27 +548,27 @@ object. - It is this new <code class="docutils literal"><span class="pre">Assemb
 your <code class="docutils literal"><span class="pre">Assembly</span></code> or <code class="docutils literal"><span class="pre">Polypeptide</span></code> object, they run some calculations
 for you, and add the results to the <code class="docutils literal"><span class="pre">tags</span></code> atrribute of the relevant
 object(s) in the AMPAL framework.</p>
-<p>Try typing “<code class="docutils literal"><span class="pre">a.tag_</span></code>” into the code cell below, and then pressing the
+<p>Try typing &#8220;<code class="docutils literal"><span class="pre">a.tag_</span></code>&#8221; into the code cell below, and then pressing the
 <code class="docutils literal"><span class="pre">Shift</span></code> key on your keyboard.</p>
 <p>You should see a pop-up listing a small number of tagging functions, two
-of which we have already explored. We’ll cover two more of these very
+of which we have already explored. We&#8217;ll cover two more of these very
 briefly here, but feel free to look at / play around with the remaining
 tagging functions.</p>
 <div class="section" id="tag-ca-geometry">
 <h3>tag_ca_geometry<a class="headerlink" href="#tag-ca-geometry" title="Permalink to this headline">¶</a></h3>
 <p>Running the <code class="docutils literal"><span class="pre">tag_ca_geometry</span></code> function tags each <code class="docutils literal"><span class="pre">Residue</span></code> of the
-<code class="docutils literal"><span class="pre">Protein</span></code> with values for ‘rise_per_residue’,
-‘radius_of_curvature’ and ‘residues_per_turn’.</p>
-<p>The concepts of ‘rise_per_residue’ and ‘residues_per_turn’ can be
+<code class="docutils literal"><span class="pre">Protein</span></code> with values for &#8216;rise_per_residue&#8217;,
+&#8216;radius_of_curvature&#8217; and &#8216;residues_per_turn&#8217;.</p>
+<p>The concepts of &#8216;rise_per_residue&#8217; and &#8216;residues_per_turn&#8217; can be
 calculated for any region of the protein structure. The
-‘radius_of_curvature’ represents how bent or straight a part of the
+&#8216;radius_of_curvature&#8217; represents how bent or straight a part of the
 protein backbone is, with the largest values occurring at the
 straightest regions of the structure.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">tag_ca_geometry</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Let’s look at the <code class="docutils literal"><span class="pre">tags</span></code> of a helical <code class="docutils literal"><span class="pre">Residue</span></code>. The values for
-‘residues_per_turn’ and ‘rise_per_residue’ are what we’d expect to
+<p>Let&#8217;s look at the <code class="docutils literal"><span class="pre">tags</span></code> of a helical <code class="docutils literal"><span class="pre">Residue</span></code>. The values for
+&#8216;residues_per_turn&#8217; and &#8216;rise_per_residue&#8217; are what we&#8217;d expect to
 see for something in an <span class="math">\(\alpha\)</span> helix.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">tags</span>
 </pre></div>
@@ -627,7 +627,7 @@ Notice their similar structure.</div>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -659,7 +659,7 @@ Notice their similar structure.</div>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

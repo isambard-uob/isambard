@@ -189,7 +189,7 @@ intuitive way.</p>
 <p>All protein models produced by ISAMBARD are AMPAL objects, but you can
 also load in crystal structures.</p>
 <blockquote>
-<div><p><strong>Q. So why aren’t these objects just called Protein, Chain and
+<div><p><strong>Q. So why aren&#8217;t these objects just called Protein, Chain and
 Residue?</strong></p>
 <p>Well, there are <code class="docutils literal"><span class="pre">Polypeptide</span></code>, and <code class="docutils literal"><span class="pre">Residue</span></code> objects, but they
 are just protein-specific versions of <code class="docutils literal"><span class="pre">Polymer</span></code> and <code class="docutils literal"><span class="pre">Monomer</span></code>.
@@ -220,7 +220,7 @@ variable and look inside it.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span> <span class="o">=</span> <span class="n">isambard</span><span class="o">.</span><span class="n">ampal</span><span class="o">.</span><span class="n">convert_pdb_to_ampal</span><span class="p">(</span><span class="s1">&#39;3qy1.pdb&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Remember if you are using the object in Jupyter Notebook once it’s
+<p>Remember if you are using the object in Jupyter Notebook once it&#8217;s
 assigned to a variable, you can have a look at its attributes and
 methods by typing <code class="docutils literal"><span class="pre">my_protein.</span></code> and then pressing tab.</p>
 </div>
@@ -274,7 +274,7 @@ accessing items in a standard Python list:</p>
 </pre></div>
 </div>
 <p>You can also select a <code class="docutils literal"><span class="pre">Polymer</span></code> using a string of the chain id from
-the PDB file. In this case there are two chains ‘A’ and ‘B’.</p>
+the PDB file. In this case there are two chains &#8216;A&#8217; and &#8216;B&#8217;.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_protein</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -353,7 +353,7 @@ objects. You can access the <code class="docutils literal"><span class="pre">Res
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Residue</span> <span class="n">containing</span> <span class="mi">8</span> <span class="n">Atoms</span><span class="o">.</span> <span class="n">Residue</span> <span class="n">code</span><span class="p">:</span> <span class="n">ILE</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>If you use a residue number that isn’t defined in the PDB a <code class="docutils literal"><span class="pre">KeyError</span></code>
+<p>If you use a residue number that isn&#8217;t defined in the PDB a <code class="docutils literal"><span class="pre">KeyError</span></code>
 will be raised:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">my_chain_a</span><span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">]</span>
 </pre></div>
@@ -475,8 +475,8 @@ the C<span class="math">\(\alpha\)</span> atom of the residue can be selected li
 </div>
 <div class="section" id="ampal-parents">
 <h2>6. AMPAL Parents<a class="headerlink" href="#ampal-parents" title="Permalink to this headline">¶</a></h2>
-<p>Hopefully you can see that it’s easy to traverse down the AMPAL
-framework from <code class="docutils literal"><span class="pre">Assembly</span></code> level to the <code class="docutils literal"><span class="pre">Atom</span></code> level, but it’s just
+<p>Hopefully you can see that it&#8217;s easy to traverse down the AMPAL
+framework from <code class="docutils literal"><span class="pre">Assembly</span></code> level to the <code class="docutils literal"><span class="pre">Atom</span></code> level, but it&#8217;s just
 as easy to work your way back up. With any AMPAL object you can use the
 <code class="docutils literal"><span class="pre">ampal_parent</span></code> attribute to find the AMPAL object that it is contained
 inside.</p>
@@ -626,7 +626,7 @@ through it (tip: you can do this with the IPython file browser)</li>
 </ol>
 </li>
 </ol>
-<p>In the next section we’ll look at how we can perform more complex
+<p>In the next section we&#8217;ll look at how we can perform more complex
 selections and more detailed analysis on these objects.</p>
 </div>
 </div>
@@ -654,7 +654,7 @@ selections and more detailed analysis on these objects.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -686,7 +686,7 @@ selections and more detailed analysis on these objects.</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

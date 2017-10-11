@@ -178,12 +178,12 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>monomers</strong> (<a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue"><em>Residue</em></a><em> or </em><em>[</em><a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue"><em>Residue</em></a><em>]</em><em>, </em><em>optional</em>) – <cite>Residue</cite> or list containing <cite>Residue</cite> objects to form the
+<li><strong>monomers</strong> (<a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue"><em>Residue</em></a><em> or </em><em>[</em><a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue"><em>Residue</em></a><em>]</em><em>, </em><em>optional</em>) &#8211; <cite>Residue</cite> or list containing <cite>Residue</cite> objects to form the
 <cite>Polypeptide</cite>.</li>
-<li><strong>polymer_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – An ID that the user can use to identify the <cite>Polypeptide</cite>. This is
+<li><strong>polymer_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; An ID that the user can use to identify the <cite>Polypeptide</cite>. This is
 used when generating a pdb file using <cite>Polypeptide().pdb</cite>.</li>
-<li><strong>ampal_parent</strong> (<em>ampal.Assembly</em><em>, </em><em>optional</em>) – Reference to <cite>Assembly</cite> containing the <cite>Polymer</cite>.</li>
-<li><strong>sl</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The default smoothing level used when calculating the
+<li><strong>ampal_parent</strong> (<em>ampal.Assembly</em><em>, </em><em>optional</em>) &#8211; Reference to <cite>Assembly</cite> containing the <cite>Polymer</cite>.</li>
+<li><strong>sl</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; The default smoothing level used when calculating the
 backbone primitive.</li>
 </ul>
 </td>
@@ -193,32 +193,32 @@ backbone primitive.</li>
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Polypeptide.id">
 <code class="descname">id</code><a class="headerlink" href="#isambard.ampal.protein.Polypeptide.id" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – <cite>Polypeptide</cite> ID</p>
+<dd><p><em>str</em> &#8211; <cite>Polypeptide</cite> ID</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Polypeptide.ampal_parent">
 <code class="descname">ampal_parent</code><a class="headerlink" href="#isambard.ampal.protein.Polypeptide.ampal_parent" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ampal.Assembly or None</em> – Reference to <cite>Assembly</cite> containing the <cite>Polypeptide</cite></p>
+<dd><p><em>ampal.Assembly or None</em> &#8211; Reference to <cite>Assembly</cite> containing the <cite>Polypeptide</cite></p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Polypeptide.molecule_type">
 <code class="descname">molecule_type</code><a class="headerlink" href="#isambard.ampal.protein.Polypeptide.molecule_type" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – A description of the type of <cite>Polymer</cite> i.e. Protein, DNA etc.</p>
+<dd><p><em>str</em> &#8211; A description of the type of <cite>Polymer</cite> i.e. Protein, DNA etc.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Polypeptide.ligands">
 <code class="descname">ligands</code><a class="headerlink" href="#isambard.ampal.protein.Polypeptide.ligands" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ampal.LigandGroup</em> – A <cite>LigandGroup</cite> containing all the <cite>Ligands</cite> associated with this
+<dd><p><em>ampal.LigandGroup</em> &#8211; A <cite>LigandGroup</cite> containing all the <cite>Ligands</cite> associated with this
 <cite>Polypeptide</cite> chain.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Polypeptide.tags">
 <code class="descname">tags</code><a class="headerlink" href="#isambard.ampal.protein.Polypeptide.tags" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – A dictionary containing information about this AMPAL object.
+<dd><p><em>dict</em> &#8211; A dictionary containing information about this AMPAL object.
 The tags dictionary is used by AMPAL to cache information
 about this object, but is also intended to be used by users
 to store any relevant information they have.</p>
@@ -227,7 +227,7 @@ to store any relevant information they have.</p>
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Polypeptide.sl">
 <code class="descname">sl</code><a class="headerlink" href="#isambard.ampal.protein.Polypeptide.sl" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – The default smoothing level used when calculating the
+<dd><p><em>int</em> &#8211; The default smoothing level used when calculating the
 backbone primitive.</p>
 </dd></dl>
 
@@ -235,7 +235,7 @@ backbone primitive.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – <cite>Polymer</cite> type objects can only be initialised empty or using
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; <cite>Polymer</cite> type objects can only be initialised empty or using
 a <cite>Monomer</cite>.</td>
 </tr>
 </tbody>
@@ -251,7 +251,7 @@ Sequence data is retained, but only the main chain atoms are retained.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bb_poly</strong> – Polymer containing only the backbone atoms of the original
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bb_poly</strong> &#8211; Polymer containing only the backbone atoms of the original
 Polymer.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide">Polypeptide</a></td>
@@ -268,7 +268,7 @@ Polymer.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bond_angles</strong> – Keys are <cite>n_ca_c</cite>, <cite>ca_c_o</cite>, <cite>ca_c_n</cite> and <cite>c_n_ca</cite>, referring
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bond_angles</strong> &#8211; Keys are <cite>n_ca_c</cite>, <cite>ca_c_o</cite>, <cite>ca_c_n</cite> and <cite>c_n_ca</cite>, referring
 to the N-CA-C, CA-C=O, CA-C-N and C-N-CA angles respectively.
 Values are lists of floats : the bond angles in degrees.
 The lists of n_ca_c, ca_c_o are of length k for a <cite>Polypeptide</cite>
@@ -291,7 +291,7 @@ between successive <cite>Residue</cite> pairs).</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bond_lengths</strong> – Keys are <cite>n_ca</cite>, <cite>ca_c</cite>, <cite>c_o</cite> and <cite>c_n</cite>, referring to the
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bond_lengths</strong> &#8211; Keys are <cite>n_ca</cite>, <cite>ca_c</cite>, <cite>c_o</cite> and <cite>c_n</cite>, referring to the
 N-CA, CA-C, C=O and C-N bonds respectively. Values are
 lists of floats : the bond lengths in Angstroms.
 The lists of n_ca, ca_c and c_o are of length k for
@@ -321,8 +321,8 @@ cap of the same type will overwrite the original one.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>cap</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Type of cap to be added. Options: ‘acid’, ‘amide’</li>
-<li><strong>cap_dihedral</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Alternate psi angle to be used when added cap.</li>
+<li><strong>cap</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Type of cap to be added. Options: &#8216;acid&#8217;, &#8216;amide&#8217;</li>
+<li><strong>cap_dihedral</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Alternate psi angle to be used when added cap.</li>
 </ul>
 </td>
 </tr>
@@ -341,27 +341,27 @@ cap of the same type will overwrite the original one.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>other</strong> (<a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue"><em>Residue</em></a><em> or </em><a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) – </li>
-<li><strong>psi</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Psi torsion angle (degrees) between final <cite>Residue</cite> of self
+<li><strong>other</strong> (<a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue"><em>Residue</em></a><em> or </em><a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) &#8211; </li>
+<li><strong>psi</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Psi torsion angle (degrees) between final <cite>Residue</cite> of self
 and first <cite>Residue</cite> of other.</li>
-<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Omega torsion angle (degrees) between final <cite>Residue</cite> of
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Omega torsion angle (degrees) between final <cite>Residue</cite> of
 self and first <cite>Residue</cite> of other.</li>
-<li><strong>phi</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Phi torsion angle (degrees) between final <cite>Residue</cite> of self
+<li><strong>phi</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Phi torsion angle (degrees) between final <cite>Residue</cite> of self
 and first <cite>Residue</cite> of other.</li>
-<li><strong>o_c_n_angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em>, </em><em>optional</em>) – Desired angle between O, C (final <cite>Residue</cite> of self) and N
+<li><strong>o_c_n_angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em>, </em><em>optional</em>) &#8211; Desired angle between O, C (final <cite>Residue</cite> of self) and N
 (first <cite>Residue</cite> of other) atoms. If <cite>None</cite>, default value is
 taken from <cite>ideal_backbone_bond_angles</cite>.</li>
-<li><strong>c_n_ca_angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em>, </em><em>optional</em>) – Desired angle between C (final <cite>Residue</cite> of self) and N, CA
+<li><strong>c_n_ca_angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em>, </em><em>optional</em>) &#8211; Desired angle between C (final <cite>Residue</cite> of self) and N, CA
 (first <cite>Residue</cite> of other) atoms. If <cite>None</cite>, default value is
 taken from <cite>ideal_backbone_bond_angles</cite>.</li>
-<li><strong>c_n_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em>, </em><em>optional</em>) – Desired peptide bond length between final <cite>Residue</cite> of self
+<li><strong>c_n_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em>, </em><em>optional</em>) &#8211; Desired peptide bond length between final <cite>Residue</cite> of self
 and first <cite>Residue</cite> of other. If <cite>None</cite>, default value is taken
 from <cite>ideal_backbone_bond_lengths</cite>.</li>
-<li><strong>relabel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, <cite>relabel_all</cite> is run on self before returning.</li>
+<li><strong>relabel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, <cite>relabel_all</cite> is run on self before returning.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError: – If other is not a <cite>Residue</cite> or a Polypeptide.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError: &#8211; If other is not a <cite>Residue</cite> or a Polypeptide.</p>
 </td>
 </tr>
 </tbody>
@@ -383,12 +383,12 @@ from <cite>ideal_backbone_bond_lengths</cite>.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – string representing start residue id (PDB numbering)</li>
-<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – string representing end residue id (PDB numbering)</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; string representing start residue id (PDB numbering)</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; string representing end residue id (PDB numbering)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>slice_polymer</strong> – Polymer containing the residue range specified by start-end</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>slice_polymer</strong> &#8211; Polymer containing the residue range specified by start-end</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Polymer" title="isambard.ampal.base_ampal.Polymer">Polymer</a></p>
@@ -408,7 +408,7 @@ from <cite>ideal_backbone_bond_lengths</cite>.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>hel_assembly</strong> – <cite>Assembly</cite> containing only the alpha-helices of the
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>hel_assembly</strong> &#8211; <cite>Assembly</cite> containing only the alpha-helices of the
 original <cite>Polymer</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly">Assembly</a></td>
@@ -451,8 +451,8 @@ for other caps.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>cap</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Type of cap to be added. Options: ‘acetyl’</li>
-<li><strong>cap_dihedral</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Alternate psi angle to be used when added cap.</li>
+<li><strong>cap</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Type of cap to be added. Options: &#8216;acetyl&#8217;</li>
+<li><strong>cap_dihedral</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Alternate psi angle to be used when added cap.</li>
 </ul>
 </td>
 </tr>
@@ -471,27 +471,27 @@ for other caps.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>other</strong> (<a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue"><em>Residue</em></a><em> or </em><a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) – </li>
-<li><strong>psi</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Psi torsion angle (degrees) between final <cite>Residue</cite> of other
+<li><strong>other</strong> (<a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue"><em>Residue</em></a><em> or </em><a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) &#8211; </li>
+<li><strong>psi</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Psi torsion angle (degrees) between final <cite>Residue</cite> of other
 and first <cite>Residue</cite> of self.</li>
-<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Omega torsion angle (degrees) between final <cite>Residue</cite> of
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Omega torsion angle (degrees) between final <cite>Residue</cite> of
 other and first <cite>Residue</cite> of self.</li>
-<li><strong>phi</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Phi torsion angle (degrees) between final <cite>Residue</cite> of other
+<li><strong>phi</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Phi torsion angle (degrees) between final <cite>Residue</cite> of other
 and first <cite>Residue</cite> of self.</li>
-<li><strong>o_c_n_angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a>) – Desired angle between O, C (final <cite>Residue</cite> of other) and N
+<li><strong>o_c_n_angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a>) &#8211; Desired angle between O, C (final <cite>Residue</cite> of other) and N
 (first <cite>Residue</cite> of self) atoms. If <cite>None</cite>, default value is
 taken from <cite>ideal_backbone_bond_angles</cite>.</li>
-<li><strong>c_n_ca_angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a>) – Desired angle between C (final <cite>Residue</cite> of other) and N, CA
+<li><strong>c_n_ca_angle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a>) &#8211; Desired angle between C (final <cite>Residue</cite> of other) and N, CA
 (first <cite>Residue</cite> of self) atoms. If <cite>None</cite>, default value is taken
 from <cite>ideal_backbone_bond_angles</cite>.</li>
-<li><strong>c_n_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a>) – Desired peptide bond length between final <cite>Residue</cite> of other
+<li><strong>c_n_length</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a>) &#8211; Desired peptide bond length between final <cite>Residue</cite> of other
 and first <cite>Residue</cite> of self. If None, default value is taken
 from ideal_backbone_bond_lengths.</li>
-<li><strong>relabel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, relabel_all is run on self before returning.</li>
+<li><strong>relabel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True, relabel_all is run on self before returning.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError: – If other is not a <cite>Residue</cite> or a <cite>Polypeptide</cite></p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError: &#8211; If other is not a <cite>Residue</cite> or a <cite>Polypeptide</cite></p>
 </td>
 </tr>
 </tbody>
@@ -506,10 +506,10 @@ from ideal_backbone_bond_lengths.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sequence</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – String containing the amino acid sequence. This must
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sequence</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; String containing the amino acid sequence. This must
 be the same length as the Polymer</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if the sequence length does not match the
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; Raised if the sequence length does not match the
 number of monomers in the Polymer.</td>
 </tr>
 </tbody>
@@ -553,7 +553,7 @@ of <cite>sl</cite> <cite>Residues</cite>.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>sequence</strong> – String of the <cite>Residue</cite> sequence of the <cite>Polypeptide</cite>.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>sequence</strong> &#8211; String of the <cite>Residue</cite> sequence of the <cite>Polypeptide</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)">str</a></td>
 </tr>
@@ -571,7 +571,7 @@ of <cite>sl</cite> <cite>Residues</cite>.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>strand_assembly</strong> – <cite>Assembly</cite> containing only the beta-strand atoms of
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>strand_assembly</strong> &#8211; <cite>Assembly</cite> containing only the beta-strand atoms of
 the original <cite>Polymer</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="isambard.ampal.assembly.html#isambard.ampal.assembly.Assembly" title="isambard.ampal.assembly.Assembly">Assembly</a></td>
@@ -589,11 +589,11 @@ the original <cite>Polymer</cite>.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> the tag will be run even if <cite>Residues</cite> are already
+<li><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite> the tag will be run even if <cite>Residues</cite> are already
 tagged.</li>
-<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em><em>, </em><em>optional</em>) – Coordinates to feed to geometry functions that depend on
+<li><strong>reference_axis</strong> (<em>list</em><em>(</em><em>numpy.array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a><em> or </em><em>list</em><em>)</em><em>, </em><em>optional</em>) &#8211; Coordinates to feed to geometry functions that depend on
 having a reference axis.</li>
-<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Used to name the keys in tags at <cite>Polypeptide</cite> and <cite>Residue</cite> level.</li>
+<li><strong>reference_axis_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Used to name the keys in tags at <cite>Polypeptide</cite> and <cite>Residue</cite> level.</li>
 </ul>
 </td>
 </tr>
@@ -607,23 +607,23 @@ having a reference axis.</li>
 <dd><p>Tags each <cite>Residues</cite> Polymer with its solvent accessibility.</p>
 <p class="rubric">Notes</p>
 <dl class="docutils">
-<dt>For more about DSSP’s solvent accessibilty metric, see:</dt>
+<dt>For more about DSSP&#8217;s solvent accessibilty metric, see:</dt>
 <dd><a class="reference external" href="http://swift.cmbi.ru.nl/gv/dssp/HTML/descrip.html#ACC">http://swift.cmbi.ru.nl/gv/dssp/HTML/descrip.html#ACC</a></dd>
 </dl>
 <p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) “Dictionary of protein
+<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) &#8220;Dictionary of protein
 secondary structure: pattern recognition of hydrogen-bonded
-and geometrical features”, Biopolymers, 22, 2577-637.</td></tr>
+and geometrical features&#8221;, Biopolymers, 22, 2577-637.</td></tr>
 </tbody>
 </table>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> the tag will be run even if <cite>Residues</cite> are
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite> the tag will be run even if <cite>Residues</cite> are
 already tagged.</td>
 </tr>
 </tbody>
@@ -643,7 +643,7 @@ NACCESS writes.</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td>Hubbard,S.J. &amp; Thornton, J.M. (1993), ‘NACCESS’,
+<tr><td class="label">[1]</td><td>Hubbard,S.J. &amp; Thornton, J.M. (1993), &#8216;NACCESS&#8217;,
 Computer Program, Department of Biochemistry and Molecular
 Biology, University College London.</td></tr>
 </tbody>
@@ -653,16 +653,16 @@ Biology, University College London.</td></tr>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, the ta will be run even if <cite>Residues</cite> are
+<li><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite>, the ta will be run even if <cite>Residues</cite> are
 already tagged.</li>
-<li><strong>tag_type</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Specifies the name of the tag. Defaults to
-‘residue_solvent_accessibility’. Useful for specifying more
+<li><strong>tag_type</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Specifies the name of the tag. Defaults to
+&#8216;residue_solvent_accessibility&#8217;. Useful for specifying more
 than one tag, e.g. if the Polymer is part of an Assembly.</li>
-<li><strong>tag_total</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True then the total rsa of the Polymer will be tagged
-in the ‘total accessibility’ tag.</li>
-<li><strong>include_hetatms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If true then NACCESS will run with the -h flag and will
+<li><strong>tag_total</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If True then the total rsa of the Polymer will be tagged
+in the &#8216;total accessibility&#8217; tag.</li>
+<li><strong>include_hetatms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If true then NACCESS will run with the -h flag and will
 include heteroatom solvent accessibility where it can.
-Helpful if your file has MSE residues that you don’t
+Helpful if your file has MSE residues that you don&#8217;t
 convert to MET, but best check if they are there
 before using the flag.</li>
 </ul>
@@ -686,16 +686,16 @@ available, please follow instruction here to add it:
 <table class="docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) “Dictionary of protein
+<tr><td class="label">[1]</td><td>Kabsch W, Sander C (1983) &#8220;Dictionary of protein
 secondary structure: pattern recognition of hydrogen-bonded
-and geometrical features”, Biopolymers, 22, 2577-637.</td></tr>
+and geometrical features&#8221;, Biopolymers, 22, 2577-637.</td></tr>
 </tbody>
 </table>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> the tag will be run even if <cite>Residues</cite> are
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite> the tag will be run even if <cite>Residues</cite> are
 already tagged.</td>
 </tr>
 </tbody>
@@ -721,7 +721,7 @@ already tagged.</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> the tag will be run even if <cite>Residues</cite> are
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>True</cite> the tag will be run even if <cite>Residues</cite> are
 already tagged.</td>
 </tr>
 </tbody>
@@ -746,7 +746,7 @@ Protein Structure. New York: Springer-Verlag, 1979.</td></tr>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance value in degrees for the absolute deviation
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Tolerance value in degrees for the absolute deviation
 away from ideal backbone bond angles.</td>
 </tr>
 </tbody>
@@ -771,7 +771,7 @@ Protein Structure. New York: Springer-Verlag, 1979.</td></tr>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance value in Angstoms for the absolute deviation
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Tolerance value in Angstoms for the absolute deviation
 away from ideal backbone bond lengths.</td>
 </tr>
 </tbody>
@@ -790,14 +790,14 @@ away from ideal backbone bond lengths.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>atoms</strong> (<em>OrderedDict</em><em>, </em><em>optional</em>) – OrderedDict containing Atoms for the Monomer. OrderedDict
+<li><strong>atoms</strong> (<em>OrderedDict</em><em>, </em><em>optional</em>) &#8211; OrderedDict containing Atoms for the Monomer. OrderedDict
 is used to maintain the order items were added to the
 dictionary.</li>
-<li><strong>mol_code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – One or three letter code that represents the monomer.</li>
-<li><strong>monomer_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – String used to identify the residue.</li>
-<li><strong>insertion_code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Insertion code of monomer, used if reading from pdb.</li>
-<li><strong>is_hetero</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – True if is a hetero atom in pdb. Helps with PDB formatting.</li>
-<li><strong>ampal_parent</strong> (<em>ampal.Polypeptide</em><em>, </em><em>optional</em>) – Reference to <cite>Polypeptide</cite> containing the <cite>Residue</cite>.</li>
+<li><strong>mol_code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; One or three letter code that represents the monomer.</li>
+<li><strong>monomer_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; String used to identify the residue.</li>
+<li><strong>insertion_code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Insertion code of monomer, used if reading from pdb.</li>
+<li><strong>is_hetero</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; True if is a hetero atom in pdb. Helps with PDB formatting.</li>
+<li><strong>ampal_parent</strong> (<em>ampal.Polypeptide</em><em>, </em><em>optional</em>) &#8211; Reference to <cite>Polypeptide</cite> containing the <cite>Residue</cite>.</li>
 </ul>
 </td>
 </tr>
@@ -806,38 +806,38 @@ dictionary.</li>
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Residue.mol_code">
 <code class="descname">mol_code</code><a class="headerlink" href="#isambard.ampal.protein.Residue.mol_code" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – PDB molecule code that represents the <cite>Residue</cite>.</p>
+<dd><p><em>str</em> &#8211; PDB molecule code that represents the <cite>Residue</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Residue.insertion_code">
 <code class="descname">insertion_code</code><a class="headerlink" href="#isambard.ampal.protein.Residue.insertion_code" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Insertion code of <cite>Residue</cite>, used if reading from pdb.</p>
+<dd><p><em>str</em> &#8211; Insertion code of <cite>Residue</cite>, used if reading from pdb.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Residue.is_hetero">
 <code class="descname">is_hetero</code><a class="headerlink" href="#isambard.ampal.protein.Residue.is_hetero" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – True if is a hetero atom in pdb. Helps with PDB formatting.</p>
+<dd><p><em>bool</em> &#8211; True if is a hetero atom in pdb. Helps with PDB formatting.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Residue.states">
 <code class="descname">states</code><a class="headerlink" href="#isambard.ampal.protein.Residue.states" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – Contains an <cite>OrderedDicts</cite> containing atom information for each
+<dd><p><em>dict</em> &#8211; Contains an <cite>OrderedDicts</cite> containing atom information for each
 state available for the <cite>Residue</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Residue.id">
 <code class="descname">id</code><a class="headerlink" href="#isambard.ampal.protein.Residue.id" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – String used to identify the residue.</p>
+<dd><p><em>str</em> &#8211; String used to identify the residue.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Residue.reference_atom">
 <code class="descname">reference_atom</code><a class="headerlink" href="#isambard.ampal.protein.Residue.reference_atom" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – The key that corresponds to the reference atom. This is used
+<dd><p><em>str</em> &#8211; The key that corresponds to the reference atom. This is used
 by various functions, for example backbone primitives are
 calculated using the atom defined using this key.</p>
 </dd></dl>
@@ -845,13 +845,13 @@ calculated using the atom defined using this key.</p>
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Residue.ampal_parent">
 <code class="descname">ampal_parent</code><a class="headerlink" href="#isambard.ampal.protein.Residue.ampal_parent" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Polypeptide or None</em> – A reference to the <cite>Polypeptide</cite> containing this <cite>Residue</cite>.</p>
+<dd><p><em>Polypeptide or None</em> &#8211; A reference to the <cite>Polypeptide</cite> containing this <cite>Residue</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.protein.Residue.tags">
 <code class="descname">tags</code><a class="headerlink" href="#isambard.ampal.protein.Residue.tags" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – A dictionary containing information about this AMPAL object.
+<dd><p><em>dict</em> &#8211; A dictionary containing information about this AMPAL object.
 The tags dictionary is used by AMPAL to cache information
 about this object, but is also intended to be used by users
 to store any relevant information they have.</p>
@@ -861,7 +861,7 @@ to store any relevant information they have.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if <cite>mol_code</cite> is not length 1 or 3.</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; Raised if <cite>mol_code</cite> is not length 1 or 3.</td>
 </tr>
 </tbody>
 </table>
@@ -873,12 +873,12 @@ to store any relevant information they have.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bb_monomer</strong> – <cite>Residue</cite> containing only the backbone atoms of the original
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bb_monomer</strong> &#8211; <cite>Residue</cite> containing only the backbone atoms of the original
 <cite>Monomer</cite>.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#isambard.ampal.protein.Residue" title="isambard.ampal.protein.Residue">Residue</a></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> – Raise if the <cite>atoms</cite> dict does not contain the backbone
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; Raise if the <cite>atoms</cite> dict does not contain the backbone
 atoms (N, CA, C, O).</td>
 </tr>
 </tbody>
@@ -914,20 +914,20 @@ atoms (N, CA, C, O).</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum inter-atom distance for residue to be included.
+<li><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Maximum inter-atom distance for residue to be included.
 Defaults to 4.</li>
-<li><strong>include_neighbours</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>false</cite>, does not return <cite>Residue</cite> at i-1, i+1 positions
+<li><strong>include_neighbours</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>false</cite>, does not return <cite>Residue</cite> at i-1, i+1 positions
 in same chain as <cite>Residue</cite>.</li>
-<li><strong>inter_chain</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>false</cite>, only includes nearby <cite>Residue</cite> in the same chain
+<li><strong>inter_chain</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>false</cite>, only includes nearby <cite>Residue</cite> in the same chain
 as the <cite>Residue</cite>.</li>
-<li><strong>include_ligands</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>true</cite>, <cite>Residue</cite> classed as ligands but not identified as
+<li><strong>include_ligands</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>true</cite>, <cite>Residue</cite> classed as ligands but not identified as
 solvent will be included in the environment.</li>
-<li><strong>include_solvent</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>true</cite>, Monomers classed as categorised as solvent
+<li><strong>include_solvent</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If <cite>true</cite>, Monomers classed as categorised as solvent
 will be included in the environment.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sc_environment</strong> – List of monomers within cutoff distance of side-chain.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sc_environment</strong> &#8211; List of monomers within cutoff distance of side-chain.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
@@ -947,8 +947,8 @@ If each polymer in an assembly has a distinct id, it will uniquely
 identify each monomer within the assembly.</p>
 <p>The hetero-flag is defined as in Biopython as a string that is
 either a single whitespace in the case of a non-hetero atom,
-or ‘<a href="#id6"><span class="problematic" id="id7">H_</span></a>’ plus the name of the hetero-residue (e.g. ‘H_GLC’ in
-the case of a glucose molecule), or ‘W’ in the case of a water
+or &#8216;<a href="#id6"><span class="problematic" id="id7">H_</span></a>&#8216; plus the name of the hetero-residue (e.g. &#8216;H_GLC&#8217; in
+the case of a glucose molecule), or &#8216;W&#8217; in the case of a water
 molecule.</p>
 <p>For more information, see the Biopython documentation or this
 Biopython wiki page:
@@ -957,7 +957,7 @@ Biopython wiki page:
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>unique_id</strong> – unique_id[0] is the polymer_id unique_id[1] is a triple
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>unique_id</strong> &#8211; unique_id[0] is the polymer_id unique_id[1] is a triple
 of the hetero-flag, the monomer id (residue number) and the
 insertion code.</td>
 </tr>
@@ -981,10 +981,10 @@ It does not return a new object.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>target</strong> (<a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) – Polypeptide to be aligned to.</li>
-<li><strong>mobile</strong> (<a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) – Polypeptide to be moved during alignment.</li>
-<li><strong>target_i</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Index of <cite>Residue</cite> in target to align to.</li>
-<li><strong>mobile_i</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Index of <cite>Residue</cite> in mobile to be aligned.</li>
+<li><strong>target</strong> (<a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) &#8211; Polypeptide to be aligned to.</li>
+<li><strong>mobile</strong> (<a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) &#8211; Polypeptide to be moved during alignment.</li>
+<li><strong>target_i</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Index of <cite>Residue</cite> in target to align to.</li>
+<li><strong>mobile_i</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Index of <cite>Residue</cite> in mobile to be aligned.</li>
 </ul>
 </td>
 </tr>
@@ -1001,14 +1001,14 @@ It does not return a new object.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>polymer</strong> (<a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) – <cite>Polymer</cite> object to be searched secondary structure regions.</li>
-<li><strong>ss</strong> (<em>list</em>) – List of secondary structure tags to be separate i.e. [‘H’]
-would return helices, [‘H’, ‘E’] would return helices
+<li><strong>polymer</strong> (<a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide"><em>Polypeptide</em></a>) &#8211; <cite>Polymer</cite> object to be searched secondary structure regions.</li>
+<li><strong>ss</strong> (<em>list</em>) &#8211; List of secondary structure tags to be separate i.e. [&#8216;H&#8217;]
+would return helices, [&#8216;H&#8217;, &#8216;E&#8217;] would return helices
 and strands.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fragments</strong> – <cite>Assembly</cite> containing a <cite>Polymer</cite> for each region of specified
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fragments</strong> &#8211; <cite>Assembly</cite> containing a <cite>Polymer</cite> for each region of specified
 secondary structure.</p>
 </td>
 </tr>
@@ -1028,13 +1028,13 @@ secondary structure.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>atom_list</strong> (<em>[</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom" title="isambard.ampal.base_ampal.Atom"><em>Atom</em></a><em>]</em>) – Flat list of co-ordinates.</li>
-<li><strong>atom_group_s</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Size of atom groups.</li>
+<li><strong>atom_list</strong> (<em>[</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom" title="isambard.ampal.base_ampal.Atom"><em>Atom</em></a><em>]</em>) &#8211; Flat list of co-ordinates.</li>
+<li><strong>atom_group_s</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Size of atom groups.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>polymer</strong> – <cite>Polymer</cite> object containing atom coord converted <cite>Monomers</cite>
-with ‘DUM’ atom name.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>polymer</strong> &#8211; <cite>Polymer</cite> object containing atom coord converted <cite>Monomers</cite>
+with &#8216;DUM&#8217; atom name.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide">Polypeptide</a></p>
@@ -1053,18 +1053,18 @@ with ‘DUM’ atom name.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>atom_list</strong> (<em>[</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom" title="isambard.ampal.base_ampal.Atom"><em>Atom</em></a><em>]</em>) – Flat list of coordinates.</li>
-<li><strong>atom_group_s</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Size of atom groups.</li>
+<li><strong>atom_list</strong> (<em>[</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Atom" title="isambard.ampal.base_ampal.Atom"><em>Atom</em></a><em>]</em>) &#8211; Flat list of coordinates.</li>
+<li><strong>atom_group_s</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Size of atom groups.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>polymer</strong> – <cite>Polymer</cite> object containing atom coords converted <cite>Monomers</cite>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>polymer</strong> &#8211; <cite>Polymer</cite> object containing atom coords converted <cite>Monomers</cite>.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#isambard.ampal.protein.Polypeptide" title="isambard.ampal.protein.Polypeptide">Polypeptide</a></p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if <cite>atom_group_s</cite> != 4 or 5</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; Raised if <cite>atom_group_s</cite> != 4 or 5</p>
 </td>
 </tr>
 </tbody>
@@ -1096,7 +1096,7 @@ with ‘DUM’ atom name.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -1128,7 +1128,7 @@ with ‘DUM’ atom name.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

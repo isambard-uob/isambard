@@ -181,13 +181,13 @@ represented using the <cite>Ligand</cite> class.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>mol_code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – PDB molecule code that represents the monomer.</li>
-<li><strong>atoms</strong> (<em>OrderedDict</em><em>, </em><em>optional</em>) – OrderedDict containing Atoms for the Monomer. OrderedDict
+<li><strong>mol_code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; PDB molecule code that represents the monomer.</li>
+<li><strong>atoms</strong> (<em>OrderedDict</em><em>, </em><em>optional</em>) &#8211; OrderedDict containing Atoms for the Monomer. OrderedDict
 is used to maintain the order items were added to the
 dictionary.</li>
-<li><strong>monomer_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – String used to identify the residue.</li>
-<li><strong>insertion_code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Insertion code of monomer, used if reading from pdb.</li>
-<li><strong>is_hetero</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – True if is a hetero atom in pdb. Helps with PDB formatting.</li>
+<li><strong>monomer_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; String used to identify the residue.</li>
+<li><strong>insertion_code</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Insertion code of monomer, used if reading from pdb.</li>
+<li><strong>is_hetero</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; True if is a hetero atom in pdb. Helps with PDB formatting.</li>
 </ul>
 </td>
 </tr>
@@ -196,7 +196,7 @@ dictionary.</li>
 <dl class="attribute">
 <dt id="isambard.ampal.ligands.Ligand.atoms">
 <code class="descname">atoms</code><a class="headerlink" href="#isambard.ampal.ligands.Ligand.atoms" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>OrderedDict</em> – OrderedDict containing Atoms for the Monomer. OrderedDict
+<dd><p><em>OrderedDict</em> &#8211; OrderedDict containing Atoms for the Monomer. OrderedDict
 is used to maintain the order items were added to the
 dictionary.</p>
 </dd></dl>
@@ -204,44 +204,44 @@ dictionary.</p>
 <dl class="attribute">
 <dt id="isambard.ampal.ligands.Ligand.mol_code">
 <code class="descname">mol_code</code><a class="headerlink" href="#isambard.ampal.ligands.Ligand.mol_code" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – PDB molecule code that represents the <cite>Ligand</cite>.</p>
+<dd><p><em>str</em> &#8211; PDB molecule code that represents the <cite>Ligand</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.ligands.Ligand.insertion_code">
 <code class="descname">insertion_code</code><a class="headerlink" href="#isambard.ampal.ligands.Ligand.insertion_code" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – Insertion code of <cite>Ligand</cite>, used if reading from pdb.</p>
+<dd><p><em>str</em> &#8211; Insertion code of <cite>Ligand</cite>, used if reading from pdb.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.ligands.Ligand.is_hetero">
 <code class="descname">is_hetero</code><a class="headerlink" href="#isambard.ampal.ligands.Ligand.is_hetero" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – True if is a hetero atom in pdb. Helps with PDB formatting.</p>
+<dd><p><em>bool</em> &#8211; True if is a hetero atom in pdb. Helps with PDB formatting.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.ligands.Ligand.self.states">
 <code class="descclassname">self.</code><code class="descname">states</code><a class="headerlink" href="#isambard.ampal.ligands.Ligand.self.states" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – Contains an <cite>OrderedDicts</cite> containing atom information for each
+<dd><p><em>dict</em> &#8211; Contains an <cite>OrderedDicts</cite> containing atom information for each
 state available for the <cite>Ligand</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.ligands.Ligand.id">
 <code class="descname">id</code><a class="headerlink" href="#isambard.ampal.ligands.Ligand.id" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – String used to identify the residue.</p>
+<dd><p><em>str</em> &#8211; String used to identify the residue.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.ligands.Ligand.ampal_parent">
 <code class="descname">ampal_parent</code><a class="headerlink" href="#isambard.ampal.ligands.Ligand.ampal_parent" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Polymer or None</em> – A reference to the <cite>LigandGroup</cite> containing this <cite>Ligand</cite>.</p>
+<dd><p><em>Polymer or None</em> &#8211; A reference to the <cite>LigandGroup</cite> containing this <cite>Ligand</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.ampal.ligands.Ligand.tags">
 <code class="descname">tags</code><a class="headerlink" href="#isambard.ampal.ligands.Ligand.tags" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – A dictionary containing information about this AMPAL object.
+<dd><p><em>dict</em> &#8211; A dictionary containing information about this AMPAL object.
 The tags dictionary is used by AMPAL to cache information
 about this object, but is also intended to be used by users
 to store any relevant information they have.</p>
@@ -259,11 +259,11 @@ to store any relevant information they have.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>monomers</strong> (<a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer" title="isambard.ampal.base_ampal.Monomer"><em>Monomer</em></a><em> or </em><em>[</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer" title="isambard.ampal.base_ampal.Monomer"><em>Monomer</em></a><em>]</em><em>, </em><em>optional</em>) – Monomer or list containing Monomer objects to form the Polymer().</li>
-<li><strong>polymer_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – An ID that the user can use to identify the <cite>Polymer</cite>. This is
+<li><strong>monomers</strong> (<a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer" title="isambard.ampal.base_ampal.Monomer"><em>Monomer</em></a><em> or </em><em>[</em><a class="reference internal" href="isambard.ampal.base_ampal.html#isambard.ampal.base_ampal.Monomer" title="isambard.ampal.base_ampal.Monomer"><em>Monomer</em></a><em>]</em><em>, </em><em>optional</em>) &#8211; Monomer or list containing Monomer objects to form the Polymer().</li>
+<li><strong>polymer_id</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; An ID that the user can use to identify the <cite>Polymer</cite>. This is
 used when generating a pdb file using <cite>Polymer().pdb</cite>.</li>
-<li><strong>ampal_parent</strong> (<em>ampal.Assembly</em><em>, </em><em>optional</em>) – Reference to <cite>Assembly</cite> containing the <cite>Polymer</cite>.</li>
-<li><strong>sl</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The default smoothing level used when calculating the
+<li><strong>ampal_parent</strong> (<em>ampal.Assembly</em><em>, </em><em>optional</em>) &#8211; Reference to <cite>Assembly</cite> containing the <cite>Polymer</cite>.</li>
+<li><strong>sl</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; The default smoothing level used when calculating the
 backbone primitive.</li>
 </ul>
 </td>
@@ -309,7 +309,7 @@ backbone primitive.</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2017, Woolfson Group.
-      Last updated on August 17, 2017.
+      Last updated on October 09, 2017.
 
     </p>
   </div>
@@ -341,7 +341,7 @@ backbone primitive.</li>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
