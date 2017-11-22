@@ -5,7 +5,7 @@ from Cython.Build import cythonize
 try:
     import pypandoc
     long_description = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError):
+except:
     long_description = open('README.md').read()
 
 
