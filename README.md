@@ -55,13 +55,13 @@ isambard.settings.configure()
 
 `.isambard_settings` is simple JSON config file, if you're having any trouble with your settings, you can tinker with it manually. You can find an example `.isambard_settings` file [here](https://github.com/woolfson-group/isambard/wiki/Example-%60.isambard_settings%60-file).
 
-Chat with us on Gitter if you get stuck (link above), or raise an issue!
+Chat with us on riot.im if you get stuck (link above), or raise an issue!
 
 ## Once ISAMBARD is installed...
 
 You might want to take a look at the [wiki](https://github.com/woolfson-group/isambard/wiki), there are a range of tutorials that demonstrate various aspects of ISAMBARD. These are IPython notebooks, so please download them and run through them (modify/hack/break them) on your own machine.
 
-Wanting to delve a bit deeper? Take a look at the [docs](http://isambard.readthedocs.io/en/latest/) to find out more of the features in ISAMBARD, or just take a look through the code base and hack around. Remember, feel free to contact us on Gitter, email or through the issues if you get stuck.
+Wanting to delve a bit deeper? Take a look at the [docs](https://woolfson-group.github.io/isambard/) to find out more of the features in ISAMBARD, or just take a look through the code base and hack around. Remember, feel free to contact us on Gitter, email or through the issues if you get stuck.
 
 ## Unit tests 
 To ensure that the package is correctly installed unit tests can be run by:
