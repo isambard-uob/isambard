@@ -9,21 +9,20 @@
 [![CircleCI](https://circleci.com/gh/woolfson-group/isambard.svg?style=shield&circle-token=27387ac82a6d30c7bd6a72ce3214fa57677e9d87)](https://circleci.com/gh/woolfson-group/isambard)
 [![codecov](https://codecov.io/gh/woolfson-group/isambard/branch/master/graph/badge.svg)](https://codecov.io/gh/woolfson-group/isambard)
 [![Python Version](https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg)](https://woolfson-group.github.io/isambard/)
-[![PyPI version](https://badge.fury.io/py/isambard.svg)](https://badge.fury.io/py/isambard)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/woolfson-group/isambard/blob/master/LICENSE.md)
 
 ISAMBARD (Intelligent System for Analysis, Model Building And Rational Design), is a Python-based framework for 
 structural analysis and rational design of biomolecules, with a particular focus on parametric modelling of proteins. It is developed and maintained by members of the
 [Woolfson group, University of Bristol](http://www.chm.bris.ac.uk/org/woolfson/index.html).
 
-## Citing ISAMBARD
+Need help getting started? Please visit the [New Users room](https://riot.im/app/#/room/#isambard-new-users:matrix.org) in the ISAMBARD community on riot.im. You don't need to create an account to ask questions. Alternatively, you can raise an issue in the GitHub repository.
+
+### Citing ISAMBARD
 Any publication arising from use of the ISAMBARD software package should cite the following reference:
 
-[Christopher W. Wood, Jack W. Heal, Andrew R. Thomson, Gail J. Bartlett, Amaurys A. Ibarra, R. Leo Brady, Richard B. Sessions, Derek N. Woolfson; ISAMBARD: an open-source computational environment for biomolecular analysis, modelling and design. Bioinformatics 2017 btx352. doi: 10.1093/bioinformatics/btx352](https://doi.org/10.1093/bioinformatics/btx352)
+[Wood CW *et al* (2017) ISAMBARD: an open-source computational environment for biomolecular analysis, modelling and design. *Bioinformatics*, **33**, 3043-50](https://doi.org/10.1093/bioinformatics/btx352)
 
-## Quick Start
-
-### Basic Install
+## Basic Install
 
 ISAMBARD can be installed straight from PyPI using `pip`:
 
@@ -40,7 +39,7 @@ ISAMBARD has a few Python package requirements, just install them through pip if
 
 If you're having trouble installing ISAMBARD take a look at the [troubleshooting](https://github.com/woolfson-group/isambard/wiki/Installation-Troubleshooting) section of the wiki, especially if you're on a bleeding-edge Linux distro like Arch.
 
-### External Programs
+## External Programs
 
 To get the most out of ISAMBARD, a couple of external programs are recommended:
 
@@ -58,13 +57,13 @@ isambard.settings.configure()
 
 Chat with us on Gitter if you get stuck (link above), or raise an issue!
 
-### Once ISAMBARD is installed...
+## Once ISAMBARD is installed...
 
 You might want to take a look at the [wiki](https://github.com/woolfson-group/isambard/wiki), there are a range of tutorials that demonstrate various aspects of ISAMBARD. These are IPython notebooks, so please download them and run through them (modify/hack/break them) on your own machine.
 
 Wanting to delve a bit deeper? Take a look at the [docs](http://isambard.readthedocs.io/en/latest/) to find out more of the features in ISAMBARD, or just take a look through the code base and hack around. Remember, feel free to contact us on Gitter, email or through the issues if you get stuck.
 
-### Unit tests 
+## Unit tests 
 To ensure that the package is correctly installed unit tests can be run by:
 
 `python -m unittest discover unit_tests/`
