@@ -1,9 +1,0 @@
-ignoremissing
-align
-atoms ca
-fit
-atoms n,ca,c,o
-fit
-atoms *
-fit
-quit
