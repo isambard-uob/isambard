@@ -5,7 +5,7 @@ from collections import OrderedDict
 import numpy
 from libc.math cimport cos, sin, M_PI
 
-from ampal.base_ampal import Atom, Polypeptide, Residue, align
+from ampal import Atom, Polypeptide, Residue, align
 from ampal.analyse_protein import measure_torsion_angles
 from ampal.amino_acids import ideal_backbone_bond_lengths, ideal_backbone_bond_angles
 from ampal.geometry import dihedral, Quaternion
