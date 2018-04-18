@@ -34,7 +34,7 @@ setup(name='ISAMBARD',
       ext_modules=cythonize(
           [Extension(
               "isambard.specifications.ta_polypeptide",
-              [("isambard/specifications/ta_polypeptide.pyx")]),
+              [("src/isambard/specifications/ta_polypeptide.pyx")]),
            ]
       ),
       install_requires=[

@@ -20,6 +20,7 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -40,9 +41,10 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+.pytest_cache
 nosetests.xml
 coverage.xml
-*,cover
+*.cover
 .hypothesis/
 
 # Translations
@@ -66,7 +68,7 @@ docs/_build/
 # PyBuilder
 target/
 
-# IPython Notebook
+# Jupyter Notebook
 .ipynb_checkpoints
 
 # pyenv
@@ -75,36 +77,29 @@ target/
 # celery beat schedule file
 celerybeat-schedule
 
+# SageMath parsed files
+*.sage.py
+
 # dotenv
 .env
 
 # virtualenv
+.venv
 venv/
 ENV/
 
 # Spyder project settings
 .spyderproject
+.spyproject
 
 # Rope project settings
 .ropeproject
 
-# Temporary Files
-*.db-journal
+# mkdocs documentation
+/site
 
-# Compiled Cython files
-isambard/ampal/specifications/polymer_specs/ta_polypeptide.c
-isambard/buff/calculate_energy.cpp
-isambard/tools/geometry.c
+# mypy
+.mypy_cache/
 
-# Editor Gubbinz
-.vscode/
-
-PyRosetta
-.DS_Store
-.idea/
-.ipynb_checkpoints/
-.py___jb_bak___
-DrewTools
-*.csv
-isambard/settings.json
-hot.grp
+# Cython generated
+*.c
