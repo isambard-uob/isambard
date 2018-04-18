@@ -2,10 +2,10 @@
 
 import copy
 
+from ampal import Assembly
 import numpy
 
-from ampal.assembly import Assembly
-from ampal.specifications.polymer_specs.helix import Helix
+from .helix import Helix
 
 
 class HelixPair(Assembly):

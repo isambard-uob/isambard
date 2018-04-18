@@ -1,9 +1,9 @@
 """Contains code for modelling coiled coils and collagens."""
 
+from ampal import Assembly
 import numpy
 
-from ampal.specifications.polymer_specs.helix import HelicalHelix, _helix_parameters
-from ampal.protein import Assembly
+from .helix import HelicalHelix, _helix_parameters
 
 basis_set_parameters = {
     2: {'name': 'CC-Di', 'pitch': 225.8, 'radius': 5.07, 'interface_angle': 283.56,

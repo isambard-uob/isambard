@@ -1,9 +1,9 @@
 """Contains code for generating nucleic acid duplexes."""
 
-from ampal.assembly import Assembly
-from ampal.specifications.polymer_specs.nucleic_acid_strand import (
-    NucleicAcidStrand)
-from tools.geometry import dihedral
+from ampal import Assembly
+from ampal.geometry import dihedral
+
+from .nucleic_acid_strand import NucleicAcidStrand
 
 
 def generate_antisense_sequence(sequence):
@@ -26,6 +26,7 @@ class DNADuplex(Assembly):
     strand: NucleicAcidStrand
         DNA single strand helix.
     """
+
     def __init__(self, strand):
         super().__init__([strand, self.generate_complementary_strand(strand)])
         self.relabel_polymers()

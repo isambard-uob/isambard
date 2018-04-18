@@ -3,13 +3,10 @@
 from collections import OrderedDict
 
 import numpy
-
-from tools.geometry import (
-    Quaternion, dihedral, find_transformations, cylindrical_to_cartesian, Axis)
-from ampal.base_ampal import Atom
-from ampal.protein import Polypeptide, Residue
+from ampal.geometry import (Quaternion, dihedral, find_transformations,
+                            cylindrical_to_cartesian, Axis, HelicalCurve)
+from ampal import Atom, Residue, Polypeptide
 from ampal.pseudo_atoms import Primitive
-from tools.geometry import HelicalCurve
 
 _helix_parameters = {
     # residues_per_turn, rise_per_residue
@@ -203,7 +200,7 @@ class Helix(Polypeptide):
 
         monomers = []
         for i in range(self.num_monomers):
-            residue = Residue(mol_code=res_label, ampal_parent=self)
+            residue = Residue(mol_code=res_label, parent=self)
             atoms_dict = OrderedDict()
             for atom_label in atom_labels:
                 r, zeta, z_shift = atom_offsets[atom_label]
@@ -213,7 +210,7 @@ class Helix(Polypeptide):
                     radius=r, azimuth=rot_ang, z=z, radians=True)
                 atom = Atom(
                     coordinates=coords, element=atom_label[0],
-                    ampal_parent=residue, res_label=atom_label)
+                    parent=residue, res_label=atom_label)
                 atoms_dict[atom_label] = atom
             residue.atoms = atoms_dict
             monomers.append(residue)
@@ -455,7 +452,7 @@ class HelicalHelix(Polypeptide):
         helical_helix.relabel_all()
         self._monomers = helical_helix._monomers[:]
         for monomer in self._monomers:
-            monomer.ampal_parent = self
+            monomer.parent = self
         return
 
     def get_orient_angle(self, reference_point=numpy.array([0, 0, 0]),

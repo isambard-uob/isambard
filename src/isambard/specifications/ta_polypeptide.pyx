@@ -1,15 +1,14 @@
 """Contains functionality for builting protein structure from torsion angles."""
+#cython: embedsignature=True
 
 from collections import OrderedDict
 import numpy
-#cython: embedsignature=True
 from libc.math cimport cos, sin, M_PI
 
-from ampal.protein import Polypeptide, Residue, align
-from ampal.base_ampal import Atom
+from ampal.base_ampal import Atom, Polypeptide, Residue, align
 from ampal.analyse_protein import measure_torsion_angles
-from tools.amino_acids import ideal_backbone_bond_lengths, ideal_backbone_bond_angles
-from tools.geometry import dihedral, Quaternion
+from ampal.amino_acids import ideal_backbone_bond_lengths, ideal_backbone_bond_angles
+from ampal.geometry import dihedral, Quaternion
 
 
 cdef _planar_c_and_o_coords(double n_ca, ca_c, c_o, n_ca_c, ca_c_o):

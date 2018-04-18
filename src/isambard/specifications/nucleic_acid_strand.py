@@ -3,11 +3,10 @@
 from collections import OrderedDict
 
 import numpy
-from tools.geometry import (angle_between_vectors, unit_vector, find_foot,
+from ampal.geometry import (angle_between_vectors, unit_vector, find_foot,
                             Quaternion, dihedral, find_transformations,
                             cylindrical_to_cartesian, Axis)
-from ampal.base_ampal import Atom
-from ampal.nucleic_acid import Polynucleotide, Nucleotide
+from ampal import Atom, Polynucleotide, Nucleotide
 
 _helix_parameters = {
     # nucleotides_per_turn, rise_per_nucleotide
@@ -243,13 +242,13 @@ class NucleicAcidStrand(Polynucleotide):
         return self.num_monomers * self.rise_per_nucleotide
 
     def translate(self, vector):
-        super(Polynucleotide, self).translate(vector=vector)
+        super().translate(vector=vector)
         self.helix_start += vector
         self.helix_end += vector
         return
 
     def rotate(self, angle, axis, point=None, radians=False):
-        super(Polynucleotide, self).rotate(
+        super().rotate(
             angle=angle, axis=axis, point=point, radians=radians)
         # modify helix_start and helix_end accordingly.
         q = Quaternion.angle_and_axis(angle=angle, axis=axis, radians=radians)
@@ -270,7 +269,7 @@ class NucleicAcidStrand(Polynucleotide):
         mol_code_format = _backbone_properties[self.helix_type]['mol_code_format']
         for i, b in enumerate(self.base_sequence):
             nucleotide = Nucleotide(
-                mol_code=mol_code_format.format(b), ampal_parent=self)
+                mol_code=mol_code_format.format(b), parent=self)
             atoms_dict = OrderedDict()
             if (i == (len(self.base_sequence) - 1)) and not self.phos_3_prime:
                 # Do not include phosphate on last nucleotide
@@ -289,7 +288,7 @@ class NucleicAcidStrand(Polynucleotide):
                     radius=r, azimuth=rot_ang, z=z, radians=True)
                 atom = Atom(
                     coordinates=coords, element=atom_label[0],
-                    ampal_parent=nucleotide, res_label=atom_label)
+                    parent=nucleotide, res_label=atom_label)
                 atoms_dict[atom_label] = atom
             base_ref = _bases[b]['ref_atom']
             rot_adj = _bases[b]['rot_adj']
@@ -310,7 +309,7 @@ class NucleicAcidStrand(Polynucleotide):
             for k, v in list(base_dict.items()):
                 if k not in atoms_dict:
                     atom = Atom(q2.rotate_vector(v, base_dict[base_ref]),
-                                element=k[0], ampal_parent=nucleotide,
+                                element=k[0], parent=nucleotide,
                                 res_label=k)
                     atoms_dict[k] = atom
             nucleotide.atoms = atoms_dict
