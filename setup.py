@@ -1,58 +1,45 @@
-import setuptools
+"""Setup script for the ISAMBARD."""
+
+from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from Cython.Build import cythonize
 
-try:
-    import pypandoc
-    long_description = pypandoc.convert('README.md', 'rst')
-except:
-    long_description = open('README.md').read()
+
+def readme():
+    """Loads the readme file for AMPAL."""
+    with open('README.md', 'r') as inf:
+        return inf.read()
 
 
-setuptools.setup(
-    name='isambard',
-    packages=setuptools.find_packages(),
-    # This code automatically builds the Cython extensions.
-    ext_modules=cythonize(
-        [Extension(
-            "isambard.tools.geometry",
-            ["isambard/tools/geometry.pyx"]),
-         Extension(
-             "isambard.buff.calculate_energy",
-             ["isambard/buff/calculate_energy.pyx"],
-             include_dir=["isambard/buff/"],
-             language='c++'),
-         Extension(
-             "isambard.ampal.specifications.polymer_specs.ta_polypeptide",
-             [("isambard/ampal/specifications/polymer_specs/"
-               "ta_polypeptide.pyx")]),
-         ]),
-    include_package_data=True,
-    version='2017.3.0',
-    description=(
-        'ISAMBARD: An open-source computational environment for'
-        ' biomolecular analysis, modelling and design'),
-    long_description=long_description,
-    author='Woolfson Group, University of Bristol',
-    author_email='isambardinfo@gmail.com',
-    url='https://github.com/woolfson-group/isambard/',
-    download_url='https://github.com/woolfson-group/isambard/tarball/2017.3.0',
-    keywords=['isambard', 'biomolecule', 'parametric',
-              'modelling', 'bristol', 'woolfson'],
-    install_requires=[
-        'Cython',
-        'numpy',
-        'requests',
-        'SQLAlchemy',
-        'networkx',
-        'deap',
-        'matplotlib',
-        'hypothesis',
-        'pyreadline',
-        'bs4',
-        'parmed',
-        'recommonmark',
-        'numpydoc',
-        'pypandoc'
-    ]
-)
+setup(name='ISAMBARD',
+      version='2.0.0',
+      description='A package for biomolecular analysis, modelling and design',
+      long_description=readme(),
+      long_description_content_type='text/markdown; charset=UTF-8; variant=GFM',
+      url='https://github.com/isambard-uob/isambard',
+      author='Woolfson Group, University of Bristol',
+      author_email='chris.wood@bristol.ac.uk',
+      classifiers=[
+          'Intended Audience :: Science/Research',
+          'License :: OSI Approved :: MIT License',
+          'Natural Language :: English',
+          'Topic :: Scientific/Engineering :: Bio-Informatics',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+      ],
+      packages=find_packages('src'),
+      package_dir={'': 'src'},
+      include_package_data=True,
+      # This code automatically builds the Cython extensions.
+      ext_modules=cythonize(
+          [Extension(
+              "isambard.specifications.ta_polypeptide",
+              [("isambard/specifications/ta_polypeptide.pyx")]),
+           ]
+      ),
+      install_requires=[
+          'Cython',
+          'numpy',
+      ],
+      zip_safe=False,
+      )
