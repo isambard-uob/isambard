@@ -1,4 +1,4 @@
-"""Base class for bio-inspired optimizers."""
+"""Bio-inspired optimizers."""
 
 import operator
 import random
@@ -6,7 +6,7 @@ import random
 from deap import creator, tools
 import numpy
 
-from optimisation.base_evo_opt import BaseOptimizer, Parameter, default_build
+from .base_evo_opt import BaseOptimizer, Parameter, default_build
 
 
 class DE(BaseOptimizer):
@@ -46,8 +46,9 @@ class DE(BaseOptimizer):
         be provided as an int.
     """
 
-    def __init__(self, specification, sequences, parameters, build_fn, eval_fn,
-                 cxpb=0.75, diff_weight=1, neighbours=None, **kwargs):
+    def __init__(self, specification, sequences, parameters, eval_fn,
+                 build_fn=default_build, cxpb=0.75, diff_weight=1,
+                 neighbours=None, **kwargs):
         super().__init__(
             specification, sequences, parameters,
             build_fn=build_fn, eval_fn=eval_fn, **kwargs)
@@ -190,8 +191,9 @@ class PSO(BaseOptimizer):
         be provided as an int.
     """
 
-    def __init__(self, specification, sequences, parameters, build_fn, eval_fn,
-                 max_speed=0.75, neighbours=None, **kwargs):
+    def __init__(self, specification, sequences, parameters, eval_fn,
+                 build_fn=default_build, max_speed=0.75, neighbours=None,
+                 **kwargs):
         super().__init__(
             specification, sequences, parameters,
             build_fn=build_fn, eval_fn=eval_fn, **kwargs)
@@ -343,8 +345,8 @@ class GA(BaseOptimizer):
         Probability of mutating an individual.
     """
 
-    def __init__(self, specification, sequences, parameters, build_fn, eval_fn,
-                 cxpb=0.5, mutpb=0.2, **kwargs):
+    def __init__(self, specification, sequences, parameters, eval_fn,
+                 build_fn=default_build, cxpb=0.5, mutpb=0.2, **kwargs):
         super().__init__(
             specification, sequences, parameters,
             build_fn=build_fn, eval_fn=eval_fn, **kwargs)
@@ -446,8 +448,9 @@ class CMAES(BaseOptimizer):
         speed of particles.
     """
 
-    def __init__(self, specification, sequences, parameters, build_fn, eval_fn,
-                 sigma=0.3, weight_type='superlinear', **kwargs):
+    def __init__(self, specification, sequences, parameters, eval_fn,
+                 build_fn=default_build, sigma=0.3, weight_type='superlinear',
+                 **kwargs):
         super().__init__(
             specification, sequences, parameters,
             build_fn=build_fn, eval_fn=eval_fn, **kwargs)
@@ -621,13 +624,14 @@ class CMAES(BaseOptimizer):
         elif self.weight_type == "equal":
             self.weights = numpy.ones(self.mu)
         else:
-            raise RuntimeError("Unknown weights : %s" % rweights)
+            raise RuntimeError(
+                "Unknown weight type: {}".format(self.weight_type))
 
         self.weights /= sum(self.weights)
         self.mueff = 1. / sum(self.weights ** 2)
 
         self.cc = 4. / (self.dim + 4.)
-        self.cs = (self.mueff + 2.) /  (self.dim + self.mueff + 3.)
+        self.cs = (self.mueff + 2.) / (self.dim + self.mueff + 3.)
         self.ccov1 = 2. / ((self.dim + 1.3) ** 2 + self.mueff)
         self.ccovmu = (2. * (self.mueff - 2. + 1. / self.mueff)) / (
             (self.dim + 2.) ** 2 + self.mueff)

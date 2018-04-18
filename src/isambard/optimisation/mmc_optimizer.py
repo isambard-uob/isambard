@@ -9,11 +9,6 @@ import sys
 import numpy
 
 
-def default_eval_function(ampal):
-    """Returns the total BUDE energy for an AMPAL object."""
-    return ampal.buff_internal_energy.total_energy
-
-
 def float_f(f):
     """Formats a float for printing to std out."""
     return '{:.0f}'.format(f)
@@ -151,7 +146,7 @@ class MMCParameterOptimisation:
         match the init signiture of the specification.
     sequences : [str]
         The sequences to be used during the optimisation.
-    eval_function : f(ampal) -> float, optional
+    eval_function : f(ampal) -> float
         A function that takes an AMPAL object as an input and returns
         a float. By default the `buff_interaction_energy` will be
         used to evaluate the structure.
@@ -184,8 +179,7 @@ class MMCParameterOptimisation:
     best_parameters = None
     best_model = None
 
-    def __init__(self, specification, parameters, sequences,
-                 eval_function=default_eval_function):
+    def __init__(self, specification, parameters, sequences, eval_function):
         self.specification = specification
         self.current_parameters = copy.deepcopy(parameters)
         self.sequences = sequences

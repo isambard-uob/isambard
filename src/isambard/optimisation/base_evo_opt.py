@@ -6,11 +6,9 @@ import enum
 import os
 import sys
 
-from deap import base, creator, tools
-import numpy
 import matplotlib.pylab as plt
-
-from external_programs.profit import run_profit
+import numpy
+from deap import base, creator, tools
 
 
 def default_build(spec_seq_params):
@@ -18,23 +16,6 @@ def default_build(spec_seq_params):
     model = specification(*params)
     model.pack_new_sequences(sequences)
     return model
-
-
-def buff_interaction_eval(ampal):
-    return ampal.buff_interaction_energy.total_energy
-
-
-def buff_internal_eval(ampal):
-    return ampal.buff_internal_energy.total_energy
-
-
-def make_rmsd_eval(reference_ampal):
-    def rmsd_eval(ampal):
-        ca, bb, aa = run_profit(
-            ampal.pdb, reference_ampal,
-            path1=False, path2=False)
-        return bb
-    return rmsd_eval
 
 
 class BaseOptimizer:
@@ -71,93 +52,6 @@ class BaseOptimizer:
         self._evals = 0
         self._model_count = 0
         self._store_params = True
-
-    @classmethod
-    def buff_interaction_eval(cls, specification, sequences, parameters,
-                              **kwargs):
-        """Creates optimizer with default build and BUFF interaction eval.
-
-        Notes
-        -----
-        Any keyword arguments will be propagated down to BaseOptimizer.
-
-        Parameters
-        ----------
-        specification : ampal.assembly.specification
-            Any assembly level specification.
-        sequences : [str]
-            A list of sequences, one for each polymer.
-        parameters : [base_ev_opt.Parameter]
-            A list of `Parameter` objects in the same order as the
-            function signature expects.
-        """
-        instance = cls(specification,
-                       sequences,
-                       parameters,
-                       build_fn=default_build,
-                       eval_fn=buff_interaction_eval,
-                       **kwargs)
-        return instance
-
-    @classmethod
-    def buff_internal_eval(cls, specification, sequences, parameters, **kwargs):
-        """Creates optimizer with default build and BUFF interaction eval.
-
-        Notes
-        -----
-        Any keyword arguments will be propagated down to BaseOptimizer.
-
-        Parameters
-        ----------
-        specification : ampal.assembly.specification
-            Any assembly level specification.
-        sequences : [str]
-            A list of sequences, one for each polymer.
-        parameters : [base_ev_opt.Parameter]
-            A list of `Parameter` objects in the same order as the
-            function signature expects.
-        """
-        instance = cls(specification,
-                       sequences,
-                       parameters,
-                       build_fn=default_build,
-                       eval_fn=buff_internal_eval,
-                       **kwargs)
-        return instance
-
-    @classmethod
-    def rmsd_eval(cls, specification, sequences, parameters, reference_ampal,
-                  **kwargs):
-        """Creates optimizer with default build and RMSD eval.
-
-        Notes
-        -----
-        Any keyword arguments will be propagated down to BaseOptimizer.
-
-        RMSD eval is restricted to a single core only, due to restrictions
-        on closure pickling.
-
-        Parameters
-        ----------
-        specification : ampal.assembly.specification
-            Any assembly level specification.
-        sequences : [str]
-            A list of sequences, one for each polymer.
-        parameters : [base_ev_opt.Parameter]
-            A list of `Parameter` objects in the same order as the
-            function signature expects.
-        reference_ampal : ampal.Assembly
-            The target structure of the optimisation.
-        """
-        eval_fn = make_rmsd_eval(reference_ampal)
-        instance = cls(specification,
-                       sequences,
-                       parameters,
-                       build_fn=default_build,
-                       eval_fn=eval_fn,
-                       mp_disabled=True,
-                       **kwargs)
-        return instance
 
     def parse_individual(self, individual):
         """Converts a deap individual into a full list of parameters.
@@ -290,7 +184,7 @@ class BaseOptimizer:
                 self.arrangement.append(parameter.value)
             else:
                 raise AttributeError(
-                    '"{}"Unknown parameter type ({}). Parameters can be STATIC or'
+                    'Unknown parameter type ({}). Parameters can be STATIC or'
                     ' DYNAMIC.'.format(parameter.type))
         return
 
@@ -401,7 +295,7 @@ class BaseOptimizer:
             (self.specification,
              self.sequences,
              self.parse_individual(self.halloffame[0])
-            ))
+             ))
         return model
 
     def make_energy_funnel_data(self, cores=1):
