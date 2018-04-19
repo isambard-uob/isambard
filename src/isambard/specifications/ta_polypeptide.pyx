@@ -119,7 +119,7 @@ class TAPolypeptide(Polypeptide):
     """
 
     def __init__(self, torsion_angles, auto_build=True):
-        super(TAPolypeptide, self).__init__()
+        super().__init__()
         self.torsion_angles = torsion_angles
         self.num_monomers = len(self.torsion_angles)
         self.trans = [True if abs(self.torsion_angles[i][0]) >= 90

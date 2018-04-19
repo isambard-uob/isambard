@@ -5,6 +5,7 @@ import unittest
 from hypothesis import given
 from hypothesis.strategies import floats
 import isambard
+import isambard.specifications
 from isambard.optimisation.mmc_optimizer import (
     MMCParameter, MMCParameterType, MMCParameterOptimisation)
 
