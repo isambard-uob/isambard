@@ -132,8 +132,8 @@ def parse_scwrl_out(scwrl_std_out, scwrl_pdb):
     return fixed_scwrl_str, float(score)
 
 
-def pack_sidechains_scwrl(assembly, sequences,
-                          rigid_rotamer_model=True, hydrogens=False):
+def pack_side_chains_scwrl(assembly, sequences,
+                           rigid_rotamer_model=True, hydrogens=False):
     """Packs side chains onto a protein structure.
 
     Parameters
