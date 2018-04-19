@@ -20,18 +20,18 @@ import re
 import ampal
 
 
-def test_scwrl():
-    """Raises an error if Scwrl is unavailable."""
+def scwrl_available():
+    """True if Scwrl is available."""
+    available = False
     try:
         subprocess.check_output(['Scwrl4'], stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
-        pass
+        available = True
     except FileNotFoundError:
-        raise ChildProcessError(
-            "Scwrl4 has not been found on your path. If you have already "
-            "installed Scwrl but are unsure how to add it to your path, "
-            "check out this: https://stackoverflow.com/a/14638025")
-    return
+        print("Scwrl4 has not been found on your path. If you have already "
+              "installed Scwrl but are unsure how to add it to your path, "
+              "check out this: https://stackoverflow.com/a/14638025")
+    return available
 
 
 def run_scwrl(pdb, sequence,
@@ -154,7 +154,8 @@ def pack_sidechains_scwrl(assembly, sequences,
         A new AMPAL Assembly containing the packed structure, with
         the Scwrl score in the tags.
     """
-    test_scwrl()
+    if not scwrl_available():
+        raise ValueError('Scwrl4 is unavailable on your system path.')
     protein = [x for x in assembly if isinstance(x, ampal.Polypeptide)]
     total_seq_len = sum([len(x) for x in sequences])
     total_aa_len = sum([len(x) for x in protein])
