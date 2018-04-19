@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: python:3.6
+    steps:
+      - checkout
+      - run: pip install Cython
+      - run: pip install hypothesis
+      - run: pip install pytest
+      - run: pip install .
+      - run: pytest
