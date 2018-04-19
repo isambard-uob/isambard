@@ -38,7 +38,11 @@ setup(name='ISAMBARD',
            ]
       ),
       install_requires=[
+          'ampal',
+          'budeff',
           'Cython',
+          'deap',
+          'matplotlib',
           'numpy',
       ],
       zip_safe=False,
