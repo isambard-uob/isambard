@@ -3,20 +3,23 @@
 import unittest
 import warnings
 
-import isambard
+import budeff
+
 import isambard.optimisation.evo_optimizers as ev_opts
 from isambard.optimisation.evo_optimizers import Parameter
+from isambard.modelling.scwrl import scwrl_available
+import isambard.specifications as specs
 
 warnings.filterwarnings("ignore")
 
 
-@unittest.skipUnless('scwrl' in isambard.settings.global_settings,
-                     "External program not detected.")
+@unittest.skipUnless(scwrl_available(), "External program not detected.")
 class TestOptimizers(unittest.TestCase):
     """Tests the GA optimizer."""
+
     def tiny_opt_run(self, optimizer):
         """Perform a tiny run of an optimizer."""
-        specification = isambard.specifications.CoiledCoil.from_parameters
+        specification = specs.CoiledCoil.from_parameters
         sequences = ['EIAALKQEIAALKK'] * 2
         parameters = [
             Parameter.static('Oligomeric State', 2),
@@ -25,8 +28,8 @@ class TestOptimizers(unittest.TestCase):
             Parameter.dynamic('Pitch', 180, 100),
             Parameter.dynamic('PhiCA', -78, 27),
         ]
-        opt = optimizer.buff_internal_eval(
-            specification, sequences, parameters)
+        opt = optimizer(specification, sequences, parameters,
+                        lambda x: budeff.get_interaction_energy(x).total_energy)
         opt.run_opt(5, 2, cores=1)
         self.assertTrue(opt.best_model)
 
