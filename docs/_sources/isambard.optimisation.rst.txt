@@ -27,12 +27,3 @@ isambard.optimisation.mmc\_optimizer module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: isambard.optimisation
-    :members:
-    :undoc-members:
-    :show-inheritance:

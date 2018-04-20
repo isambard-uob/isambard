@@ -16,6 +16,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="isambard.specifications package" href="isambard.specifications.html" />
+    <link rel="prev" title="isambard.modelling package" href="isambard.modelling.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -43,55 +45,68 @@
 <em class="property">class </em><code class="descclassname">isambard.optimisation.base_evo_opt.</code><code class="descname">BaseOptimizer</code><span class="sig-paren">(</span><em>specification</em>, <em>sequences</em>, <em>parameters</em>, <em>build_fn=None</em>, <em>eval_fn=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#BaseOptimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.BaseOptimizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Abstract base class for the evolutionary optimizers.</p>
+<p class="rubric">Notes</p>
 <p>Not intended to be used directly, see the evolutionary
 optimizers for full documentation.</p>
 <dl class="method">
 <dt id="isambard.optimisation.base_evo_opt.BaseOptimizer.assign_fitnesses">
 <code class="descname">assign_fitnesses</code><span class="sig-paren">(</span><em>targets</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#BaseOptimizer.assign_fitnesses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.BaseOptimizer.assign_fitnesses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assigns fitnesses to parameters.</p>
-<p>Uses <cite>self.eval_fn</cite> to evaluate each member of target.
-Parameters
-———</p>
-<dl class="docutils">
-<dt>targets</dt>
-<dd>Parameter values for each member of the population.</dd>
-</dl>
+<p class="rubric">Notes</p>
+<p>Uses <cite>self.eval_fn</cite> to evaluate each member of target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>targets</strong> – Parameter values for each member of the population.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.optimisation.base_evo_opt.BaseOptimizer.best_model">
 <code class="descname">best_model</code><a class="headerlink" href="#isambard.optimisation.base_evo_opt.BaseOptimizer.best_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rebuilds the top scoring model from an optimisation.</p>
-<dl class="docutils">
-<dt>model: AMPAL</dt>
-<dd>Returns an AMPAL model of the top scoring parameters.</dd>
-</dl>
-<dl class="docutils">
-<dt>AttributeError</dt>
-<dd>Raises a name error if the optimiser has not been run.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>model</strong> – Returns an AMPAL model of the top scoring parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">AMPAL</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">AttributeError</span></code> – Raises a name error if the optimiser has not been run.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="isambard.optimisation.base_evo_opt.BaseOptimizer.funnel_rebuild">
 <em class="property">static </em><code class="descname">funnel_rebuild</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#BaseOptimizer.funnel_rebuild"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.BaseOptimizer.funnel_rebuild" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rebuilds a model and compares it to a reference model.</p>
-<dl class="docutils">
-<dt>psg_trm: (([float], float, int), AMPAL, specification)</dt>
-<dd>A tuple containing the parameters, score and generation for a
-model as well as a model of the best scoring parameters.</dd>
-</dl>
-<dl class="docutils">
-<dt>energy_rmsd_gen: (float, float, int)</dt>
-<dd>A triple containing the BUFF score, RMSD to the top model
-and generation of a model generated during the minimisation.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>psg_trm</strong> (<em>(</em><em>(</em><em>[</em><em>float</em><em>]</em><em>, </em><em>float</em><em>, </em><em>int</em><em>)</em><em>, </em><em>AMPAL</em><em>, </em><em>specification</em><em>)</em>) – A tuple containing the parameters, score and generation for a
+model as well as a model of the best scoring parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>energy_rmsd_gen</strong> – A triple containing the BUFF score, RMSD to the top model
+and generation of a model generated during the minimisation.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(float, float, int)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="isambard.optimisation.base_evo_opt.BaseOptimizer.log_results">
 <code class="descname">log_results</code><span class="sig-paren">(</span><em>output_path=None</em>, <em>run_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#BaseOptimizer.log_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.BaseOptimizer.log_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves files for the minimization.</p>
+<p class="rubric">Notes</p>
 <p>Currently saves a logfile with best individual and a pdb of
 the best model.</p>
 </dd></dl>
@@ -100,68 +115,76 @@ the best model.</p>
 <dt id="isambard.optimisation.base_evo_opt.BaseOptimizer.make_energy_funnel_data">
 <code class="descname">make_energy_funnel_data</code><span class="sig-paren">(</span><em>cores=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#BaseOptimizer.make_energy_funnel_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.BaseOptimizer.make_energy_funnel_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compares models created during the minimisation to the best model.</p>
-<dl class="docutils">
-<dt>cores <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>Number of CPU cores to rebuild models and measure RMSD.</dd>
-</dl>
-<dl class="docutils">
-<dt>energy_rmsd_gen: [(float, float, int)]</dt>
-<dd>A list of triples containing the BUFF score, RMSD to the
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cores</strong> (<em>int</em>) – Number of CPU cores to rebuild models and measure RMSD.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>energy_rmsd_gen</strong> – A list of triples containing the BUFF score, RMSD to the
 top model and generation of a model generated during the
-minimisation.</dd>
-</dl>
+minimisation.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">[(float, float, int)]</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="isambard.optimisation.base_evo_opt.BaseOptimizer.parse_individual">
 <code class="descname">parse_individual</code><span class="sig-paren">(</span><em>individual</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#BaseOptimizer.parse_individual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.BaseOptimizer.parse_individual" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a deap individual into a full list of parameters.</p>
-<dl class="docutils">
-<dt>individual: deap individual from optimization</dt>
-<dd>Details vary according to type of optimization, but
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>individual</strong> (<em>deap individual from optimization</em>) – Details vary according to type of optimization, but
 parameters within deap individual are always between -1
 and 1. This function converts them into the values used to
-actually build the model</dd>
-</dl>
-<dl class="docutils">
-<dt>fullpars: list</dt>
-<dd>Full parameter list for model building.</dd>
-</dl>
+actually build the model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>fullpars</strong> – Full parameter list for model building.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="isambard.optimisation.base_evo_opt.BaseOptimizer.run_opt">
 <code class="descname">run_opt</code><span class="sig-paren">(</span><em>pop_size</em>, <em>generations</em>, <em>cores=1</em>, <em>plot=False</em>, <em>log=False</em>, <em>log_path=None</em>, <em>run_id=None</em>, <em>store_params=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#BaseOptimizer.run_opt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.BaseOptimizer.run_opt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the optimizer.</p>
-<dl class="docutils">
-<dt>pop_size: int</dt>
-<dd>Size of the population each generation.</dd>
-<dt>generation: int</dt>
-<dd>Number of generations in optimisation.</dd>
-<dt>cores: int, optional</dt>
-<dd>Number of CPU cores used to run the optimisation.
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pop_size</strong> (<em>int</em>) – Size of the population each generation.</li>
+<li><strong>generation</strong> (<em>int</em>) – Number of generations in optimisation.</li>
+<li><strong>cores</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of CPU cores used to run the optimisation.
 If the ‘mp_disabled’ keyword is passed to the
 optimizer, this will be ignored and one core will
-be used.</dd>
-<dt>plot: bool, optional</dt>
-<dd>If true, matplotlib will be used to plot information
-about the minimisation.</dd>
-<dt>log: bool, optional</dt>
-<dd>If true, a log file describing the optimisation will
+be used.</li>
+<li><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, matplotlib will be used to plot information
+about the minimisation.</li>
+<li><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, a log file describing the optimisation will
 be created. By default it will be written to the
 current directory and named according to the time the
 minimisation finished. This can be manually specified
 by passing the ‘output_path’ and ‘run_id’ keyword
-arguments.</dd>
-<dt>log_path <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Path to write output file.</dd>
-<dt>run_id <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>An identifier used as the name of your log file.</dd>
-<dt>store_params: bool, optional</dt>
-<dd>If true, the parameters for each model created during
+arguments.</li>
+<li><strong>log_path</strong> (<em>str</em>) – Path to write output file.</li>
+<li><strong>run_id</strong> (<em>str</em>) – An identifier used as the name of your log file.</li>
+<li><strong>store_params</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, the parameters for each model created during
 the optimisation will be stored. This can be used to
-create funnel data later on.</dd>
-</dl>
+create funnel data later on.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -180,27 +203,38 @@ create funnel data later on.</dd>
 <dt id="isambard.optimisation.base_evo_opt.Parameter.dynamic">
 <em class="property">classmethod </em><code class="descname">dynamic</code><span class="sig-paren">(</span><em>label</em>, <em>val_mean</em>, <em>val_range</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#Parameter.dynamic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.Parameter.dynamic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a static parameter.</p>
-<dl class="docutils">
-<dt>label <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>A human-readable label for the parameter.</dd>
-<dt>val_mean <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The mean value of the parameter.</dd>
-<dt>val_range <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The minimum and maximum variance from the mean allowed for
-parameter.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>label</strong> (<em>str</em>) – A human-readable label for the parameter.</li>
+<li><strong>val_mean</strong> (<em>float</em>) – The mean value of the parameter.</li>
+<li><strong>val_range</strong> (<em>float</em>) – The minimum and maximum variance from the mean allowed for
+parameter.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="isambard.optimisation.base_evo_opt.Parameter.static">
 <em class="property">classmethod </em><code class="descname">static</code><span class="sig-paren">(</span><em>label</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/base_evo_opt.html#Parameter.static"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.base_evo_opt.Parameter.static" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a static parameter.</p>
-<dl class="docutils">
-<dt>label <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>A human-readable label for the parameter.</dd>
-<dt>value</dt>
-<dd>The static value to be used.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>label</strong> (<em>str</em>) – A human-readable label for the parameter.</li>
+<li><strong>value</strong> – The static value to be used.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -236,38 +270,41 @@ parameter.</dd>
 <em class="property">class </em><code class="descclassname">isambard.optimisation.evo_optimizers.</code><code class="descname">CMAES</code><span class="sig-paren">(</span><em>specification</em>, <em>sequences</em>, <em>parameters</em>, <em>eval_fn</em>, <em>build_fn=&lt;function default_build&gt;</em>, <em>sigma=0.3</em>, <em>weight_type='superlinear'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/evo_optimizers.html#CMAES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.evo_optimizers.CMAES" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#isambard.optimisation.base_evo_opt.BaseOptimizer" title="isambard.optimisation.base_evo_opt.BaseOptimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">isambard.optimisation.base_evo_opt.BaseOptimizer</span></code></a></p>
 <p>Covariance matrix adaptation evolutionary strategy optimizer.</p>
+<p class="rubric">Notes</p>
 <p>Basically uses a covariance matrix at each step to identify the
 ‘direction’ of the optimal solution in the search space, and
 generates new individuals accordingly. Bound handling is achieved
 by moving any out of bounds parameters to the boundary condition.
 Other than that the implementation used here is as in the
 originating code from the deap module.</p>
-<dl class="docutils">
-<dt>specification <span class="classifier-delimiter">:</span> <span class="classifier">ampal.specification.assembly_specification</span></dt>
-<dd>An <cite>Assembly</cite> level specification to be optimised.</dd>
-<dt>sequences <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
-<dd>A list of sequences, one for each polymer.</dd>
-<dt>parameters <span class="classifier-delimiter">:</span> <span class="classifier">[base_ev_opt.Parameter]</span></dt>
-<dd>A list of <cite>Parameter</cite> objects in the same order as the
-function signature expects.</dd>
-<dt>build_fn <span class="classifier-delimiter">:</span> <span class="classifier">function((spec, seq, params)) -&gt; ampal</span></dt>
-<dd>A function for building a model using parameters supplied
-by the optimizer.</dd>
-<dt>eval_fn <span class="classifier-delimiter">:</span> <span class="classifier">function(ampal) -&gt; float</span></dt>
-<dd>An evaluation function that assesses an AMPAL object and
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>specification</strong> (<em>ampal.specification.assembly_specification</em>) – An <cite>Assembly</cite> level specification to be optimised.</li>
+<li><strong>sequences</strong> (<em>[</em><em>str</em><em>]</em>) – A list of sequences, one for each polymer.</li>
+<li><strong>parameters</strong> (<em>[</em><em>base_ev_opt.Parameter</em><em>]</em>) – A list of <cite>Parameter</cite> objects in the same order as the
+function signature expects.</li>
+<li><strong>build_fn</strong> (<em>function</em><em>(</em><em>(</em><em>spec</em><em>, </em><em>seq</em><em>, </em><em>params</em><em>)</em><em>) </em><em>-&gt; ampal</em>) – A function for building a model using parameters supplied
+by the optimizer.</li>
+<li><strong>eval_fn</strong> (<em>function</em><em>(</em><em>ampal</em><em>) </em><em>-&gt; float</em>) – An evaluation function that assesses an AMPAL object and
 returns a float. This float will be used to compare models.
 The optimizer uses the thermodynamic convention that lower
-numbers are better.</dd>
-<dt>sigma <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>Initial standard deviation of the distribution.</dd>
-<dt>weight_type <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Can be ‘linear’, ‘superlinear’ or ‘equal’. Used to decrease
-speed of particles.</dd>
-</dl>
+numbers are better.</li>
+<li><strong>sigma</strong> (<em>float</em>) – Initial standard deviation of the distribution.</li>
+<li><strong>weight_type</strong> (<em>str</em>) – Can be ‘linear’, ‘superlinear’ or ‘equal’. Used to decrease
+speed of particles.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="isambard.optimisation.evo_optimizers.CMAES.compute_params">
 <code class="descname">compute_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/evo_optimizers.html#CMAES.compute_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.evo_optimizers.CMAES.compute_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the parameters depending on <span class="math notranslate">\(\lambda\)</span>.</p>
+<p class="rubric">Notes</p>
 <p>It needs to be called again if <span class="math notranslate">\(\lambda\)</span> changes during
 evolution.</p>
 </dd></dl>
@@ -276,25 +313,35 @@ evolution.</p>
 <dt id="isambard.optimisation.evo_optimizers.CMAES.initialize_cma_es">
 <code class="descname">initialize_cma_es</code><span class="sig-paren">(</span><em>lambda_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/evo_optimizers.html#CMAES.initialize_cma_es"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.evo_optimizers.CMAES.initialize_cma_es" title="Permalink to this definition">¶</a></dt>
 <dd><p>A strategy that will keep track of the basic parameters.</p>
-<dl class="docutils">
-<dt>centroid:</dt>
-<dd>An iterable object that indicates where to start the
-evolution.</dd>
-<dt>parameter:</dt>
-<dd>One or more parameter to pass to the strategy as
-described in the following table, optional.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>centroid</strong> – An iterable object that indicates where to start the
+evolution.</li>
+<li><strong>parameter</strong> – One or more parameter to pass to the strategy as
+described in the following table, optional.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="isambard.optimisation.evo_optimizers.CMAES.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>population</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/evo_optimizers.html#CMAES.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.evo_optimizers.CMAES.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the covariance matrix strategy from the <em>population</em>.</p>
-<dl class="docutils">
-<dt>population:</dt>
-<dd>A list of individuals from which to update the
-parameters.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>population</strong> – A list of individuals from which to update the
+parameters.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -304,35 +351,36 @@ parameters.</dd>
 <em class="property">class </em><code class="descclassname">isambard.optimisation.evo_optimizers.</code><code class="descname">DE</code><span class="sig-paren">(</span><em>specification</em>, <em>sequences</em>, <em>parameters</em>, <em>eval_fn</em>, <em>build_fn=&lt;function default_build&gt;</em>, <em>cxpb=0.75</em>, <em>diff_weight=1</em>, <em>neighbours=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/evo_optimizers.html#DE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.evo_optimizers.DE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#isambard.optimisation.base_evo_opt.BaseOptimizer" title="isambard.optimisation.base_evo_opt.BaseOptimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">isambard.optimisation.base_evo_opt.BaseOptimizer</span></code></a></p>
 <p>Differential evolution optimisation algorithm.</p>
+<p class="rubric">Notes</p>
 <p>Can use neighbourhood model to reduce chance of getting stuck
 in local optima. This is a very versatile algorithm, and its use
 is recommended.</p>
-<dl class="docutils">
-<dt>specification <span class="classifier-delimiter">:</span> <span class="classifier">ampal.specification.assembly_specification</span></dt>
-<dd>An <cite>Assembly</cite> level specification to be optimised.</dd>
-<dt>sequences <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
-<dd>A list of sequences, one for each polymer.</dd>
-<dt>parameters <span class="classifier-delimiter">:</span> <span class="classifier">[base_ev_opt.Parameter]</span></dt>
-<dd>A list of <cite>Parameter</cite> objects in the same order as the
-function signature expects.</dd>
-<dt>build_fn <span class="classifier-delimiter">:</span> <span class="classifier">function((spec, seq, params)) -&gt; ampal</span></dt>
-<dd>A function for building a model using parameters supplied
-by the optimizer.</dd>
-<dt>eval_fn <span class="classifier-delimiter">:</span> <span class="classifier">function(ampal) -&gt; float</span></dt>
-<dd>An evaluation function that assesses an AMPAL object and
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>specification</strong> (<em>ampal.specification.assembly_specification</em>) – An <cite>Assembly</cite> level specification to be optimised.</li>
+<li><strong>sequences</strong> (<em>[</em><em>str</em><em>]</em>) – A list of sequences, one for each polymer.</li>
+<li><strong>parameters</strong> (<em>[</em><em>base_ev_opt.Parameter</em><em>]</em>) – A list of <cite>Parameter</cite> objects in the same order as the
+function signature expects.</li>
+<li><strong>build_fn</strong> (<em>function</em><em>(</em><em>(</em><em>spec</em><em>, </em><em>seq</em><em>, </em><em>params</em><em>)</em><em>) </em><em>-&gt; ampal</em>) – A function for building a model using parameters supplied
+by the optimizer.</li>
+<li><strong>eval_fn</strong> (<em>function</em><em>(</em><em>ampal</em><em>) </em><em>-&gt; float</em>) – An evaluation function that assesses an AMPAL object and
 returns a float. This float will be used to compare models.
 The optimizer uses the thermodynamic convention that lower
-numbers are better.</dd>
-<dt>cxpb <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The probability of crossing two individuals.</dd>
-<dt>diff_weight <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>A scaling factor for crossing.</dd>
-<dt>neighbours <span class="classifier-delimiter">:</span> <span class="classifier">int or None</span></dt>
-<dd>If not <cite>None</cite>, uses a neighbourhood model to reduce the
+numbers are better.</li>
+<li><strong>cxpb</strong> (<em>float</em>) – The probability of crossing two individuals.</li>
+<li><strong>diff_weight</strong> (<em>float</em>) – A scaling factor for crossing.</li>
+<li><strong>neighbours</strong> (<em>int</em><em> or </em><em>None</em>) – If not <cite>None</cite>, uses a neighbourhood model to reduce the
 likelihood of the optimisation getting stuck in a local
 optima. The number of particles to use as neighbours can
-be provided as an int.</dd>
-</dl>
+be provided as an int.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
@@ -340,31 +388,33 @@ be provided as an int.</dd>
 <em class="property">class </em><code class="descclassname">isambard.optimisation.evo_optimizers.</code><code class="descname">GA</code><span class="sig-paren">(</span><em>specification</em>, <em>sequences</em>, <em>parameters</em>, <em>eval_fn</em>, <em>build_fn=&lt;function default_build&gt;</em>, <em>cxpb=0.5</em>, <em>mutpb=0.2</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/evo_optimizers.html#GA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.evo_optimizers.GA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#isambard.optimisation.base_evo_opt.BaseOptimizer" title="isambard.optimisation.base_evo_opt.BaseOptimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">isambard.optimisation.base_evo_opt.BaseOptimizer</span></code></a></p>
 <p>A classic genetic algorithm optimization algorithm.</p>
+<p class="rubric">Notes</p>
 <p>Very good for eliminating unfavourable regions of the search space.
 Can be heavily customized in terms of mutation and crossover operators
 etc. Bound handling is achieved simply by amending any out of
 bounds parameters to the boundary value.</p>
-<dl class="docutils">
-<dt>specification <span class="classifier-delimiter">:</span> <span class="classifier">ampal.specification.assembly_specification</span></dt>
-<dd>An <cite>Assembly</cite> level specification to be optimised.</dd>
-<dt>sequences <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
-<dd>A list of sequences, one for each polymer.</dd>
-<dt>parameters <span class="classifier-delimiter">:</span> <span class="classifier">[base_ev_opt.Parameter]</span></dt>
-<dd>A list of <cite>Parameter</cite> objects in the same order as the
-function signature expects.</dd>
-<dt>build_fn <span class="classifier-delimiter">:</span> <span class="classifier">function((spec, seq, params)) -&gt; ampal</span></dt>
-<dd>A function for building a model using parameters supplied
-by the optimizer.</dd>
-<dt>eval_fn <span class="classifier-delimiter">:</span> <span class="classifier">function(ampal) -&gt; float</span></dt>
-<dd>An evaluation function that assesses an AMPAL object and
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>specification</strong> (<em>ampal.specification.assembly_specification</em>) – An <cite>Assembly</cite> level specification to be optimised.</li>
+<li><strong>sequences</strong> (<em>[</em><em>str</em><em>]</em>) – A list of sequences, one for each polymer.</li>
+<li><strong>parameters</strong> (<em>[</em><em>base_ev_opt.Parameter</em><em>]</em>) – A list of <cite>Parameter</cite> objects in the same order as the
+function signature expects.</li>
+<li><strong>build_fn</strong> (<em>function</em><em>(</em><em>(</em><em>spec</em><em>, </em><em>seq</em><em>, </em><em>params</em><em>)</em><em>) </em><em>-&gt; ampal</em>) – A function for building a model using parameters supplied
+by the optimizer.</li>
+<li><strong>eval_fn</strong> (<em>function</em><em>(</em><em>ampal</em><em>) </em><em>-&gt; float</em>) – An evaluation function that assesses an AMPAL object and
 returns a float. This float will be used to compare models.
 The optimizer uses the thermodynamic convention that lower
-numbers are better.</dd>
-<dt>cxpb <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The probability of crossing two individuals.</dd>
-<dt>mutpb <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>Probability of mutating an individual.</dd>
-</dl>
+numbers are better.</li>
+<li><strong>cxpb</strong> (<em>float</em>) – The probability of crossing two individuals.</li>
+<li><strong>mutpb</strong> (<em>float</em>) – Probability of mutating an individual.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
@@ -372,39 +422,42 @@ numbers are better.</dd>
 <em class="property">class </em><code class="descclassname">isambard.optimisation.evo_optimizers.</code><code class="descname">PSO</code><span class="sig-paren">(</span><em>specification</em>, <em>sequences</em>, <em>parameters</em>, <em>eval_fn</em>, <em>build_fn=&lt;function default_build&gt;</em>, <em>max_speed=0.75</em>, <em>neighbours=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/evo_optimizers.html#PSO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.evo_optimizers.PSO" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#isambard.optimisation.base_evo_opt.BaseOptimizer" title="isambard.optimisation.base_evo_opt.BaseOptimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">isambard.optimisation.base_evo_opt.BaseOptimizer</span></code></a></p>
 <p>A particle swarm optimization algorithm.</p>
+<p class="rubric">Notes</p>
 <p>This is good for avoiding bias and premature minimization, though
 it may struggle to find the ultimate optimum solution. Supports
 the neighbourhood model. Bound handling is achieved by allowing
 particles to exceed permitted bounds, but not assigning them a
 fitness in this case.</p>
-<dl class="docutils">
-<dt>specification <span class="classifier-delimiter">:</span> <span class="classifier">ampal.specification.assembly_specification</span></dt>
-<dd>An <cite>Assembly</cite> level specification to be optimised.</dd>
-<dt>sequences <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
-<dd>A list of sequences, one for each polymer.</dd>
-<dt>parameters <span class="classifier-delimiter">:</span> <span class="classifier">[base_ev_opt.Parameter]</span></dt>
-<dd>A list of <cite>Parameter</cite> objects in the same order as the
-function signature expects.</dd>
-<dt>build_fn <span class="classifier-delimiter">:</span> <span class="classifier">function((spec, seq, params)) -&gt; ampal</span></dt>
-<dd>A function for building a model using parameters supplied
-by the optimizer.</dd>
-<dt>eval_fn <span class="classifier-delimiter">:</span> <span class="classifier">function(ampal) -&gt; float</span></dt>
-<dd>An evaluation function that assesses an AMPAL object and
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>specification</strong> (<em>ampal.specification.assembly_specification</em>) – An <cite>Assembly</cite> level specification to be optimised.</li>
+<li><strong>sequences</strong> (<em>[</em><em>str</em><em>]</em>) – A list of sequences, one for each polymer.</li>
+<li><strong>parameters</strong> (<em>[</em><em>base_ev_opt.Parameter</em><em>]</em>) – A list of <cite>Parameter</cite> objects in the same order as the
+function signature expects.</li>
+<li><strong>build_fn</strong> (<em>function</em><em>(</em><em>(</em><em>spec</em><em>, </em><em>seq</em><em>, </em><em>params</em><em>)</em><em>) </em><em>-&gt; ampal</em>) – A function for building a model using parameters supplied
+by the optimizer.</li>
+<li><strong>eval_fn</strong> (<em>function</em><em>(</em><em>ampal</em><em>) </em><em>-&gt; float</em>) – An evaluation function that assesses an AMPAL object and
 returns a float. This float will be used to compare models.
 The optimizer uses the thermodynamic convention that lower
-numbers are better.</dd>
-<dt>max_speed <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The maximum speed that a particle can have in the swarm.</dd>
-<dt>neighbours <span class="classifier-delimiter">:</span> <span class="classifier">int or None</span></dt>
-<dd>If not <cite>None</cite>, uses a neighbourhood model to reduce the
+numbers are better.</li>
+<li><strong>max_speed</strong> (<em>float</em>) – The maximum speed that a particle can have in the swarm.</li>
+<li><strong>neighbours</strong> (<em>int</em><em> or </em><em>None</em>) – If not <cite>None</cite>, uses a neighbourhood model to reduce the
 likelihood of the optimisation getting stuck in a local
 optima. The number of particles to use as neighbours can
-be provided as an int.</dd>
-</dl>
+be provided as an int.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="isambard.optimisation.evo_optimizers.PSO.update_particle">
 <code class="descname">update_particle</code><span class="sig-paren">(</span><em>part</em>, <em>chi=0.729843788</em>, <em>c=2.05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/evo_optimizers.html#PSO.update_particle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.evo_optimizers.PSO.update_particle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constriction factor update particle method.</p>
+<p class="rubric">Notes</p>
 <p>Looks for a list of neighbours attached to a particle and
 uses the particle’s best position and that of the best
 neighbour.</p>
@@ -421,37 +474,63 @@ neighbour.</p>
 <em class="property">class </em><code class="descclassname">isambard.optimisation.mmc_optimizer.</code><code class="descname">MMCParameter</code><span class="sig-paren">(</span><em>label</em>, <em>parameter_type</em>, <em>static_dist_or_list</em>, <em>starting_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Defines parameters used in the MMC optimizer.</p>
-<dl class="docutils">
-<dt>label <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>The name of the parameter.</dd>
-<dt>parameter_type <span class="classifier-delimiter">:</span> <span class="classifier">MMCParameterType</span></dt>
-<dd>The type of the parameter.</dd>
-<dt>static_dist_or_list</dt>
-<dd>The values used to create the parameter. For example, if the
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>label</strong> (<em>str</em>) – The name of the parameter.</li>
+<li><strong>parameter_type</strong> (<a class="reference internal" href="#isambard.optimisation.mmc_optimizer.MMCParameterType" title="isambard.optimisation.mmc_optimizer.MMCParameterType"><em>MMCParameterType</em></a>) – The type of the parameter.</li>
+<li><strong>static_dist_or_list</strong> – The values used to create the parameter. For example, if the
 parameter types is “STATIC_VALUE” then this can be any object,
 if it is “LIST” then it should be a list of values and if it
-is “UNIFORM_DIST” then it should be (mu, sigma) etc.</dd>
-<dt>starting_value, optional</dt>
-<dd>The initial value of the parameter.</dd>
-</dl>
-<dl class="docutils">
-<dt>label <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>The name of the parameter.</dd>
-<dt>parameter_type <span class="classifier-delimiter">:</span> <span class="classifier">MMCParameterType</span></dt>
-<dd>The type of the parameter.</dd>
-<dt>static_dist_or_list</dt>
-<dd>The values used to create the parameter. For example, if the
+is “UNIFORM_DIST” then it should be (mu, sigma) etc.</li>
+<li><strong>optional</strong> (<em>starting_value</em><em>,</em>) – The initial value of the parameter.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.label">
+<code class="descname">label</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.label" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – The name of the parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.parameter_type">
+<code class="descname">parameter_type</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.parameter_type" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>MMCParameterType</em> – The type of the parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.static_dist_or_list">
+<code class="descname">static_dist_or_list</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.static_dist_or_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>The values used to create the parameter. For example, if the
 parameter types is “STATIC_VALUE” then this can be any object,
 if it is “LIST” then it should be a list of values and if it
-is “UNIFORM_DIST” then it should be (mu, sigma) etc.</dd>
-<dt>starting_value</dt>
-<dd>The initial value of the parameter.</dd>
-<dt>current_value</dt>
-<dd>The currently accepted value for the parameter.</dd>
-<dt>proposed_value</dt>
-<dd>A new value proposed for the parameter that has not been
-accepted.</dd>
-</dl>
+is “UNIFORM_DIST” then it should be (mu, sigma) etc.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.starting_value">
+<code class="descname">starting_value</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.starting_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initial value of the parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.current_value">
+<code class="descname">current_value</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.current_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently accepted value for the parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameter.proposed_value">
+<code class="descname">proposed_value</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.proposed_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>A new value proposed for the parameter that has not been
+accepted.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="isambard.optimisation.mmc_optimizer.MMCParameter.accept_proposed_value">
 <code class="descname">accept_proposed_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameter.accept_proposed_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.accept_proposed_value" title="Permalink to this definition">¶</a></dt>
@@ -462,12 +541,18 @@ accepted.</dd>
 <dt id="isambard.optimisation.mmc_optimizer.MMCParameter.randomise_proposed_value">
 <code class="descname">randomise_proposed_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameter.randomise_proposed_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameter.randomise_proposed_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a randomly the proposed value.</p>
-<dl class="docutils">
-<dt>TypeError</dt>
-<dd>Raised if this method is called on a static value.</dd>
-<dt>TypeError</dt>
-<dd>Raised if the parameter type is unknown.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – Raised if this method is called on a static value.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – Raised if the parameter type is unknown.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -483,6 +568,7 @@ accepted.</dd>
 <em class="property">class </em><code class="descclassname">isambard.optimisation.mmc_optimizer.</code><code class="descname">MMCParameterOptimisation</code><span class="sig-paren">(</span><em>specification</em>, <em>parameters</em>, <em>sequences</em>, <em>eval_function</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameterOptimisation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Performs Metropolis Monte Carlo opimisation on a specification.</p>
+<p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
@@ -492,55 +578,89 @@ Computing Machines, Journal of Chemical Physics. 21 (6),
 1087-1092.</td></tr>
 </tbody>
 </table>
-<dl class="docutils">
-<dt>specification <span class="classifier-delimiter">:</span> <span class="classifier">isambard.Specification</span></dt>
-<dd>Any ISAMBARD specification. This will be used to create models
-during the optimisation.</dd>
-<dt>parameters <span class="classifier-delimiter">:</span> <span class="classifier">[MMCParameter]</span></dt>
-<dd>Parameters to be optimised. The order of the parameters should
-match the init signiture of the specification.</dd>
-<dt>sequences <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
-<dd>The sequences to be used during the optimisation.</dd>
-<dt>eval_function <span class="classifier-delimiter">:</span> <span class="classifier">f(ampal) -&gt; float</span></dt>
-<dd>A function that takes an AMPAL object as an input and returns
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>specification</strong> (<em>isambard.Specification</em>) – Any ISAMBARD specification. This will be used to create models
+during the optimisation.</li>
+<li><strong>parameters</strong> (<em>[</em><a class="reference internal" href="#isambard.optimisation.mmc_optimizer.MMCParameter" title="isambard.optimisation.mmc_optimizer.MMCParameter"><em>MMCParameter</em></a><em>]</em>) – Parameters to be optimised. The order of the parameters should
+match the init signiture of the specification.</li>
+<li><strong>sequences</strong> (<em>[</em><em>str</em><em>]</em>) – The sequences to be used during the optimisation.</li>
+<li><strong>eval_function</strong> (<em>f</em><em>(</em><em>ampal</em><em>) </em><em>-&gt; float</em>) – A function that takes an AMPAL object as an input and returns
 a float. By default the <cite>buff_interaction_energy</cite> will be
-used to evaluate the structure.</dd>
-</dl>
-<dl class="docutils">
-<dt>specification <span class="classifier-delimiter">:</span> <span class="classifier">isambard.Specification</span></dt>
-<dd>Any ISAMBARD specification. This will be used to create models
-during the optimisation.</dd>
-<dt>parameters <span class="classifier-delimiter">:</span> <span class="classifier">[MMCParameter]</span></dt>
-<dd>Parameters to be optimised. The order of the parameters should
-match the init signiture of the specification.</dd>
-<dt>sequences <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
-<dd>The sequences to be used during the optimisation.</dd>
-<dt>eval_function <span class="classifier-delimiter">:</span> <span class="classifier">f(ampal) -&gt; float</span></dt>
-<dd>A function that takes an AMPAL object as an input and returns
-a float. By default the <cite>buff_interaction_energy</cite> will be
-used to evaluate the structure.</dd>
-<dt>current_energy <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The energy of the current structure.</dd>
-<dt>best_energy <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The best energy observed for any model.</dd>
-<dt>best_parameters <span class="classifier-delimiter">:</span> <span class="classifier">[MMCParameter]</span></dt>
-<dd>The parameters associated with the <cite>best_energy</cite>.</dd>
-<dt>best_model <span class="classifier-delimiter">:</span> <span class="classifier">AMPAL Object</span></dt>
-<dd>The model associated with the <cite>best_energy</cite>.</dd>
-</dl>
+used to evaluate the structure.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
-<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_energy">
-<code class="descname">best_energy</code><em class="property"> = None</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_energy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.specification">
+<code class="descname">specification</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.specification" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>isambard.Specification</em> – Any ISAMBARD specification. This will be used to create models
+during the optimisation.</p>
+</dd></dl>
 
 <dl class="attribute">
-<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_model">
-<code class="descname">best_model</code><em class="property"> = None</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.parameters">
+<code class="descname">parameters</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>[MMCParameter]</em> – Parameters to be optimised. The order of the parameters should
+match the init signiture of the specification.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.sequences">
+<code class="descname">sequences</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>[str]</em> – The sequences to be used during the optimisation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.eval_function">
+<code class="descname">eval_function</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.eval_function" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>f(ampal) -&gt; float</em> – A function that takes an AMPAL object as an input and returns
+a float. By default the <cite>buff_interaction_energy</cite> will be
+used to evaluate the structure.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.current_energy">
+<code class="descname">current_energy</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.current_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The energy of the current structure.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_energy">
+<code class="descname">best_energy</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The best energy observed for any model.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_parameters">
-<code class="descname">best_parameters</code><em class="property"> = None</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">best_parameters</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>[MMCParameter]</em> – The parameters associated with the <cite>best_energy</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_model">
+<code class="descname">best_model</code><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.best_model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>AMPAL Object</em> – The model associated with the <cite>best_energy</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">best_energy</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">best_model</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">best_parameters</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
@@ -551,20 +671,26 @@ used to evaluate the structure.</dd>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.current_energy">
-<code class="descname">current_energy</code><em class="property"> = None</em><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.current_energy" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">current_energy</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.start_optimisation">
 <code class="descname">start_optimisation</code><span class="sig-paren">(</span><em>rounds</em>, <em>temp=298.15</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/optimisation/mmc_optimizer.html#MMCParameterOptimisation.start_optimisation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.start_optimisation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Begin the optimisation run.</p>
-<dl class="docutils">
-<dt>rounds <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>The number of rounds of optimisation to perform.</dd>
-<dt>temp <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
-<dd>The temperature (in K) used during the optimisation.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rounds</strong> (<em>int</em>) – The number of rounds of optimisation to perform.</li>
+<li><strong>temp</strong> (<em>float</em><em>, </em><em>optional</em>) – The temperature (in K) used during the optimisation.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -608,9 +734,6 @@ used to evaluate the structure.</dd>
 </dd></dl>
 
 </div>
-<div class="section" id="module-isambard.optimisation">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-isambard.optimisation" title="Permalink to this headline">¶</a></h2>
-</div>
 </div>
 
 
@@ -635,13 +758,22 @@ used to evaluate the structure.</dd>
 
 
   <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">isambard.optimisation package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-isambard.optimisation.base_evo_opt">isambard.optimisation.base_evo_opt module</a></li>
-<li><a class="reference internal" href="#module-isambard.optimisation.evo_optimizers">isambard.optimisation.evo_optimizers module</a></li>
-<li><a class="reference internal" href="#module-isambard.optimisation.mmc_optimizer">isambard.optimisation.mmc_optimizer module</a></li>
-<li><a class="reference internal" href="#module-isambard.optimisation">Module contents</a></li>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="isambard.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="isambard.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="isambard.modelling.html">isambard.modelling package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">isambard.optimisation package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-isambard.optimisation.base_evo_opt">isambard.optimisation.base_evo_opt module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-isambard.optimisation.evo_optimizers">isambard.optimisation.evo_optimizers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-isambard.optimisation.mmc_optimizer">isambard.optimisation.mmc_optimizer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="isambard.specifications.html">isambard.specifications package</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -649,6 +781,10 @@ used to evaluate the structure.</dd>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="isambard.html">isambard package</a><ul>
+      <li>Previous: <a href="isambard.modelling.html" title="previous chapter">isambard.modelling package</a></li>
+      <li>Next: <a href="isambard.specifications.html" title="next chapter">isambard.specifications package</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>

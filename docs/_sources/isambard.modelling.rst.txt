@@ -19,12 +19,3 @@ isambard.modelling.scwrl module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: isambard.modelling
-    :members:
-    :undoc-members:
-    :show-inheritance:

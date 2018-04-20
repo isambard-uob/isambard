@@ -51,12 +51,3 @@ isambard.specifications.ta\_polypeptide module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: isambard.specifications
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -16,6 +16,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="isambard.optimisation package" href="isambard.optimisation.html" />
+    <link rel="prev" title="isambard package" href="isambard.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -42,12 +44,18 @@
 <dt id="isambard.modelling.non_canonical.align_nab">
 <code class="descclassname">isambard.modelling.non_canonical.</code><code class="descname">align_nab</code><span class="sig-paren">(</span><em>tar</em>, <em>ref</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/modelling/non_canonical.html#align_nab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.modelling.non_canonical.align_nab" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aligns the N-CA and CA-CB vector of the target monomer.</p>
-<dl class="docutils">
-<dt>tar: ampal.Residue</dt>
-<dd>The residue that will be aligned to the reference.</dd>
-<dt>ref: ampal.Residue</dt>
-<dd>The reference residue for the alignment.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tar</strong> (<em>ampal.Residue</em>) – The residue that will be aligned to the reference.</li>
+<li><strong>ref</strong> (<em>ampal.Residue</em>) – The reference residue for the alignment.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -63,10 +71,15 @@
 <p>All metadata associated with the original pro will be lost i.e. tags.
 As a consequence, it is advisable to relabel all atoms in the structure
 in order to make them contiguous.</p>
-<dl class="docutils">
-<dt>pro: ampal.Residue</dt>
-<dd>The proline residue to be mutated to hydroxyproline.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pro</strong> (<em>ampal.Residue</em>) – The proline residue to be mutated to hydroxyproline.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
 <p>We can create a collagen model using isambard and convert every third
 residue to hydroxyproline:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">isambard</span>
@@ -90,8 +103,7 @@ residue to hydroxyproline:</p>
 <p>The Scwrl executable must be on your path. Run the <cite>test_scwrl</cite>
 function to determine if it is available.</p>
 <p>For more information on Scwrl see [1].</p>
-<div class="section" id="references">
-<h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
@@ -104,72 +116,82 @@ Proteins.</td></tr>
 <dt id="isambard.modelling.scwrl.pack_side_chains_scwrl">
 <code class="descclassname">isambard.modelling.scwrl.</code><code class="descname">pack_side_chains_scwrl</code><span class="sig-paren">(</span><em>assembly</em>, <em>sequences</em>, <em>rigid_rotamer_model=True</em>, <em>hydrogens=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/modelling/scwrl.html#pack_side_chains_scwrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.modelling.scwrl.pack_side_chains_scwrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Packs side chains onto a protein structure.</p>
-<dl class="docutils">
-<dt>assembly <span class="classifier-delimiter">:</span> <span class="classifier">AMPAL Assembly</span></dt>
-<dd>AMPAL object containing some protein structure.</dd>
-<dt>sequence <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
-<dd>A list of amino acid sequences in single-letter code for Scwrl to pack.</dd>
-<dt>rigid_rotamer_model <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd>If True, Scwrl will use the rigid-rotamer model, which is
-faster but less accurate.</dd>
-<dt>hydrogens <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd>If False, the hydrogens produced by Scwrl will be ommitted.</dd>
-</dl>
-<dl class="docutils">
-<dt>packed_structure <span class="classifier-delimiter">:</span> <span class="classifier">AMPAL Assembly</span></dt>
-<dd>A new AMPAL Assembly containing the packed structure, with
-the Scwrl score in the tags.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>assembly</strong> (<em>AMPAL Assembly</em>) – AMPAL object containing some protein structure.</li>
+<li><strong>sequence</strong> (<em>[</em><em>str</em><em>]</em>) – A list of amino acid sequences in single-letter code for Scwrl to pack.</li>
+<li><strong>rigid_rotamer_model</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, Scwrl will use the rigid-rotamer model, which is
+faster but less accurate.</li>
+<li><strong>hydrogens</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, the hydrogens produced by Scwrl will be ommitted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>packed_structure</strong> – A new AMPAL Assembly containing the packed structure, with
+the Scwrl score in the tags.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">AMPAL Assembly</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="isambard.modelling.scwrl.parse_scwrl_out">
 <code class="descclassname">isambard.modelling.scwrl.</code><code class="descname">parse_scwrl_out</code><span class="sig-paren">(</span><em>scwrl_std_out</em>, <em>scwrl_pdb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/modelling/scwrl.html#parse_scwrl_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.modelling.scwrl.parse_scwrl_out" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parses SCWRL output and returns PDB and SCWRL score.
-Parameters
-———-
-scwrl_std_out : str</p>
-<blockquote>
-<div>Std out from SCWRL.</div></blockquote>
-<dl class="docutils">
-<dt>scwrl_pdb <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>String of packed SCWRL PDB.</dd>
-</dl>
-<dl class="docutils">
-<dt>fixed_scwrl_str <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>String of packed SCWRL PDB, with correct PDB format.</dd>
-<dt>score <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>SCWRL Score</dd>
-</dl>
+:param scwrl_std_out: Std out from SCWRL.
+:type scwrl_std_out: str
+:param scwrl_pdb: String of packed SCWRL PDB.
+:type scwrl_pdb: str</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>fixed_scwrl_str</strong> (<em>str</em>) – String of packed SCWRL PDB, with correct PDB format.</li>
+<li><strong>score</strong> (<em>float</em>) – SCWRL Score</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="isambard.modelling.scwrl.run_scwrl">
 <code class="descclassname">isambard.modelling.scwrl.</code><code class="descname">run_scwrl</code><span class="sig-paren">(</span><em>pdb</em>, <em>sequence</em>, <em>path=True</em>, <em>rigid_rotamer_model=True</em>, <em>hydrogens=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/modelling/scwrl.html#run_scwrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.modelling.scwrl.run_scwrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs SCWRL on input PDB strong or path to PDB and a sequence string.</p>
-<dl class="docutils">
-<dt>pdb <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>PDB string or a path to a PDB file.</dd>
-<dt>sequence <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Amino acid sequence for SCWRL to pack in single-letter code.</dd>
-<dt>path <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd>True if pdb is a path.</dd>
-<dt>rigid_rotamer_model <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd>If True, Scwrl will use the rigid-rotamer model, which is
-faster but less accurate.</dd>
-<dt>hydrogens <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd>If False, the hydrogens produced by Scwrl will be ommitted.</dd>
-</dl>
-<dl class="docutils">
-<dt>scwrl_std_out <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Std out from SCWRL.</dd>
-<dt>scwrl_pdb <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>String of packed SCWRL PDB.</dd>
-</dl>
-<dl class="docutils">
-<dt>ChildProcessError</dt>
-<dd>Raised if SCWRL failed to run.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pdb</strong> (<em>str</em>) – PDB string or a path to a PDB file.</li>
+<li><strong>sequence</strong> (<em>str</em>) – Amino acid sequence for SCWRL to pack in single-letter code.</li>
+<li><strong>path</strong> (<em>bool</em><em>, </em><em>optional</em>) – True if pdb is a path.</li>
+<li><strong>rigid_rotamer_model</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, Scwrl will use the rigid-rotamer model, which is
+faster but less accurate.</li>
+<li><strong>hydrogens</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, the hydrogens produced by Scwrl will be ommitted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li><strong>scwrl_std_out</strong> (<em>str</em>) – Std out from SCWRL.</li>
+<li><strong>scwrl_pdb</strong> (<em>str</em>) – String of packed SCWRL PDB.</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ChildProcessError</span></code> – Raised if SCWRL failed to run.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -178,10 +200,6 @@ faster but less accurate.</dd>
 <dd><p>True if Scwrl is available.</p>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-isambard.modelling">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-isambard.modelling" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -207,15 +225,21 @@ faster but less accurate.</dd>
 
 
   <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">isambard.modelling package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-isambard.modelling.non_canonical">isambard.modelling.non_canonical module</a></li>
-<li><a class="reference internal" href="#module-isambard.modelling.scwrl">isambard.modelling.scwrl module</a><ul>
-<li><a class="reference internal" href="#references">References</a></li>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="isambard.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="isambard.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">isambard.modelling package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-isambard.modelling.non_canonical">isambard.modelling.non_canonical module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-isambard.modelling.scwrl">isambard.modelling.scwrl module</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-isambard.modelling">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isambard.optimisation.html">isambard.optimisation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isambard.specifications.html">isambard.specifications package</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -223,6 +247,10 @@ faster but less accurate.</dd>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="isambard.html">isambard package</a><ul>
+      <li>Previous: <a href="isambard.html" title="previous chapter">isambard package</a></li>
+      <li>Next: <a href="isambard.optimisation.html" title="next chapter">isambard.optimisation package</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>

@@ -1,0 +1,1001 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ampal.protein &#8212; ISAMBARD 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ampal.protein</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;AMPAL objects that represent protein.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">ampal.base_ampal</span> <span class="k">import</span> <span class="n">Polymer</span><span class="p">,</span> <span class="n">Monomer</span><span class="p">,</span> <span class="n">Atom</span>
+<span class="kn">from</span> <span class="nn">ampal.pseudo_atoms</span> <span class="k">import</span> <span class="n">Primitive</span>
+<span class="kn">from</span> <span class="nn">ampal.analyse_protein</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">make_primitive_extrapolate_ends</span><span class="p">,</span> <span class="n">measure_torsion_angles</span><span class="p">,</span> <span class="n">residues_per_turn</span><span class="p">,</span>
+    <span class="n">polymer_to_reference_axis_distances</span><span class="p">,</span> <span class="n">crick_angles</span><span class="p">,</span> <span class="n">alpha_angles</span><span class="p">,</span>
+    <span class="n">sequence_molecular_weight</span><span class="p">,</span> <span class="n">sequence_molar_extinction_280</span><span class="p">,</span>
+    <span class="n">sequence_isoelectric_point</span><span class="p">,</span> <span class="n">measure_sidechain_torsion_angles</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">ampal.interactions</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">generate_covalent_bond_graph</span><span class="p">,</span> <span class="n">generate_bond_subgraphs_from_break</span><span class="p">,</span>
+    <span class="n">find_covalent_bonds</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.amino_acids</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">get_aa_code</span><span class="p">,</span> <span class="n">get_aa_letter</span><span class="p">,</span> <span class="n">ideal_backbone_bond_lengths</span><span class="p">,</span>
+    <span class="n">ideal_backbone_bond_angles</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.geometry</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">Quaternion</span><span class="p">,</span> <span class="n">unit_vector</span><span class="p">,</span> <span class="n">dihedral</span><span class="p">,</span> <span class="n">find_transformations</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span>
+    <span class="n">angle_between_vectors</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.ampal_warnings</span> <span class="k">import</span> <span class="n">MalformedPDBWarning</span>
+
+
+<span class="k">def</span> <span class="nf">flat_list_to_polymer</span><span class="p">(</span><span class="n">atom_list</span><span class="p">,</span> <span class="n">atom_group_s</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes a flat list of atomic coordinates and converts it to a `Polymer`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atom_list : [Atom]</span>
+<span class="sd">        Flat list of coordinates.</span>
+<span class="sd">    atom_group_s : int, optional</span>
+<span class="sd">        Size of atom groups.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    polymer : Polypeptide</span>
+<span class="sd">        `Polymer` object containing atom coords converted `Monomers`.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised if `atom_group_s` != 4 or 5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atom_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">]</span>
+    <span class="n">atom_elements</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">]</span>
+    <span class="n">atoms_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom_list</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">+</span> <span class="n">atom_group_s</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_list</span><span class="p">),</span> <span class="n">atom_group_s</span><span class="p">)]</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="p">[[</span><span class="n">Atom</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">atom_elements</span><span class="p">)]</span>
+             <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">atoms_coords</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">atom_group_s</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="n">monomers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Residue</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">atom_labels</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span> <span class="s1">&#39;ALA&#39;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">atom_group_s</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">monomers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Residue</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">atom_labels</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span> <span class="s1">&#39;GLY&#39;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Parameter atom_group_s must be 4 or 5 so atoms can be labeled correctly.&#39;</span><span class="p">)</span>
+    <span class="n">polymer</span> <span class="o">=</span> <span class="n">Polypeptide</span><span class="p">(</span><span class="n">monomers</span><span class="o">=</span><span class="n">monomers</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">polymer</span>
+
+
+<span class="k">def</span> <span class="nf">flat_list_to_dummy_chain</span><span class="p">(</span><span class="n">atom_list</span><span class="p">,</span> <span class="n">atom_group_s</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts flat list of coordinates into dummy C-alpha carbons</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atom_list : [Atom]</span>
+<span class="sd">        Flat list of co-ordinates.</span>
+<span class="sd">    atom_group_s : int, optional</span>
+<span class="sd">        Size of atom groups.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    polymer : Polypeptide</span>
+<span class="sd">        `Polymer` object containing atom coord converted `Monomers`</span>
+<span class="sd">        with &#39;DUM&#39; atom name.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atom_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span>
+    <span class="n">atom_elements</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span>
+    <span class="n">atoms_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom_list</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">+</span> <span class="n">atom_group_s</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_list</span><span class="p">),</span> <span class="n">atom_group_s</span><span class="p">)]</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="p">[[</span><span class="n">Atom</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">atom_elements</span><span class="p">)]</span>
+             <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">atoms_coords</span><span class="p">]</span>
+    <span class="n">monomers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Residue</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">atom_labels</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span> <span class="s1">&#39;DUM&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+    <span class="n">polymer</span> <span class="o">=</span> <span class="n">Polypeptide</span><span class="p">(</span><span class="n">monomers</span><span class="o">=</span><span class="n">monomers</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">polymer</span>
+
+
+<span class="k">def</span> <span class="nf">align</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">mobile</span><span class="p">,</span> <span class="n">target_i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mobile_i</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Aligns one Polypeptide (mobile) to another (target).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function directly modifies atoms of the mobile Polypeptide!</span>
+<span class="sd">    It does not return a new object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    target : Polypeptide</span>
+<span class="sd">        Polypeptide to be aligned to.</span>
+<span class="sd">    mobile : Polypeptide</span>
+<span class="sd">        Polypeptide to be moved during alignment.</span>
+<span class="sd">    target_i : int, optional</span>
+<span class="sd">        Index of `Residue` in target to align to.</span>
+<span class="sd">    mobile_i : int, optional</span>
+<span class="sd">        Index of `Residue` in mobile to be aligned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># First, align N-&gt;CA vectors.</span>
+    <span class="n">s1</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">e2</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_vector</span>
+                      <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">mobile</span><span class="p">[</span><span class="n">mobile_i</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">mobile</span><span class="p">[</span><span class="n">mobile_i</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span>
+                                <span class="n">target</span><span class="p">[</span><span class="n">target_i</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="n">target_i</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]]]</span>
+    <span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="n">find_transformations</span><span class="p">(</span>
+        <span class="n">s1</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Rotation first, Then translation.</span>
+    <span class="n">mobile</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">mobile</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">vector</span><span class="o">=</span><span class="n">translation</span><span class="p">)</span>
+    <span class="c1"># Second, rotate about N-&gt;CA axis to align CA-&gt;C vectors.</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span><span class="n">mobile</span><span class="p">[</span><span class="n">mobile_i</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">mobile</span><span class="p">[</span><span class="n">mobile_i</span><span class="p">]</span>
+                     <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">mobile</span><span class="p">[</span><span class="n">mobile_i</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="n">target_i</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">])</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">target_i</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">[</span><span class="n">target_i</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
+    <span class="n">point</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">target_i</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+    <span class="n">mobile</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">point</span><span class="p">)</span>
+    <span class="k">return</span>
+
+
+<span class="k">class</span> <span class="nc">Polypeptide</span><span class="p">(</span><span class="n">Polymer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Container for `Residues`, inherits from `Polymer`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    monomers : Residue or [Residue], optional</span>
+<span class="sd">        `Residue` or list containing `Residue` objects to form the</span>
+<span class="sd">        `Polypeptide`.</span>
+<span class="sd">    polymer_id : str, optional</span>
+<span class="sd">        An ID that the user can use to identify the `Polypeptide`. This is</span>
+<span class="sd">        used when generating a pdb file using `Polypeptide().pdb`.</span>
+<span class="sd">    parent : ampal.Assembly, optional</span>
+<span class="sd">        Reference to `Assembly` containing the `Polymer`.</span>
+<span class="sd">    sl : int, optional</span>
+<span class="sd">        The default smoothing level used when calculating the</span>
+<span class="sd">        backbone primitive.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id : str</span>
+<span class="sd">        `Polypeptide` ID</span>
+<span class="sd">    parent : ampal.Assembly or None</span>
+<span class="sd">        Reference to `Assembly` containing the `Polypeptide`</span>
+<span class="sd">    molecule_type : str</span>
+<span class="sd">        A description of the type of `Polymer` i.e. Protein, DNA etc.</span>
+<span class="sd">    ligands : ampal.LigandGroup</span>
+<span class="sd">        A `LigandGroup` containing all the `Ligands` associated with this</span>
+<span class="sd">        `Polypeptide` chain.</span>
+<span class="sd">    tags : dict</span>
+<span class="sd">        A dictionary containing information about this AMPAL object.</span>
+<span class="sd">        The tags dictionary is used by AMPAL to cache information</span>
+<span class="sd">        about this object, but is also intended to be used by users</span>
+<span class="sd">        to store any relevant information they have.</span>
+<span class="sd">    sl : int</span>
+<span class="sd">        The default smoothing level used when calculating the</span>
+<span class="sd">        backbone primitive.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        `Polymer` type objects can only be initialised empty or using</span>
+<span class="sd">        a `Monomer`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monomers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">monomers</span><span class="o">=</span><span class="n">monomers</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="n">polymer_id</span><span class="p">,</span> <span class="n">molecule_type</span><span class="o">=</span><span class="s1">&#39;protein&#39;</span><span class="p">,</span>
+            <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">sl</span><span class="o">=</span><span class="n">sl</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Polymer</span><span class="p">):</span>
+            <span class="n">merged_polymer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Only Polymer objects may be merged with a Polymer.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Polypeptide</span><span class="p">(</span><span class="n">monomers</span><span class="o">=</span><span class="n">merged_polymer</span><span class="p">,</span> <span class="n">polymer_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">id_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">id</span><span class="p">):</span> <span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">id_dict</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Polypeptide</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="n">polymer_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;...&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;Polypeptide containing </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">. Sequence: </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">),</span>
+            <span class="s1">&#39;Residue&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;Residues&#39;</span><span class="p">,</span> <span class="n">seq</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_slice_from_res_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a new `Polypeptide` containing the `Residues` in start/end range.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start : str</span>
+<span class="sd">            string representing start residue id (PDB numbering)</span>
+<span class="sd">        end : str</span>
+<span class="sd">            string representing end residue id (PDB numbering)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        slice_polymer : Polymer</span>
+<span class="sd">            Polymer containing the residue range specified by start-end</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">id_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">id</span><span class="p">):</span> <span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">}</span>
+        <span class="n">slice_polymer</span> <span class="o">=</span> <span class="n">Polypeptide</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">id_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)],</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">slice_polymer</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">backbone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a new `Polymer` containing only the backbone atoms.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Metadata is not currently preserved from the parent object.</span>
+<span class="sd">        Sequence data is retained, but only the main chain atoms are retained.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bb_poly : Polypeptide</span>
+<span class="sd">            Polymer containing only the backbone atoms of the original</span>
+<span class="sd">            Polymer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bb_poly</span> <span class="o">=</span> <span class="n">Polypeptide</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">backbone</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bb_poly</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">primitive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Primitive of the backbone.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is the average of the positions of all the CAs in frames</span>
+<span class="sd">        of `sl` `Residues`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reference_coords</span><span class="p">()</span>
+        <span class="n">primitive_coords</span> <span class="o">=</span> <span class="n">make_primitive_extrapolate_ends</span><span class="p">(</span>
+            <span class="n">cas</span><span class="p">,</span> <span class="n">smoothing_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sl</span><span class="p">)</span>
+        <span class="n">primitive</span> <span class="o">=</span> <span class="n">Primitive</span><span class="o">.</span><span class="n">from_coordinates</span><span class="p">(</span><span class="n">primitive_coords</span><span class="p">)</span>
+        <span class="n">primitive</span><span class="o">.</span><span class="n">relabel_monomers</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+        <span class="n">primitive</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">primitive</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">primitive</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fasta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates sequence data for the protein in FASTA format.&quot;&quot;&quot;</span>
+        <span class="n">max_line_length</span> <span class="o">=</span> <span class="mi">79</span>
+        <span class="n">fasta_str</span> <span class="o">=</span> <span class="s1">&#39;&gt;</span><span class="si">{0}</span><span class="s1">:</span><span class="si">{1}</span><span class="s1">|PDBID|CHAIN|SEQUENCE</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence</span>
+        <span class="n">split_seq</span> <span class="o">=</span> <span class="p">[</span><span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">max_line_length</span><span class="p">]</span>
+                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">max_line_length</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">seq_part</span> <span class="ow">in</span> <span class="n">split_seq</span><span class="p">:</span>
+            <span class="n">fasta_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seq_part</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fasta_str</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the sequence of the `Polymer` as a string.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sequence : str</span>
+<span class="sd">            String of the `Residue` sequence of the `Polypeptide`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">mol_letter</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">molecular_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the molecular weight of the `Assembly` in Daltons.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">sequence_molecular_weight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">molar_extinction_280</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the extinction co-efficient of the `Assembly` at 280 nm.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">sequence_molar_extinction_280</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">isoelectric_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the isoelectric point of the `Assembly`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">sequence_isoelectric_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">backbone_bond_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dictionary containing backbone bond lengths as lists of floats.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bond_lengths : dict</span>
+<span class="sd">            Keys are `n_ca`, `ca_c`, `c_o` and `c_n`, referring to the</span>
+<span class="sd">            N-CA, CA-C, C=O and C-N bonds respectively. Values are</span>
+<span class="sd">            lists of floats : the bond lengths in Angstroms.</span>
+<span class="sd">            The lists of n_ca, ca_c and c_o are of length k for</span>
+<span class="sd">            a Polypeptide containing k Residues. The list of c_n bonds</span>
+<span class="sd">            is of length k-1 for a Polypeptide containing k Residues</span>
+<span class="sd">            (C-N formed between successive `Residue` pairs).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bond_lengths</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">n_ca</span><span class="o">=</span><span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">])</span>
+                  <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">(</span><span class="n">ligands</span><span class="o">=</span><span class="kc">False</span><span class="p">)],</span>
+            <span class="n">ca_c</span><span class="o">=</span><span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">])</span>
+                  <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">(</span><span class="n">ligands</span><span class="o">=</span><span class="kc">False</span><span class="p">)],</span>
+            <span class="n">c_o</span><span class="o">=</span><span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;O&#39;</span><span class="p">])</span>
+                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">(</span><span class="n">ligands</span><span class="o">=</span><span class="kc">False</span><span class="p">)],</span>
+            <span class="n">c_n</span><span class="o">=</span><span class="p">[</span><span class="n">distance</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]],</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">bond_lengths</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">backbone_bond_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dictionary containing backbone bond angles as lists of floats.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bond_angles : dict</span>
+<span class="sd">            Keys are `n_ca_c`, `ca_c_o`, `ca_c_n` and `c_n_ca`, referring</span>
+<span class="sd">            to the N-CA-C, CA-C=O, CA-C-N and C-N-CA angles respectively.</span>
+<span class="sd">            Values are lists of floats : the bond angles in degrees.</span>
+<span class="sd">            The lists of n_ca_c, ca_c_o are of length k for a `Polypeptide`</span>
+<span class="sd">            containing k `Residues`. The list of ca_c_n and c_n_ca are of</span>
+<span class="sd">            length k-1 for a `Polypeptide` containing k `Residues` (These</span>
+<span class="sd">            angles are across the peptide bond, and are therefore formed</span>
+<span class="sd">            between successive `Residue` pairs).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bond_angles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">n_ca_c</span><span class="o">=</span><span class="p">[</span><span class="n">angle_between_vectors</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">(</span><span class="n">ligands</span><span class="o">=</span><span class="kc">False</span><span class="p">)],</span>
+            <span class="n">ca_c_o</span><span class="o">=</span><span class="p">[</span><span class="n">angle_between_vectors</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;O&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">(</span><span class="n">ligands</span><span class="o">=</span><span class="kc">False</span><span class="p">)],</span>
+            <span class="n">ca_c_n</span><span class="o">=</span><span class="p">[</span><span class="n">angle_between_vectors</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="p">[(</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]],</span>
+            <span class="n">c_n_ca</span><span class="o">=</span><span class="p">[</span><span class="n">angle_between_vectors</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="p">[(</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]],</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">bond_angles</span>
+
+    <span class="k">def</span> <span class="nf">c_join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">psi</span><span class="o">=-</span><span class="mf">40.76</span><span class="p">,</span> <span class="n">omega</span><span class="o">=-</span><span class="mf">178.25</span><span class="p">,</span> <span class="n">phi</span><span class="o">=-</span><span class="mf">65.07</span><span class="p">,</span>
+               <span class="n">o_c_n_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c_n_ca_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c_n_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">relabel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Joins other to self at the C-terminus via a peptide bond.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This function directly modifies self. It does not return a new object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other: Residue or Polypeptide</span>
+<span class="sd">        psi: float, optional</span>
+<span class="sd">            Psi torsion angle (degrees) between final `Residue` of self</span>
+<span class="sd">            and first `Residue` of other.</span>
+<span class="sd">        omega: float, optional</span>
+<span class="sd">            Omega torsion angle (degrees) between final `Residue` of</span>
+<span class="sd">            self and first `Residue` of other.</span>
+<span class="sd">        phi: float, optional</span>
+<span class="sd">            Phi torsion angle (degrees) between final `Residue` of self</span>
+<span class="sd">            and first `Residue` of other.</span>
+<span class="sd">        o_c_n_angle: float or None, optional</span>
+<span class="sd">            Desired angle between O, C (final `Residue` of self) and N</span>
+<span class="sd">            (first `Residue` of other) atoms. If `None`, default value is</span>
+<span class="sd">            taken from `ideal_backbone_bond_angles`.</span>
+<span class="sd">        c_n_ca_angle: float or None, optional</span>
+<span class="sd">            Desired angle between C (final `Residue` of self) and N, CA</span>
+<span class="sd">            (first `Residue` of other) atoms. If `None`, default value is</span>
+<span class="sd">            taken from `ideal_backbone_bond_angles`.</span>
+<span class="sd">        c_n_length: float or None, optional</span>
+<span class="sd">            Desired peptide bond length between final `Residue` of self</span>
+<span class="sd">            and first `Residue` of other. If `None`, default value is taken</span>
+<span class="sd">            from `ideal_backbone_bond_lengths`.</span>
+<span class="sd">        relabel: bool, optional</span>
+<span class="sd">            If `True`, `relabel_all` is run on self before returning.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError:</span>
+<span class="sd">            If other is not a `Residue` or a Polypeptide.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Residue</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">Polypeptide</span><span class="p">([</span><span class="n">other</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Polypeptide</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Only Polypeptide or Residue objects can be joined to a Polypeptide&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">90</span><span class="p">:</span>
+            <span class="n">peptide_conformation</span> <span class="o">=</span> <span class="s1">&#39;trans&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">peptide_conformation</span> <span class="o">=</span> <span class="s1">&#39;cis&#39;</span>
+        <span class="k">if</span> <span class="n">o_c_n_angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">o_c_n_angle</span> <span class="o">=</span> <span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="n">peptide_conformation</span><span class="p">][</span><span class="s1">&#39;o_c_n&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">c_n_ca_angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">c_n_ca_angle</span> <span class="o">=</span> <span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="n">peptide_conformation</span><span class="p">][</span><span class="s1">&#39;c_n_ca&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">c_n_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">c_n_length</span> <span class="o">=</span> <span class="n">ideal_backbone_bond_lengths</span><span class="p">[</span><span class="s1">&#39;c_n&#39;</span><span class="p">]</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">r1_ca</span> <span class="o">=</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="n">r1_c</span> <span class="o">=</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="n">r1_o</span> <span class="o">=</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;O&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="c1"># p1 is point that will be used to position the N atom of r2.</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">r1_o</span><span class="p">[:]</span>
+        <span class="c1"># rotate p1 by o_c_n_angle, about axis perpendicular to the</span>
+        <span class="c1"># r1_ca, r1_c, r1_o plane, passing through r1_c.</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cross</span><span class="p">((</span><span class="n">r1_ca</span> <span class="o">-</span> <span class="n">r1_c</span><span class="p">),</span> <span class="p">(</span><span class="n">r1_o</span> <span class="o">-</span> <span class="n">r1_c</span><span class="p">))</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">Quaternion</span><span class="o">.</span><span class="n">angle_and_axis</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">o_c_n_angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">r1_c</span><span class="p">)</span>
+        <span class="c1"># Ensure p1 is separated from r1_c by the correct distance.</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">r1_c</span> <span class="o">+</span> <span class="p">(</span><span class="n">c_n_length</span> <span class="o">*</span> <span class="n">unit_vector</span><span class="p">(</span><span class="n">p1</span> <span class="o">-</span> <span class="n">r1_c</span><span class="p">))</span>
+        <span class="c1"># rotate p1 and r1[&#39;O&#39;] by to obtain desired psi value at the join.</span>
+        <span class="n">measured_psi</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">p1</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">Quaternion</span><span class="o">.</span><span class="n">angle_and_axis</span><span class="p">(</span>
+            <span class="n">angle</span><span class="o">=</span><span class="p">(</span><span class="n">psi</span> <span class="o">-</span> <span class="n">measured_psi</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="n">r1_c</span> <span class="o">-</span> <span class="n">r1_ca</span><span class="p">))</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">r1_c</span><span class="p">)</span>
+        <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;O&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">r1_o</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">r1_c</span><span class="p">)</span>
+        <span class="c1"># translate other so that its first N atom is at p1</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">vector</span><span class="o">=</span><span class="p">(</span><span class="n">p1</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">))</span>
+        <span class="c1"># rotate other so that c_n_ca angle is correct.</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">r1_c</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="n">measured_c_n_ca</span> <span class="o">=</span> <span class="n">angle_between_vectors</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="p">(</span><span class="n">c_n_ca_angle</span> <span class="o">-</span> <span class="n">measured_c_n_ca</span><span class="p">),</span>
+                     <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+        <span class="c1"># rotate other to obtain desired omega and phi values at the join</span>
+        <span class="n">measured_omega</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+            <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">])</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="p">(</span><span class="n">omega</span> <span class="o">-</span> <span class="n">measured_omega</span><span class="p">),</span>
+                     <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]),</span> <span class="n">point</span><span class="o">=</span><span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+        <span class="n">measured_phi</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+            <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">])</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="p">(</span><span class="n">phi</span> <span class="o">-</span> <span class="n">measured_phi</span><span class="p">),</span>
+                     <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">]),</span> <span class="n">point</span><span class="o">=</span><span class="n">other</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">relabel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">relabel_all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;assigned_ff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">n_join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">psi</span><span class="o">=-</span><span class="mf">40.76</span><span class="p">,</span> <span class="n">omega</span><span class="o">=-</span><span class="mf">178.25</span><span class="p">,</span> <span class="n">phi</span><span class="o">=-</span><span class="mf">65.07</span><span class="p">,</span>
+               <span class="n">o_c_n_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c_n_ca_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c_n_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">relabel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Joins other to self at the N-terminus via a peptide bond.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This function directly modifies self. It does not return a new object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other: Residue or Polypeptide</span>
+<span class="sd">        psi: float</span>
+<span class="sd">            Psi torsion angle (degrees) between final `Residue` of other</span>
+<span class="sd">            and first `Residue` of self.</span>
+<span class="sd">        omega: float</span>
+<span class="sd">            Omega torsion angle (degrees) between final `Residue` of</span>
+<span class="sd">            other and first `Residue` of self.</span>
+<span class="sd">        phi: float</span>
+<span class="sd">            Phi torsion angle (degrees) between final `Residue` of other</span>
+<span class="sd">            and first `Residue` of self.</span>
+<span class="sd">        o_c_n_angle: float or None</span>
+<span class="sd">            Desired angle between O, C (final `Residue` of other) and N</span>
+<span class="sd">            (first `Residue` of self) atoms. If `None`, default value is</span>
+<span class="sd">            taken from `ideal_backbone_bond_angles`.</span>
+<span class="sd">        c_n_ca_angle: float or None</span>
+<span class="sd">            Desired angle between C (final `Residue` of other) and N, CA</span>
+<span class="sd">            (first `Residue` of self) atoms. If `None`, default value is taken</span>
+<span class="sd">            from `ideal_backbone_bond_angles`.</span>
+<span class="sd">        c_n_length: float or None</span>
+<span class="sd">            Desired peptide bond length between final `Residue` of other</span>
+<span class="sd">            and first `Residue` of self. If None, default value is taken</span>
+<span class="sd">            from ideal_backbone_bond_lengths.</span>
+<span class="sd">        relabel: bool</span>
+<span class="sd">            If True, relabel_all is run on self before returning.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError:</span>
+<span class="sd">            If other is not a `Residue` or a `Polypeptide`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Residue</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">Polypeptide</span><span class="p">([</span><span class="n">other</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Polypeptide</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Only Polypeptide or Residue objects can be joined to a Polypeptide&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">90</span><span class="p">:</span>
+            <span class="n">peptide_conformation</span> <span class="o">=</span> <span class="s1">&#39;trans&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">peptide_conformation</span> <span class="o">=</span> <span class="s1">&#39;cis&#39;</span>
+        <span class="k">if</span> <span class="n">o_c_n_angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">o_c_n_angle</span> <span class="o">=</span> <span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="n">peptide_conformation</span><span class="p">][</span><span class="s1">&#39;o_c_n&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">c_n_ca_angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">c_n_ca_angle</span> <span class="o">=</span> <span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="n">peptide_conformation</span><span class="p">][</span><span class="s1">&#39;c_n_ca&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">c_n_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">c_n_length</span> <span class="o">=</span> <span class="n">ideal_backbone_bond_lengths</span><span class="p">[</span><span class="s1">&#39;c_n&#39;</span><span class="p">]</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">r1_n</span> <span class="o">=</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="n">r1_ca</span> <span class="o">=</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="n">r1_c</span> <span class="o">=</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span>
+        <span class="c1"># p1 is point that will be used to position the C atom of r2.</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">r1_ca</span><span class="p">[:]</span>
+        <span class="c1"># rotate p1 by c_n_ca_angle, about axis perpendicular to the</span>
+        <span class="c1"># r1_n, r1_ca, r1_c plane, passing through r1_ca.</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cross</span><span class="p">((</span><span class="n">r1_ca</span> <span class="o">-</span> <span class="n">r1_n</span><span class="p">),</span> <span class="p">(</span><span class="n">r1_c</span> <span class="o">-</span> <span class="n">r1_n</span><span class="p">))</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">Quaternion</span><span class="o">.</span><span class="n">angle_and_axis</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="n">c_n_ca_angle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">rotate_vector</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">r1_n</span><span class="p">)</span>
+        <span class="c1"># Ensure p1 is separated from r1_n by the correct distance.</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">r1_n</span> <span class="o">+</span> <span class="p">(</span><span class="n">c_n_length</span> <span class="o">*</span> <span class="n">unit_vector</span><span class="p">(</span><span class="n">p1</span> <span class="o">-</span> <span class="n">r1_n</span><span class="p">))</span>
+        <span class="c1"># translate other so that its final C atom is at p1</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">vector</span><span class="o">=</span><span class="p">(</span><span class="n">p1</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">))</span>
+        <span class="c1"># Force CA-C=O-N to be in a plane, and fix O=C-N angle accordingly</span>
+        <span class="n">measured_dihedral</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+            <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;O&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">])</span>
+        <span class="n">desired_dihedral</span> <span class="o">=</span> <span class="mf">180.0</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;O&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">]</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="p">(</span><span class="n">measured_dihedral</span> <span class="o">-</span> <span class="n">desired_dihedral</span><span class="p">),</span>
+                     <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;O&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">]))</span>
+        <span class="n">measured_o_c_n</span> <span class="o">=</span> <span class="n">angle_between_vectors</span><span class="p">(</span>
+            <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;O&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">])</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="p">(</span><span class="n">measured_o_c_n</span> <span class="o">-</span> <span class="n">o_c_n_angle</span><span class="p">),</span>
+                     <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+        <span class="c1"># rotate other to obtain desired phi, omega, psi values at the join.</span>
+        <span class="n">measured_phi</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span><span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">])</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="p">(</span><span class="n">phi</span> <span class="o">-</span> <span class="n">measured_phi</span><span class="p">),</span>
+                     <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="n">r1_n</span> <span class="o">-</span> <span class="n">r1_ca</span><span class="p">),</span> <span class="n">point</span><span class="o">=</span><span class="n">r1_ca</span><span class="p">)</span>
+        <span class="n">measured_omega</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+            <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">])</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="p">(</span><span class="n">measured_omega</span> <span class="o">-</span> <span class="n">omega</span><span class="p">),</span>
+                     <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">]),</span> <span class="n">point</span><span class="o">=</span><span class="n">r1_n</span><span class="p">)</span>
+        <span class="n">measured_psi</span> <span class="o">=</span> <span class="n">dihedral</span><span class="p">(</span>
+            <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">],</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">])</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="o">=-</span><span class="p">(</span><span class="n">measured_psi</span> <span class="o">-</span> <span class="n">psi</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">]),</span>
+                     <span class="n">point</span><span class="o">=</span><span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_vector</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_monomers</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span>
+        <span class="k">if</span> <span class="n">relabel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">relabel_all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;assigned_ff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">tag_sidechain_dihedrals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tags each monomer with side-chain dihedral angles</span>
+
+<span class="sd">        force: bool, optional</span>
+<span class="sd">            If `True` the tag will be run even if `Residues` are</span>
+<span class="sd">            already tagged.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tagged</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chi_angles&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">tagged</span><span class="p">))</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">monomer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">:</span>
+                <span class="n">chi_angles</span> <span class="o">=</span> <span class="n">measure_sidechain_torsion_angles</span><span class="p">(</span>
+                    <span class="n">monomer</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;chi_angles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chi_angles</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">tag_torsion_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tags each Monomer of the Polymer with its omega, phi and psi torsion angle.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        force : bool, optional</span>
+<span class="sd">            If `True` the tag will be run even if `Residues` are</span>
+<span class="sd">            already tagged.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tagged</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;omega&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">tagged</span><span class="p">))</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+            <span class="n">tas</span> <span class="o">=</span> <span class="n">measure_torsion_angles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">monomer</span><span class="p">,</span> <span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">psi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">,</span> <span class="n">tas</span><span class="p">):</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;omega&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">psi</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;tas&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">psi</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">rise_per_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List of rise per residue values along the `Polypeptide`.</span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Calculated from `Polypeptide.primitive`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">rise_per_residue</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">radii_of_curvature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; List of radius of curvature values along the `Polypeptide`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">radii_of_curvature</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">tag_ca_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reference_axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">reference_axis_name</span><span class="o">=</span><span class="s1">&#39;ref_axis&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tags each `Residue` with rise_per_residue, radius_of_curvature and residues_per_turn.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        force : bool, optional</span>
+<span class="sd">            If `True` the tag will be run even if `Residues` are already</span>
+<span class="sd">            tagged.</span>
+<span class="sd">        reference_axis : list(numpy.array or tuple or list), optional</span>
+<span class="sd">            Coordinates to feed to geometry functions that depend on</span>
+<span class="sd">            having a reference axis.</span>
+<span class="sd">        reference_axis_name : str, optional</span>
+<span class="sd">            Used to name the keys in tags at `Polypeptide` and `Residue` level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tagged</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rise_per_residue&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">tagged</span><span class="p">))</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+            <span class="c1"># Assign tags None if Polymer is too short to have a primitive.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="n">rprs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">rocs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">rpts</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rprs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rise_per_residue</span><span class="p">()</span>
+                <span class="n">rocs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radii_of_curvature</span><span class="p">()</span>
+                <span class="n">rpts</span> <span class="o">=</span> <span class="n">residues_per_turn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">monomer</span><span class="p">,</span> <span class="n">rpr</span><span class="p">,</span> <span class="n">roc</span><span class="p">,</span> <span class="n">rpt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monomers</span><span class="p">,</span> <span class="n">rprs</span><span class="p">,</span> <span class="n">rocs</span><span class="p">,</span> <span class="n">rpts</span><span class="p">):</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;rise_per_residue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rpr</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;radius_of_curvature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roc</span>
+                <span class="n">monomer</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;residues_per_turn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rpt</span>
+        <span class="c1"># Functions that require a reference_axis.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">reference_axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">reference_axis</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="c1"># Set up arguments to pass to functions.</span>
+            <span class="n">ref_axis_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">reference_axis</span><span class="o">=</span><span class="n">reference_axis</span><span class="p">,</span>
+                                 <span class="n">tag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">reference_axis_name</span><span class="o">=</span><span class="n">reference_axis_name</span><span class="p">)</span>
+            <span class="c1"># Run the functions.</span>
+            <span class="n">polymer_to_reference_axis_distances</span><span class="p">(</span><span class="o">**</span><span class="n">ref_axis_args</span><span class="p">)</span>
+            <span class="n">crick_angles</span><span class="p">(</span><span class="o">**</span><span class="n">ref_axis_args</span><span class="p">)</span>
+            <span class="n">alpha_angles</span><span class="p">(</span><span class="o">**</span><span class="n">ref_axis_args</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">valid_backbone_bond_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True if all backbone bonds are within atol Angstroms of the expected distance.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Ideal bond lengths taken from [1].</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] Schulz, G. E, and R. Heiner Schirmer. Principles Of</span>
+<span class="sd">           Protein Structure. New York: Springer-Verlag, 1979.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atol : float, optional</span>
+<span class="sd">            Tolerance value in Angstoms for the absolute deviation</span>
+<span class="sd">            away from ideal backbone bond lengths.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bond_lengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone_bond_lengths</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bond_lengths</span><span class="p">[</span><span class="s1">&#39;n_ca&#39;</span><span class="p">],</span>
+                            <span class="p">[</span><span class="n">ideal_backbone_bond_lengths</span><span class="p">[</span><span class="s1">&#39;n_ca&#39;</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                            <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bond_lengths</span><span class="p">[</span><span class="s1">&#39;ca_c&#39;</span><span class="p">],</span>
+                            <span class="p">[</span><span class="n">ideal_backbone_bond_lengths</span><span class="p">[</span><span class="s1">&#39;ca_c&#39;</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                            <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bond_lengths</span><span class="p">[</span><span class="s1">&#39;c_o&#39;</span><span class="p">],</span>
+                            <span class="p">[</span><span class="n">ideal_backbone_bond_lengths</span><span class="p">[</span><span class="s1">&#39;c_o&#39;</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                            <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="n">a4</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bond_lengths</span><span class="p">[</span><span class="s1">&#39;c_n&#39;</span><span class="p">],</span>
+                            <span class="p">[</span><span class="n">ideal_backbone_bond_lengths</span><span class="p">[</span><span class="s1">&#39;c_n&#39;</span><span class="p">]]</span> <span class="o">*</span>
+                            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                            <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="n">a4</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">valid_backbone_bond_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True if all backbone bond angles are within atol degrees of their expected values.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Ideal bond angles taken from [1].</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] Schulz, G. E, and R. Heiner Schirmer. Principles Of</span>
+<span class="sd">           Protein Structure. New York: Springer-Verlag, 1979.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atol : float, optional</span>
+<span class="sd">            Tolerance value in degrees for the absolute deviation</span>
+<span class="sd">            away from ideal backbone bond angles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bond_angles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone_bond_angles</span>
+        <span class="n">omegas</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">measure_torsion_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span>
+        <span class="n">trans</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;trans&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">omega</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">90</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;cis&#39;</span> <span class="k">for</span> <span class="n">omega</span> <span class="ow">in</span> <span class="n">omegas</span><span class="p">]</span>
+        <span class="n">ideal_n_ca_c</span> <span class="o">=</span> <span class="p">[</span><span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s1">&#39;n_ca_c&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">trans</span><span class="p">]</span>
+        <span class="n">ideal_ca_c_o</span> <span class="o">=</span> <span class="p">[</span><span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="n">trans</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+                        <span class="p">[</span><span class="s1">&#39;ca_c_o&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trans</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">ideal_ca_c_o</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="s1">&#39;trans&#39;</span><span class="p">][</span><span class="s1">&#39;ca_c_o&#39;</span><span class="p">])</span>
+        <span class="n">ideal_ca_c_n</span> <span class="o">=</span> <span class="p">[</span><span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s1">&#39;ca_c_n&#39;</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">trans</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="n">ideal_c_n_ca</span> <span class="o">=</span> <span class="p">[</span><span class="n">ideal_backbone_bond_angles</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s1">&#39;c_n_ca&#39;</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">trans</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bond_angles</span><span class="p">[</span><span class="s1">&#39;n_ca_c&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">ideal_n_ca_c</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bond_angles</span><span class="p">[</span><span class="s1">&#39;ca_c_o&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">ideal_ca_c_o</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bond_angles</span><span class="p">[</span><span class="s1">&#39;ca_c_n&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">ideal_ca_c_n</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="n">a4</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bond_angles</span><span class="p">[</span><span class="s1">&#39;c_n_ca&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">ideal_c_n_ca</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="n">a4</span><span class="p">])</span>
+
+
+<span class="k">class</span> <span class="nc">Residue</span><span class="p">(</span><span class="n">Monomer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a amino acid `Residue`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atoms : OrderedDict, optional</span>
+<span class="sd">        OrderedDict containing Atoms for the Monomer. OrderedDict</span>
+<span class="sd">        is used to maintain the order items were added to the</span>
+<span class="sd">        dictionary.</span>
+<span class="sd">    mol_code : str, optional</span>
+<span class="sd">        One or three letter code that represents the monomer.</span>
+<span class="sd">    monomer_id : str, optional</span>
+<span class="sd">        String used to identify the residue.</span>
+<span class="sd">    insertion_code : str, optional</span>
+<span class="sd">        Insertion code of monomer, used if reading from pdb.</span>
+<span class="sd">    is_hetero : bool, optional</span>
+<span class="sd">        True if is a hetero atom in pdb. Helps with PDB formatting.</span>
+<span class="sd">    parent : ampal.Polypeptide, optional</span>
+<span class="sd">        Reference to `Polypeptide` containing the `Residue`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mol_code : str</span>
+<span class="sd">        PDB molecule code that represents the `Residue`.</span>
+<span class="sd">    insertion_code : str</span>
+<span class="sd">        Insertion code of `Residue`, used if reading from pdb.</span>
+<span class="sd">    is_hetero : bool</span>
+<span class="sd">        True if is a hetero atom in pdb. Helps with PDB formatting.</span>
+<span class="sd">    states : dict</span>
+<span class="sd">        Contains an `OrderedDicts` containing atom information for each</span>
+<span class="sd">        state available for the `Residue`.</span>
+<span class="sd">    id : str</span>
+<span class="sd">        String used to identify the residue.</span>
+<span class="sd">    reference_atom : str</span>
+<span class="sd">        The key that corresponds to the reference atom. This is used</span>
+<span class="sd">        by various functions, for example backbone primitives are</span>
+<span class="sd">        calculated using the atom defined using this key.</span>
+<span class="sd">    parent : Polypeptide or None</span>
+<span class="sd">        A reference to the `Polypeptide` containing this `Residue`.</span>
+<span class="sd">    tags : dict</span>
+<span class="sd">        A dictionary containing information about this AMPAL object.</span>
+<span class="sd">        The tags dictionary is used by AMPAL to cache information</span>
+<span class="sd">        about this object, but is also intended to be used by users</span>
+<span class="sd">        to store any relevant information they have.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised if `mol_code` is not length 1 or 3.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mol_code</span><span class="o">=</span><span class="s1">&#39;UNK&#39;</span><span class="p">,</span> <span class="n">monomer_id</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span>
+                 <span class="n">insertion_code</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">is_hetero</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Residue</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">atoms</span><span class="p">,</span> <span class="n">monomer_id</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mol_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span> <span class="o">=</span> <span class="n">mol_code</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mol_letter</span> <span class="o">=</span> <span class="n">get_aa_letter</span><span class="p">(</span><span class="n">mol_code</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">mol_code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span> <span class="o">=</span> <span class="n">get_aa_code</span><span class="p">(</span><span class="n">mol_code</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mol_letter</span> <span class="o">=</span> <span class="n">mol_code</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Monomer requires either a 1-letter or a 3-letter &#39;</span>
+                <span class="s1">&#39;amino acid code (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mol_code</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insertion_code</span> <span class="o">=</span> <span class="n">insertion_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_hetero</span> <span class="o">=</span> <span class="n">is_hetero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reference_atom</span> <span class="o">=</span> <span class="s1">&#39;CA&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;Residue containing </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">. Residue code: </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">),</span> <span class="s1">&#39;Atom&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;Atoms&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">backbone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a new `Residue` containing only the backbone atoms.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bb_monomer : Residue</span>
+<span class="sd">            `Residue` containing only the backbone atoms of the original</span>
+<span class="sd">            `Monomer`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IndexError</span>
+<span class="sd">            Raise if the `atoms` dict does not contain the backbone</span>
+<span class="sd">            atoms (N, CA, C, O).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">backbone</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]),</span>
+                                    <span class="p">(</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]),</span>
+                                    <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]),</span>
+                                    <span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="s1">&#39;O&#39;</span><span class="p">])])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">missing_atoms</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+                                   <span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">)</span>
+                                   <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Error in residue </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">, missing (</span><span class="si">{}</span><span class="s1">) atoms. &#39;</span>
+                           <span class="s1">&#39;`atoms` must be an `OrderedDict` with coordinates &#39;</span>
+                           <span class="s1">&#39;defined for the backbone (N, CA, C, O) atoms.&#39;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_atoms</span><span class="p">)))</span>
+        <span class="n">bb_monomer</span> <span class="o">=</span> <span class="n">Residue</span><span class="p">(</span><span class="n">backbone</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span><span class="p">,</span> <span class="n">monomer_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                             <span class="n">insertion_code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">insertion_code</span><span class="p">,</span>
+                             <span class="n">is_hetero</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_hetero</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bb_monomer</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">unique_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates a tuple that uniquely identifies a `Monomer` in an `Assembly`.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The unique_id will uniquely identify each monomer within a polymer.</span>
+<span class="sd">        If each polymer in an assembly has a distinct id, it will uniquely</span>
+<span class="sd">        identify each monomer within the assembly.</span>
+
+<span class="sd">        The hetero-flag is defined as in Biopython as a string that is</span>
+<span class="sd">        either a single whitespace in the case of a non-hetero atom,</span>
+<span class="sd">        or &#39;H_&#39; plus the name of the hetero-residue (e.g. &#39;H_GLC&#39; in</span>
+<span class="sd">        the case of a glucose molecule), or &#39;W&#39; in the case of a water</span>
+<span class="sd">        molecule.</span>
+
+<span class="sd">        For more information, see the Biopython documentation or this</span>
+<span class="sd">        Biopython wiki page:</span>
+<span class="sd">        http://biopython.org/wiki/The_Biopython_Structural_Bioinformatics_FAQ</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        unique_id : tuple</span>
+<span class="sd">            unique_id[0] is the polymer_id unique_id[1] is a triple</span>
+<span class="sd">            of the hetero-flag, the monomer id (residue number) and the</span>
+<span class="sd">            insertion code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_hetero</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span> <span class="o">==</span> <span class="s1">&#39;HOH&#39;</span><span class="p">:</span>
+                <span class="n">hetero_flag</span> <span class="o">=</span> <span class="s1">&#39;W&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hetero_flag</span> <span class="o">=</span> <span class="s1">&#39;H_</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hetero_flag</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="p">(</span><span class="n">hetero_flag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">insertion_code</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">side_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List of the side-chain atoms (R-group).</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Returns empty list for glycine.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        side_chain_atoms: list(`Atoms`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">side_chain_atoms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_code</span> <span class="o">!=</span> <span class="s1">&#39;GLY&#39;</span><span class="p">:</span>
+            <span class="n">covalent_bond_graph</span> <span class="o">=</span> <span class="n">generate_covalent_bond_graph</span><span class="p">(</span>
+                <span class="n">find_covalent_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">subgraphs</span> <span class="o">=</span> <span class="n">generate_bond_subgraphs_from_break</span><span class="p">(</span>
+                    <span class="n">covalent_bond_graph</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subgraphs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">subgraphs</span> <span class="o">=</span> <span class="n">generate_bond_subgraphs_from_break</span><span class="p">(</span>
+                        <span class="n">subgraphs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;CD&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subgraphs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">subgraphs</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">g</span><span class="p">:</span>
+                            <span class="n">side_chain_atoms</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+                            <span class="k">break</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">warning_message</span> <span class="o">=</span> <span class="s2">&quot;Malformed PDB for Residue </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;CB&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">side_chain_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;CB&#39;</span><span class="p">])</span>
+                    <span class="n">warning_message</span> <span class="o">+=</span> <span class="s2">&quot; Side-chain is just the CB atom.&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">warning_message</span> <span class="o">+=</span> <span class="s2">&quot; Empty side-chain.&quot;</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">,</span> <span class="n">MalformedPDBWarning</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">side_chain_atoms</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Jack W. Heal, Christopher W. Wood, Gail J. Bartlett, &#39;</span>
+              <span class="s1">&#39;Andrew R. Thomson, Kieran L. Hudson&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../isambard.html">API Documentation</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Woolfson Group, UoB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

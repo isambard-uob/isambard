@@ -9,14 +9,23 @@ for tutorials and to find out about features.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    Installation <installation>
    Tutorials <tutorials>
+   API Documentation <isambard>
 
+Citing ISAMBARD
+---------------
+
+Any publication arising from use of the ISAMBARD software package should cite
+the following reference:
+
+`Wood CW *et al* (2017) ISAMBARD: an open-source computational environment for
+biomolecular analysis, modelling and design. *Bioinformatics*, **33**, 3043-50
+<https://doi.org/10.1093/bioinformatics/btx352>`_
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
