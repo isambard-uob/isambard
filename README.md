@@ -37,7 +37,72 @@ http://dunbrack.fccc.edu/scwrl4/) installed and available on your system path.
 
 ## Quick Start
 
-Wanting to delve a bit deeper? Take a look at the [docs](
-https://woolfson-group.github.io/isambard/) to find out more of the features in
-ISAMBARD, or just take a look through the code base and hack around. Feel free
-to contact us through email or the issues if you get stuck.
+> Note<br />
+> If you're not sure what parametric modelling of proteins is, have a
+> play with [CCBuilder 2.0](http://coiledcoils.chm.bris.ac.uk/ccbuilder2/builder).
+
+Let's build a coiled-coil dimer with typical parameters:
+
+```Python
+import isambard.specifications as specifications
+import isambard.modelling as modelling
+import isambard.optimisation
+
+my_dimer = specifications.CoiledCoil.from_parameters(2, 28, 5, 225, 283)
+dimer_sequences = [
+    'EIAALKQEIAALKKENAALKWEIAALKQ',
+    'EIAALKQEIAALKKENAALKWEIAALKQ'
+]
+my_dimer = modelling.pack_side_chains_scwrl(my_dimer, dimer_sequences)
+print(my_dimer.pdb)
+# OUT: 
+# HEADER ISAMBARD Model                                                                  
+# ATOM      1  N   GLU A   1      -5.364  -1.566  -0.689  1.00  0.00           N  
+# ATOM      2  CA  GLU A   1      -4.483  -2.220   0.308  1.00  0.00           C  
+# ATOM      3  C   GLU A   1      -3.886  -1.143   1.216  1.00  0.00           C  
+# ATOM      4  O   GLU A   1      -3.740  -1.337   2.425  1.00  0.00           O  
+# ATOM      5  CB  GLU A   1      -3.389  -3.028  -0.392  1.00  0.00           C  
+# ...
+```
+
+Don't know what your parameters might be? Let's optimise them then!
+
+```Python
+import budeff
+import isambard.optimisation.evo_optimizers as ev_opts
+from isambard.optimisation.evo_optimizers import Parameter
+
+specification = specifications.CoiledCoil.from_parameters
+sequences = [
+    'EIAALKQEIAALKKENAALKWEIAALKQ',
+    'EIAALKQEIAALKKENAALKWEIAALKQ'
+]
+parameters = [
+    Parameter.static('Oligomeric State', 2),
+    Parameter.static('Helix Length', 28),
+    Parameter.dynamic('Radius', 5.0, 1.0),
+    Parameter.dynamic('Pitch', 200, 60),
+    Parameter.dynamic('PhiCA', 283, 27),  # 283 is equivalent a g position
+]
+def get_buff_total_energy(ampal_object):
+    return budeff.get_internal_energy(ampal_object).total_energy
+opt_ga = ev_opts.GA(specification, sequences, parameters, get_buff_total_energy)
+opt_ga.run_opt(100, 5, cores=8)
+# OUT:
+# gen	evals	avg     	std    	min     	max     
+# 0  	61   	-820.401	42.0119	-908.875	-750.001
+# 1  	59   	-859.86 	31.4194	-950.15 	-807.265
+# 2  	60   	-887.028	23.8683	-951.153	-847.346
+# 3  	70   	-907.257	15.9615	-952.863	-882.028
+# 4  	81   	-922.522	14.6206	-972.335	-903.444
+# Evaluated 431 models in total in 0:00:29.523487
+# Best fitness is (-972.3348571854714,)
+# Best parameters are [2, 28, 4.678360526981807, 151.35365923229745, 277.2061538048508]
+optimized_model = opt_ga.best_model
+```
+
+This quick example of parametric modelling with ISAMBARD, the next thing to do
+is take a look at the [docs](https://isambard-uob.github.io/isambard/) from
+tutorials on the tools available, or just take a look through the code base and
+hack around. Feel free to contact us through email or the issues if you get
+stuck.
