@@ -1,0 +1,739 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>isambard.optimisation.evo_optimizers &#8212; ISAMBARD 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for isambard.optimisation.evo_optimizers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Bio-inspired optimizers.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">deap</span> <span class="k">import</span> <span class="n">creator</span><span class="p">,</span> <span class="n">tools</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">.base_evo_opt</span> <span class="k">import</span> <span class="n">BaseOptimizer</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">default_build</span>
+
+
+<div class="viewcode-block" id="DE"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.evo_optimizers.DE">[docs]</a><span class="k">class</span> <span class="nc">DE</span><span class="p">(</span><span class="n">BaseOptimizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Differential evolution optimisation algorithm.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Can use neighbourhood model to reduce chance of getting stuck</span>
+<span class="sd">    in local optima. This is a very versatile algorithm, and its use</span>
+<span class="sd">    is recommended.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    specification : ampal.specification.assembly_specification</span>
+<span class="sd">        An `Assembly` level specification to be optimised.</span>
+<span class="sd">    sequences : [str]</span>
+<span class="sd">        A list of sequences, one for each polymer.</span>
+<span class="sd">    parameters : [base_ev_opt.Parameter]</span>
+<span class="sd">        A list of `Parameter` objects in the same order as the</span>
+<span class="sd">        function signature expects.</span>
+<span class="sd">    build_fn : function((spec, seq, params)) -&gt; ampal</span>
+<span class="sd">        A function for building a model using parameters supplied</span>
+<span class="sd">        by the optimizer.</span>
+<span class="sd">    eval_fn : function(ampal) -&gt; float</span>
+<span class="sd">        An evaluation function that assesses an AMPAL object and</span>
+<span class="sd">        returns a float. This float will be used to compare models.</span>
+<span class="sd">        The optimizer uses the thermodynamic convention that lower</span>
+<span class="sd">        numbers are better.</span>
+<span class="sd">    cxpb : float</span>
+<span class="sd">        The probability of crossing two individuals.</span>
+<span class="sd">    diff_weight : float</span>
+<span class="sd">        A scaling factor for crossing.</span>
+<span class="sd">    neighbours : int or None</span>
+<span class="sd">        If not `None`, uses a neighbourhood model to reduce the</span>
+<span class="sd">        likelihood of the optimisation getting stuck in a local</span>
+<span class="sd">        optima. The number of particles to use as neighbours can</span>
+<span class="sd">        be provided as an int.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specification</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">eval_fn</span><span class="p">,</span>
+                 <span class="n">build_fn</span><span class="o">=</span><span class="n">default_build</span><span class="p">,</span> <span class="n">cxpb</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">diff_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">neighbours</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">specification</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">build_fn</span><span class="o">=</span><span class="n">build_fn</span><span class="p">,</span> <span class="n">eval_fn</span><span class="o">=</span><span class="n">eval_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cxpb</span> <span class="o">=</span> <span class="n">cxpb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diff_weight</span> <span class="o">=</span> <span class="n">diff_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="n">neighbours</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Individual&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">FitnessMin</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates a particle using the creator function.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Position and speed are uniformly randomly seeded within</span>
+<span class="sd">        allowed bounds. The particle also has speed limit settings</span>
+<span class="sd">        taken from global values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        particle object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_means</span><span class="p">))])</span>
+        <span class="n">ind</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">ind</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">ind</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assigns indices to individuals in population.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;individual&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;population&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">initRepeat</span><span class="p">,</span>
+                              <span class="nb">list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">individual</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">pop_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="nb">set</span><span class="p">(</span>
+                        <span class="p">[(</span><span class="n">i</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">+</span>
+                        <span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+                    <span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_fitnesses</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_crossover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Used by the evolution process to generate a new individual.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a tweaked version of the classical DE crossover</span>
+<span class="sd">        algorithm, the main difference that candidate parameters are</span>
+<span class="sd">        generated using a lognormal distribution. Bound handling is</span>
+<span class="sd">        achieved by resampling where the candidate solution exceeds +/-1</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ind : deap individual</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y : deap individual</span>
+<span class="sd">            An individual representing a candidate solution, to be</span>
+<span class="sd">            assigned a fitness.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span><span class="p">:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ind</span><span class="o">.</span><span class="n">neighbours</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="n">ind</span><span class="o">.</span><span class="n">ident</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="n">ind</span><span class="o">.</span><span class="n">neighbours</span>
+        <span class="k">del</span> <span class="n">y</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span>
+        <span class="c1"># y should now be a copy of ind with the vector elements from a</span>
+        <span class="n">ident</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_means</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">ident</span> <span class="ow">or</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxpb</span><span class="p">:</span>
+                <span class="n">entry</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">lognormvariate</span><span class="p">(</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">diff_weight</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">tries</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="nb">abs</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                    <span class="n">tries</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">entry</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">lognormvariate</span><span class="p">(</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">diff_weight</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">tries</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">:</span>
+                        <span class="n">entry</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span>
+        <span class="k">return</span> <span class="n">y</span>
+
+    <span class="k">def</span> <span class="nf">_update_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates population according to crossover and fitness criteria.&quot;&quot;&quot;</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">:</span>
+            <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_crossover</span><span class="p">(</span><span class="n">ind</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_fitnesses</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">candidates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">candidates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+        <span class="k">return</span>
+
+
+<div class="viewcode-block" id="PSO"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.evo_optimizers.PSO">[docs]</a><span class="k">class</span> <span class="nc">PSO</span><span class="p">(</span><span class="n">BaseOptimizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A particle swarm optimization algorithm.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This is good for avoiding bias and premature minimization, though</span>
+<span class="sd">    it may struggle to find the ultimate optimum solution. Supports</span>
+<span class="sd">    the neighbourhood model. Bound handling is achieved by allowing</span>
+<span class="sd">    particles to exceed permitted bounds, but not assigning them a</span>
+<span class="sd">    fitness in this case.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    specification : ampal.specification.assembly_specification</span>
+<span class="sd">        An `Assembly` level specification to be optimised.</span>
+<span class="sd">    sequences : [str]</span>
+<span class="sd">        A list of sequences, one for each polymer.</span>
+<span class="sd">    parameters : [base_ev_opt.Parameter]</span>
+<span class="sd">        A list of `Parameter` objects in the same order as the</span>
+<span class="sd">        function signature expects.</span>
+<span class="sd">    build_fn : function((spec, seq, params)) -&gt; ampal</span>
+<span class="sd">        A function for building a model using parameters supplied</span>
+<span class="sd">        by the optimizer.</span>
+<span class="sd">    eval_fn : function(ampal) -&gt; float</span>
+<span class="sd">        An evaluation function that assesses an AMPAL object and</span>
+<span class="sd">        returns a float. This float will be used to compare models.</span>
+<span class="sd">        The optimizer uses the thermodynamic convention that lower</span>
+<span class="sd">        numbers are better.</span>
+<span class="sd">    max_speed : float</span>
+<span class="sd">        The maximum speed that a particle can have in the swarm.</span>
+<span class="sd">    neighbours : int or None</span>
+<span class="sd">        If not `None`, uses a neighbourhood model to reduce the</span>
+<span class="sd">        likelihood of the optimisation getting stuck in a local</span>
+<span class="sd">        optima. The number of particles to use as neighbours can</span>
+<span class="sd">        be provided as an int.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specification</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">eval_fn</span><span class="p">,</span>
+                 <span class="n">build_fn</span><span class="o">=</span><span class="n">default_build</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">neighbours</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">specification</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">build_fn</span><span class="o">=</span><span class="n">build_fn</span><span class="p">,</span> <span class="n">eval_fn</span><span class="o">=</span><span class="n">eval_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_speed</span> <span class="o">=</span> <span class="mf">0.75</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Particle&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">FitnessMin</span><span class="p">,</span>
+                       <span class="n">speed</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">smin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">best</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;particle&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate</span><span class="p">)</span>
+        <span class="c1"># can this pick up the global fitness?</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Swarm&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">gbest</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gbestfit</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">FitnessMin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;swarm&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">initRepeat</span><span class="p">,</span>
+                              <span class="n">creator</span><span class="o">.</span><span class="n">Swarm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">particle</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates initial population with random positions and speeds.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">swarm</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">pop_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="nb">set</span><span class="p">(</span>
+                        <span class="p">[(</span><span class="n">i</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">+</span>
+                        <span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span>
+                        <span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+                    <span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">))]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_fitnesses</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">:</span>
+            <span class="n">part</span><span class="o">.</span><span class="n">best</span> <span class="o">=</span> <span class="n">creator</span><span class="o">.</span><span class="n">Particle</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="n">part</span><span class="o">.</span><span class="n">best</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates a particle using the creator function.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Position and speed are uniformly randomly seeded within</span>
+<span class="sd">        allowed bounds. The particle also has speed limit settings</span>
+<span class="sd">        taken from global values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        part : particle object</span>
+<span class="sd">            A particle used during optimisation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">part</span> <span class="o">=</span> <span class="n">creator</span><span class="o">.</span><span class="n">Particle</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_means</span><span class="p">))])</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">speed</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_speed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_speed</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_means</span><span class="p">))]</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">smin</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_speed</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">smax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_speed</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">neighbours</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">part</span>
+
+<div class="viewcode-block" id="PSO.update_particle"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.evo_optimizers.PSO.update_particle">[docs]</a>    <span class="k">def</span> <span class="nf">update_particle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="mf">0.729843788</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">2.05</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constriction factor update particle method.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Looks for a list of neighbours attached to a particle and</span>
+<span class="sd">        uses the particle&#39;s best position and that of the best</span>
+<span class="sd">        neighbour.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">neighbour_pool</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">part</span><span class="o">.</span><span class="n">neighbours</span><span class="p">]</span>
+        <span class="n">best_neighbour</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">neighbour_pool</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">best</span><span class="o">.</span><span class="n">fitness</span><span class="p">)</span>
+        <span class="n">ce1</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="p">)))</span>
+        <span class="n">ce2</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="p">)))</span>
+        <span class="n">ce1_p</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="n">ce1</span><span class="p">,</span> <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">best</span><span class="p">,</span> <span class="n">part</span><span class="p">))</span>
+        <span class="n">ce2_g</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="n">ce2</span><span class="p">,</span> <span class="nb">map</span><span class="p">(</span>
+            <span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span> <span class="n">best_neighbour</span><span class="o">.</span><span class="n">best</span><span class="p">,</span> <span class="n">part</span><span class="p">))</span>
+        <span class="n">chi_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">chi</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+        <span class="n">chi_list2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">chi</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span>
+                <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="n">chi_list</span><span class="p">,</span> <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">ce1_p</span><span class="p">,</span> <span class="n">ce2_g</span><span class="p">)),</span>
+                <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="n">chi_list2</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">speed</span><span class="p">))</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">speed</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">speed</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">speed</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">speed</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">speed</span> <span class="o">&lt;</span> <span class="n">part</span><span class="o">.</span><span class="n">smin</span><span class="p">:</span>
+                <span class="n">part</span><span class="o">.</span><span class="n">speed</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">smin</span>
+            <span class="k">elif</span> <span class="n">speed</span> <span class="o">&gt;</span> <span class="n">part</span><span class="o">.</span><span class="n">smax</span><span class="p">:</span>
+                <span class="n">part</span><span class="o">.</span><span class="n">speed</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">smax</span>
+        <span class="n">part</span><span class="p">[:]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">speed</span><span class="p">))</span></div>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_update_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assigns fitnesses to particles that are within bounds.&quot;&quot;&quot;</span>
+        <span class="n">valid_particles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">invalid_particles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">part</span><span class="p">):</span>
+                <span class="n">invalid_particles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">valid_particles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_particles</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">valid_particles</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_particle</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_fitnesses</span><span class="p">(</span><span class="n">valid_particles</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">valid_particles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">fitness</span> <span class="o">&gt;</span> <span class="n">part</span><span class="o">.</span><span class="n">best</span><span class="o">.</span><span class="n">fitness</span><span class="p">:</span>
+                <span class="n">part</span><span class="o">.</span><span class="n">best</span> <span class="o">=</span> <span class="n">creator</span><span class="o">.</span><span class="n">Particle</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+                <span class="n">part</span><span class="o">.</span><span class="n">best</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">fitness</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">invalid_particles</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_particle</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">valid_particles</span> <span class="o">+</span> <span class="n">invalid_particles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">ident</span><span class="p">)</span>  <span class="c1"># shouldn&#39;t need to sort?</span></div>
+        <span class="k">return</span>
+
+
+<div class="viewcode-block" id="GA"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.evo_optimizers.GA">[docs]</a><span class="k">class</span> <span class="nc">GA</span><span class="p">(</span><span class="n">BaseOptimizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A classic genetic algorithm optimization algorithm.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Very good for eliminating unfavourable regions of the search space.</span>
+<span class="sd">    Can be heavily customized in terms of mutation and crossover operators</span>
+<span class="sd">    etc. Bound handling is achieved simply by amending any out of</span>
+<span class="sd">    bounds parameters to the boundary value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    specification : ampal.specification.assembly_specification</span>
+<span class="sd">        An `Assembly` level specification to be optimised.</span>
+<span class="sd">    sequences : [str]</span>
+<span class="sd">        A list of sequences, one for each polymer.</span>
+<span class="sd">    parameters : [base_ev_opt.Parameter]</span>
+<span class="sd">        A list of `Parameter` objects in the same order as the</span>
+<span class="sd">        function signature expects.</span>
+<span class="sd">    build_fn : function((spec, seq, params)) -&gt; ampal</span>
+<span class="sd">        A function for building a model using parameters supplied</span>
+<span class="sd">        by the optimizer.</span>
+<span class="sd">    eval_fn : function(ampal) -&gt; float</span>
+<span class="sd">        An evaluation function that assesses an AMPAL object and</span>
+<span class="sd">        returns a float. This float will be used to compare models.</span>
+<span class="sd">        The optimizer uses the thermodynamic convention that lower</span>
+<span class="sd">        numbers are better.</span>
+<span class="sd">    cxpb : float</span>
+<span class="sd">        The probability of crossing two individuals.</span>
+<span class="sd">    mutpb : float</span>
+<span class="sd">        Probability of mutating an individual.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specification</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">eval_fn</span><span class="p">,</span>
+                 <span class="n">build_fn</span><span class="o">=</span><span class="n">default_build</span><span class="p">,</span> <span class="n">cxpb</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mutpb</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">specification</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">build_fn</span><span class="o">=</span><span class="n">build_fn</span><span class="p">,</span> <span class="n">eval_fn</span><span class="o">=</span><span class="n">eval_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cxpb</span> <span class="o">=</span> <span class="n">cxpb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mutpb</span> <span class="o">=</span> <span class="n">mutpb</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Individual&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">FitnessMin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;mate&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">cxBlend</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;mutate&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">mutGaussian</span><span class="p">,</span>
+                              <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">indpb</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;select&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">selTournament</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates a particle using the creator function.&quot;&quot;&quot;</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_means</span><span class="p">))])</span>
+        <span class="k">return</span> <span class="n">ind</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assigns indices to individuals in population.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;individual&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;population&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">initRepeat</span><span class="p">,</span>
+                              <span class="nb">list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">individual</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">pop_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_fitnesses</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_update_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates population according to crossover and fitness criteria.&quot;&quot;&quot;</span>
+        <span class="n">offspring</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">clone</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pop_size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxpb</span><span class="p">:</span>
+                <span class="n">child1</span><span class="p">,</span> <span class="n">child2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="n">temp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">child1</span><span class="p">)</span>
+                <span class="n">temp2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">child2</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">mate</span><span class="p">(</span><span class="n">temp1</span><span class="p">,</span> <span class="n">temp2</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">temp1</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span>
+                <span class="k">del</span> <span class="n">temp2</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">offspring</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp1</span><span class="p">)</span>
+                <span class="n">offspring</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">mutant</span> <span class="ow">in</span> <span class="n">offspring</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutpb</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">mutate</span><span class="p">(</span><span class="n">mutant</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">mutant</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span>
+        <span class="c1"># simple bound checking</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">offspring</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">offspring</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                <span class="k">if</span> <span class="n">offspring</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">offspring</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">offspring</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">offspring</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">ind</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">offspring</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_fitnesses</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">ind</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">offspring</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">valid</span><span class="p">])</span>
+        <span class="n">offspring</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">fitness</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">halloffame</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># elitism- if none beat best so far it is reinserted</span>
+            <span class="k">if</span> <span class="n">offspring</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">halloffame</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span><span class="p">:</span>
+                <span class="n">offspring</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">halloffame</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">offspring</span><span class="p">[:</span><span class="n">pop_size</span><span class="p">]</span></div>
+        <span class="k">return</span>
+
+
+<div class="viewcode-block" id="CMAES"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.evo_optimizers.CMAES">[docs]</a><span class="k">class</span> <span class="nc">CMAES</span><span class="p">(</span><span class="n">BaseOptimizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Covariance matrix adaptation evolutionary strategy optimizer.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Basically uses a covariance matrix at each step to identify the</span>
+<span class="sd">    &#39;direction&#39; of the optimal solution in the search space, and</span>
+<span class="sd">    generates new individuals accordingly. Bound handling is achieved</span>
+<span class="sd">    by moving any out of bounds parameters to the boundary condition.</span>
+<span class="sd">    Other than that the implementation used here is as in the</span>
+<span class="sd">    originating code from the deap module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    specification : ampal.specification.assembly_specification</span>
+<span class="sd">        An `Assembly` level specification to be optimised.</span>
+<span class="sd">    sequences : [str]</span>
+<span class="sd">        A list of sequences, one for each polymer.</span>
+<span class="sd">    parameters : [base_ev_opt.Parameter]</span>
+<span class="sd">        A list of `Parameter` objects in the same order as the</span>
+<span class="sd">        function signature expects.</span>
+<span class="sd">    build_fn : function((spec, seq, params)) -&gt; ampal</span>
+<span class="sd">        A function for building a model using parameters supplied</span>
+<span class="sd">        by the optimizer.</span>
+<span class="sd">    eval_fn : function(ampal) -&gt; float</span>
+<span class="sd">        An evaluation function that assesses an AMPAL object and</span>
+<span class="sd">        returns a float. This float will be used to compare models.</span>
+<span class="sd">        The optimizer uses the thermodynamic convention that lower</span>
+<span class="sd">        numbers are better.</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Initial standard deviation of the distribution.</span>
+<span class="sd">    weight_type : str</span>
+<span class="sd">        Can be &#39;linear&#39;, &#39;superlinear&#39; or &#39;equal&#39;. Used to decrease</span>
+<span class="sd">        speed of particles.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specification</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">eval_fn</span><span class="p">,</span>
+                 <span class="n">build_fn</span><span class="o">=</span><span class="n">default_build</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">weight_type</span><span class="o">=</span><span class="s1">&#39;superlinear&#39;</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">specification</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">build_fn</span><span class="o">=</span><span class="n">build_fn</span><span class="p">,</span> <span class="n">eval_fn</span><span class="o">=</span><span class="n">eval_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight_type</span> <span class="o">=</span> <span class="n">weight_type</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Individual&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">FitnessMin</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates the initial population and assigns fitnesses.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_cma_es</span><span class="p">(</span><span class="n">pop_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;individual&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_individual</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;generate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">individual</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;population&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">initRepeat</span><span class="p">,</span>
+                              <span class="nb">list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_individual</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;update&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">pop_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_fitnesses</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_initial_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates an individual with random parameters within bounds.&quot;&quot;&quot;</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_means</span><span class="p">))])</span>
+        <span class="k">return</span> <span class="n">ind</span>
+
+    <span class="k">def</span> <span class="nf">_update_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates population according to crossover and fitness criteria.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+        <span class="c1"># simple bound checking</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_fitnesses</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_make_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramlist</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes an individual particle.&quot;&quot;&quot;</span>
+        <span class="n">part</span> <span class="o">=</span> <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">(</span><span class="n">paramlist</span><span class="p">)</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">part</span>
+
+<div class="viewcode-block" id="CMAES.initialize_cma_es"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.evo_optimizers.CMAES.initialize_cma_es">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_cma_es</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lambda_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A strategy that will keep track of the basic parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        centroid:</span>
+<span class="sd">            An iterable object that indicates where to start the</span>
+<span class="sd">            evolution.</span>
+<span class="sd">        parameter:</span>
+<span class="sd">            One or more parameter to pass to the strategy as</span>
+<span class="sd">            described in the following table, optional.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create a centroid as a numpy array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centroid</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_means</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centroid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pc</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ps</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chiN</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">21.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
+
+        <span class="n">indx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[:,</span> <span class="n">indx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BD</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">[</span><span class="n">indx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">[</span><span class="n">indx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span> <span class="o">=</span> <span class="n">lambda_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_params</span><span class="p">()</span></div>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate a population of :math:`\lambda` individuals.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Individuals are of type *ind_init* from the current strategy.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ind_init:</span>
+<span class="sd">            A function object that is able to initialize an</span>
+<span class="sd">            individual from a list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arz</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">))</span>
+        <span class="n">arz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centroid</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">arz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">BD</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">arz</span><span class="p">))</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="CMAES.update"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.evo_optimizers.CMAES.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the covariance matrix strategy from the *population*.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population:</span>
+<span class="sd">            A list of individuals from which to update the</span>
+<span class="sd">            parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">population</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ind</span><span class="p">:</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">old_centroid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centroid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centroid</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">])</span>
+
+        <span class="n">c_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centroid</span> <span class="o">-</span> <span class="n">old_centroid</span>
+
+        <span class="c1"># Cumulation : update evolution path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ps</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps</span> \
+            <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cs</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> \
+            <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">c_diff</span><span class="p">))</span>
+
+        <span class="n">hsig</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ps</span><span class="p">)</span> <span class="o">/</span>
+                      <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">)</span> <span class="o">**</span>
+                                 <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_count</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">chiN</span>
+                      <span class="o">&lt;</span> <span class="p">(</span><span class="mf">1.4</span> <span class="o">+</span> <span class="mf">2.</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">))))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pc</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pc</span> <span class="o">+</span> <span class="n">hsig</span> \
+            <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cc</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> \
+            <span class="o">*</span> <span class="n">c_diff</span>
+
+        <span class="c1"># Update covariance matrix</span>
+        <span class="n">artmp</span> <span class="o">=</span> <span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">]</span> <span class="o">-</span> <span class="n">old_centroid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccov1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccovmu</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">hsig</span><span class="p">)</span>
+                  <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccov1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span> \
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccov1</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span> \
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccovmu</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">*</span> <span class="n">artmp</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">artmp</span><span class="p">)</span> \
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ps</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">chiN</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span>
+                                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">damps</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
+        <span class="n">indx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">[</span><span class="n">indx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">[</span><span class="n">indx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[:,</span> <span class="n">indx</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BD</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagD</span>
+
+<div class="viewcode-block" id="CMAES.compute_params"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.evo_optimizers.CMAES.compute_params">[docs]</a>    <span class="k">def</span> <span class="nf">compute_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the parameters depending on :math:`\lambda`.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        It needs to be called again if :math:`\lambda` changes during</span>
+<span class="sd">        evolution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_type</span> <span class="o">==</span> <span class="s2">&quot;superlinear&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> \
+                <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_type</span> <span class="o">==</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_type</span> <span class="o">==</span> <span class="s2">&quot;equal&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Unknown weight type: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_type</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">/=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cc</span> <span class="o">=</span> <span class="mf">4.</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">+</span> <span class="mf">4.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cs</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">+</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">+</span> <span class="mf">3.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ccov1</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">+</span> <span class="mf">1.3</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ccovmu</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">-</span> <span class="mf">2.</span> <span class="o">+</span> <span class="mf">1.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">+</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ccovmu</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccov1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccovmu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">damps</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">+</span> <span class="mf">2.</span> <span class="o">*</span> \
+            <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">))</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">cs</span></div></div>
+        <span class="k">return</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Andrew R. Thomson, Christopher W. Wood, Gail J. Bartlett&#39;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s1">&#39;Development&#39;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Woolfson Group, UoB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

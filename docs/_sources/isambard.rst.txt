@@ -1,0 +1,31 @@
+isambard package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    isambard.modelling
+    isambard.optimisation
+    isambard.specifications
+
+Submodules
+----------
+
+isambard.isambard\_warnings module
+----------------------------------
+
+.. automodule:: isambard.isambard_warnings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: isambard
+    :members:
+    :undoc-members:
+    :show-inheritance:

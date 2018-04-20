@@ -1,0 +1,966 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>isambard.specifications package &#8212; ISAMBARD 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="isambard-specifications-package">
+<h1>isambard.specifications package<a class="headerlink" href="#isambard-specifications-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-isambard.specifications.coiledcoil">
+<span id="isambard-specifications-coiledcoil-module"></span><h2>isambard.specifications.coiledcoil module<a class="headerlink" href="#module-isambard.specifications.coiledcoil" title="Permalink to this headline">¶</a></h2>
+<p>Contains code for modelling coiled coils and collagens.</p>
+<dl class="class">
+<dt id="isambard.specifications.coiledcoil.CoiledCoil">
+<em class="property">class </em><code class="descclassname">isambard.specifications.coiledcoil.</code><code class="descname">CoiledCoil</code><span class="sig-paren">(</span><em>n</em>, <em>auto_build=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/coiledcoil.html#CoiledCoil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.coiledcoil.CoiledCoil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ampal.assembly.Assembly</span></code></p>
+<p>Models a coiled-coil protein.</p>
+<p>Instantiating this class using just an oligomeric state is used
+to create simple reference models. To build more complex models
+use the <cite>from_parameters</cite> classmethod.</p>
+<dl class="docutils">
+<dt>n <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>The oligomeric state of the model to be built.</dd>
+<dt>auto_build <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If <cite>True</cite>, the model will be built as part of instantiation.</dd>
+</dl>
+<dl class="docutils">
+<dt>aas <span class="classifier-delimiter">:</span> <span class="classifier">[int]</span></dt>
+<dd>Number of amino acids in each minor helix.</dd>
+<dt>basis_set_sequences <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
+<dd>Reference sequences for the oligomeric state that has been
+selected, taken from the basis set of coiled coils.</dd>
+<dt>major_radii <span class="classifier-delimiter">:</span> <span class="classifier">[float]</span></dt>
+<dd>Radii of the minor helices relative to the super-helical
+axis.</dd>
+<dt>major_pitches <span class="classifier-delimiter">:</span> <span class="classifier">[float]</span></dt>
+<dd>Pitch values of the minor helices relative to the super-helical
+axis.</dd>
+<dt>phi_c_alphas :</dt>
+<dd>Relative rotation values of the minor helices relative to
+the super-helical axis.</dd>
+<dt>minor_helix_types <span class="classifier-delimiter">:</span> <span class="classifier">[str]</span></dt>
+<dd>Helix types of the minor helices. Can be: ‘alpha’, ‘pi’, ‘3-10’,
+‘PPI’, ‘PP2’, ‘collagen’.</dd>
+<dt>major_handedness <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Handedness of the super helix.</dd>
+<dt>orientations :</dt>
+<dd>Orientation of helices relative to the super-helical axis. 1
+is parallel, -1 is anti-parallel.</dd>
+<dt>minor_repeats <span class="classifier-delimiter">:</span> <span class="classifier">[float]</span></dt>
+<dd>Hydrophobic repeats of the minor helices.</dd>
+<dt>rotational_offsets :</dt>
+<dd>Rotation of the minor helices relative to the super-helical
+axis.</dd>
+<dt>z_shifts <span class="classifier-delimiter">:</span> <span class="classifier">[float]</span></dt>
+<dd>Translation of the minor helices along the super-helical axis.</dd>
+<dt>oligomeric_state <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Oligomeric state of the coiled coil.</dd>
+</dl>
+<dl class="method">
+<dt id="isambard.specifications.coiledcoil.CoiledCoil.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/coiledcoil.html#CoiledCoil.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.coiledcoil.CoiledCoil.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a model of a coiled coil protein using input parameters.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.specifications.coiledcoil.CoiledCoil.from_parameters">
+<em class="property">classmethod </em><code class="descname">from_parameters</code><span class="sig-paren">(</span><em>n</em>, <em>aa=28</em>, <em>major_radius=None</em>, <em>major_pitch=None</em>, <em>phi_c_alpha=26.42</em>, <em>minor_helix_type='alpha'</em>, <em>auto_build=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/coiledcoil.html#CoiledCoil.from_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.coiledcoil.CoiledCoil.from_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <cite>CoiledCoil</cite> from defined super-helical parameters.</p>
+<dl class="docutils">
+<dt>n <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Oligomeric state</dd>
+<dt>aa <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>Number of amino acids per minor helix.</dd>
+<dt>major_radius <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Radius of super helix.</dd>
+<dt>major_pitch <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Pitch of super helix.</dd>
+<dt>phi_c_alpha <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Rotation of minor helices relative to the super-helical
+axis.</dd>
+<dt>minor_helix_type <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Helix type of minor helices. Can be: ‘alpha’, ‘pi’, ‘3-10’,
+‘PPI’, ‘PP2’, ‘collagen’.</dd>
+<dt>auto_build <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If <cite>True</cite>, the model will be built as part of instantiation.</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.specifications.coiledcoil.CoiledCoil.from_polymers">
+<em class="property">classmethod </em><code class="descname">from_polymers</code><span class="sig-paren">(</span><em>polymers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/coiledcoil.html#CoiledCoil.from_polymers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.coiledcoil.CoiledCoil.from_polymers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <cite>CoiledCoil</cite> from a list of <cite>HelicalHelices</cite>.</p>
+<dl class="docutils">
+<dt>polymers <span class="classifier-delimiter">:</span> <span class="classifier">[HelicalHelix]</span></dt>
+<dd>List of <cite>HelicalHelices</cite>.</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.specifications.coiledcoil.CoiledCoil.tropocollagen">
+<em class="property">classmethod </em><code class="descname">tropocollagen</code><span class="sig-paren">(</span><em>aa=28</em>, <em>major_radius=5.0</em>, <em>major_pitch=85.0</em>, <em>auto_build=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/coiledcoil.html#CoiledCoil.tropocollagen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.coiledcoil.CoiledCoil.tropocollagen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a model of a collagen triple helix.</p>
+<dl class="docutils">
+<dt>aa <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>Number of amino acids per minor helix.</dd>
+<dt>major_radius <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Radius of super helix.</dd>
+<dt>major_pitch <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Pitch of super helix.</dd>
+<dt>auto_build <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If <cite>True</cite>, the model will be built as part of instantiation.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-isambard.specifications.helix">
+<span id="isambard-specifications-helix-module"></span><h2>isambard.specifications.helix module<a class="headerlink" href="#module-isambard.specifications.helix" title="Permalink to this headline">¶</a></h2>
+<p>Contains classes and functions for modelling helical structure.</p>
+<dl class="class">
+<dt id="isambard.specifications.helix.HelicalHelix">
+<em class="property">class </em><code class="descclassname">isambard.specifications.helix.</code><code class="descname">HelicalHelix</code><span class="sig-paren">(</span><em>aa=10</em>, <em>major_pitch=225.8</em>, <em>major_radius=5.07</em>, <em>major_handedness='l'</em>, <em>minor_helix_type='alpha'</em>, <em>orientation=1</em>, <em>phi_c_alpha=0.0</em>, <em>minor_repeat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ampal.protein.Polypeptide</span></code></p>
+<p>Builds a <cite>Helix</cite> along a curve defined by a super helix.</p>
+<dl class="docutils">
+<dt>aa <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of amino acids in the <cite>Helix</cite>. If <a href="#id1"><span class="problematic" id="id2">`</span></a>None, an
+appropriate number of residues are added.</dd>
+<dt>major_pitch <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Pitch of the super helix.</dd>
+<dt>major_radius <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Radius of the super helix.</dd>
+<dt>major_handedness <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd>Handedness of the super helix.</dd>
+<dt>minor_helix_type <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd>Type of minor helix, can be: ‘alpha’, ‘pi’, ‘3-10’,
+‘PPI’, ‘PPII’, ‘collagen’.</dd>
+<dt>orientation <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>Parallel (1) or anti-parallel (-1).</dd>
+<dt>phi_c_alpha <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Rotation of the minor helix relative to the super-
+helical axis.</dd>
+<dt>minor_repeat <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Hydrophobic repeat of the <cite>Helix</cite>.</dd>
+</dl>
+<dl class="docutils">
+<dt>num_monomers <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of amino acids in the <cite>Helix</cite>. If <a href="#id3"><span class="problematic" id="id4">`</span></a>None, an</dd>
+<dt>major_pitch <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Pitch of the super helix.</dd>
+<dt>major_radius <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Radius of the super helix.</dd>
+<dt>major_handedness <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd>Handedness of the super helix.</dd>
+<dt>minor_helix_type <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd>Type of minor helix, can be: ‘alpha’, ‘pi’, ‘3-10’,
+‘PPI’, ‘PPII’, ‘collagen’.</dd>
+<dt>orientation <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>Parallel (1) or anti-parallel (-1).</dd>
+<dt>phi_c_alpha <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Rotation of the minor helix relative to the super-
+helical axis.</dd>
+<dt>minor_repeat <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Hydrophobic repeat of the <cite>Helix</cite>,
+appropriate number of residues are added.</dd>
+<dt>minor_rise_per_residue <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Distance that each residue travels along the z-axis.</dd>
+<dt>minor_handedness <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The handedness of the helix can be ‘r’ or ‘l’.</dd>
+<dt>helix_start <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the start of the helix primitive.</dd>
+<dt>helix_end <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the end of the helix primitive.</dd>
+</dl>
+<dl class="method">
+<dt id="isambard.specifications.helix.HelicalHelix.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds the <cite>HelicalHelix</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.HelicalHelix.curve">
+<code class="descname">curve</code><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Curve of the super helix.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.HelicalHelix.curve_primitive">
+<code class="descname">curve_primitive</code><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.curve_primitive" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Primitive</cite> of the super-helical curve.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.specifications.helix.HelicalHelix.from_start_and_end">
+<em class="property">classmethod </em><code class="descname">from_start_and_end</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>aa=None</em>, <em>major_pitch=225.8</em>, <em>major_radius=5.07</em>, <em>major_handedness='l'</em>, <em>minor_helix_type='alpha'</em>, <em>orientation=1</em>, <em>phi_c_alpha=0.0</em>, <em>minor_repeat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix.from_start_and_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.from_start_and_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <cite>HelicalHelix</cite> between a <cite>start</cite> and <cite>end</cite> point.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.HelicalHelix.get_orient_angle">
+<code class="descname">get_orient_angle</code><span class="sig-paren">(</span><em>reference_point=array([0</em>, <em>0</em>, <em>0])</em>, <em>monomer_index=0</em>, <em>res_label='CA'</em>, <em>radians=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix.get_orient_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.get_orient_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Angle between reference_point and self[monomer_index][res_label].</p>
+<p>Angle is calculated using the dihedral angle, with the 
+second and third points coming from the curve_primitive.</p>
+<p>reference_point : list, tuple or numpy.array of length 3.
+monomer_index : int</p>
+<blockquote>
+<div>Index of the Residue to centre.</div></blockquote>
+<dl class="docutils">
+<dt>res_label <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Atom name for centred atom, e.g. “CA” or “OE1”.</dd>
+<dt>radians <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd>If True, then desired_angle is in radians instead of degrees.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.HelicalHelix.helix_length">
+<code class="descname">helix_length</code><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.helix_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of major axis (i.e. height of cylinder around which helicalhelix curves).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.HelicalHelix.major_axis">
+<code class="descname">major_axis</code><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.major_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Axis of the super helix.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.HelicalHelix.major_rise_per_monomer">
+<code class="descname">major_rise_per_monomer</code><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.major_rise_per_monomer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rise along super-helical axis per monomer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.HelicalHelix.minor_residues_per_turn">
+<code class="descname">minor_residues_per_turn</code><span class="sig-paren">(</span><em>minor_repeat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix.minor_residues_per_turn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.minor_residues_per_turn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the number of residues per turn of the minor helix.</p>
+<dl class="docutils">
+<dt>minor_repeat <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Hydrophobic repeat of the minor helix.</dd>
+</dl>
+<dl class="docutils">
+<dt>minor_rpt <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Residues per turn of the minor helix.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.HelicalHelix.move_to">
+<code class="descname">move_to</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix.move_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.move_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the <cite>HelicalHelix</cite> to lie on the vector <cite>start</cite> and <cite>end</cite>.</p>
+<dl class="docutils">
+<dt>start <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the start of the helix primitive.</dd>
+<dt>end <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the end of the helix primitive.</dd>
+</dl>
+<dl class="docutils">
+<dt>ValueError</dt>
+<dd>Raised if <cite>start</cite> and <cite>end</cite> are very close together.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.HelicalHelix.rotate">
+<code class="descname">rotate</code><span class="sig-paren">(</span><em>angle</em>, <em>axis</em>, <em>point=None</em>, <em>radians=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates every atom in the AMPAL object.</p>
+<dl class="docutils">
+<dt>angle <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Angle that AMPAL object will be rotated.</dd>
+<dt>axis <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array)</span></dt>
+<dd>Axis about which the AMPAL object will be rotated.</dd>
+<dt>point <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array), optional</span></dt>
+<dd>Point that the axis lies upon. If <cite>None</cite> then the origin is used.</dd>
+<dt>radians <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>True is <cite>angle</cite> is define in radians, False is degrees.</dd>
+<dt>inc_alt_states <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If true, will rotate atoms in all states i.e. includes
+alternate conformations for sidechains.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.HelicalHelix.rotate_monomers">
+<code class="descname">rotate_monomers</code><span class="sig-paren">(</span><em>angle</em>, <em>radians=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix.rotate_monomers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.rotate_monomers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates each Residue in the Polypeptide.</p>
+<p>Each monomer is rotated about the axis formed between its
+corresponding primitive <cite>PseudoAtom</cite> and that of the 
+subsequent <cite>Monomer</cite>.</p>
+<dl class="docutils">
+<dt>angle <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Angle by which to rotate each monomer.</dd>
+<dt>radians <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd>Indicates whether angle is in radians or degrees.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.HelicalHelix.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>vector</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#HelicalHelix.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.HelicalHelix.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates every atom in the AMPAL object.</p>
+<dl class="docutils">
+<dt>vector <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array)</span></dt>
+<dd>Vector used for translation.</dd>
+<dt>inc_alt_states <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If true, will rotate atoms in all states i.e. includes
+alternate conformations for sidechains.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.specifications.helix.Helix">
+<em class="property">class </em><code class="descclassname">isambard.specifications.helix.</code><code class="descname">Helix</code><span class="sig-paren">(</span><em>aa=10</em>, <em>helix_type='alpha'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#Helix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.Helix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ampal.protein.Polypeptide</span></code></p>
+<p>Creates a model of a <cite>Polypeptide</cite> with helical structure.</p>
+<dl class="docutils">
+<dt>aa <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>Number of amino acids in the <cite>Helix</cite>.</dd>
+<dt>helix_type <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd>Type of helix, can be: ‘alpha’, ‘pi’, ‘3-10’,
+‘PPI’, ‘PPII’, ‘collagen’.</dd>
+</dl>
+<dl class="docutils">
+<dt>num_monomers <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of amino acids in the <cite>Helix</cite>.</dd>
+<dt>helix_type <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Type of helix, can be: ‘alpha’, ‘pi’, ‘3-10’,
+‘PPI’, ‘PPII’, ‘collagen’.</dd>
+<dt>residues_per_turn <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Number of residues per turn of the helix.</dd>
+<dt>rise_per_residue <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Distance that each residue travels along the z-axis.</dd>
+<dt>handedness <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The handedness of the helix can be ‘r’ or ‘l’.</dd>
+<dt>helix_start <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the start of the helix primitive.</dd>
+<dt>helix_end <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the end of the helix primitive.</dd>
+</dl>
+<dl class="attribute">
+<dt id="isambard.specifications.helix.Helix.ax_unit">
+<code class="descname">ax_unit</code><a class="headerlink" href="#isambard.specifications.helix.Helix.ax_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unit tangent of the axis.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.Helix.axis">
+<code class="descname">axis</code><a class="headerlink" href="#isambard.specifications.helix.Helix.axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <cite>Axis</cite> around which the helix is constructed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.Helix.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#Helix.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.Helix.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build straight helix along z-axis, starting with CA1 on x-axis</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.specifications.helix.Helix.from_start_and_end">
+<em class="property">classmethod </em><code class="descname">from_start_and_end</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>aa=None</em>, <em>helix_type='alpha'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#Helix.from_start_and_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.Helix.from_start_and_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <cite>Helix</cite> between <cite>start</cite> and <cite>end</cite>.</p>
+<dl class="docutils">
+<dt>start <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the start of the helix primitive.</dd>
+<dt>end <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the end of the helix primitive.</dd>
+<dt>aa <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>Number of amino acids in the <cite>Helix</cite>. If <a href="#id5"><span class="problematic" id="id6">`</span></a>None, an
+appropriate number of residues are added.</dd>
+<dt>helix_type <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd>Type of helix, can be: ‘alpha’, ‘pi’, ‘3-10’,
+‘PPI’, ‘PPII’, ‘collagen’.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.Helix.helix_length">
+<code class="descname">helix_length</code><a class="headerlink" href="#isambard.specifications.helix.Helix.helix_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>The length of the <cite>Helix</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.Helix.move_to">
+<code class="descname">move_to</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#Helix.move_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.Helix.move_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the <cite>Helix</cite> to lie on the vector between <cite>start</cite> and <cite>end</cite>.</p>
+<dl class="docutils">
+<dt>start <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the start of the helix primitive.</dd>
+<dt>end <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the end of the helix primitive.</dd>
+</dl>
+<dl class="docutils">
+<dt>ValueError</dt>
+<dd>Raised if <cite>start</cite> and <cite>end</cite> are very close together.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.Helix.rad_unit">
+<code class="descname">rad_unit</code><a class="headerlink" href="#isambard.specifications.helix.Helix.rad_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unit normal of the axis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.Helix.rotate">
+<code class="descname">rotate</code><span class="sig-paren">(</span><em>angle</em>, <em>axis</em>, <em>point=None</em>, <em>radians=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#Helix.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.Helix.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates every atom in the AMPAL object.</p>
+<dl class="docutils">
+<dt>angle <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Angle that AMPAL object will be rotated.</dd>
+<dt>axis <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array)</span></dt>
+<dd>Axis about which the AMPAL object will be rotated.</dd>
+<dt>point <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array), optional</span></dt>
+<dd>Point that the axis lies upon. If <cite>None</cite> then the origin is used.</dd>
+<dt>radians <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>True is <cite>angle</cite> is define in radians, False is degrees.</dd>
+<dt>inc_alt_states <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If true, will rotate atoms in all states i.e. includes
+alternate conformations for sidechains.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.helix.Helix.tan_unit">
+<code class="descname">tan_unit</code><a class="headerlink" href="#isambard.specifications.helix.Helix.tan_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unit binormal of the axis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.helix.Helix.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>vector</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/helix.html#Helix.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.helix.Helix.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates every atom in the AMPAL object.</p>
+<dl class="docutils">
+<dt>vector <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array)</span></dt>
+<dd>Vector used for translation.</dd>
+<dt>inc_alt_states <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If true, will rotate atoms in all states i.e. includes
+alternate conformations for sidechains.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-isambard.specifications.nucleic_acid_duplex">
+<span id="isambard-specifications-nucleic-acid-duplex-module"></span><h2>isambard.specifications.nucleic_acid_duplex module<a class="headerlink" href="#module-isambard.specifications.nucleic_acid_duplex" title="Permalink to this headline">¶</a></h2>
+<p>Contains code for generating nucleic acid duplexes.</p>
+<dl class="class">
+<dt id="isambard.specifications.nucleic_acid_duplex.DNADuplex">
+<em class="property">class </em><code class="descclassname">isambard.specifications.nucleic_acid_duplex.</code><code class="descname">DNADuplex</code><span class="sig-paren">(</span><em>strand</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_duplex.html#DNADuplex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_duplex.DNADuplex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ampal.assembly.Assembly</span></code></p>
+<p>Creates a DNA duplex from a single strand of helical DNA.</p>
+<dl class="docutils">
+<dt>strand: NucleicAcidStrand</dt>
+<dd>DNA single strand helix.</dd>
+</dl>
+<dl class="classmethod">
+<dt id="isambard.specifications.nucleic_acid_duplex.DNADuplex.from_sequence">
+<em class="property">classmethod </em><code class="descname">from_sequence</code><span class="sig-paren">(</span><em>sequence</em>, <em>phos_3_prime=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_duplex.html#DNADuplex.from_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_duplex.DNADuplex.from_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a DNA duplex from a nucleotide sequence.</p>
+<dl class="docutils">
+<dt>sequence: str</dt>
+<dd>Nucleotide sequence.</dd>
+<dt>phos_3_prime: bool, optional</dt>
+<dd>If false the 5’ and the 3’ phosphor will be omitted.</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.specifications.nucleic_acid_duplex.DNADuplex.from_start_and_end">
+<em class="property">classmethod </em><code class="descname">from_start_and_end</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>sequence</em>, <em>phos_3_prime=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_duplex.html#DNADuplex.from_start_and_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_duplex.DNADuplex.from_start_and_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a DNA duplex from a start and end point.</p>
+<dl class="docutils">
+<dt>start: [float, float, float]</dt>
+<dd>Start of the build axis.</dd>
+<dt>end: [float, float, float]</dt>
+<dd>End of build axis.</dd>
+<dt>sequence: str</dt>
+<dd>Nucleotide sequence.</dd>
+<dt>phos_3_prime: bool, optional</dt>
+<dd>If false the 5’ and the 3’ phosphor will be omitted.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="isambard.specifications.nucleic_acid_duplex.DNADuplex.generate_complementary_strand">
+<em class="property">static </em><code class="descname">generate_complementary_strand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_duplex.html#DNADuplex.generate_complementary_strand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_duplex.DNADuplex.generate_complementary_strand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a SingleStrandHelix and creates the antisense strand.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.specifications.nucleic_acid_duplex.generate_antisense_sequence">
+<code class="descclassname">isambard.specifications.nucleic_acid_duplex.</code><code class="descname">generate_antisense_sequence</code><span class="sig-paren">(</span><em>sequence</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_duplex.html#generate_antisense_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_duplex.generate_antisense_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the antisense sequence of a DNA strand.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-isambard.specifications.nucleic_acid_strand">
+<span id="isambard-specifications-nucleic-acid-strand-module"></span><h2>isambard.specifications.nucleic_acid_strand module<a class="headerlink" href="#module-isambard.specifications.nucleic_acid_strand" title="Permalink to this headline">¶</a></h2>
+<p>Contains code for generating single polynucleotides.</p>
+<dl class="class">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand">
+<em class="property">class </em><code class="descclassname">isambard.specifications.nucleic_acid_strand.</code><code class="descname">NucleicAcidStrand</code><span class="sig-paren">(</span><em>sequence='GATC'</em>, <em>helix_type='b_dna'</em>, <em>phos_3_prime=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_strand.html#NucleicAcidStrand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ampal.nucleic_acid.Polynucleotide</span></code></p>
+<p>Generates a <cite>Polynucleotide</cite> from a sequence of bases.</p>
+<dl class="docutils">
+<dt>sequence: str</dt>
+<dd>The nucleotide sequence of the nucleic acid.</dd>
+<dt>helix_type: str, optional</dt>
+<dd>The type of nucleic acid helix to generate.</dd>
+<dt>phos_3_prime: bool, optional</dt>
+<dd>If false the 5’ and the 3’ phosphor will be omitted.</dd>
+</dl>
+<dl class="docutils">
+<dt>base_sequence <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Nucleotide sequence for the nucleic acid.</dd>
+<dt>num_monomers <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of bases in the sequence.</dd>
+<dt>helix_type <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The type of nucleic acid helix. Currently only b-DNA is
+implemented.</dd>
+<dt>phos_3_prime <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd>If <cite>true</cite>, the 3’ end of the strand will have a phosphate.</dd>
+<dt>nucleotides_per_turn <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Number of nucleotides per turn of the nucleic acid super
+helix.</dd>
+<dt>rise_per_nucleotide <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Rise along the nucleic acid super helix per base.</dd>
+<dt>handedness <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Handedness of the super helix.</dd>
+<dt>helix_start <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>Initial coordinate of the backbone primitive.</dd>
+<dt>helix_end <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>Last coordinate of the backbone primitive.</dd>
+</dl>
+<dl class="docutils">
+<dt>ValueError</dt>
+<dd>Raised if a sequence is not provided.</dd>
+</dl>
+<dl class="attribute">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.ax_unit">
+<code class="descname">ax_unit</code><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.ax_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unit tangent of the super-helical axis.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.axis">
+<code class="descname">axis</code><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>The super-helical axis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_strand.html#NucleicAcidStrand.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build single DNA strand along z-axis, starting with P on x-axis</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.from_start_and_end">
+<em class="property">classmethod </em><code class="descname">from_start_and_end</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>sequence</em>, <em>helix_type='b_dna'</em>, <em>phos_3_prime=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_strand.html#NucleicAcidStrand.from_start_and_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.from_start_and_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a helical <cite>Polynucleotide</cite> that is built along an axis.</p>
+<dl class="docutils">
+<dt>start: [float, float, float]</dt>
+<dd>Start of the build axis.</dd>
+<dt>end: [float, float, float]</dt>
+<dd>End of build axis.</dd>
+<dt>sequence: str</dt>
+<dd>The nucleotide sequence of the nucleic acid.</dd>
+<dt>helix_type: str</dt>
+<dd>The type of nucleic acid helix to generate.</dd>
+<dt>phos_3_prime: bool</dt>
+<dd>If false the 5’ and the 3’ phosphor will be omitted.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.helix_length">
+<code class="descname">helix_length</code><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.helix_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of the helix in Ångstroms.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.move_to">
+<code class="descname">move_to</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_strand.html#NucleicAcidStrand.move_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.move_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the <cite>Polynucleotide</cite> to lie on the <cite>start</cite> and <cite>end</cite> vector.</p>
+<dl class="docutils">
+<dt>start <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the start of the helix primitive.</dd>
+<dt>end <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple or list or numpy.array)</span></dt>
+<dd>The coordinate of the end of the helix primitive.</dd>
+</dl>
+<dl class="docutils">
+<dt>ValueError</dt>
+<dd>Raised if <cite>start</cite> and <cite>end</cite> are very close together.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.rad_unit">
+<code class="descname">rad_unit</code><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.rad_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unit normal of the super-helical axis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.rotate">
+<code class="descname">rotate</code><span class="sig-paren">(</span><em>angle</em>, <em>axis</em>, <em>point=None</em>, <em>radians=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_strand.html#NucleicAcidStrand.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates every atom in the AMPAL object.</p>
+<dl class="docutils">
+<dt>angle <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Angle that AMPAL object will be rotated.</dd>
+<dt>axis <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array)</span></dt>
+<dd>Axis about which the AMPAL object will be rotated.</dd>
+<dt>point <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array), optional</span></dt>
+<dd>Point that the axis lies upon. If <cite>None</cite> then the origin is used.</dd>
+<dt>radians <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>True is <cite>angle</cite> is define in radians, False is degrees.</dd>
+<dt>inc_alt_states <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If true, will rotate atoms in all states i.e. includes
+alternate conformations for sidechains.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.tan_unit">
+<code class="descname">tan_unit</code><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.tan_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unit binormal of the super-helical axis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>vector</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/nucleic_acid_strand.html#NucleicAcidStrand.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.nucleic_acid_strand.NucleicAcidStrand.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates every atom in the AMPAL object.</p>
+<dl class="docutils">
+<dt>vector <span class="classifier-delimiter">:</span> <span class="classifier">3D Vector (tuple, list, numpy.array)</span></dt>
+<dd>Vector used for translation.</dd>
+<dt>inc_alt_states <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>If true, will rotate atoms in all states i.e. includes
+alternate conformations for sidechains.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-isambard.specifications.solenoid">
+<span id="isambard-specifications-solenoid-module"></span><h2>isambard.specifications.solenoid module<a class="headerlink" href="#module-isambard.specifications.solenoid" title="Permalink to this headline">¶</a></h2>
+<p>Contains classes for modeling alpha-solenoid proteins.</p>
+<dl class="class">
+<dt id="isambard.specifications.solenoid.HelixPair">
+<em class="property">class </em><code class="descclassname">isambard.specifications.solenoid.</code><code class="descname">HelixPair</code><span class="sig-paren">(</span><em>aas=(10</em>, <em>10)</em>, <em>axis_distances=(-4.5</em>, <em>4.5)</em>, <em>z_shifts=(0</em>, <em>0)</em>, <em>phis=(0</em>, <em>0)</em>, <em>splays=(0</em>, <em>0)</em>, <em>off_plane=(0</em>, <em>0)</em>, <em>build=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/solenoid.html#HelixPair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.solenoid.HelixPair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ampal.assembly.Assembly</span></code></p>
+<p>Generates a pair of helixes oriented relative to a central axis.</p>
+<dl class="docutils">
+<dt>aas: (int, int), optional</dt>
+<dd>Number of residues per helix.</dd>
+<dt>axis_distances: (float, float), optional</dt>
+<dd>Distance from central axis (Å).</dd>
+<dt>z_shifts: (float, float), optional</dt>
+<dd>Z-shift of the helices relative to the central axis.</dd>
+<dt>phis: (float, float), optional</dt>
+<dd>Rotation of the component helices around their local helical axis.</dd>
+<dt>splays: (float, float), optional</dt>
+<dd>The tiltedness of the helices in the plane relative to each other.</dd>
+<dt>off_plane <span class="classifier-delimiter">:</span> <span class="classifier">(float, float), optional</span></dt>
+<dd>The tiltedness of the helices out of plane relative to each other.</dd>
+<dt>build: bool</dt>
+<dd>Automatically build.</dd>
+</dl>
+<dl class="docutils">
+<dt>aas: (int, int)</dt>
+<dd>Number of residues per helix.</dd>
+<dt>axis_distances: (float, float)</dt>
+<dd>Distance from central axis (Å).</dd>
+<dt>z_shifts: (float, float)</dt>
+<dd>Z-shift of the helices relative to the central axis.</dd>
+<dt>phis: (float, float)</dt>
+<dd>Rotation of the component helices around their local helical axis.</dd>
+<dt>splays: (float, float)</dt>
+<dd>The tiltedness of the helices in the plane relative to each other.</dd>
+<dt>off_plane <span class="classifier-delimiter">:</span> <span class="classifier">(float, float)</span></dt>
+<dd>The tiltedness of the helices out of plane relative to each other.</dd>
+</dl>
+<dl class="method">
+<dt id="isambard.specifications.solenoid.HelixPair.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/solenoid.html#HelixPair.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.solenoid.HelixPair.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a <cite>HelixPair</cite> using the defined attributes.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="isambard.specifications.solenoid.HelixPair.make_helix">
+<em class="property">static </em><code class="descname">make_helix</code><span class="sig-paren">(</span><em>axis_distance</em>, <em>z_shift</em>, <em>phi</em>, <em>splay</em>, <em>off_plane</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/solenoid.html#HelixPair.make_helix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.solenoid.HelixPair.make_helix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a helix for a given set of parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="isambard.specifications.solenoid.Solenoid">
+<em class="property">class </em><code class="descclassname">isambard.specifications.solenoid.</code><code class="descname">Solenoid</code><span class="sig-paren">(</span><em>repeat_unit</em>, <em>num_of_repeats</em>, <em>radius</em>, <em>rise</em>, <em>rot_ang</em>, <em>handedness</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/solenoid.html#Solenoid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.solenoid.Solenoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ampal.assembly.Assembly</span></code></p>
+<p>Generates a <cite>Solenoid</cite> from a repeating unit.</p>
+<dl class="docutils">
+<dt>repeat_unit: Ampal Object</dt>
+<dd>Any AMPAL object.</dd>
+<dt>num_of_repeats: int</dt>
+<dd>Number of copies of the repeating unit.</dd>
+<dt>radius:</dt>
+<dd>Radius of super-helix.</dd>
+<dt>rise:</dt>
+<dd>Rise of super-helix</dd>
+<dt>rot_ang:</dt>
+<dd>Delta angle of each repeating unit.</dd>
+<dt>handedness:</dt>
+<dd>Handedness of the super-helix.</dd>
+</dl>
+<dl class="docutils">
+<dt>repeat_unit: Ampal Object</dt>
+<dd>Any AMPAL object.</dd>
+<dt>num_of_repeats: int</dt>
+<dd>Number of copies of the repeating unit.</dd>
+<dt>radius:</dt>
+<dd>Radius of super-helix.</dd>
+<dt>rise:</dt>
+<dd>Rise of super-helix</dd>
+<dt>rot_ang:</dt>
+<dd>Delta angle of each repeating unit.</dd>
+<dt>handedness:</dt>
+<dd>Handedness of the super-helix.</dd>
+</dl>
+<dl class="method">
+<dt id="isambard.specifications.solenoid.Solenoid.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/specifications/solenoid.html#Solenoid.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.specifications.solenoid.Solenoid.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a Solenoid using the defined attributes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-isambard.specifications.ta_polypeptide">
+<span id="isambard-specifications-ta-polypeptide-module"></span><h2>isambard.specifications.ta_polypeptide module<a class="headerlink" href="#module-isambard.specifications.ta_polypeptide" title="Permalink to this headline">¶</a></h2>
+<p>Contains functionality for builting protein structure from torsion angles.</p>
+<dl class="class">
+<dt id="isambard.specifications.ta_polypeptide.TAPolypeptide">
+<em class="property">class </em><code class="descclassname">isambard.specifications.ta_polypeptide.</code><code class="descname">TAPolypeptide</code><a class="headerlink" href="#isambard.specifications.ta_polypeptide.TAPolypeptide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ampal.protein.Polypeptide</span></code></p>
+<p>Generates a polypeptide with defined torsion angles.</p>
+<p>Default bond angles and distances from [1]. The final oxygen atom
+is positioned as if the next (imaginary) Residue is bonded in a
+trans conformation (i.e. using a default value for the CA-C=O 
+angle of 121.0, not 119.0).</p>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[0]</td><td>Schulz, G. E, and R. Heiner Schirmer. Principles Of Protein
+Structure. New York: Springer-Verlag, 1979.</td></tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>torsion_angles <span class="classifier-delimiter">:</span> <span class="classifier">list of triples</span></dt>
+<dd>Contains lists of torsion angles (omega, phi, psi) that will
+be used to create the polypeptide. The number of residues
+is equal to the length of this list. The first value of the
+first list (omega) and the last value of the last list (psi)
+will not be used to generate the polypeptide.</dd>
+<dt>auto_build <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd>If <cite>true</cite>, the model will be built as part of instantiation.</dd>
+</dl>
+<dl class="docutils">
+<dt>torsion_angles <span class="classifier-delimiter">:</span> <span class="classifier">list of triples</span></dt>
+<dd>Contains lists of torsion angles (omega, phi, psi) that will
+be used to create the polypeptide. The number of residues
+is equal to the length of this list. The first value of the
+first list (omega) and the last value of the last list (psi)
+will not be used to generate the polypeptide.</dd>
+<dt>n_ca_bonds: list of float</dt>
+<dd>Backbone N-CA bond distances in Angstroms.</dd>
+<dt>ca_c_bonds: list of float</dt>
+<dd>Backbone CA-C bond distances in Angstroms.</dd>
+<dt>c_n_bonds: list of float</dt>
+<dd>Backbone C-N (peptide) bond distances in Angstroms.</dd>
+<dt>c_o_bonds: list of float</dt>
+<dd>Backbone C=O bond distances in Angstroms.</dd>
+<dt>n_ca_c_angles: list of float</dt>
+<dd>Backbone N-CA-C bond angle in degrees.</dd>
+<dt>ca_c_o_angles: list of float</dt>
+<dd>Backbone CA-C=O bond angle in degrees.</dd>
+<dt>ca_c_n_angles: list of float</dt>
+<dd>Backbone CA-C-N bond angle in degrees.</dd>
+<dt>c_n_ca_angles: list of float</dt>
+<dd>Backbone C-N-CA bond angle in degrees.</dd>
+</dl>
+<dl class="attribute">
+<dt id="isambard.specifications.ta_polypeptide.TAPolypeptide.build">
+<code class="descname">build</code><a class="headerlink" href="#isambard.specifications.ta_polypeptide.TAPolypeptide.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds TAPolypeptide using its bond angle and bond length lists.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="isambard.specifications.ta_polypeptide.TAPolypeptide.from_polypeptide">
+<em class="property">classmethod </em><code class="descname">from_polypeptide</code><span class="sig-paren">(</span><em>polypeptide</em>, <em>align_model=True</em>, <em>auto_build=True</em><span class="sig-paren">)</span><a class="headerlink" href="#isambard.specifications.ta_polypeptide.TAPolypeptide.from_polypeptide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds input polypeptide as a TAPolypeptide</p>
+<p>polypeptide : Polypeptide
+align_model : bool</p>
+<blockquote>
+<div>If True, runs align() on the TAPolypeptide to align it with
+the Polypeptide before returning.</div></blockquote>
+<dl class="docutils">
+<dt>auto_build <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd>If <cite>true</cite>, the model will be built as part of instantiation.</dd>
+</dl>
+<dl class="docutils">
+<dt>TypeError</dt>
+<dd>Raised if <cite>polypeptide</cite> is not <cite>ampal.Polypeptide</cite>.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="isambard.specifications.ta_polypeptide.TAPolypeptide.o_c_n_angles">
+<code class="descname">o_c_n_angles</code><a class="headerlink" href="#isambard.specifications.ta_polypeptide.TAPolypeptide.o_c_n_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backbone O=C-N angle determined by CA-C=O and CA-C-N angle.</p>
+<p>Must sum to 360.0.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.specifications.ta_polypeptide.planar_residue">
+<code class="descclassname">isambard.specifications.ta_polypeptide.</code><code class="descname">planar_residue</code><span class="sig-paren">(</span><em>n_ca=1.47</em>, <em>ca_c=1.53</em>, <em>c_o=1.24</em>, <em>n_ca_c=110.0</em>, <em>ca_c_o=121.0</em><span class="sig-paren">)</span><a class="headerlink" href="#isambard.specifications.ta_polypeptide.planar_residue" title="Permalink to this definition">¶</a></dt>
+<dd><p>GLY Residue with all coordinates in the y-z plane.</p>
+<p>Builds a GLY Residue in the y-z plane.
+N is placed at the origin, and CA on the positive z-axis.
+The C and O coordinates are determined by input bond length and angles.</p>
+<dl class="docutils">
+<dt>n_ca: float, optional</dt>
+<dd>N-CA bond distance in Angstroms.</dd>
+<dt>ca_c: float, optional</dt>
+<dd>CA-C bond distance in Angstroms.</dd>
+<dt>c_o: float, optional</dt>
+<dd>C=O bond distances in Angstroms.</dd>
+<dt>n_ca_c: float, optional</dt>
+<dd>N-CA-C bond angle in degrees.</dd>
+<dt>ca_c_o: float, optional</dt>
+<dd>CA-C=O bond angle in degrees.</dd>
+</dl>
+<dl class="docutils">
+<dt>Residue</dt>
+<dd>A GLY Residue in the y-z plane.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-isambard.specifications">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-isambard.specifications" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">isambard.specifications package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-isambard.specifications.coiledcoil">isambard.specifications.coiledcoil module</a></li>
+<li><a class="reference internal" href="#module-isambard.specifications.helix">isambard.specifications.helix module</a></li>
+<li><a class="reference internal" href="#module-isambard.specifications.nucleic_acid_duplex">isambard.specifications.nucleic_acid_duplex module</a></li>
+<li><a class="reference internal" href="#module-isambard.specifications.nucleic_acid_strand">isambard.specifications.nucleic_acid_strand module</a></li>
+<li><a class="reference internal" href="#module-isambard.specifications.solenoid">isambard.specifications.solenoid module</a></li>
+<li><a class="reference internal" href="#module-isambard.specifications.ta_polypeptide">isambard.specifications.ta_polypeptide module</a></li>
+<li><a class="reference internal" href="#module-isambard.specifications">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Woolfson Group, UoB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/isambard.specifications.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

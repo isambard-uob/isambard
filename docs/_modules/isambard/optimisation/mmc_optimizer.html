@@ -1,0 +1,396 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>isambard.optimisation.mmc_optimizer &#8212; ISAMBARD 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for isambard.optimisation.mmc_optimizer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Provides optimisation of structure using Metropolis Monte Carlo.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+
+<div class="viewcode-block" id="float_f"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.float_f">[docs]</a><span class="k">def</span> <span class="nf">float_f</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Formats a float for printing to std out.&quot;&quot;&quot;</span></div>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MMCParameterType"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.MMCParameterType">[docs]</a><span class="k">class</span> <span class="nc">MMCParameterType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Defines the types of parameters that can be used for Monte Carlo.&quot;&quot;&quot;</span>
+    <span class="n">STATIC_VALUE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">DISCRETE_RANGE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">LIST</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">UNIFORM_DIST</span> <span class="o">=</span> <span class="mi">4</span></div>
+    <span class="n">NORMAL_DIST</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<div class="viewcode-block" id="MMCParameter"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.MMCParameter">[docs]</a><span class="k">class</span> <span class="nc">MMCParameter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Defines parameters used in the MMC optimizer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    label : str</span>
+<span class="sd">        The name of the parameter.</span>
+<span class="sd">    parameter_type : MMCParameterType</span>
+<span class="sd">        The type of the parameter.</span>
+<span class="sd">    static_dist_or_list</span>
+<span class="sd">        The values used to create the parameter. For example, if the</span>
+<span class="sd">        parameter types is &quot;STATIC_VALUE&quot; then this can be any object,</span>
+<span class="sd">        if it is &quot;LIST&quot; then it should be a list of values and if it</span>
+<span class="sd">        is &quot;UNIFORM_DIST&quot; then it should be (mu, sigma) etc.</span>
+<span class="sd">    starting_value, optional</span>
+<span class="sd">        The initial value of the parameter.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    label : str</span>
+<span class="sd">        The name of the parameter.</span>
+<span class="sd">    parameter_type : MMCParameterType</span>
+<span class="sd">        The type of the parameter.</span>
+<span class="sd">    static_dist_or_list</span>
+<span class="sd">        The values used to create the parameter. For example, if the</span>
+<span class="sd">        parameter types is &quot;STATIC_VALUE&quot; then this can be any object,</span>
+<span class="sd">        if it is &quot;LIST&quot; then it should be a list of values and if it</span>
+<span class="sd">        is &quot;UNIFORM_DIST&quot; then it should be (mu, sigma) etc.</span>
+<span class="sd">    starting_value</span>
+<span class="sd">        The initial value of the parameter.</span>
+<span class="sd">    current_value</span>
+<span class="sd">        The currently accepted value for the parameter.</span>
+<span class="sd">    proposed_value</span>
+<span class="sd">        A new value proposed for the parameter that has not been</span>
+<span class="sd">        accepted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">parameter_type</span><span class="p">,</span> <span class="n">static_dist_or_list</span><span class="p">,</span>
+                 <span class="n">starting_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_type</span> <span class="o">=</span> <span class="n">parameter_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">static_dist_or_list</span> <span class="o">=</span> <span class="n">static_dist_or_list</span>
+        <span class="k">if</span> <span class="n">starting_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_type</span> <span class="ow">is</span> <span class="n">MMCParameterType</span><span class="o">.</span><span class="n">STATIC_VALUE</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">starting_value</span> <span class="o">=</span> <span class="n">static_dist_or_list</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">starting_value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">randomise_proposed_value</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">starting_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">accept_proposed_value</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">starting_value</span> <span class="o">=</span> <span class="n">starting_value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">starting_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="MMCParameter.randomise_proposed_value"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.MMCParameter.randomise_proposed_value">[docs]</a>    <span class="k">def</span> <span class="nf">randomise_proposed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a randomly the proposed value.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            Raised if this method is called on a static value.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            Raised if the parameter type is unknown.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_type</span> <span class="ow">is</span> <span class="n">MMCParameterType</span><span class="o">.</span><span class="n">UNIFORM_DIST</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_dist_or_list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_type</span> <span class="ow">is</span> <span class="n">MMCParameterType</span><span class="o">.</span><span class="n">NORMAL_DIST</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_dist_or_list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">normalvariate</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_type</span> <span class="ow">is</span> <span class="n">MMCParameterType</span><span class="o">.</span><span class="n">DISCRETE_RANGE</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">min_v</span><span class="p">,</span> <span class="n">max_v</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_dist_or_list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_v</span><span class="p">,</span> <span class="n">max_v</span><span class="p">,</span> <span class="n">step</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_type</span> <span class="ow">is</span> <span class="n">MMCParameterType</span><span class="o">.</span><span class="n">LIST</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">static_dist_or_list</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_type</span> <span class="ow">is</span> <span class="n">MMCParameterType</span><span class="o">.</span><span class="n">STATIC_VALUE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;This value is static, it cannot be mutated.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Cannot randomise this parameter, unknown parameter type.&#39;</span><span class="p">)</span></div>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="MMCParameter.accept_proposed_value"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.MMCParameter.accept_proposed_value">[docs]</a>    <span class="k">def</span> <span class="nf">accept_proposed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the current value to the proposed value.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="MMCParameter.reject_proposed_value"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.MMCParameter.reject_proposed_value">[docs]</a>    <span class="k">def</span> <span class="nf">reject_proposed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes the proposed value.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proposed_value</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;MMCParameter: </span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_dist_or_list</span><span class="p">,</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_value</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MMCParameterOptimisation"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation">[docs]</a><span class="k">class</span> <span class="nc">MMCParameterOptimisation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Performs Metropolis Monte Carlo opimisation on a specification.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [0] Metropolis N, Rosenbluth AW, Rosenbluth MN, Teller AH and</span>
+<span class="sd">       Teller E (1953) Equations of State Calculations by Fast</span>
+<span class="sd">       Computing Machines, Journal of Chemical Physics. 21 (6),</span>
+<span class="sd">       1087-1092.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    specification : isambard.Specification</span>
+<span class="sd">        Any ISAMBARD specification. This will be used to create models</span>
+<span class="sd">        during the optimisation.</span>
+<span class="sd">    parameters : [MMCParameter]</span>
+<span class="sd">        Parameters to be optimised. The order of the parameters should</span>
+<span class="sd">        match the init signiture of the specification.</span>
+<span class="sd">    sequences : [str]</span>
+<span class="sd">        The sequences to be used during the optimisation.</span>
+<span class="sd">    eval_function : f(ampal) -&gt; float</span>
+<span class="sd">        A function that takes an AMPAL object as an input and returns</span>
+<span class="sd">        a float. By default the `buff_interaction_energy` will be</span>
+<span class="sd">        used to evaluate the structure.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    specification : isambard.Specification</span>
+<span class="sd">        Any ISAMBARD specification. This will be used to create models</span>
+<span class="sd">        during the optimisation.</span>
+<span class="sd">    parameters : [MMCParameter]</span>
+<span class="sd">        Parameters to be optimised. The order of the parameters should</span>
+<span class="sd">        match the init signiture of the specification.</span>
+<span class="sd">    sequences : [str]</span>
+<span class="sd">        The sequences to be used during the optimisation.</span>
+<span class="sd">    eval_function : f(ampal) -&gt; float</span>
+<span class="sd">        A function that takes an AMPAL object as an input and returns</span>
+<span class="sd">        a float. By default the `buff_interaction_energy` will be</span>
+<span class="sd">        used to evaluate the structure.</span>
+<span class="sd">    current_energy : float</span>
+<span class="sd">        The energy of the current structure.</span>
+<span class="sd">    best_energy : float</span>
+<span class="sd">        The best energy observed for any model.</span>
+<span class="sd">    best_parameters : [MMCParameter]</span>
+<span class="sd">        The parameters associated with the `best_energy`.</span>
+<span class="sd">    best_model : AMPAL Object</span>
+<span class="sd">        The model associated with the `best_energy`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_energy</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">best_energy</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">best_parameters</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">best_model</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specification</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">eval_function</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specification</span> <span class="o">=</span> <span class="n">specification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_parameters</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span> <span class="o">=</span> <span class="n">sequences</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_function</span> <span class="o">=</span> <span class="n">eval_function</span>
+
+<div class="viewcode-block" id="MMCParameterOptimisation.start_optimisation"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.start_optimisation">[docs]</a>    <span class="k">def</span> <span class="nf">start_optimisation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rounds</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="mf">298.15</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Begin the optimisation run.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rounds : int</span>
+<span class="sd">            The number of rounds of optimisation to perform.</span>
+<span class="sd">        temp : float, optional</span>
+<span class="sd">            The temperature (in K) used during the optimisation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generate_initial_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mmc_loop</span><span class="p">(</span><span class="n">rounds</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="n">temp</span><span class="p">)</span></div>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_generate_initial_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates the initial model for the optimistation.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            Raised if the model failed to build. This could be due to</span>
+<span class="sd">            parameters being passed to the specification in the wrong</span>
+<span class="sd">            format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">initial_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">current_value</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_parameters</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">initial_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification</span><span class="p">(</span><span class="o">*</span><span class="n">initial_parameters</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Failed to build initial model. Make sure that the input &#39;</span>
+                <span class="s1">&#39;parameters match the number and order of arguements &#39;</span>
+                <span class="s1">&#39;expected by the input specification.&#39;</span><span class="p">)</span>
+        <span class="n">initial_model</span><span class="o">.</span><span class="n">pack_new_sequences</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_energy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_function</span><span class="p">(</span><span class="n">initial_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_energy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_energy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_parameters</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_model</span> <span class="o">=</span> <span class="n">initial_model</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_mmc_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rounds</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="mf">298.15</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The main MMC loop.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rounds : int</span>
+<span class="sd">            The number of rounds of optimisation to perform.</span>
+<span class="sd">        temp : float, optional</span>
+<span class="sd">            The temperature (in K) used during the optimisation.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            If true, prints information about the run to std out.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO add weighted randomisation of altered variable</span>
+        <span class="n">current_round</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">current_round</span> <span class="o">&lt;</span> <span class="n">rounds</span><span class="p">:</span>
+            <span class="n">modifiable</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">parameter_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MMCParameterType</span><span class="o">.</span><span class="n">STATIC_VALUE</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_parameters</span><span class="p">))</span>
+            <span class="n">chosen_parameter</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">modifiable</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">chosen_parameter</span><span class="o">.</span><span class="n">parameter_type</span> <span class="ow">is</span> <span class="n">MMCParameterType</span><span class="o">.</span><span class="n">UNIFORM_DIST</span><span class="p">:</span>
+                <span class="n">chosen_parameter</span><span class="o">.</span><span class="n">randomise_proposed_value</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">chosen_parameter</span><span class="o">.</span><span class="n">randomise_proposed_value</span><span class="p">()</span>
+            <span class="n">proposed_parameters</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">current_value</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">proposed_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">p</span><span class="o">.</span><span class="n">proposed_value</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_parameters</span><span class="p">]</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification</span><span class="p">(</span><span class="o">*</span><span class="n">proposed_parameters</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">pack_new_sequences</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="p">)</span>
+            <span class="n">proposed_energy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_function</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="c1"># TODO Add proper logging</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">Round: </span><span class="si">{}</span><span class="s1">, Current energy: </span><span class="si">{}</span><span class="s1">, Proposed energy: </span><span class="si">{}</span><span class="s1"> &#39;</span>
+                    <span class="s1">&#39;(best </span><span class="si">{}</span><span class="s1">), </span><span class="si">{}</span><span class="s1">.       &#39;</span>
+                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_round</span><span class="p">,</span> <span class="n">float_f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_energy</span><span class="p">),</span>
+                            <span class="n">float_f</span><span class="p">(</span><span class="n">proposed_energy</span><span class="p">),</span> <span class="n">float_f</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">best_energy</span><span class="p">),</span>
+                            <span class="s2">&quot;ACCEPTED&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_move</span><span class="p">(</span>
+                                <span class="n">proposed_energy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_energy</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">temp</span><span class="p">)</span>
+                            <span class="k">else</span> <span class="s2">&quot;DECLINED&quot;</span>
+                            <span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_move</span><span class="p">(</span><span class="n">proposed_energy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_energy</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">temp</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_parameters</span><span class="p">:</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">accept_proposed_value</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_energy</span> <span class="o">=</span> <span class="n">proposed_energy</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_energy</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_energy</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">best_energy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_energy</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">best_parameters</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">current_parameters</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">best_model</span> <span class="o">=</span> <span class="n">model</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_parameters</span><span class="p">:</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">reject_proposed_value</span><span class="p">()</span>
+            <span class="n">current_round</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="MMCParameterOptimisation.check_move"><a class="viewcode-back" href="../../../isambard.optimisation.html#isambard.optimisation.mmc_optimizer.MMCParameterOptimisation.check_move">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">check_move</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determines if a model will be accepted.</span>
+
+<span class="sd">        Uses Boltzmann distribution scaled by temperature in Kelvin.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">K_BOLTZ</span> <span class="o">=</span> <span class="mf">8.3144621E-003</span>  <span class="c1"># kJa/mol.K</span>
+        <span class="k">if</span> <span class="n">new</span> <span class="o">&lt;</span> <span class="n">old</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">move_prob</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">new</span> <span class="o">-</span> <span class="n">old</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">K_BOLTZ</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">move_prob</span> <span class="o">&gt;</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span></div></div>
+                <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christopher W. Wood&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Woolfson Group, UoB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,272 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>isambard.modelling.scwrl &#8212; ISAMBARD 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for isambard.modelling.scwrl</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module provides an interface to the program Scwrl4.</span>
+
+<span class="sd">The Scwrl executable must be on your path. Run the `test_scwrl`</span>
+<span class="sd">function to determine if it is available.</span>
+
+<span class="sd">For more information on Scwrl see [1].</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">.. [1] Krivov GG, Shapovalov MV, and Dunbrack Jr RL (2009) &quot;Improved</span>
+<span class="sd">   prediction of protein side-chain conformations with SCWRL4.&quot;,</span>
+<span class="sd">   Proteins.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">ampal</span>
+
+
+<div class="viewcode-block" id="scwrl_available"><a class="viewcode-back" href="../../../isambard.modelling.html#isambard.modelling.scwrl.scwrl_available">[docs]</a><span class="k">def</span> <span class="nf">scwrl_available</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;True if Scwrl is available.&quot;&quot;&quot;</span>
+    <span class="n">available</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;Scwrl4&#39;</span><span class="p">],</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Scwrl4 has not been found on your path. If you have already &quot;</span>
+              <span class="s2">&quot;installed Scwrl but are unsure how to add it to your path, &quot;</span>
+              <span class="s2">&quot;check out this: https://stackoverflow.com/a/14638025&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">available</span>
+
+
+<div class="viewcode-block" id="run_scwrl"><a class="viewcode-back" href="../../../isambard.modelling.html#isambard.modelling.scwrl.run_scwrl">[docs]</a><span class="k">def</span> <span class="nf">run_scwrl</span><span class="p">(</span><span class="n">pdb</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span>
+              <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rigid_rotamer_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hydrogens</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs SCWRL on input PDB strong or path to PDB and a sequence string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pdb : str</span>
+<span class="sd">        PDB string or a path to a PDB file.</span>
+<span class="sd">    sequence : str</span>
+<span class="sd">        Amino acid sequence for SCWRL to pack in single-letter code.</span>
+<span class="sd">    path : bool, optional</span>
+<span class="sd">        True if pdb is a path.</span>
+<span class="sd">    rigid_rotamer_model : bool, optional</span>
+<span class="sd">        If True, Scwrl will use the rigid-rotamer model, which is</span>
+<span class="sd">        faster but less accurate.</span>
+<span class="sd">    hydrogens : bool, optional</span>
+<span class="sd">        If False, the hydrogens produced by Scwrl will be ommitted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    scwrl_std_out : str</span>
+<span class="sd">        Std out from SCWRL.</span>
+<span class="sd">    scwrl_pdb : str</span>
+<span class="sd">        String of packed SCWRL PDB.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ChildProcessError</span>
+<span class="sd">        Raised if SCWRL failed to run.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="n">pdb</span> <span class="o">=</span> <span class="n">inf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">pdb</span> <span class="o">=</span> <span class="n">pdb</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="n">sequence</span> <span class="o">=</span> <span class="n">sequence</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">scwrl_tmp</span><span class="p">,</span>\
+                <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">scwrl_seq</span><span class="p">,</span>\
+                <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">scwrl_out</span><span class="p">:</span>
+            <span class="n">scwrl_tmp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
+            <span class="n">scwrl_tmp</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Resets the buffer back to the first line</span>
+            <span class="n">scwrl_seq</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+            <span class="n">scwrl_seq</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">scwrl_command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Scwrl4&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="n">scwrl_tmp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">scwrl_out</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="n">scwrl_seq</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">rigid_rotamer_model</span><span class="p">:</span>
+                <span class="n">scwrl_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">hydrogens</span><span class="p">:</span>
+                <span class="n">scwrl_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">)</span>
+            <span class="n">scwrl_std_out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">scwrl_command</span><span class="p">)</span>
+            <span class="n">scwrl_out</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">scwrl_pdb</span> <span class="o">=</span> <span class="n">scwrl_out</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">scwrl_tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">scwrl_out</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">scwrl_seq</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">scwrl_pdb</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ChildProcessError</span><span class="p">(</span>
+            <span class="s1">&#39;SCWRL failed to run. SCWRL:</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scwrl_std_out</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">scwrl_std_out</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">scwrl_pdb</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="parse_scwrl_out"><a class="viewcode-back" href="../../../isambard.modelling.html#isambard.modelling.scwrl.parse_scwrl_out">[docs]</a><span class="k">def</span> <span class="nf">parse_scwrl_out</span><span class="p">(</span><span class="n">scwrl_std_out</span><span class="p">,</span> <span class="n">scwrl_pdb</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parses SCWRL output and returns PDB and SCWRL score.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scwrl_std_out : str</span>
+<span class="sd">        Std out from SCWRL.</span>
+<span class="sd">    scwrl_pdb : str</span>
+<span class="sd">        String of packed SCWRL PDB.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fixed_scwrl_str : str</span>
+<span class="sd">        String of packed SCWRL PDB, with correct PDB format.</span>
+<span class="sd">    score : float</span>
+<span class="sd">        SCWRL Score</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">&#39;Total minimal energy of the graph = ([-0-9.]+)&#39;</span><span class="p">,</span> <span class="n">scwrl_std_out</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Add temperature factors to SCWRL out</span>
+    <span class="n">split_scwrl</span> <span class="o">=</span> <span class="n">scwrl_pdb</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="n">fixed_scwrl</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">split_scwrl</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">80</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;H?E?T?ATO?M\s+\d+.+&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+            <span class="n">front</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="mi">61</span><span class="p">]</span>
+            <span class="n">temp_factor</span> <span class="o">=</span> <span class="s1">&#39; 0.00&#39;</span>
+            <span class="n">back</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">66</span><span class="p">:]</span>
+            <span class="n">fixed_scwrl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">front</span><span class="p">,</span> <span class="n">temp_factor</span><span class="p">,</span> <span class="n">back</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fixed_scwrl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">fixed_scwrl_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fixed_scwrl</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
+    <span class="k">return</span> <span class="n">fixed_scwrl_str</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="pack_side_chains_scwrl"><a class="viewcode-back" href="../../../isambard.modelling.html#isambard.modelling.scwrl.pack_side_chains_scwrl">[docs]</a><span class="k">def</span> <span class="nf">pack_side_chains_scwrl</span><span class="p">(</span><span class="n">assembly</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span>
+                           <span class="n">rigid_rotamer_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hydrogens</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Packs side chains onto a protein structure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    assembly : AMPAL Assembly</span>
+<span class="sd">        AMPAL object containing some protein structure.</span>
+<span class="sd">    sequence : [str]</span>
+<span class="sd">        A list of amino acid sequences in single-letter code for Scwrl to pack.</span>
+<span class="sd">    rigid_rotamer_model : bool, optional</span>
+<span class="sd">        If True, Scwrl will use the rigid-rotamer model, which is</span>
+<span class="sd">        faster but less accurate.</span>
+<span class="sd">    hydrogens : bool, optional</span>
+<span class="sd">        If False, the hydrogens produced by Scwrl will be ommitted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    packed_structure : AMPAL Assembly</span>
+<span class="sd">        A new AMPAL Assembly containing the packed structure, with</span>
+<span class="sd">        the Scwrl score in the tags.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">scwrl_available</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Scwrl4 is unavailable on your system path.&#39;</span><span class="p">)</span>
+    <span class="n">protein</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">assembly</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ampal</span><span class="o">.</span><span class="n">Polypeptide</span><span class="p">)]</span>
+    <span class="n">total_seq_len</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">])</span>
+    <span class="n">total_aa_len</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">protein</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">total_seq_len</span> <span class="o">!=</span> <span class="n">total_aa_len</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Total sequence length (</span><span class="si">{}</span><span class="s1">) does not match &#39;</span>
+                         <span class="s1">&#39;total Polypeptide length (</span><span class="si">{}</span><span class="s1">).&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                             <span class="n">total_seq_len</span><span class="p">,</span> <span class="n">total_aa_len</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">protein</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Number of sequences (</span><span class="si">{}</span><span class="s1">) does not match &#39;</span>
+                         <span class="s1">&#39;number of Polypeptides (</span><span class="si">{}</span><span class="s1">).&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                             <span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">protein</span><span class="p">)))</span>
+    <span class="n">scwrl_std_out</span><span class="p">,</span> <span class="n">scwrl_pdb</span> <span class="o">=</span> <span class="n">run_scwrl</span><span class="p">(</span>
+        <span class="n">assembly</span><span class="o">.</span><span class="n">pdb</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sequences</span><span class="p">),</span> <span class="n">path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">rigid_rotamer_model</span><span class="o">=</span><span class="n">rigid_rotamer_model</span><span class="p">,</span> <span class="n">hydrogens</span><span class="o">=</span><span class="n">hydrogens</span><span class="p">)</span>
+    <span class="n">packed_structure</span><span class="p">,</span> <span class="n">scwrl_score</span> <span class="o">=</span> <span class="n">parse_scwrl_out</span><span class="p">(</span><span class="n">scwrl_std_out</span><span class="p">,</span> <span class="n">scwrl_pdb</span><span class="p">)</span>
+    <span class="n">new_assembly</span> <span class="o">=</span> <span class="n">ampal</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="n">packed_structure</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">new_assembly</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;scwrl_score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scwrl_score</span></div>
+    <span class="k">return</span> <span class="n">new_assembly</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Christopher W. Wood&#39;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Woolfson Group, UoB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

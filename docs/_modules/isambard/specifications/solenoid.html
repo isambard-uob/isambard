@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>isambard.specifications.solenoid &#8212; ISAMBARD 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for isambard.specifications.solenoid</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Contains classes for modeling alpha-solenoid proteins.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">ampal</span> <span class="k">import</span> <span class="n">Assembly</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">.helix</span> <span class="k">import</span> <span class="n">Helix</span>
+
+
+<div class="viewcode-block" id="HelixPair"><a class="viewcode-back" href="../../../isambard.specifications.html#isambard.specifications.solenoid.HelixPair">[docs]</a><span class="k">class</span> <span class="nc">HelixPair</span><span class="p">(</span><span class="n">Assembly</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a pair of helixes oriented relative to a central axis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aas: (int, int), optional</span>
+<span class="sd">        Number of residues per helix.</span>
+<span class="sd">    axis_distances: (float, float), optional</span>
+<span class="sd">        Distance from central axis (Å).</span>
+<span class="sd">    z_shifts: (float, float), optional</span>
+<span class="sd">        Z-shift of the helices relative to the central axis.</span>
+<span class="sd">    phis: (float, float), optional</span>
+<span class="sd">        Rotation of the component helices around their local helical axis.</span>
+<span class="sd">    splays: (float, float), optional</span>
+<span class="sd">        The tiltedness of the helices in the plane relative to each other.</span>
+<span class="sd">    off_plane : (float, float), optional</span>
+<span class="sd">        The tiltedness of the helices out of plane relative to each other.</span>
+<span class="sd">    build: bool</span>
+<span class="sd">        Automatically build.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aas: (int, int)</span>
+<span class="sd">        Number of residues per helix.</span>
+<span class="sd">    axis_distances: (float, float)</span>
+<span class="sd">        Distance from central axis (Å).</span>
+<span class="sd">    z_shifts: (float, float)</span>
+<span class="sd">        Z-shift of the helices relative to the central axis.</span>
+<span class="sd">    phis: (float, float)</span>
+<span class="sd">        Rotation of the component helices around their local helical axis.</span>
+<span class="sd">    splays: (float, float)</span>
+<span class="sd">        The tiltedness of the helices in the plane relative to each other.</span>
+<span class="sd">    off_plane : (float, float)</span>
+<span class="sd">        The tiltedness of the helices out of plane relative to each other.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aas</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">axis_distances</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">),</span>
+                 <span class="n">z_shifts</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">phis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">splays</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                 <span class="n">off_plane</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">build</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aas</span> <span class="o">=</span> <span class="n">aas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axis_distances</span> <span class="o">=</span> <span class="n">axis_distances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_shifts</span> <span class="o">=</span> <span class="n">z_shifts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phis</span> <span class="o">=</span> <span class="n">phis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">splays</span> <span class="o">=</span> <span class="n">splays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">off_plane</span> <span class="o">=</span> <span class="n">off_plane</span>
+        <span class="k">if</span> <span class="n">build</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relabel_all</span><span class="p">()</span>
+
+<div class="viewcode-block" id="HelixPair.build"><a class="viewcode-back" href="../../../isambard.specifications.html#isambard.specifications.solenoid.HelixPair.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Builds a `HelixPair` using the defined attributes.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_molecules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">make_helix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis_distances</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">z_shifts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">phis</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">splays</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">off_plane</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span></div>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="HelixPair.make_helix"><a class="viewcode-back" href="../../../isambard.specifications.html#isambard.specifications.solenoid.HelixPair.make_helix">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">make_helix</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span> <span class="n">axis_distance</span><span class="p">,</span> <span class="n">z_shift</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">splay</span><span class="p">,</span> <span class="n">off_plane</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Builds a helix for a given set of parameters.&quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axis_distance</span><span class="p">,</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">z_shift</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axis_distance</span><span class="p">,</span> <span class="p">(</span><span class="n">aa</span> <span class="o">*</span> <span class="mf">1.52</span><span class="p">)</span> <span class="o">+</span> <span class="n">z_shift</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">end</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+        <span class="n">helix</span> <span class="o">=</span> <span class="n">Helix</span><span class="o">.</span><span class="n">from_start_and_end</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">aa</span><span class="o">=</span><span class="n">aa</span><span class="p">)</span>
+        <span class="n">helix</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">splay</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">mid</span><span class="p">)</span>
+        <span class="n">helix</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">off_plane</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">mid</span><span class="p">)</span>
+        <span class="n">helix</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">helix</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">unit_tangent</span><span class="p">,</span> <span class="n">helix</span><span class="o">.</span><span class="n">helix_start</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">helix</span>
+
+
+<div class="viewcode-block" id="Solenoid"><a class="viewcode-back" href="../../../isambard.specifications.html#isambard.specifications.solenoid.Solenoid">[docs]</a><span class="k">class</span> <span class="nc">Solenoid</span><span class="p">(</span><span class="n">Assembly</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a `Solenoid` from a repeating unit.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    repeat_unit: Ampal Object</span>
+<span class="sd">        Any AMPAL object.</span>
+<span class="sd">    num_of_repeats: int</span>
+<span class="sd">        Number of copies of the repeating unit.</span>
+<span class="sd">    radius:</span>
+<span class="sd">        Radius of super-helix.</span>
+<span class="sd">    rise:</span>
+<span class="sd">        Rise of super-helix</span>
+<span class="sd">    rot_ang:</span>
+<span class="sd">        Delta angle of each repeating unit.</span>
+<span class="sd">    handedness:</span>
+<span class="sd">        Handedness of the super-helix.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    repeat_unit: Ampal Object</span>
+<span class="sd">        Any AMPAL object.</span>
+<span class="sd">    num_of_repeats: int</span>
+<span class="sd">        Number of copies of the repeating unit.</span>
+<span class="sd">    radius:</span>
+<span class="sd">        Radius of super-helix.</span>
+<span class="sd">    rise:</span>
+<span class="sd">        Rise of super-helix</span>
+<span class="sd">    rot_ang:</span>
+<span class="sd">        Delta angle of each repeating unit.</span>
+<span class="sd">    handedness:</span>
+<span class="sd">        Handedness of the super-helix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repeat_unit</span><span class="p">,</span> <span class="n">num_of_repeats</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">rise</span><span class="p">,</span> <span class="n">rot_ang</span><span class="p">,</span>
+                 <span class="n">handedness</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">ru</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">repeat_unit</span><span class="p">)</span>
+        <span class="n">ru</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">radius</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">ru</span><span class="o">.</span><span class="n">centre_of_mass</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repeat_unit</span> <span class="o">=</span> <span class="n">ru</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_of_repeats</span> <span class="o">=</span> <span class="n">num_of_repeats</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rise</span> <span class="o">=</span> <span class="n">rise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rot_ang</span> <span class="o">=</span> <span class="n">rot_ang</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handedness</span> <span class="o">=</span> <span class="n">handedness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relabel_all</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Solenoid.build"><a class="viewcode-back" href="../../../isambard.specifications.html#isambard.specifications.solenoid.Solenoid.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Builds a Solenoid using the defined attributes.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_molecules</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handedness</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+            <span class="n">handedness</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">handedness</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">rot_ang</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rot_ang</span> <span class="o">*</span> <span class="n">handedness</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_of_repeats</span><span class="p">):</span>
+            <span class="n">dup_unit</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repeat_unit</span><span class="p">)</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rise</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">dup_unit</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">dup_unit</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">rot_ang</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">dup_unit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relabel_all</span><span class="p">()</span></div></div>
+        <span class="k">return</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Christopher W. Wood&#39;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Woolfson Group, UoB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
