@@ -1,5 +1,8 @@
-isambard.optimisation package
-=============================
+Optimisation Package
+====================
+
+This module contains code for automatically optimising parametric models for a
+given sequence.
 
 Submodules
 ----------

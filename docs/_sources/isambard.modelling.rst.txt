@@ -1,5 +1,9 @@
-isambard.modelling package
-==========================
+Modelling Package
+=================
+
+This module contains tools for modifying biomolecular structures.
+For example, it includes tools adding capping groups, non-canonical
+amino acids and loops.
 
 Submodules
 ----------

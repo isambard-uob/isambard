@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Evaluation Package &#8212; ISAMBARD 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modelling Package" href="isambard.modelling.html" />
+    <link rel="prev" title="isambard package" href="isambard.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="evaluation-package">
+<h1>Evaluation Package<a class="headerlink" href="#evaluation-package" title="Permalink to this headline">¶</a></h1>
+<p>This module contains a range of metrics that can be used to evaluate
+the quality of your models. Some of them are directly implemented
+by us, others are interfaces to external programs.</p>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-isambard.evaluation.contact_order">
+<span id="isambard-evaluation-contact-order-module"></span><h2>isambard.evaluation.contact_order module<a class="headerlink" href="#module-isambard.evaluation.contact_order" title="Permalink to this headline">¶</a></h2>
+<p>Module for evaluating the contact order of polypeptides.</p>
+<dl class="function">
+<dt id="isambard.evaluation.contact_order.calculate_contact_order">
+<code class="descclassname">isambard.evaluation.contact_order.</code><code class="descname">calculate_contact_order</code><span class="sig-paren">(</span><em>polypeptide</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/contact_order.html#calculate_contact_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.contact_order.calculate_contact_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the contact order of a polypeptide.</p>
+<p>Contact order is a is a measure of the number and range of contacts
+found in a protein normalised by sequence length <a class="footnote-reference" href="#id4" id="id1">[1]</a>. For proteins
+with folding pathways that can be approximated as two state, contact
+order is linearly related to <span class="math notranslate">\(\ln{K}\)</span> <a class="footnote-reference" href="#id4" id="id2">[1]</a> <a class="footnote-reference" href="#id5" id="id3">[2]</a>. Contact order
+is calculated using the following method:</p>
+<blockquote>
+<div><span class="math notranslate">\(CO = \frac{1}{LN}\sum\limits_{}^{N}\Delta{}Z_{i,j}\)</span></div></blockquote>
+<p>Where <em>N</em> is the total number of contacts, <em>L</em> is the sequence length
+and <span class="math notranslate">\(\Delta{}Z_{i,j}\)</span> is the sequence distance between
+contacting residues.</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Plaxco KW, Simons KT, Baker D (1998) Contact order, transition
+state placement and the refolding rates of single domain proteins,
+J. Mol Biol, <strong>277</strong>, 985-994.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Fersht AR (2000) Transition-state structure as a unifying basis
+in protein-folding mechanisms: Contact order, chain topology,
+stability, and the extended nucleus mechanism, Proc Natl Acad Sci,
+<strong>97</strong>, 1525-1529.</td></tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>I’ve used 18 A for the Ca cut off distance to be very cautious about
+throwing away interactions. The distance between the amine and Ca of the
+nitrogen is around 6.5 A, so if two fully extended lysines were
+interacting, it’d be 2*6.5 plus 2 times van der Waals radius, so around
+17 A.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="isambard.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="isambard.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Evaluation Package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-isambard.evaluation.contact_order">isambard.evaluation.contact_order module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="isambard.modelling.html">Modelling Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isambard.optimisation.html">Optimisation Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isambard.specifications.html">Specifications Package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="isambard.html">isambard package</a><ul>
+      <li>Previous: <a href="isambard.html" title="previous chapter">isambard package</a></li>
+      <li>Next: <a href="isambard.modelling.html" title="next chapter">Modelling Package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Woolfson Group, UoB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/isambard.evaluation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

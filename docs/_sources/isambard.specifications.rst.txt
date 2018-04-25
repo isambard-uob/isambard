@@ -1,5 +1,9 @@
-isambard.specifications package
-===============================
+Specifications Package
+======================
+
+This package contains ``specification`` classes, which are protein
+parametrisations and can used to create parametric models of a
+protein fold.
 
 Submodules
 ----------
