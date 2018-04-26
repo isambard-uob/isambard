@@ -33,8 +33,8 @@ def calculate_contact_order(polypeptide):
     -----
 
     I've used 18 A for the Ca cut off distance to be very cautious about
-    throwing away interactions. The distance between the amine and Ca of the
-    nitrogen is around 6.5 A, so if two fully extended lysines were
+    throwing away interactions. The distance between the amine and Ca of
+    fully extended lysine is around 6.5 A, so if two lysines were
     interacting, it'd be 2*6.5 plus 2 times van der Waals radius, so around
     17 A.
     """
@@ -47,7 +47,13 @@ def calculate_contact_order(polypeptide):
                 for a, b in budeff.find_intra_ampal(polypeptide, 18.0)
                 if ampal.geometry.distance(a, b) <= 4.0}
     d_z_values = map(lambda x: x[1]-x[0]-1, contacts)
-    contact_order = 1/(len(contacts)*len(polypeptide))*sum(d_z_values)
+    try:
+        contact_order = 1/(len(contacts)*len(polypeptide))*sum(d_z_values)
+    except ZeroDivisionError:
+        raise ValueError(
+            'Number of contacts ({}) or length of polypeptide ({}) is 0'
+            ' so contact order cannot be calculated.'.format(len(contacts),
+                                                             len(polypeptide)))
     return contact_order
 
 
