@@ -1,0 +1,275 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>isambard.evaluation.hydrophobic_fitness &#8212; ISAMBARD 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for isambard.evaluation.hydrophobic_fitness</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for calculating the hydrophobic fitness of a protein.&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">ampal</span>
+<span class="kn">from</span> <span class="nn">ampal.amino_acids</span> <span class="k">import</span> <span class="n">standard_amino_acids</span>
+
+
+<span class="n">HYDROPHOBIC</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="calculate_hydrophobic_fitness"><a class="viewcode-back" href="../../../isambard.evaluation.html#isambard.evaluation.hydrophobic_fitness.calculate_hydrophobic_fitness">[docs]</a><span class="k">def</span> <span class="nf">calculate_hydrophobic_fitness</span><span class="p">(</span><span class="n">assembly</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculates the hydrophobic fitness of a protein.</span>
+
+<span class="sd">    Hydrophobic fitness is an efficient centroid-based method for</span>
+<span class="sd">    calculating the packing quality of your structure [3]_. For this</span>
+<span class="sd">    method C, F, I, L, M, V, W and Y are considered hydrophobic. The</span>
+<span class="sd">    algorithm has two terms:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        Hydrophobic\ term = \frac{\sum\limits_{i}^{}(H_{i}-H_{i}^{\circ})}{n}</span>
+
+<span class="sd">    where :math:`H_{i}` is the total number of number of hydrophobic</span>
+<span class="sd">    contacts of residue *i*, :math:`H_{i}^{\circ}` is the number of</span>
+<span class="sd">    hydrophobic contacts expected by chance :eq:`hi_chance` and *n*</span>
+<span class="sd">    is the total number of residues.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        Burial\ term = \frac{\sum\limits_{i}B_{i}}{n}</span>
+
+<span class="sd">    where :math:`B_{i}` is the number of centroids within 10 A. The</span>
+<span class="sd">    number of hydrophobic contacts expected by chance is calculated</span>
+<span class="sd">    as follows:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        :label: hi_chance</span>
+
+<span class="sd">        H_{i}^{\circ} = C_{i}\left(\frac{h_{i}}{N_{i}}\right)</span>
+
+<span class="sd">    where :math:`C_{i}` is the number of all side-chain centroids</span>
+<span class="sd">    that contact residue *i*, *h* is the total number of hydrophobic</span>
+<span class="sd">    residues in the sequence except for any neighbours. :math:`h_{i}`</span>
+<span class="sd">    is the total number of residue minus i and neighbours. The</span>
+<span class="sd">    hydrophobic fitness score is the combination of these terms:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        HF = -\frac{\left(\sum\limits_{i}B_{i}\right)\left(\sum\limits_{</span>
+<span class="sd">        i}^{}(H_{i}-H_{i}^{\circ})\right)}{n^{2}}</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    WARNING: The scores produced by this implementation do not quite</span>
+<span class="sd">    match scores listed in publications from the Levitt group. The</span>
+<span class="sd">    scores are generally off by up to around 1 unit, and so it</span>
+<span class="sd">    should still be useful.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [3] Huang ES, Subbiah S and Levitt M (1995) Recognizing Native</span>
+<span class="sd">       Folds by the Arrangement of Hydrophobic and Polar Residues, J. Mol.</span>
+<span class="sd">       Biol return., **252**, 709-720.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hydrophobic_centroids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tyrosine_centroids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">polar_centroids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">assembly</span><span class="o">.</span><span class="n">get_monomers</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ampal</span><span class="o">.</span><span class="n">Residue</span><span class="p">)]:</span>
+        <span class="n">centroid_list</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">centroid</span> <span class="o">=</span> <span class="n">residue</span><span class="o">.</span><span class="n">centroid</span>
+        <span class="k">if</span> <span class="n">residue</span><span class="o">.</span><span class="n">mol_letter</span> <span class="ow">in</span> <span class="n">HYDROPHOBIC</span><span class="p">:</span>
+            <span class="n">centroid_list</span> <span class="o">=</span> <span class="n">hydrophobic_centroids</span>
+        <span class="k">elif</span> <span class="n">residue</span><span class="o">.</span><span class="n">mol_letter</span> <span class="o">==</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span>
+            <span class="n">centroid_list</span> <span class="o">=</span> <span class="n">tyrosine_centroids</span>
+        <span class="k">elif</span> <span class="n">residue</span><span class="o">.</span><span class="n">mol_letter</span> <span class="ow">in</span> <span class="n">standard_amino_acids</span><span class="p">:</span>
+            <span class="n">centroid_list</span> <span class="o">=</span> <span class="n">polar_centroids</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">centroid_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">centroid_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">residue</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">residue</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                 <span class="n">residue</span><span class="p">[</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">centroid</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">centroid</span><span class="p">))</span>
+    <span class="n">hf</span> <span class="o">=</span> <span class="n">run_hf_loop</span><span class="p">(</span><span class="n">hydrophobic_centroids</span><span class="p">,</span>
+                     <span class="n">tyrosine_centroids</span><span class="p">,</span> <span class="n">polar_centroids</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">hf</span>
+
+
+<div class="viewcode-block" id="run_hf_loop"><a class="viewcode-back" href="../../../isambard.evaluation.html#isambard.evaluation.hydrophobic_fitness.run_hf_loop">[docs]</a><span class="k">def</span> <span class="nf">run_hf_loop</span><span class="p">(</span><span class="n">hydrophobic_centroids</span><span class="p">,</span> <span class="n">tyrosine_centroids</span><span class="p">,</span> <span class="n">polar_centroids</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the hydrophobic fitness algorithm.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hydrophobic_centroids : [(str, int, (float, float, float))]</span>
+<span class="sd">        A list containing the chain ID, residue number and the centroid</span>
+<span class="sd">        coordinate position for all the hydrophobic residues exclusing</span>
+<span class="sd">        tyrosine.</span>
+<span class="sd">    tyrosine_centroids : [(str, int, (float, float, float))]</span>
+<span class="sd">        A list containing the chain ID, residue number and the centroid</span>
+<span class="sd">        coordinate position for all the tyrosine residues.</span>
+<span class="sd">    polar_centroids : [(str, int, (float, float, float))]</span>
+<span class="sd">        A list containing the chain ID, residue number and the centroid</span>
+<span class="sd">        coordinate position for all the polar residues.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    hydrophobic_fitness : float</span>
+<span class="sd">        The hydrophobic fitness score.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_hydrophobic</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hydrophobic_centroids</span><span class="p">)</span>
+    <span class="n">n_tyrosine</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tyrosine_centroids</span><span class="p">)</span>
+    <span class="n">n_polar</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">polar_centroids</span><span class="p">)</span>
+    <span class="n">hydrophobic_scores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">burial_scores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">hydrophobic_centroids</span><span class="p">:</span>
+        <span class="n">h_centroids_in_7_3</span><span class="p">,</span> <span class="n">h_centroids_in_10</span><span class="p">,</span> <span class="n">h_neighbours</span> <span class="o">=</span> <span class="n">get_number_within</span><span class="p">(</span>
+            <span class="n">reference</span><span class="p">,</span> <span class="n">hydrophobic_centroids</span><span class="p">)</span>
+        <span class="n">y_centroids_in_7_3</span><span class="p">,</span> <span class="n">y_centroids_in_10</span><span class="p">,</span> <span class="n">y_neighbours</span> <span class="o">=</span> <span class="n">get_number_within</span><span class="p">(</span>
+            <span class="n">reference</span><span class="p">,</span> <span class="n">tyrosine_centroids</span><span class="p">)</span>
+        <span class="n">p_centroids_in_7_3</span><span class="p">,</span> <span class="n">p_centroids_in_10</span><span class="p">,</span> <span class="n">p_neighbours</span> <span class="o">=</span> <span class="n">get_number_within</span><span class="p">(</span>
+            <span class="n">reference</span><span class="p">,</span> <span class="n">polar_centroids</span><span class="p">)</span>
+        <span class="n">all_neighbours</span> <span class="o">=</span> <span class="n">h_neighbours</span> <span class="o">+</span> <span class="n">y_neighbours</span> <span class="o">+</span> <span class="n">p_neighbours</span>
+        <span class="n">ci</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_centroids_in_7_3</span> <span class="o">+</span> <span class="n">y_centroids_in_7_3</span> <span class="o">+</span> <span class="n">p_centroids_in_7_3</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span>
+            <span class="n">all_neighbours</span><span class="p">)</span>
+        <span class="n">hi</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_hydrophobic</span> <span class="o">-</span> <span class="n">h_neighbours</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">n_tyrosine</span> <span class="o">-</span> <span class="n">y_neighbours</span><span class="p">)</span>
+        <span class="n">Ni</span> <span class="o">=</span> <span class="n">hi</span> <span class="o">+</span> <span class="p">(</span><span class="n">n_polar</span> <span class="o">-</span> <span class="n">p_neighbours</span><span class="p">)</span>
+        <span class="n">Hic</span> <span class="o">=</span> <span class="n">ci</span> <span class="o">*</span> <span class="p">(</span><span class="n">hi</span> <span class="o">/</span> <span class="n">Ni</span><span class="p">)</span>
+        <span class="n">Hi</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_centroids_in_7_3</span> <span class="o">+</span> <span class="n">y_centroids_in_7_3</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span>
+            <span class="n">h_neighbours</span> <span class="o">+</span> <span class="n">y_neighbours</span><span class="p">)</span>
+        <span class="n">hydrophobic_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hi</span> <span class="o">-</span> <span class="n">Hic</span><span class="p">)</span>
+        <span class="n">burial_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">h_centroids_in_10</span> <span class="o">+</span> <span class="n">y_centroids_in_10</span> <span class="o">+</span> <span class="n">p_centroids_in_10</span><span class="p">))</span>
+    <span class="n">hydrophobic_fitness</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span>
+        <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">burial_scores</span><span class="p">)</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">hydrophobic_scores</span><span class="p">)</span>
+         <span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">n_hydrophobic</span><span class="o">+</span><span class="n">n_tyrosine</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">hydrophobic_fitness</span>
+
+
+<div class="viewcode-block" id="get_number_within"><a class="viewcode-back" href="../../../isambard.evaluation.html#isambard.evaluation.hydrophobic_fitness.get_number_within">[docs]</a><span class="k">def</span> <span class="nf">get_number_within</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">target_points</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the number of points within 10 and 7.3 residue.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    reference : (str, int, (float, float, float))</span>
+<span class="sd">        Reference centroid.</span>
+<span class="sd">    target_points : [(str, int, (float, float, float))]</span>
+<span class="sd">        A list of centroids.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    within_and_neighbours : (int, int, int)</span>
+<span class="sd">        Returns the number of target centroids within 7.3 A, 10.0 A</span>
+<span class="sd">        and the number of neighbours (based on chain ID and residue</span>
+<span class="sd">        number).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">centroids_in_10</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">centroids_in_7_3</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">neighbours</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">target_points</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="n">reference</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">elif</span> <span class="n">reference</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">reference</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">reference</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">neighbours</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">ampal</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">reference</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;=</span> <span class="mf">10.0</span><span class="p">:</span>
+            <span class="n">centroids_in_10</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;=</span> <span class="mf">7.3</span><span class="p">:</span>
+            <span class="n">centroids_in_7_3</span> <span class="o">+=</span> <span class="mi">1</span></div>
+    <span class="k">return</span> <span class="n">centroids_in_7_3</span><span class="p">,</span> <span class="n">centroids_in_10</span><span class="p">,</span> <span class="n">neighbours</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Christopher W. Wood&#39;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../isambard.html">API Documentation</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Woolfson Group, UoB.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

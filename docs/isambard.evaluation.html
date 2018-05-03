@@ -52,8 +52,8 @@ found in a protein normalised by sequence length <a class="footnote-reference" h
 with folding pathways that can be approximated as two state, contact
 order is linearly related to <span class="math notranslate">\(\ln{K}\)</span> <a class="footnote-reference" href="#id4" id="id2">[1]</a> <a class="footnote-reference" href="#id5" id="id3">[2]</a>. Contact order
 is calculated using the following method:</p>
-<blockquote>
-<div><span class="math notranslate">\(CO = \frac{1}{LN}\sum\limits_{}^{N}\Delta{}Z_{i,j}\)</span></div></blockquote>
+<div class="math notranslate">
+\[CO = \frac{1}{LN}\sum\limits_{}^{N}\Delta{}Z_{i,j}\]</div>
 <p>Where <em>N</em> is the total number of contacts, <em>L</em> is the sequence length
 and <span class="math notranslate">\(\Delta{}Z_{i,j}\)</span> is the sequence distance between
 contacting residues.</p>
@@ -77,10 +77,114 @@ stability, and the extended nucleus mechanism, Proc Natl Acad Sci,
 </table>
 <p class="rubric">Notes</p>
 <p>I’ve used 18 A for the Ca cut off distance to be very cautious about
-throwing away interactions. The distance between the amine and Ca of the
-nitrogen is around 6.5 A, so if two fully extended lysines were
+throwing away interactions. The distance between the amine and Ca of
+fully extended lysine is around 6.5 A, so if two lysines were
 interacting, it’d be 2*6.5 plus 2 times van der Waals radius, so around
 17 A.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-isambard.evaluation.hydrophobic_fitness">
+<span id="isambard-evaluation-hydrophobic-fitness-module"></span><h2>isambard.evaluation.hydrophobic_fitness module<a class="headerlink" href="#module-isambard.evaluation.hydrophobic_fitness" title="Permalink to this headline">¶</a></h2>
+<p>Module for calculating the hydrophobic fitness of a protein.</p>
+<dl class="function">
+<dt id="isambard.evaluation.hydrophobic_fitness.calculate_hydrophobic_fitness">
+<code class="descclassname">isambard.evaluation.hydrophobic_fitness.</code><code class="descname">calculate_hydrophobic_fitness</code><span class="sig-paren">(</span><em>assembly</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/hydrophobic_fitness.html#calculate_hydrophobic_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.hydrophobic_fitness.calculate_hydrophobic_fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the hydrophobic fitness of a protein.</p>
+<p>Hydrophobic fitness is an efficient centroid-based method for
+calculating the packing quality of your structure <a class="footnote-reference" href="#id7" id="id6">[3]</a>. For this
+method C, F, I, L, M, V, W and Y are considered hydrophobic. The
+algorithm has two terms:</p>
+<div class="math notranslate">
+\[Hydrophobic\ term = \frac{\sum\limits_{i}^{}(H_{i}-H_{i}^{\circ})}{n}\]</div>
+<p>where <span class="math notranslate">\(H_{i}\)</span> is the total number of number of hydrophobic
+contacts of residue <em>i</em>, <span class="math notranslate">\(H_{i}^{\circ}\)</span> is the number of
+hydrophobic contacts expected by chance <a class="reference internal" href="#equation-hi-chance">(1)</a> and <em>n</em>
+is the total number of residues.</p>
+<div class="math notranslate">
+\[Burial\ term = \frac{\sum\limits_{i}B_{i}}{n}\]</div>
+<p>where <span class="math notranslate">\(B_{i}\)</span> is the number of centroids within 10 A. The
+number of hydrophobic contacts expected by chance is calculated
+as follows:</p>
+<div class="math notranslate" id="equation-hi-chance">
+<span class="eqno">(1)<a class="headerlink" href="#equation-hi-chance" title="Permalink to this equation">¶</a></span>\[H_{i}^{\circ} = C_{i}\left(\frac{h_{i}}{N_{i}}\right)\]</div>
+<p>where <span class="math notranslate">\(C_{i}\)</span> is the number of all side-chain centroids
+that contact residue <em>i</em>, <em>h</em> is the total number of hydrophobic
+residues in the sequence except for any neighbours. <span class="math notranslate">\(h_{i}\)</span>
+is the total number of residue minus i and neighbours. The
+hydrophobic fitness score is the combination of these terms:</p>
+<div class="math notranslate">
+\[HF = -\frac{\left(\sum\limits_{i}B_{i}\right)\left(\sum\limits_{
+i}^{}(H_{i}-H_{i}^{\circ})\right)}{n^{2}}\]</div>
+<p class="rubric">Notes</p>
+<p>WARNING: The scores produced by this implementation do not quite
+match scores listed in publications from the Levitt group. The
+scores are generally off by up to around 1 unit, and so it
+should still be useful.</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[3]</a></td><td>Huang ES, Subbiah S and Levitt M (1995) Recognizing Native
+Folds by the Arrangement of Hydrophobic and Polar Residues, J. Mol.
+Biol return., <strong>252</strong>, 709-720.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.evaluation.hydrophobic_fitness.get_number_within">
+<code class="descclassname">isambard.evaluation.hydrophobic_fitness.</code><code class="descname">get_number_within</code><span class="sig-paren">(</span><em>reference</em>, <em>target_points</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/hydrophobic_fitness.html#get_number_within"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.hydrophobic_fitness.get_number_within" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of points within 10 and 7.3 residue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>reference</strong> (<em>(</em><em>str</em><em>, </em><em>int</em><em>, </em><em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em><em>)</em>) – Reference centroid.</li>
+<li><strong>target_points</strong> (<em>[</em><em>(</em><em>str</em><em>, </em><em>int</em><em>, </em><em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em><em>)</em><em>]</em>) – A list of centroids.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>within_and_neighbours</strong> – Returns the number of target centroids within 7.3 A, 10.0 A
+and the number of neighbours (based on chain ID and residue
+number).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(int, int, int)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.evaluation.hydrophobic_fitness.run_hf_loop">
+<code class="descclassname">isambard.evaluation.hydrophobic_fitness.</code><code class="descname">run_hf_loop</code><span class="sig-paren">(</span><em>hydrophobic_centroids</em>, <em>tyrosine_centroids</em>, <em>polar_centroids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/hydrophobic_fitness.html#run_hf_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.hydrophobic_fitness.run_hf_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the hydrophobic fitness algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>hydrophobic_centroids</strong> (<em>[</em><em>(</em><em>str</em><em>, </em><em>int</em><em>, </em><em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em><em>)</em><em>]</em>) – A list containing the chain ID, residue number and the centroid
+coordinate position for all the hydrophobic residues exclusing
+tyrosine.</li>
+<li><strong>tyrosine_centroids</strong> (<em>[</em><em>(</em><em>str</em><em>, </em><em>int</em><em>, </em><em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em><em>)</em><em>]</em>) – A list containing the chain ID, residue number and the centroid
+coordinate position for all the tyrosine residues.</li>
+<li><strong>polar_centroids</strong> (<em>[</em><em>(</em><em>str</em><em>, </em><em>int</em><em>, </em><em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em><em>)</em><em>]</em>) – A list containing the chain ID, residue number and the centroid
+coordinate position for all the polar residues.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>hydrophobic_fitness</strong> – The hydrophobic fitness score.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -116,6 +220,7 @@ interacting, it’d be 2*6.5 plus 2 times van der Waals radius, so around
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Evaluation Package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-isambard.evaluation.contact_order">isambard.evaluation.contact_order module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-isambard.evaluation.hydrophobic_fitness">isambard.evaluation.hydrophobic_fitness module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="isambard.modelling.html">Modelling Package</a></li>

@@ -15,3 +15,11 @@ isambard.evaluation.contact\_order module
     :members:
     :undoc-members:
     :show-inheritance:
+
+isambard.evaluation.hydrophobic\_fitness module
+-----------------------------------------------
+
+.. automodule:: isambard.evaluation.hydrophobic_fitness
+    :members:
+    :undoc-members:
+    :show-inheritance:

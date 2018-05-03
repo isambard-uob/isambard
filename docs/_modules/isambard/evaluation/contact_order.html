@@ -46,7 +46,9 @@
 <span class="sd">    order is linearly related to :math:`\ln{K}` [1]_ [2]_. Contact order</span>
 <span class="sd">    is calculated using the following method:</span>
 
-<span class="sd">        :math:`CO = \frac{1}{LN}\sum\limits_{}^{N}\Delta{}Z_{i,j}`</span>
+<span class="sd">    .. math::</span>
+
+<span class="sd">        CO = \frac{1}{LN}\sum\limits_{}^{N}\Delta{}Z_{i,j}</span>
 
 <span class="sd">    Where *N* is the total number of contacts, *L* is the sequence length</span>
 <span class="sd">    and :math:`\Delta{}Z_{i,j}` is the sequence distance between</span>
@@ -66,8 +68,8 @@
 <span class="sd">    -----</span>
 
 <span class="sd">    I&#39;ve used 18 A for the Ca cut off distance to be very cautious about</span>
-<span class="sd">    throwing away interactions. The distance between the amine and Ca of the</span>
-<span class="sd">    nitrogen is around 6.5 A, so if two fully extended lysines were</span>
+<span class="sd">    throwing away interactions. The distance between the amine and Ca of</span>
+<span class="sd">    fully extended lysine is around 6.5 A, so if two lysines were</span>
 <span class="sd">    interacting, it&#39;d be 2*6.5 plus 2 times van der Waals radius, so around</span>
 <span class="sd">    17 A.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -80,8 +82,17 @@
                 <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">budeff</span><span class="o">.</span><span class="n">find_intra_ampal</span><span class="p">(</span><span class="n">polypeptide</span><span class="p">,</span> <span class="mf">18.0</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">ampal</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">4.0</span><span class="p">}</span>
     <span class="n">d_z_values</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">contacts</span><span class="p">)</span>
-    <span class="n">contact_order</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contacts</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">polypeptide</span><span class="p">))</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">d_z_values</span><span class="p">)</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">contact_order</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contacts</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">polypeptide</span><span class="p">))</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">d_z_values</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Number of contacts (</span><span class="si">{}</span><span class="s1">) or length of polypeptide (</span><span class="si">{}</span><span class="s1">) is 0&#39;</span>
+            <span class="s1">&#39; so contact order cannot be calculated.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contacts</span><span class="p">),</span>
+                                                             <span class="nb">len</span><span class="p">(</span><span class="n">polypeptide</span><span class="p">)))</span></div>
     <span class="k">return</span> <span class="n">contact_order</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Christopher W. Wood&#39;</span>
 </pre></div>
 
           </div>
