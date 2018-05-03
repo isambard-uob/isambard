@@ -13,7 +13,9 @@ def calculate_contact_order(polypeptide):
     order is linearly related to :math:`\ln{K}` [1]_ [2]_. Contact order
     is calculated using the following method:
 
-        :math:`CO = \frac{1}{LN}\sum\limits_{}^{N}\Delta{}Z_{i,j}`
+    .. math::
+
+        CO = \frac{1}{LN}\sum\limits_{}^{N}\Delta{}Z_{i,j}
 
     Where *N* is the total number of contacts, *L* is the sequence length
     and :math:`\Delta{}Z_{i,j}` is the sequence distance between
