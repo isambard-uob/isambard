@@ -106,7 +106,7 @@ def extract_all_ss_dssp(in_dssp, path=True):
     return dssp_residues
 
 
-def find_ss_regions(dssp_residues):
+def find_ss_regions(dssp_residues, loop_assignments=(' ', 'B', 'S', 'T')):
     """Separates parsed DSSP data into groups of secondary structure.
 
     Notes
@@ -134,7 +134,7 @@ def find_ss_regions(dssp_residues):
         Innermost list has the same format as above.
     """
 
-    loops = [' ', 'B', 'S', 'T']
+    loops = loop_assignments
     current_ele = None
     fragment = []
     fragments = []
@@ -159,12 +159,14 @@ def find_ss_regions(dssp_residues):
     return fragments
 
 
-def tag_dssp_data(assembly):
-    """Adds output data from DSSP to each residue in an Assembly.
+def tag_dssp_data(assembly, loop_assignments=(' ', 'B', 'S', 'T')):
+    """Adds output data from DSSP to an Assembly.
 
-    A dictionary will be added to `tags` called `dssp_data`, which
-    contains the secondary structure definition, solvent accessibility
-    phi and psi values from DSSP.
+    A dictionary will be added to the `tags` dictionary of each
+    residue called `dssp_data`, which contains the secondary
+    structure definition, solvent accessibility phi and psi values
+    from DSSP. A list of regions of continuous secondary assignments
+    will also be added to each `Polypeptide`.
 
     The tags are added in place, so nothing is returned from this
     function.
@@ -173,6 +175,9 @@ def tag_dssp_data(assembly):
     ----------
     assembly : ampal.Assembly
         An Assembly containing some protein.
+    loop_assignments : tuple or list
+        A tuple containing the DSSP secondary structure identifiers to
+        that are classed as loop regions.
     """
     dssp_out = run_dssp(assembly.pdb, path=False)
     dssp_data = extract_all_ss_dssp(dssp_out, path=False)
@@ -184,6 +189,16 @@ def tag_dssp_data(assembly):
             'phi': phi,
             'psi': psi
         }
+    ss_regions = find_ss_regions(dssp_data, loop_assignments)
+    for region in ss_regions:
+        chain = region[0][2]
+        ss_type = region[0][1]
+        first_residue = str(region[0][0])
+        last_residue = str(region[-1][0])
+        if not 'ss_regions' in assembly[chain].tags:
+            assembly[chain].tags['ss_regions'] = []
+        assembly[chain].tags['ss_regions'].append(
+            (first_residue, last_residue, ss_type))
     return
 
 
