@@ -1,8 +1,10 @@
 """This module provides an interface to the program DSSP.
-For more information on DSSP see [1].
+
+For more information on DSSP see [4]_.
+
 References
 ----------
-.. [1] Kabsch W, Sander C (1983) "Dictionary of protein
+.. [4] Kabsch W, Sander C (1983) "Dictionary of protein
    secondary structure: pattern recognition of hydrogen-bonded
    and geometrical features", Biopolymers, 22, 2577-637.
 """
