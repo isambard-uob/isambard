@@ -84,6 +84,134 @@ interacting, it’d be 2*6.5 plus 2 times van der Waals radius, so around
 </dd></dl>
 
 </div>
+<div class="section" id="module-isambard.evaluation.dssp">
+<span id="isambard-evaluation-dssp-module"></span><h2>isambard.evaluation.dssp module<a class="headerlink" href="#module-isambard.evaluation.dssp" title="Permalink to this headline">¶</a></h2>
+<p>This module provides an interface to the program DSSP.</p>
+<p>For more information on DSSP see <a class="footnote-reference" href="#id7" id="id6">[4]</a>.</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[4]</a></td><td>Kabsch W, Sander C (1983) “Dictionary of protein
+secondary structure: pattern recognition of hydrogen-bonded
+and geometrical features”, Biopolymers, 22, 2577-637.</td></tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="isambard.evaluation.dssp.dssp_available">
+<code class="descclassname">isambard.evaluation.dssp.</code><code class="descname">dssp_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/dssp.html#dssp_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.dssp.dssp_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if mkdssp is available on the path.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.evaluation.dssp.extract_all_ss_dssp">
+<code class="descclassname">isambard.evaluation.dssp.</code><code class="descname">extract_all_ss_dssp</code><span class="sig-paren">(</span><em>in_dssp</em>, <em>path=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/dssp.html#extract_all_ss_dssp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.dssp.extract_all_ss_dssp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses DSSP to extract secondary structure information on every residue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_dssp</strong> (<em>str</em>) – Path to DSSP file.</li>
+<li><strong>path</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates if pdb is a path or a string.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>dssp_residues</strong> –</p>
+<dl class="docutils">
+<dt>Each internal list contains:</dt>
+<dd><p class="first last">[0] int Residue number
+[1] str Secondary structure type
+[2] str Chain identifier
+[3] str Residue type
+[4] float Phi torsion angle
+[5] float Psi torsion angle
+[6] int dssp solvent accessibility</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">[tuple]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.evaluation.dssp.find_ss_regions">
+<code class="descclassname">isambard.evaluation.dssp.</code><code class="descname">find_ss_regions</code><span class="sig-paren">(</span><em>dssp_residues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/dssp.html#find_ss_regions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.dssp.find_ss_regions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates parsed DSSP data into groups of secondary structure.</p>
+<p class="rubric">Notes</p>
+<p>Example: all residues in a single helix/loop/strand will be gathered
+into a list, then the next secondary structure element will be
+gathered into a separate list, and so on.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dssp_residues</strong> (<em>[</em><em>tuple</em><em>]</em>) – <dl class="docutils">
+<dt>Each internal list contains:</dt>
+<dd>[0] int Residue number
+[1] str Secondary structure type
+[2] str Chain identifier
+[3] str Residue type
+[4] float Phi torsion angle
+[5] float Psi torsion angle
+[6] int dssp solvent accessibility</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>fragments</strong> – Lists grouped in continuous regions of secondary structure.
+Innermost list has the same format as above.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">[[list]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.evaluation.dssp.run_dssp">
+<code class="descclassname">isambard.evaluation.dssp.</code><code class="descname">run_dssp</code><span class="sig-paren">(</span><em>pdb</em>, <em>path=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/dssp.html#run_dssp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.dssp.run_dssp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses DSSP to find helices and extracts helices from a pdb file or string.
+:param pdb: Path to pdb file or string.
+:type pdb: str
+:param path: Indicates if pdb is a path or a string.
+:type path: bool, optional</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>dssp_out</strong> – Std out from DSSP.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="isambard.evaluation.dssp.tag_dssp_data">
+<code class="descclassname">isambard.evaluation.dssp.</code><code class="descname">tag_dssp_data</code><span class="sig-paren">(</span><em>assembly</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/dssp.html#tag_dssp_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.dssp.tag_dssp_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds output data from DSSP to each residue in an Assembly.</p>
+<p>A dictionary will be added to <cite>tags</cite> called <cite>dssp_data</cite>, which
+contains the secondary structure definition, solvent accessibility
+phi and psi values from DSSP.</p>
+<p>The tags are added in place, so nothing is returned from this
+function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>assembly</strong> (<em>ampal.Assembly</em>) – An Assembly containing some protein.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-isambard.evaluation.hydrophobic_fitness">
 <span id="isambard-evaluation-hydrophobic-fitness-module"></span><h2>isambard.evaluation.hydrophobic_fitness module<a class="headerlink" href="#module-isambard.evaluation.hydrophobic_fitness" title="Permalink to this headline">¶</a></h2>
 <p>Module for calculating the hydrophobic fitness of a protein.</p>
@@ -92,7 +220,7 @@ interacting, it’d be 2*6.5 plus 2 times van der Waals radius, so around
 <code class="descclassname">isambard.evaluation.hydrophobic_fitness.</code><code class="descname">calculate_hydrophobic_fitness</code><span class="sig-paren">(</span><em>assembly</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/isambard/evaluation/hydrophobic_fitness.html#calculate_hydrophobic_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#isambard.evaluation.hydrophobic_fitness.calculate_hydrophobic_fitness" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the hydrophobic fitness of a protein.</p>
 <p>Hydrophobic fitness is an efficient centroid-based method for
-calculating the packing quality of your structure <a class="footnote-reference" href="#id7" id="id6">[3]</a>. For this
+calculating the packing quality of your structure <a class="footnote-reference" href="#id9" id="id8">[3]</a>. For this
 method C, F, I, L, M, V, W and Y are considered hydrophobic. The
 algorithm has two terms:</p>
 <div class="math notranslate">
@@ -122,10 +250,10 @@ match scores listed in publications from the Levitt group. The
 scores are generally off by up to around 1 unit, and so it
 should still be useful.</p>
 <p class="rubric">References</p>
-<table class="docutils footnote" frame="void" id="id7" rules="none">
+<table class="docutils footnote" frame="void" id="id9" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[3]</a></td><td>Huang ES, Subbiah S and Levitt M (1995) Recognizing Native
+<tr><td class="label"><a class="fn-backref" href="#id8">[3]</a></td><td>Huang ES, Subbiah S and Levitt M (1995) Recognizing Native
 Folds by the Arrangement of Hydrophobic and Polar Residues, J. Mol.
 Biol return., <strong>252</strong>, 709-720.</td></tr>
 </tbody>
@@ -220,6 +348,7 @@ coordinate position for all the polar residues.</li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Evaluation Package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-isambard.evaluation.contact_order">isambard.evaluation.contact_order module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-isambard.evaluation.dssp">isambard.evaluation.dssp module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-isambard.evaluation.hydrophobic_fitness">isambard.evaluation.hydrophobic_fitness module</a></li>
 </ul>
 </li>

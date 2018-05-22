@@ -16,6 +16,14 @@ isambard.evaluation.contact\_order module
     :undoc-members:
     :show-inheritance:
 
+isambard.evaluation.dssp module
+-----------------------------------------------
+
+.. automodule:: isambard.evaluation.dssp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 isambard.evaluation.hydrophobic\_fitness module
 -----------------------------------------------
 
