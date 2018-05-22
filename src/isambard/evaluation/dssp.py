@@ -56,15 +56,17 @@ def run_dssp(pdb, path=True):
 
 def extract_all_ss_dssp(in_dssp, path=True):
     """Uses DSSP to extract secondary structure information on every residue.
+
     Parameters
     ----------
     in_dssp : str
         Path to DSSP file.
     path : bool, optional
         Indicates if pdb is a path or a string.
+
     Returns
     -------
-    dssp_residues : [list]
+    dssp_residues : [tuple]
         Each internal list contains:
             [0] int Residue number
             [1] str Secondary structure type
@@ -72,7 +74,7 @@ def extract_all_ss_dssp(in_dssp, path=True):
             [3] str Residue type
             [4] float Phi torsion angle
             [5] float Psi torsion angle
-            [6] int dssp solvent accessibilty
+            [6] int dssp solvent accessibility
     """
 
     if path:
@@ -93,7 +95,7 @@ def extract_all_ss_dssp(in_dssp, path=True):
                 psi = float(line[109:116].strip())
                 acc = int(line[35:38].strip())
                 dssp_residues.append(
-                    [res_num, ss_type, chain, residue, phi, psi, acc])
+                    (res_num, ss_type, chain, residue, phi, psi, acc))
             except ValueError:
                 pass
         else:
@@ -104,14 +106,16 @@ def extract_all_ss_dssp(in_dssp, path=True):
 
 def find_ss_regions(dssp_residues):
     """Separates parsed DSSP data into groups of secondary structure.
+
     Notes
     -----
     Example: all residues in a single helix/loop/strand will be gathered
     into a list, then the next secondary structure element will be
     gathered into a separate list, and so on.
+
     Parameters
     ----------
-    dssp_residues : [list]
+    dssp_residues : [tuple]
         Each internal list contains:
             [0] int Residue number
             [1] str Secondary structure type
@@ -119,6 +123,8 @@ def find_ss_regions(dssp_residues):
             [3] str Residue type
             [4] float Phi torsion angle
             [5] float Psi torsion angle
+            [6] int dssp solvent accessibility
+
     Returns
     -------
     fragments : [[list]]
@@ -149,6 +155,34 @@ def find_ss_regions(dssp_residues):
                 fragment = [ele]
         current_ele = ele[1]
     return fragments
+
+
+def tag_dssp_data(assembly):
+    """Adds output data from DSSP to each residue in an Assembly.
+
+    A dictionary will be added to `tags` called `dssp_data`, which
+    contains the secondary structure definition, solvent accessibility
+    phi and psi values from DSSP.
+
+    The tags are added in place, so nothing is returned from this
+    function.
+
+    Parameters
+    ----------
+    assembly : ampal.Assembly
+        An Assembly containing some protein.
+    """
+    dssp_out = run_dssp(assembly.pdb, path=False)
+    dssp_data = extract_all_ss_dssp(dssp_out, path=False)
+    for record in dssp_data:
+        rnum, sstype, chid, _, phi, psi, sacc = record
+        assembly[chid][str(rnum)].tags['dssp_data'] = {
+            'ss_definition': sstype,
+            'solvent_accessibility': sacc,
+            'phi': phi,
+            'psi': psi
+        }
+    return
 
 
 __author__ = "Christopher W. Wood, Gail J. Bartlett"
