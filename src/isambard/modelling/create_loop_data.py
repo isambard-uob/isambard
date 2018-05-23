@@ -9,7 +9,7 @@ from ampal.geometry import angle_between_vectors, dihedral, unit_vector
 
 
 def make_ss_pattern(regions):
-    """Creates a string that describes the pattern of secondary structure in a set of fragments."""
+    """Creates a string representing the pattern of secondary structure."""
     ss_types = {
         'H': 'a',
         'E': 'b',
@@ -26,6 +26,33 @@ def make_ss_pattern(regions):
 
 def gather_loop_data(polypeptide, pdb_code, resolution,
                      create_geometry_path=None):
+    """Extracts data from a polypeptide regarding its loops.
+
+    The polypeptide must be tagged with DSSP data to be a valid
+    input.
+
+    Parameters
+    ----------
+    polypeptide : ampal.Polypeptide
+        A polypeptide that has been tagged with DSSP data.
+    pdb_code : str
+        A pdb code for the structure that the PDB code has been
+        taken from.
+    resolution : float
+        The resolution of the structure.
+    create_geometry_path : str, optional
+        If a path to a directory is provided, a pdb file showing the
+        geometry of the loops will be created in that directory.
+
+    Returns
+    -------
+    loops : [dict]
+        Returns a list of dictionaries, one for each loop in the
+        structure. Each dictionary contains information about the
+        loop. Keys are: pdb_code, resolution, loop_type, start_res,
+        end_res, chain, sequence, length, end_to_end_distance,
+        entering_angle, exiting_angle, dihedral and coordinates.
+    """
     if create_geometry_path:
         create_geometry_path = pathlib.Path(create_geometry_path)
     ss_regions = polypeptide.tags['ss_regions']
@@ -99,6 +126,7 @@ def gather_loop_data(polypeptide, pdb_code, resolution,
 
 def make_loop_geometry(entering_prims, entering_vector,
                        exiting_prims, exiting_vector):
+    """Creates a Polypeptide that displays the loop geometry."""
     r1 = ampal.Residue(OrderedDict([
         ('CA',
          ampal.Atom(entering_prims[-1]['CA']._vector -
