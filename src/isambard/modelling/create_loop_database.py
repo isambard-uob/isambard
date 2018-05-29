@@ -5,13 +5,14 @@ import glob
 import itertools
 import multiprocessing
 import pathlib
-from typing import List, Union
+from typing import List, Tuple, Union
 
 from sqlalchemy import create_engine, Column, Float, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from .extract_loop_data import gather_loops_from_pdb
+
 
 BASE = declarative_base()
 
@@ -72,50 +73,49 @@ def process_pdb_files(data_file_paths: List[str], output_path: str,
     """
     engine = create_engine(f'sqlite:///{output_path}', echo=False)
     BASE.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
+    session = sessionmaker(bind=engine)()
 
-    total_pdbs = 0
-    succeeded = 0
-    failed = 0
-    total_loops = 0
-    n = 100
-    data_chunks = [data_file_paths[i:i + n]
-                   for i in range(0, len(data_file_paths), n)]
+    db_stats = {
+        'total_pdbs': 0,
+        'succeeded': 0,
+        'failed': 0,
+        'total_loops': 0,
+    }
+    data_chunks = [data_file_paths[i:i + 100]
+                   for i in range(0, len(data_file_paths), 100)]
     for paths in data_chunks:
         if processes > 1:
             with multiprocessing.Pool(processes) as pool:
                 loop_lists = pool.map(fault_tolerant_gather, paths)
         else:
             loop_lists = map(fault_tolerant_gather, paths)
-        total_pdbs += len(paths)
+        db_stats['total_pdbs'] += len(paths)
         for loop in itertools.chain(*loop_lists):
-            total_loops += 1
-            if isinstance(loop, Exception):
-                e = loop
-                failed += 1
+            db_stats['total_loops'] += 1
+            if isinstance(loop, tuple):
+                (path, ex) = loop
+                db_stats['failed'] += 1
                 if verbose:
-                    print(f'Failed to process {e.path}:\n {str(e)}\n')
+                    print(f'Failed to process {path}:\n {str(ex)}\n')
                 else:
-                    print(f'Failed to process {e.path}')
+                    print(f'Failed to process {path}')
                 continue
             loop_entry = Loops(**loop)
             session.add(loop_entry)
-            succeeded += 1
+            db_stats['succeeded'] += 1
         session.commit()
-    print(f'Finished processing {total_pdbs} PDB files:\n'
-          f'{succeeded} succeeded, {failed} failed, {total_loops} added to '
-          f'database.')
+    print('Finished processing {total_pdbs} PDB files:\n'
+          '{succeeded} succeeded, {failed} failed, {total_loops} added to '
+          'database.'.format(**db_stats))
     return
 
 
-def fault_tolerant_gather(path: str) -> Union[dict, Exception]:
+def fault_tolerant_gather(path: str) -> List[Union[dict, Tuple[str, Exception]]]:
     """Returns the exception rather than raising on failure."""
     try:
         loops = gather_loops_from_pdb(path)
     except Exception as e:
-        e.path = path
-        loops = [e]
+        loops = [(path, e)]
     return loops
 
 
