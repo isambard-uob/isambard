@@ -45,5 +45,10 @@ setup(name='ISAMBARD',
           'matplotlib',
           'numpy',
       ],
+      entry_points={
+          'console_scripts': [
+              'mk_loop_db = isambard.modelling.create_loop_database:main'
+          ],
+      },
       zip_safe=False,
       )

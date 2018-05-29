@@ -2,26 +2,31 @@
 
 from collections import OrderedDict
 import pathlib
+import re
 
 import numpy
 import ampal
 from ampal.geometry import angle_between_vectors, dihedral, unit_vector
+from ..evaluation.dssp import tag_dssp_data
 
 
-def make_ss_pattern(regions):
-    """Creates a string representing the pattern of secondary structure."""
-    ss_types = {
-        'H': 'a',
-        'E': 'b',
-        ' ': 'l',
-        'T': 'l',
-        'S': 'l',
-        'B': 'l',
-        'G': '3',
-        'I': 'p'
-    }
-    pattern = [ss_types[region[2]] for region in regions]
-    return ''.join(pattern)
+def gather_loops_from_pdb(path):
+    with open(path, 'r') as inf:
+        pdb_str = inf.read()
+    assembly = ampal.load_pdb(pdb_str, path=False)
+    pdb_code = pathlib.Path(path).stem
+    resolution_match = re.search(r'RESOLUTION\.\s+([0-9\.]+)', pdb_str)
+    try:
+        resolution = float(resolution_match.groups()[0])
+    except AttributeError:
+        resolution = float('nan')
+    tag_dssp_data(assembly)
+    combined_loop_data = []
+    for polypeptide in assembly:
+        combined_loop_data.extend(
+            extract_data_for_loops(polypeptide, pdb_code, resolution)
+        )
+    return combined_loop_data
 
 
 def extract_data_for_loops(polypeptide, pdb_code, resolution,
@@ -82,6 +87,22 @@ def extract_data_for_loops(polypeptide, pdb_code, resolution,
         with open(str(create_geometry_path / 'loop_geometry.pdb'), 'w') as outf:
             outf.write(loop_geometry.pdb)
     return loops
+
+
+def make_ss_pattern(regions):
+    """Creates a string representing the pattern of secondary structure."""
+    ss_types = {
+        'H': 'a',
+        'E': 'b',
+        ' ': 'l',
+        'T': 'l',
+        'S': 'l',
+        'B': 'l',
+        'G': '3',
+        'I': 'p'
+    }
+    pattern = [ss_types[region[2]] for region in regions]
+    return ''.join(pattern)
 
 
 def create_loop_dict(polypeptide, pp_primitive,
