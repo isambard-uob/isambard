@@ -11,6 +11,7 @@ from ..evaluation.dssp import tag_dssp_data
 
 
 def gather_loops_from_pdb(path):
+    """Creates a list of dictionaries"""
     with open(path, 'r') as inf:
         pdb_str = inf.read()
     assembly = ampal.load_pdb(pdb_str, path=False)
@@ -105,9 +106,9 @@ def make_ss_pattern(regions):
     return ''.join(pattern)
 
 
-def create_loop_dict(polypeptide, pp_primitive,
-                     entering_reg, loop_reg, exiting_reg,
-                     create_geometry_path=None):
+def create_loop_dict(polypeptide, pp_primitive, entering_reg, loop_reg,
+                     exiting_reg, create_geometry_path=None):
+    """Returns dictionary describing geometry and composition of the loop."""
     loop_and_flanking = polypeptide.get_slice_from_res_id(
         str(int(entering_reg[1]) - 3), str(int(exiting_reg[0]) + 3))
     start_index = polypeptide._monomers.index(loop_and_flanking[0])
@@ -116,6 +117,48 @@ def create_loop_dict(polypeptide, pp_primitive,
     assert len(loop_region_primitives) == len(loop_and_flanking)
     entering_prims = loop_region_primitives[:4]
     exiting_prims = loop_region_primitives[-4:]
+
+    loop_geometry = calculate_loop_geometry(entering_prims, exiting_prims)
+    loop_data = {
+        'loop_type': entering_reg[2] + exiting_reg[2],
+        'start_res': loop_reg[0],
+        'end_res': loop_reg[1],
+        'chain': polypeptide.id,
+        'sequence': loop_and_flanking.sequence[4:-4],
+        'length': len(loop_and_flanking[4:-4]),
+        'end_to_end_distance': loop_geometry['end_to_end_distance'],
+        'entering_angle': loop_geometry['entering_angle'],
+        'exiting_angle': loop_geometry['exiting_angle'],
+        'dihedral': loop_geometry['enter_exit_torsion'],
+        'coordinates': loop_and_flanking.pdb
+    }
+    if create_geometry_path:
+        loop_visual = make_loop_geometry(
+            loop_geometry['entering_prims'], loop_geometry['entering_vector'],
+            loop_geometry['exiting_prims'], loop_geometry['exiting_vector'])
+    else:
+        loop_geom = None
+    return loop_data, loop_geom
+
+
+def calculate_loop_geometry(entering_prims, exiting_prims):
+    """Calculates the entering and exiting geometry of the loop.
+
+    Parameters
+    ----------
+    entering_prims : ampal.Polypeptide
+        A polypeptide containing primitives for the 4 residues
+        entering the loop region.
+    entering_prims : ampal.Polypeptide
+        A polypeptide containing primitives for the 4 residues
+        exiting the loop region.
+
+    Returns
+    -------
+    loop_geometry : dict
+        A dictionary containing information about the geometry
+        of the region entering and exiting the loop.
+    """
     end_to_end_vector = exiting_prims[0]['CA'] - entering_prims[-1]['CA']
     end_to_end_distance = numpy.linalg.norm(end_to_end_vector)
     entering_vector = unit_vector(numpy.mean(
@@ -136,25 +179,16 @@ def create_loop_dict(polypeptide, pp_primitive,
         exiting_prims[0]['CA']._vector,
         exiting_prims[-1]['CA']._vector + exiting_vector
     )
-    loop_data = {
-        'loop_type': entering_reg[2] + exiting_reg[2],
-        'start_res': loop_reg[0],
-        'end_res': loop_reg[1],
-        'chain': polypeptide.id,
-        'sequence': loop_and_flanking.sequence[4:-4],
-        'length': len(loop_and_flanking[4:-4]),
+    loop_geometry = {
+        'end_to_end_vector': end_to_end_vector,
         'end_to_end_distance': end_to_end_distance,
+        'entering_vector': entering_vector,
         'entering_angle': entering_angle,
+        'exiting_vector': exiting_vector,
         'exiting_angle': exiting_angle,
-        'dihedral': enter_exit_torsion,
-        'coordinates': loop_and_flanking.pdb
+        'enter_exit_torsion': enter_exit_torsion
     }
-    if create_geometry_path:
-        loop_geom = make_loop_geometry(entering_prims, entering_vector,
-                                       exiting_prims, exiting_vector)
-    else:
-        loop_geom = None
-    return loop_data, loop_geom
+    return loop_geometry
 
 
 def make_loop_geometry(entering_prims, entering_vector,
