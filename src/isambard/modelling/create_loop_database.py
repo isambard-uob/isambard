@@ -32,14 +32,22 @@ class Loops(BASE):
     end_to_end_distance = Column(Float)
     entering_angle = Column(Float)
     exiting_angle = Column(Float)
-    dihedral = Column(Float)
+    enter_exit_torsion = Column(Float)
     coordinates = Column(Text)
 
     def __repr__(self):
         return "<Loops(pdb='{0}', loop_type='{1}', sequence='{2}) >".format(
-            self.pdb,
+            self.pdb_code,
             self.loop_type,
             self.sequence)
+
+
+def create_db_session(path):
+    """Creates a loop database session."""
+    engine = create_engine(f'sqlite:///{path}', echo=False)
+    BASE.metadata.create_all(engine)
+    session = sessionmaker(bind=engine)()
+    return session
 
 
 def main():
@@ -71,9 +79,7 @@ def process_pdb_files(data_file_paths: List[str], output_path: str,
     verbose
         Prints verbose output if true.
     """
-    engine = create_engine(f'sqlite:///{output_path}', echo=False)
-    BASE.metadata.create_all(engine)
-    session = sessionmaker(bind=engine)()
+    session = create_db_session(output_path)
 
     db_stats = {
         'total_pdbs': 0,
