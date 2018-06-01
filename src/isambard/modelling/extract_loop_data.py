@@ -129,7 +129,7 @@ def create_loop_dict(polypeptide, pp_primitive, entering_reg, loop_reg,
         'end_to_end_distance': loop_geometry['end_to_end_distance'],
         'entering_angle': loop_geometry['entering_angle'],
         'exiting_angle': loop_geometry['exiting_angle'],
-        'dihedral': loop_geometry['enter_exit_torsion'],
+        'enter_exit_torsion': loop_geometry['enter_exit_torsion'],
         'coordinates': loop_and_flanking.pdb
     }
     if create_geometry_path:

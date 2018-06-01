@@ -17,7 +17,7 @@ from .extract_loop_data import gather_loops_from_pdb
 BASE = declarative_base()
 
 
-class Loops(BASE):
+class Loop(BASE):
     __tablename__ = 'loops'
 
     id = Column(Integer, primary_key=True)
@@ -36,7 +36,7 @@ class Loops(BASE):
     coordinates = Column(Text)
 
     def __repr__(self):
-        return "<Loops(pdb='{0}', loop_type='{1}', sequence='{2}) >".format(
+        return "<Loop(pdb='{0}', loop_type='{1}', sequence='{2}) >".format(
             self.pdb_code,
             self.loop_type,
             self.sequence)
@@ -106,7 +106,7 @@ def process_pdb_files(data_file_paths: List[str], output_path: str,
                 else:
                     print(f'Failed to process {path}')
                 continue
-            loop_entry = Loops(**loop)
+            loop_entry = Loop(**loop)
             session.add(loop_entry)
             db_stats['succeeded'] += 1
         session.commit()
