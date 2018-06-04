@@ -111,8 +111,8 @@ def process_pdb_files(data_file_paths: List[str], output_path: str,
             db_stats['succeeded'] += 1
         session.commit()
     print('Finished processing {total_pdbs} PDB files:\n'
-          '{succeeded} succeeded, {failed} failed, {total_loops} added to '
-          'database.'.format(**db_stats))
+          'Attempted to add {total_loops} loops to database: {succeeded} '
+          'succeeded, {failed} failed.'.format(**db_stats))
     return
 
 
