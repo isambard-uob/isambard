@@ -44,6 +44,7 @@ setup(name='ISAMBARD',
           'deap',
           'matplotlib',
           'numpy',
+          'sqlalchemy'
       ],
       entry_points={
           'console_scripts': [

@@ -4,3 +4,4 @@ Cython
 deap
 matplotlib
 numpy
+sqlalchemy
