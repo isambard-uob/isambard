@@ -224,6 +224,7 @@ def merge_loop(loop: Polypeptide, entering_residue: Residue,
     for residue in loop_pp:
         residue.tags['merged_loop'] = True
     merged_polypeptide = entering_pp + loop_pp + exiting_pp
+    merged_polypeptide.relabel_all()
     merged_polypeptide.tags = {**loop.tags, **entering_pp.tags,
                                **exiting_pp.tags}
     return merged_polypeptide
