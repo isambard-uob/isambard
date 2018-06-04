@@ -189,7 +189,44 @@ def fit_loop(entering_residue: Residue, exiting_residue: Residue,
     fitter = MMCFitter(loop_pp, entering_pp, exiting_pp)
     fitter.start_optimisation(fitting_rounds, max_angle_step, max_dist_step,
                               temp=temp)
-    return fitter.best_model
+    loop_model = fitter.best_model
+    loop_model.tags['loop_data'] = loop
+    loop_model.tags['loop_fit_quality'] = fitter.best_energy
+    return loop_model
+
+
+def merge_loop(loop: Polypeptide, entering_residue: Residue,
+               exiting_residue: Residue) -> Polypeptide:
+    """Creates a polypeptide by merging a loop with 2 polypeptides.
+
+    Parameters
+    ----------
+    loop : Polypeptide
+        Loop as a polypeptide, usually this will be produced by the
+        `fit_loop` function.
+    entering_residue
+        The residue that should enter the loop. All of the polypeptide
+        until this point will be merged.
+    exiting_residue
+        The residue that should exit the loop. All of the polypeptide
+        after this point will be merged.
+
+    Returns
+    -------
+    merged_polypeptide : Polypeptide
+        The merged polypeptide model.
+    """
+    ent_index = entering_residue.parent._monomers.index(entering_residue)
+    exi_index = exiting_residue.parent._monomers.index(exiting_residue)
+    entering_pp = copy.deepcopy(entering_residue.parent[:ent_index+1])
+    exiting_pp = copy.deepcopy(exiting_residue.parent[exi_index:])
+    loop_pp = copy.deepcopy(loop[4:-4])
+    for residue in loop_pp:
+        residue.tags['merged_loop'] = True
+    merged_polypeptide = entering_pp + loop_pp + exiting_pp
+    merged_polypeptide.tags = {**loop.tags, **entering_pp.tags,
+                               **exiting_pp.tags}
+    return merged_polypeptide
 
 
 class MMCFitter:
