@@ -55,8 +55,8 @@ def main():
     args = get_args()
     data_path = pathlib.Path(args.data_dir)
     data_file_paths = glob.glob(
-        str(data_path / '**' / '*.pdb' if args.recursive
-            else data_path / '*.pdb'),
+        str(data_path / '**' / f'*.{args.extension}' if args.recursive
+            else data_path / f'*.{args.extension}'),
         recursive=args.recursive)
     process_pdb_files(data_file_paths, args.output, args.processes,
                       args.verbose)
@@ -143,7 +143,14 @@ def get_args():
               "If no path is supplied, a file called loops.db will be "
               "created in the current working directory."),
         metavar='OUTPUT_DIRECTORY',
-        default="loops.db",
+        default='loops.db',
+        type=str
+    )
+    parser.add_argument(
+        '-e', '--extension',
+        help="Extension of structure files to be loaded.",
+        metavar='EXTENSIONS',
+        default='pdb',
         type=str
     )
     parser.add_argument(
