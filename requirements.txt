@@ -1,0 +1,6 @@
+ampal
+budeff
+Cython
+deap
+matplotlib
+numpy
