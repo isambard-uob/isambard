@@ -149,7 +149,7 @@ def get_args():
     parser.add_argument(
         '-e', '--extension',
         help="Extension of structure files to be loaded.",
-        metavar='EXTENSIONS',
+        metavar='EXTENSION',
         default='pdb',
         type=str
     )
