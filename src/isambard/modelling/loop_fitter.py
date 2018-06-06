@@ -196,7 +196,7 @@ def fit_loop(entering_residue: Residue, exiting_residue: Residue,
 
 
 def merge_loop(loop: Polypeptide, entering_residue: Residue,
-               exiting_residue: Residue) -> Polypeptide:
+               exiting_residue: Residue, use_loop_flanking: bool=False) -> Polypeptide:
     """Creates a polypeptide by merging a loop with 2 polypeptides.
 
     Parameters
@@ -204,12 +204,16 @@ def merge_loop(loop: Polypeptide, entering_residue: Residue,
     loop : Polypeptide
         Loop as a polypeptide, usually this will be produced by the
         `fit_loop` function.
-    entering_residue
+    entering_residue : Residue
         The residue that should enter the loop. All of the polypeptide
         until this point will be merged.
-    exiting_residue
+    exiting_residue : Residue
         The residue that should exit the loop. All of the polypeptide
         after this point will be merged.
+    use_loop_flanking : bool, optional
+        If true, the entering and exiting regions from the loop will be
+        used in place of the entering and exiting regions from the
+        references.
 
     Returns
     -------
@@ -218,9 +222,14 @@ def merge_loop(loop: Polypeptide, entering_residue: Residue,
     """
     ent_index = entering_residue.parent._monomers.index(entering_residue)
     exi_index = exiting_residue.parent._monomers.index(exiting_residue)
-    entering_pp = copy.deepcopy(entering_residue.parent[:ent_index+1])
-    exiting_pp = copy.deepcopy(exiting_residue.parent[exi_index:])
-    loop_pp = copy.deepcopy(loop[4:-4])
+    if not use_loop_flanking:
+        entering_pp = copy.deepcopy(entering_residue.parent[:ent_index+1])
+        exiting_pp = copy.deepcopy(exiting_residue.parent[exi_index:])
+        loop_pp = copy.deepcopy(loop[4:-4])
+    else:
+        entering_pp = copy.deepcopy(entering_residue.parent[:ent_index-3])
+        exiting_pp = copy.deepcopy(exiting_residue.parent[exi_index+4:])
+        loop_pp = copy.deepcopy(loop)
     for residue in loop_pp:
         residue.tags['merged_loop'] = True
     merged_polypeptide = entering_pp + loop_pp + exiting_pp
