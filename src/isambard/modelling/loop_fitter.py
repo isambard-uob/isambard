@@ -304,7 +304,7 @@ class MMCFitter:
             working_model = copy.deepcopy(self.loop_pp)
             random_vector = geometry.unit_vector(
                 numpy.random.uniform(-1, 1, size=3))
-            mode = random.choice(['rotate', 'translate'])
+            mode = random.choice(['rotate'])
             if mode == 'rotate':
                 random_angle = numpy.random.rand() * max_angle
                 working_model.rotate(random_angle, random_vector,
