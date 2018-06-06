@@ -5,7 +5,7 @@ import math
 import pathlib
 import random
 import sys
-from typing import List, Tuple, Union
+from typing import List, Optional, Union
 
 from ampal import geometry, Assembly, Polypeptide, Residue, load_pdb
 import numpy
@@ -186,13 +186,20 @@ def fit_loop(entering_residue: Residue, exiting_residue: Residue,
     )
     loop_pp.rotate(angle, axis, point)
     loop_pp.translate(translation)
-    fitter = MMCFitter(loop_pp, entering_pp, exiting_pp)
+    fitter = MMCFitter(_loop_eval, [entering_pp, exiting_pp], loop_pp)
     fitter.start_optimisation(fitting_rounds, max_angle_step, max_dist_step,
                               temp=temp)
     loop_model = fitter.best_model
     loop_model.tags['loop_data'] = loop
     loop_model.tags['loop_fit_quality'] = fitter.best_energy
     return loop_model
+
+
+def _loop_eval(working_model, entering_pp, exiting_pp):
+    """Function used to evaluate the loop after every move."""
+    entering_rmsd = working_model[:4].rmsd(entering_pp, backbone=True)
+    exiting_rmsd = working_model[-4:].rmsd(exiting_pp, backbone=True)
+    return entering_rmsd + exiting_rmsd
 
 
 def merge_loop(loop: Polypeptide, entering_residue: Residue,
@@ -240,34 +247,31 @@ def merge_loop(loop: Polypeptide, entering_residue: Residue,
 
 
 class MMCFitter:
-    """A loop fitting protocol that uses Metropolis Monte Carlo.
+    """A fitting protocol that uses Metropolis Monte Carlo.
 
     Parameters
     ----------
-    loop_pp : Polypeptide
-        An ampal polypeptide containing the model of the loop.
-    entering_pp : Polypeptide
-        Polypeptide for the entering region of the loop (the 4
-        residues immediately before the loop).
-    exiting_pp : Polypeptide
-        Polypeptide for the exiting region of the loop (the 4
-        residues immediately after the loop.
+    eval_fn : Polypeptide -> float
+        A function to evaluate the quality of your fit.
+    eval_args : list
+        A list of static args to be used in the `eval_fn`, these will
+        be unpacked into the evaluation function _i.e._
+        `eval_fn(polypeptide, *eval_args).
+    polypeptide : Polypeptide
+        An ampal polypeptide containing the model to be aligned.
     """
 
-    def __init__(self, loop_pp: Polypeptide, entering_pp: Polypeptide,
-                 exiting_pp: Polypeptide) -> None:
+    def __init__(self, eval_fn, eval_args: Optional[list],
+                 polypeptide: Polypeptide) -> None:
+        self.eval_fn = eval_fn
+        if eval_args is None:
+            self.eval_args: List = []
+        else:
+            self.eval_args = eval_args
         self.current_energy = None
         self.best_energy = None
         self.best_model = None
-        self.loop_pp = loop_pp
-        self.entering_pp = entering_pp
-        self.exiting_pp = exiting_pp
-
-    def _eval_function(self, working_model):
-        """Function used to evaluate the loop after every move."""
-        entering_rmsd = working_model[:4].rmsd(self.entering_pp, backbone=True)
-        exiting_rmsd = working_model[-4:].rmsd(self.exiting_pp, backbone=True)
-        return entering_rmsd + exiting_rmsd
+        self.polypeptide = polypeptide
 
     def start_optimisation(self, rounds: int, max_angle: float,
                            max_distance: float, temp: float=298.15):
@@ -291,9 +295,9 @@ class MMCFitter:
 
     def _generate_initial_score(self):
         """Runs the evaluation function for the initial pose."""
-        self.current_energy = self._eval_function(self.loop_pp)
+        self.current_energy = self.eval_fn(self.polypeptide, *self.eval_args)
         self.best_energy = copy.deepcopy(self.current_energy)
-        self.best_model = copy.deepcopy(self.loop_pp)
+        self.best_model = copy.deepcopy(self.polypeptide)
         return
 
     def _mmc_loop(self, rounds, max_angle, max_distance,
@@ -301,7 +305,7 @@ class MMCFitter:
         """The main Metropolis Monte Carlo loop."""
         current_round = 0
         while current_round < rounds:
-            working_model = copy.deepcopy(self.loop_pp)
+            working_model = copy.deepcopy(self.polypeptide)
             random_vector = geometry.unit_vector(
                 numpy.random.uniform(-1, 1, size=3))
             mode = random.choice(['rotate', 'rotate', 'rotate', 'translate'])
@@ -313,13 +317,13 @@ class MMCFitter:
                 random_translation = random_vector * (numpy.random.rand() *
                                                       max_distance)
                 working_model.translate(random_translation)
-            proposed_energy = self._eval_function(working_model)
+            proposed_energy = self.eval_fn(working_model, *self.eval_args)
             move_accepted = self.check_move(proposed_energy,
                                             self.current_energy, t=temp)
             if move_accepted:
                 self.current_energy = proposed_energy
                 if self.current_energy < self.best_energy:
-                    self.loop_pp = working_model
+                    self.polypeptide = working_model
                     self.best_energy = copy.deepcopy(self.current_energy)
                     self.best_model = copy.deepcopy(working_model)
             if verbose:
