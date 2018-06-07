@@ -31,6 +31,18 @@ class Loop(BASE):
     chain = Column(String)
     sequence = Column(String)
     length = Column(Integer)
+    first_primitive_x = Column(Float)
+    first_primitive_y = Column(Float)
+    first_primitive_z = Column(Float)
+    entering_primitive_x = Column(Float)
+    entering_primitive_y = Column(Float)
+    entering_primitive_z = Column(Float)
+    exiting_primitive_x = Column(Float)
+    exiting_primitive_y = Column(Float)
+    exiting_primitive_z = Column(Float)
+    last_primitive_x = Column(Float)
+    last_primitive_y = Column(Float)
+    last_primitive_z = Column(Float)
     end_to_end_distance = Column(Float)
     entering_angle = Column(Float)
     exiting_angle = Column(Float)
@@ -42,6 +54,30 @@ class Loop(BASE):
             self.pdb_code,
             self.loop_type,
             self.sequence)
+
+    def get_first_primitive(self):
+        primitive = (self.first_primitive_x,
+                     self.first_primitive_y,
+                     self.first_primitive_z)
+        return primitive
+
+    def get_entering_primitive(self):
+        primitive = (self.entering_primitive_x,
+                     self.entering_primitive_y,
+                     self.entering_primitive_z)
+        return primitive
+
+    def get_exiting_primitive(self):
+        primitive = (self.exiting_primitive_x,
+                     self.exiting_primitive_y,
+                     self.exiting_primitive_z)
+        return primitive
+
+    def get_last_primitive(self):
+        primitive = (self.last_primitive_x,
+                     self.last_primitive_y,
+                     self.last_primitive_z)
+        return primitive
 
 
 def create_db_session(path):
@@ -66,7 +102,8 @@ def main():
 
     elif args.subparser == 'fix':
         if args.remove_redundant:
-            remove_redundant(args.loop_db, args.remove_redundant, args.verbose)
+            remove_redundant(args.loop_db, args.remove_redundant,
+                             args.processes, args.verbose)
     return
 
 
@@ -132,7 +169,8 @@ def fault_tolerant_gather(path: str) -> List[Union[dict, Tuple[str, Exception]]]
 
 
 def remove_redundant(database_path: str, redundancy_cutoff: float,
-                     verbose: bool) -> None:
+                     processes: int=1, verbose: bool=False) -> None:
+    """Removes redundant loops from the loop database."""
     loop_db = create_db_session(database_path)
     loop_matches = loop_db.query(Loop)
     loop_sequences: dict = {}
@@ -234,10 +272,15 @@ def get_args():
               "cut off. Depending on the size of your loop database, this may "
               "take a very long time to finish! It's highly recommended that "
               "you use a non-redundant set of input structure when initially "
-              "creating your database to reduce this."
-              ),
+              "creating your database to reduce this."),
         metavar='CUT-OFF',
         type=float
+    )
+    fix.add_argument(
+        '-p', '--processes',
+        help="Number of processes used to filter redundant loops.",
+        type=int,
+        default=1
     )
     fix.add_argument(
         '-v', '--verbose',

@@ -140,11 +140,74 @@ def query_loop_database(
     return loops
 
 
+def align_loop(entering_residue: Residue, exiting_residue: Residue,
+               loop: Loop) -> Polypeptide:
+    """Converts a loop database entry to a polypeptide and aligns.""
+
+    Parameters
+    ----------
+    entering_residue
+        The residue that should enter the loop.
+    exiting_residue
+        The residue that should exit the loop.
+    loop : Loop or Polypeptide
+        Database entry or polypeptide for the loop to be fitted.
+
+    Returns
+    -------
+    loop_pp : Polypeptide
+        An ampal polypeptide for the fitted loop.
+    """
+    ent_index = entering_residue.parent._monomers.index(entering_residue)
+    exi_index = exiting_residue.parent._monomers.index(exiting_residue)
+    try:
+        entering_pp = entering_residue.parent[ent_index-3:ent_index+1]
+        exiting_pp = exiting_residue.parent[exi_index:exi_index+4]
+        entering_prims = entering_residue.parent.primitive[ent_index-3:ent_index+1]
+        exiting_prims = exiting_residue.parent.primitive[exi_index:exi_index+4]
+        loop_geometry = calculate_loop_geometry(entering_prims, exiting_prims)
+    except IndexError:
+        raise ValueError(
+            'The entering residue must have at least 3 residues before it and '
+            'the exiting residue must have at least 3 residues after it in '
+            'order to determine loop geometry.'
+        )
+    loop_pp = load_pdb(loop.coordinates, path=False)[0]
+    first_prim = loop.get_first_primitive()
+    translation, angle, axis, point = geometry.find_transformations(
+        loop.get_entering_primitive(),
+        loop.get_exiting_primitive(),
+        loop_geometry['entering_primitive'],
+        loop_geometry['exiting_primitive']
+    )
+    q = geometry.Quaternion.angle_and_axis(
+        angle=angle, axis=axis, radians=False)
+    for atom in loop_pp.get_atoms():
+        atom._vector = q.rotate_vector(v=atom._vector, point=point)
+    first_prim = q.rotate_vector(v=first_prim, point=point)
+    loop_pp.translate(translation)
+    first_prim += translation
+    rot_dihedral = geometry.dihedral(
+        loop_geometry['first_primitive'],
+        loop_geometry['entering_primitive'],
+        loop_geometry['exiting_primitive'],
+        first_prim
+    )
+    loop_pp.rotate(
+        rot_dihedral,
+        loop_geometry['exiting_primitive'] -
+        loop_geometry['entering_primitive'],
+        loop_geometry['entering_primitive'],
+    )
+    loop_pp.tags['loop_data'] = loop
+    return loop_pp
+
+
 def fit_loop(entering_residue: Residue, exiting_residue: Residue,
-             loop: Union[Loop, Polypeptide], fitting_rounds: int=1000,
+             loop_pp: Polypeptide, fitting_rounds: int=1000,
              temp: float=298.15, max_dist_step: float=1.0,
-             max_angle_step: float=10.0) -> Polypeptide:
-    """Takes a loop database entry and fits it between two residues.
+             max_angle_step: float=10.0, verbose=True) -> Polypeptide:
+    """Fits a polypeptide between two residues.
 
     Parameters
     ----------
@@ -156,13 +219,15 @@ def fit_loop(entering_residue: Residue, exiting_residue: Residue,
         Database entry or polypeptide for the loop to be fitted.
     fitting_rounds : int, optional
         Number of Monte Carlo moves to be performed during fitting.
-    temp : float, optional
+    temp : float, optional, optional
         Temperature used during fitting process.
-    max_angle : float
+    max_angle : float, optional
         The maximum variation in rotation that can moved per
         step.
-    max_distance : float
+    max_distance : float, optional
         The maximum distance the can be moved per step.
+    verbose : bool, optional
+        Prints verbose output if true.
 
     Returns
     -------
@@ -173,24 +238,10 @@ def fit_loop(entering_residue: Residue, exiting_residue: Residue,
     exi_index = exiting_residue.parent._monomers.index(exiting_residue)
     entering_pp = entering_residue.parent[ent_index-3:ent_index+1]
     exiting_pp = exiting_residue.parent[exi_index:exi_index+4]
-    if isinstance(loop, Loop):
-        loop_pp = load_pdb(loop.coordinates, path=False)[0]
-    elif isinstance(loop, Polypeptide):
-        loop_pp = loop
-    else:
-        raise TypeError('`loop` must either be a Loop (database entry) or a '
-                        'Polypeptide (ampal object).')
-    translation, angle, axis, point = geometry.find_transformations(
-        loop_pp[:4].centre_of_mass, loop_pp[-4:].centre_of_mass,
-        entering_pp.centre_of_mass, exiting_pp.centre_of_mass
-    )
-    loop_pp.rotate(angle, axis, point)
-    loop_pp.translate(translation)
     fitter = MMCAlign(_loop_eval, [entering_pp, exiting_pp], loop_pp)
     fitter.start_optimisation(fitting_rounds, max_angle_step, max_dist_step,
-                              temp=temp)
+                              temp=temp, verbose=verbose)
     loop_model = fitter.best_model
-    loop_model.tags['loop_data'] = loop
     loop_model.tags['loop_fit_quality'] = fitter.best_energy
     return loop_model
 
