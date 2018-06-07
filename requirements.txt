@@ -1,4 +1,4 @@
-ampal
+ampali>=1.2.0
 budeff
 Cython
 deap

@@ -8,6 +8,7 @@ import sys
 from typing import List, Optional, Union
 
 from ampal import geometry, Assembly, Polypeptide, Residue, load_pdb
+from ampal.align import MMCAlign
 import numpy
 
 from .create_loop_database import create_db_session, Loop
@@ -179,14 +180,13 @@ def fit_loop(entering_residue: Residue, exiting_residue: Residue,
     else:
         raise TypeError('`loop` must either be a Loop (database entry) or a '
                         'Polypeptide (ampal object).')
-    # Initial alignment
     translation, angle, axis, point = geometry.find_transformations(
         loop_pp[:4].centre_of_mass, loop_pp[-4:].centre_of_mass,
         entering_pp.centre_of_mass, exiting_pp.centre_of_mass
     )
     loop_pp.rotate(angle, axis, point)
     loop_pp.translate(translation)
-    fitter = MMCFitter(_loop_eval, [entering_pp, exiting_pp], loop_pp)
+    fitter = MMCAlign(_loop_eval, [entering_pp, exiting_pp], loop_pp)
     fitter.start_optimisation(fitting_rounds, max_angle_step, max_dist_step,
                               temp=temp)
     loop_model = fitter.best_model
@@ -244,119 +244,6 @@ def merge_loop(loop: Polypeptide, entering_residue: Residue,
     merged_polypeptide.tags = {**loop.tags, **entering_pp.tags,
                                **exiting_pp.tags}
     return merged_polypeptide
-
-
-class MMCFitter:
-    """A fitting protocol that uses Metropolis Monte Carlo.
-
-    Parameters
-    ----------
-    eval_fn : Polypeptide -> float
-        A function to evaluate the quality of your fit.
-    eval_args : list
-        A list of static args to be used in the `eval_fn`, these will
-        be unpacked into the evaluation function _i.e._
-        `eval_fn(polypeptide, *eval_args).
-    polypeptide : Polypeptide
-        An ampal polypeptide containing the model to be aligned.
-    """
-
-    def __init__(self, eval_fn, eval_args: Optional[list],
-                 polypeptide: Polypeptide) -> None:
-        self.eval_fn = eval_fn
-        if eval_args is None:
-            self.eval_args: List = []
-        else:
-            self.eval_args = eval_args
-        self.current_energy = None
-        self.best_energy = None
-        self.best_model = None
-        self.polypeptide = polypeptide
-
-    def start_optimisation(self, rounds: int, max_angle: float,
-                           max_distance: float, temp: float=298.15):
-        """Starts the loop fitting protocol.
-
-        Parameters
-        ----------
-        rounds : int
-            The number of Monte Carlo moves to be evaluated.
-        max_angle : float
-            The maximum variation in rotation that can moved per
-            step.
-        max_distance : float
-            The maximum distance the can be moved per step.
-        temp : float, optional
-            Temperature used during fitting process.
-        """
-        self._generate_initial_score()
-        self._mmc_loop(rounds, max_angle, max_distance, temp=temp)
-        return
-
-    def _generate_initial_score(self):
-        """Runs the evaluation function for the initial pose."""
-        self.current_energy = self.eval_fn(self.polypeptide, *self.eval_args)
-        self.best_energy = copy.deepcopy(self.current_energy)
-        self.best_model = copy.deepcopy(self.polypeptide)
-        return
-
-    def _mmc_loop(self, rounds, max_angle, max_distance,
-                  temp=298.15, verbose=True):
-        """The main Metropolis Monte Carlo loop."""
-        current_round = 0
-        while current_round < rounds:
-            working_model = copy.deepcopy(self.polypeptide)
-            random_vector = geometry.unit_vector(
-                numpy.random.uniform(-1, 1, size=3))
-            mode = random.choice(['rotate', 'rotate', 'rotate', 'translate'])
-            if mode == 'rotate':
-                random_angle = numpy.random.rand() * max_angle
-                working_model.rotate(random_angle, random_vector,
-                                     working_model.centre_of_mass)
-            else:
-                random_translation = random_vector * (numpy.random.rand() *
-                                                      max_distance)
-                working_model.translate(random_translation)
-            proposed_energy = self.eval_fn(working_model, *self.eval_args)
-            move_accepted = self.check_move(proposed_energy,
-                                            self.current_energy, t=temp)
-            if move_accepted:
-                self.current_energy = proposed_energy
-                if self.current_energy < self.best_energy:
-                    self.polypeptide = working_model
-                    self.best_energy = copy.deepcopy(self.current_energy)
-                    self.best_model = copy.deepcopy(working_model)
-            if verbose:
-                sys.stdout.write(
-                    '\rRound: {}, Current RMSD: {}, Proposed RMSD: {} '
-                    '(best {}), {}.       '
-                    .format(current_round, self.float_f(self.current_energy),
-                            self.float_f(proposed_energy), self.float_f(
-                                self.best_energy),
-                            "ACCEPTED" if move_accepted else "DECLINED")
-                )
-                sys.stdout.flush()
-            current_round += 1
-        return
-
-    @staticmethod
-    def float_f(f):
-        """Formats a float for printing to std out."""
-        return '{:.2f}'.format(f)
-
-    @staticmethod
-    def check_move(new, old, t):
-        """Determines if a model will be accepted."""
-        if (t <= 0) or numpy.isclose(t, 0.0):
-            return False
-        K_BOLTZ = 1.9872041E-003  # kcal/mol.K
-        if new < old:
-            return True
-        else:
-            move_prob = math.exp(-(new - old) / (K_BOLTZ * t))
-            if move_prob > random.uniform(0, 1):
-                return True
-        return False
 
 
 __author__ = "Christopher W. Wood"
