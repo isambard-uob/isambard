@@ -9,7 +9,7 @@ from typing import List, Optional
 import numpy  # type: ignore
 import ampal  # type: ignore
 from ampal.geometry import (angle_between_vectors, dihedral,  # type: ignore
-                            tag_dssp_data, unit_vector)
+                            unit_vector)
 
 
 def gather_loops_from_pdb(path: str) -> List[dict]:
@@ -30,7 +30,7 @@ def gather_loops_from_pdb(path: str) -> List[dict]:
         resolution = float('nan')
     else:
         resolution = float(resolution_match.groups()[0])
-    tag_dssp_data(assembly)
+    ampal.tag_dssp_data(assembly)
     combined_loop_data = []
     for polypeptide in assembly:
         combined_loop_data.extend(
