@@ -41,7 +41,7 @@ def gather_loops_from_pdb(path: str) -> List[dict]:
 
 def extract_data_for_loops(
         polypeptide: ampal.Polypeptide, pdb_code: str, resolution: float,
-        create_geometry_path: str=Optional[str]) -> List[dict]:
+        create_geometry_path: Optional[str]=None) -> List[dict]:
     """Extracts data from a polypeptide regarding its loops.
 
     The polypeptide must be tagged with DSSP data to be a valid
@@ -69,8 +69,6 @@ def extract_data_for_loops(
         end_res, chain, sequence, length, end_to_end_distance,
         entering_angle, exiting_angle, dihedral and coordinates.
     """
-    if create_geometry_path:
-        geometry_path = pathlib.Path(create_geometry_path)
     ss_regions = polypeptide.tags['ss_regions']
     region_groups = [ss_regions[i - 1:i + 2]
                      for i in range(1, len(ss_regions) - 1)]
@@ -87,7 +85,7 @@ def extract_data_for_loops(
     for entering_reg, loop_reg, exiting_reg in loop_regions:
         loop_data, loop_geom = create_loop_dict(
             polypeptide, pp_primitive, entering_reg, loop_reg, exiting_reg,
-            create_geometry_path=geometry_path)
+            create_geometry_path=create_geometry_path)
         loop_data['pdb_code'] = pdb_code
         loop_data['resolution'] = resolution
         loops.append(loop_data)
@@ -95,7 +93,7 @@ def extract_data_for_loops(
             loop_geometry.append(loop_geom)
     if create_geometry_path:
         loop_geometry.relabel_all()
-        with open(str(geometry_path / 'loop_geometry.pdb'), 'w') as outf:
+        with open(str(pathlib.Path(create_geometry_path) / 'loop_geometry.pdb'), 'w') as outf:
             outf.write(loop_geometry.pdb)
     return loops
 
@@ -119,7 +117,7 @@ def make_ss_pattern(regions: List[str]):
 def create_loop_dict(
         polypeptide: ampal.Polypeptide, pp_primitive: ampal.Primitive,
         entering_reg: str, loop_reg: str, exiting_reg: str,
-        create_geometry_path: Optional[pathlib.Path]=None):
+        create_geometry_path: Optional[str]=None):
     """Returns dictionary describing geometry and composition of the loop."""
     loop_and_flanking = polypeptide.get_slice_from_res_id(
         str(int(entering_reg[1]) - 3), str(int(exiting_reg[0]) + 3))
@@ -160,7 +158,7 @@ def create_loop_dict(
         loop_visual = make_loop_geometry(
             loop_geometry['entering_prims'], loop_geometry['entering_vector'],
             loop_geometry['exiting_prims'], loop_geometry['exiting_vector'])
-        with open(str(create_geometry_path), 'w') as outf:
+        with open(create_geometry_path, 'w') as outf:
             outf.write(loop_visual.pdb)
     else:
         loop_geom = None
