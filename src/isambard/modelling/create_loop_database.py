@@ -5,13 +5,15 @@ import glob
 import itertools
 import multiprocessing
 import pathlib
-from typing import List, Tuple, Union
+from typing import List
 
-from ampal import load_pdb
-from ampal.align import align_backbones
-from sqlalchemy import create_engine, Column, Float, Integer, String, Text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+# Types are ignored as either no stubs or Cython code
+from sqlalchemy import (  # type: ignore
+    create_engine, Column, Float, Integer, String, Text)
+from sqlalchemy.ext.declarative import declarative_base  # type: ignore
+from sqlalchemy.orm import sessionmaker  # type: ignore
+from ampal import load_pdb  # type: ignore
+from ampal.align import align_backbones  # type: ignore
 
 from .extract_loop_data import gather_loops_from_pdb
 
@@ -19,7 +21,8 @@ from .extract_loop_data import gather_loops_from_pdb
 BASE = declarative_base()
 
 
-class Loop(BASE):
+class Loop(BASE):  # type: ignore
+    """Loop database entry."""
     __tablename__ = 'loops'
 
     id = Column(Integer, primary_key=True)
@@ -56,24 +59,28 @@ class Loop(BASE):
             self.sequence)
 
     def get_first_primitive(self):
+        """Reconstructs the first primitive from its components."""
         primitive = (self.first_primitive_x,
                      self.first_primitive_y,
                      self.first_primitive_z)
         return primitive
 
     def get_entering_primitive(self):
+        """Reconstructs the entering primitive from its components."""
         primitive = (self.entering_primitive_x,
                      self.entering_primitive_y,
                      self.entering_primitive_z)
         return primitive
 
     def get_exiting_primitive(self):
+        """Reconstructs the exiting primitive from its components."""
         primitive = (self.exiting_primitive_x,
                      self.exiting_primitive_y,
                      self.exiting_primitive_z)
         return primitive
 
     def get_last_primitive(self):
+        """Reconstructs the last primitive from its components."""
         primitive = (self.last_primitive_x,
                      self.last_primitive_y,
                      self.last_primitive_z)
@@ -137,7 +144,7 @@ def process_pdb_files(data_file_paths: List[str], output_path: str,
             with multiprocessing.Pool(processes) as pool:
                 loop_lists = pool.map(fault_tolerant_gather, paths)
         else:
-            loop_lists = map(fault_tolerant_gather, paths)
+            loop_lists = list(map(fault_tolerant_gather, paths))
         db_stats['total_pdbs'] += len(paths)
         for loop in itertools.chain(*loop_lists):
             db_stats['total_loops'] += 1
@@ -159,12 +166,12 @@ def process_pdb_files(data_file_paths: List[str], output_path: str,
     return
 
 
-def fault_tolerant_gather(path: str) -> List[Union[dict, Tuple[str, Exception]]]:
+def fault_tolerant_gather(path: str) -> list:
     """Returns the exception rather than raising on failure."""
     try:
-        loops = gather_loops_from_pdb(path)
-    except Exception as e:
-        loops = [(path, e)]
+        loops: list = gather_loops_from_pdb(path)
+    except Exception as exception:  # pylint: disable=broad-except
+        loops = [(path, exception)]
     return loops
 
 
@@ -174,45 +181,57 @@ def remove_redundant(database_path: str, redundancy_cutoff: float,
     loop_db = create_db_session(database_path)
     loop_matches = loop_db.query(Loop)
     loop_sequences: dict = {}
-    db_stats = {
-        'total_loops': 0,
-        'non-redundant': 0,
-        'redundant': 0,
-    }
     for loop in loop_matches:
-        db_stats['total_loops'] += 1
         if loop.sequence in loop_sequences:
-            redundant = False
-            mobile_ampal = load_pdb(loop.coordinates, path=False)
-            for loop_id in loop_sequences[loop.sequence]:
-                reference_loop = loop_db.query(Loop).get(loop_id)
-                ref_ampal = load_pdb(reference_loop.coordinates,
-                                     path=False)
-                rmsd = align_backbones(mobile_ampal, ref_ampal,
-                                       stop_when=redundancy_cutoff,
-                                       verbose=verbose)
-                if rmsd <= redundancy_cutoff:
-                    redundant = True
-                    break
-            if not redundant:
-                db_stats['non-redundant'] += 1
-                loop_sequences[loop.sequence].append(loop.id)
-            else:
-                if verbose:
-                    print(f'\n{loop} is redundant.')
-                db_stats['redundant'] += 1
-                loop_db.delete(loop)
+            loop_sequences[loop.sequence].append(loop)
         else:
-            db_stats['non-redundant'] += 1
-            loop_sequences[loop.sequence] = [loop.id]
-    print(('\n{total_loops} analysed: {non-redundant} non-redundant, {redundant} '
-           'redundant.').format(**db_stats))
+            loop_sequences[loop.sequence] = [loop]
+    multiloops = [loop_sequence for loop_sequence in loop_sequences.values()
+                  if len(loop_sequence) > 1]
+    if processes > 1:
+        with multiprocessing.Pool(processes) as pool:
+            redudant_id_lists = pool.map(
+                list_redundant,
+                [(loop_list, redundancy_cutoff, verbose)
+                 for loop_list in multiloops])
+    else:
+        redudant_id_lists = list(map(
+            list_redundant,
+            [(loop_list, redundancy_cutoff, verbose)
+             for loop_list in multiloops]))
+    redundant_ids = list(itertools.chain(*redudant_id_lists))
+    redudant_loops = loop_db.query(Loop).filter(Loop.id.in_(redundant_ids))
+    redudant_loops.delete(synchronize_session='fetch')
     loop_db.commit()
+    print(
+        f'\nFound {len(redundant_ids)} redundant loops. Deleted from database.')
     return
 
 
-def _align_eval(loop, reference):
-    return loop.rmsd(reference, backbone=True)
+def list_redundant(arguments):
+    """Creates a list of redundant loops based on 3D alignment."""
+    loop_list, redundancy_cutoff, verbose = arguments
+    assert len(loop_list) > 1
+    non_redundant_loops = [loop_list[0]]
+    redundant_loops = []
+    for mobile_loop in loop_list[1:]:
+        redundant = False
+        mobile_ampal = load_pdb(mobile_loop.coordinates, path=False)
+        for reference_loop in non_redundant_loops:
+            ref_ampal = load_pdb(reference_loop.coordinates, path=False)
+            rmsd = align_backbones(mobile_ampal, ref_ampal,
+                                   stop_when=redundancy_cutoff,
+                                   verbose=False)
+            if rmsd <= redundancy_cutoff:
+                redundant = True
+                break
+        if not redundant:
+            non_redundant_loops.append(mobile_loop)
+        else:
+            if verbose:
+                print(f'\n{mobile_loop} is redundant.')
+            redundant_loops.append(mobile_loop)
+    return [x.id for x in redundant_loops]
 
 
 def get_args():

@@ -3,24 +3,33 @@
 from collections import OrderedDict
 import pathlib
 import re
+from typing import List, Optional
 
-import numpy
-import ampal
-from ampal.geometry import angle_between_vectors, dihedral, unit_vector
-from ..evaluation.dssp import tag_dssp_data
+# Types are ignored as either no stubs or Cython code
+import numpy  # type: ignore
+import ampal  # type: ignore
+from ampal.geometry import (angle_between_vectors, dihedral,  # type: ignore
+                            tag_dssp_data, unit_vector)
 
 
-def gather_loops_from_pdb(path):
-    """Creates a list of dictionaries"""
+def gather_loops_from_pdb(path: str) -> List[dict]:
+    """Creates a list of loop geometry dictionaries for the PDB file."""
     with open(path, 'r') as inf:
         pdb_str = inf.read()
     assembly = ampal.load_pdb(pdb_str, path=False)
+    for residue in assembly.get_monomers():
+        hydrogen_atoms = []
+        for (label, atom) in residue.atoms.items():
+            if atom.element == 'H':
+                hydrogen_atoms.append(label)
+        for label in hydrogen_atoms:
+            del residue.atoms[label]
     pdb_code = pathlib.Path(path).stem
     resolution_match = re.search(r'RESOLUTION\.\s+([0-9\.]+)', pdb_str)
-    try:
-        resolution = float(resolution_match.groups()[0])
-    except AttributeError:
+    if resolution_match is None:
         resolution = float('nan')
+    else:
+        resolution = float(resolution_match.groups()[0])
     tag_dssp_data(assembly)
     combined_loop_data = []
     for polypeptide in assembly:
@@ -30,8 +39,9 @@ def gather_loops_from_pdb(path):
     return combined_loop_data
 
 
-def extract_data_for_loops(polypeptide, pdb_code, resolution,
-                           create_geometry_path=None):
+def extract_data_for_loops(
+        polypeptide: ampal.Polypeptide, pdb_code: str, resolution: float,
+        create_geometry_path: str=Optional[str]) -> List[dict]:
     """Extracts data from a polypeptide regarding its loops.
 
     The polypeptide must be tagged with DSSP data to be a valid
@@ -60,7 +70,7 @@ def extract_data_for_loops(polypeptide, pdb_code, resolution,
         entering_angle, exiting_angle, dihedral and coordinates.
     """
     if create_geometry_path:
-        create_geometry_path = pathlib.Path(create_geometry_path)
+        geometry_path = pathlib.Path(create_geometry_path)
     ss_regions = polypeptide.tags['ss_regions']
     region_groups = [ss_regions[i - 1:i + 2]
                      for i in range(1, len(ss_regions) - 1)]
@@ -77,7 +87,7 @@ def extract_data_for_loops(polypeptide, pdb_code, resolution,
     for entering_reg, loop_reg, exiting_reg in loop_regions:
         loop_data, loop_geom = create_loop_dict(
             polypeptide, pp_primitive, entering_reg, loop_reg, exiting_reg,
-            create_geometry_path=create_geometry_path)
+            create_geometry_path=geometry_path)
         loop_data['pdb_code'] = pdb_code
         loop_data['resolution'] = resolution
         loops.append(loop_data)
@@ -85,12 +95,12 @@ def extract_data_for_loops(polypeptide, pdb_code, resolution,
             loop_geometry.append(loop_geom)
     if create_geometry_path:
         loop_geometry.relabel_all()
-        with open(str(create_geometry_path / 'loop_geometry.pdb'), 'w') as outf:
+        with open(str(geometry_path / 'loop_geometry.pdb'), 'w') as outf:
             outf.write(loop_geometry.pdb)
     return loops
 
 
-def make_ss_pattern(regions):
+def make_ss_pattern(regions: List[str]):
     """Creates a string representing the pattern of secondary structure."""
     ss_types = {
         'H': 'a',
@@ -106,8 +116,10 @@ def make_ss_pattern(regions):
     return ''.join(pattern)
 
 
-def create_loop_dict(polypeptide, pp_primitive, entering_reg, loop_reg,
-                     exiting_reg, create_geometry_path=None):
+def create_loop_dict(
+        polypeptide: ampal.Polypeptide, pp_primitive: ampal.Primitive,
+        entering_reg: str, loop_reg: str, exiting_reg: str,
+        create_geometry_path: Optional[pathlib.Path]=None):
     """Returns dictionary describing geometry and composition of the loop."""
     loop_and_flanking = polypeptide.get_slice_from_res_id(
         str(int(entering_reg[1]) - 3), str(int(exiting_reg[0]) + 3))
@@ -148,22 +160,23 @@ def create_loop_dict(polypeptide, pp_primitive, entering_reg, loop_reg,
         loop_visual = make_loop_geometry(
             loop_geometry['entering_prims'], loop_geometry['entering_vector'],
             loop_geometry['exiting_prims'], loop_geometry['exiting_vector'])
+        with open(str(create_geometry_path), 'w') as outf:
+            outf.write(loop_visual.pdb)
     else:
         loop_geom = None
     return loop_data, loop_geom
 
 
-def calculate_loop_geometry(entering_prims, exiting_prims):
+def calculate_loop_geometry(entering_prims: ampal.Primitive,
+                            exiting_prims: ampal.Primitive) -> dict:
     """Calculates the entering and exiting geometry of the loop.
 
     Parameters
     ----------
-    entering_prims : ampal.Polypeptide
-        A polypeptide containing primitives for the 4 residues
-        entering the loop region.
-    entering_prims : ampal.Polypeptide
-        A polypeptide containing primitives for the 4 residues
-        exiting the loop region.
+    entering_prims : ampal.Primitive
+        A primitive for the 4 residues entering the loop region.
+    entering_prims : ampal.Primitive
+        A primitive for the 4 residues exiting the loop region.
 
     Returns
     -------
@@ -207,28 +220,29 @@ def calculate_loop_geometry(entering_prims, exiting_prims):
     return loop_geometry
 
 
-def make_loop_geometry(entering_prims, entering_vector,
-                       exiting_prims, exiting_vector):
+def make_loop_geometry(
+        entering_prims: ampal.Primitive, entering_vector,
+        exiting_prims: ampal.Primitive, exiting_vector) -> ampal.Polypeptide:
     """Creates a Polypeptide that displays the loop geometry."""
-    r1 = ampal.Residue(OrderedDict([
+    res1 = ampal.Residue(OrderedDict([
         ('CA',
          ampal.Atom(entering_prims[-1]['CA']._vector -
                     (entering_vector*4), element='C'))
     ]))
-    r2 = ampal.Residue(OrderedDict([
+    res2 = ampal.Residue(OrderedDict([
         ('CA',
          ampal.Atom(entering_prims[-1]['CA']._vector, element='C'))
     ]))
-    r3 = ampal.Residue(OrderedDict([
+    res3 = ampal.Residue(OrderedDict([
         ('CA',
          ampal.Atom(exiting_prims[0]['CA']._vector, element='C'))
     ]))
-    r4 = ampal.Residue(OrderedDict([
+    res4 = ampal.Residue(OrderedDict([
         ('CA',
          ampal.Atom(exiting_prims[0]['CA']._vector
                     + (exiting_vector * 4), element='C'))
     ]))
-    return ampal.Polypeptide([r1, r2, r3, r4])
+    return ampal.Polypeptide([res1, res2, res3, res4])
 
 
 __author__ = 'Christopher W. Wood'

@@ -1,15 +1,13 @@
 """A module for finding and fitting loops regions to a model."""
 
 import copy
-import math
 import pathlib
-import random
-import sys
-from typing import List, Optional, Union
+from typing import List
 
-from ampal import geometry, Assembly, Polypeptide, Residue, load_pdb
-from ampal.align import MMCAlign
-import numpy
+# Types are ignored as either no stubs or Cython code
+import numpy  # type: ignore
+from ampal import geometry, Polypeptide, Residue, load_pdb  # type: ignore
+from ampal.align import MMCAlign  # type: ignore
 
 from .create_loop_database import create_db_session, Loop
 from .extract_loop_data import calculate_loop_geometry
@@ -24,34 +22,34 @@ def find_loops(
 
     Parameters
     ----------
-    entering_residue
+    entering_residue : Residue
         The residue that should enter the loop.
-    exiting_residue
+    exiting_residue : Residue
         The residue that should exit the loop.
-    path_to_db
+    path_to_db : str
         Path to a loop database.
-    distance_threshold, optional
+    distance_threshold : float, optional
         The variation that is allowed on the distance between the
         entering and exiting residue of the loop.
-    angle_threshold, optional
+    angle_threshold : float, optional
         The variation that is allowed on the angle between the
         entering and exiting backbone primitives relative to the
         vector between the entering and exiting residue.
-    dihedral_threshold, optional
+    dihedral_threshold : float, optional
         The variation that is allowed on the dihedral angle between
         the planes formed by average primitive of the 4 entering residues,
         the entering residue primitive and the exiting primitive; and the
         entering primitive, exiting primitive and the average of the
         primitives of the 4 exiting residues.
-    loop_type, optional
+    loop_type : str, optional
         The DSSP assignment of the secondary structure entering and
         exiting the loop i.e. 'HH' is helix loop helix, 'HE' is helix
         loop beta.
-    min_length, optional
+    min_length : int, optional
         The minimum loop length.
-    max_length, optional
+    max_length : int, optional
         The maximum loop length.
-    max_resolution, optional
+    max_resolution : float, optional
         The maximum allowed loop resolution i.e. 3.0 will use loops
         with 3.0 A resolution and below.
 
@@ -79,8 +77,6 @@ def find_loops(
     ent_index = entering_residue.parent._monomers.index(entering_residue)
     exi_index = exiting_residue.parent._monomers.index(exiting_residue)
     try:
-        entering_pp = entering_residue.parent[ent_index-3:ent_index+1]
-        exiting_pp = exiting_residue.parent[exi_index:exi_index+4]
         entering_prims = entering_residue.parent.primitive[ent_index-3:ent_index+1]
         exiting_prims = exiting_residue.parent.primitive[exi_index:exi_index+4]
         loop_geometry = calculate_loop_geometry(entering_prims, exiting_prims)
@@ -150,7 +146,7 @@ def align_loop(entering_residue: Residue, exiting_residue: Residue,
         The residue that should enter the loop.
     exiting_residue
         The residue that should exit the loop.
-    loop : Loop or Polypeptide
+    loop : Loop
         Database entry or polypeptide for the loop to be fitted.
 
     Returns
@@ -180,11 +176,11 @@ def align_loop(entering_residue: Residue, exiting_residue: Residue,
         loop_geometry['entering_primitive'],
         loop_geometry['exiting_primitive']
     )
-    q = geometry.Quaternion.angle_and_axis(
+    quaterion = geometry.Quaternion.angle_and_axis(
         angle=angle, axis=axis, radians=False)
     for atom in loop_pp.get_atoms():
-        atom._vector = q.rotate_vector(v=atom._vector, point=point)
-    first_prim = q.rotate_vector(v=first_prim, point=point)
+        atom._vector = quaterion.rotate_vector(v=atom._vector, point=point)
+    first_prim = quaterion.rotate_vector(v=first_prim, point=point)
     loop_pp.translate(translation)
     first_prim += translation
     rot_dihedral = geometry.dihedral(
@@ -199,7 +195,10 @@ def align_loop(entering_residue: Residue, exiting_residue: Residue,
         loop_geometry['entering_primitive'],
         loop_geometry['entering_primitive'],
     )
+    entering_rmsd = loop_pp[:4].rmsd(entering_pp, backbone=True)
+    exiting_rmsd = loop_pp[-4:].rmsd(exiting_pp, backbone=True)
     loop_pp.tags['loop_data'] = loop
+    loop_pp.tags['loop_align'] = numpy.mean([entering_rmsd, exiting_rmsd])
     return loop_pp
 
 
@@ -250,11 +249,11 @@ def _loop_eval(working_model, entering_pp, exiting_pp):
     """Function used to evaluate the loop after every move."""
     entering_rmsd = working_model[:4].rmsd(entering_pp, backbone=True)
     exiting_rmsd = working_model[-4:].rmsd(exiting_pp, backbone=True)
-    return entering_rmsd + exiting_rmsd
+    return numpy.mean([entering_rmsd, exiting_rmsd])
 
 
-def merge_loop(loop: Polypeptide, entering_residue: Residue,
-               exiting_residue: Residue, use_loop_flanking: bool=False) -> Polypeptide:
+def merge_loop(entering_residue: Residue, exiting_residue: Residue,
+               loop: Polypeptide, use_loop_flanking: bool=False) -> Polypeptide:
     """Creates a polypeptide by merging a loop with 2 polypeptides.
 
     Parameters
