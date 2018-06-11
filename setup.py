@@ -38,7 +38,7 @@ setup(name='ISAMBARD',
            ]
       ),
       install_requires=[
-          'ampal',
+          'ampal>=1.2.0,<2.0.0',
           'budeff',
           'Cython',
           'deap',
