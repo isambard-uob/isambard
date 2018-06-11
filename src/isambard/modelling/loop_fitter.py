@@ -122,16 +122,16 @@ def query_loop_database(
     di_plus_thresh = loop_geometry['enter_exit_torsion'] + \
         dihedral_threshold
     if di_plus_thresh > 180:
-        diff = (di_plus_thresh % 180) - 180
+        diff = di_plus_thresh - 360
         dihedral_query = dihedral_query | Loop.enter_exit_torsion.between(
             -180, diff)
     di_minus_thresh = loop_geometry['enter_exit_torsion'] - \
         dihedral_threshold
     if di_minus_thresh < -180:
-        diff = 180 + (di_minus_thresh % -180)
+        diff = di_minus_thresh + 360
         dihedral_query = dihedral_query | Loop.enter_exit_torsion.between(
             diff, 180)
-    loop_matches.filter(dihedral_query)
+    loop_matches = loop_matches.filter(dihedral_query)
     loops = loop_matches.all()
     return loops
 
