@@ -125,7 +125,7 @@ def fit_heptad_register(crangles):
     fit_data: [(float, float, float)]
         Sorted list of fits for each heptad position.
     """
-    crangles = [x if x > 0 else 360 + x for x in crangles]
+    crangles = [x if x > 0 else 180 + x for x in crangles]
     hept_p = [x * (360.0 / 7.0) + ((360.0 / 7.0) / 2.0) for x in range(7)]
     ideal_crangs = [
         hept_p[0],
