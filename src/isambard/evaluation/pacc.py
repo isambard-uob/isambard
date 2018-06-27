@@ -3,8 +3,9 @@
 import numpy
 
 from ampal.analyse_protein import reference_axis_from_chains, alpha_angles, crick_angles,\
-    polymer_to_reference_axis_distances
-
+    polymer_to_reference_axis_distances, polypeptide_vector
+from ampal.pseudo_atoms import Primitive
+from ampal.geometry import is_acute
 
 class PACCAnalysis(object):
     def __init__(self, coiledcoil):
@@ -24,10 +25,21 @@ class PACCAnalysis(object):
         self.cc_len = len_set.pop()
         self.cc = coiledcoil
         self.ra = reference_axis_from_chains(self.cc)
+        # create flipped axis
+        self.ra_flipped = Primitive.from_coordinates(numpy.flipud(self.ra.coordinates))
+        ref_polypeptide_vec = polypeptide_vector(self.cc[0])
+
         for ch in self.cc:
-            polymer_to_reference_axis_distances(ch, self.ra)
-            alpha_angles(ch, self.ra)
-            crick_angles(ch, self.ra)
+            ch_polypeptide_vec = polypeptide_vector(ch)
+            # if both vectors point in the same direction (angle less than 90 deg)
+            if is_acute(ref_polypeptide_vec, ch_polypeptide_vec):
+                ref_ax = self.ra
+            else:
+                ref_ax = self.ra_flipped
+            polymer_to_reference_axis_distances(ch, ref_ax)
+            alpha_angles(ch, ref_ax)
+            crick_angles(ch, ref_ax)
+
         self.radii_layers = []
         self.alpha_layers = []
         self.ca_layers = []
