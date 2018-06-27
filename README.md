@@ -35,6 +35,12 @@ pip install .
 If you want to add side chains to your designs, you need to have [Scwrl4](
 http://dunbrack.fccc.edu/scwrl4/) installed and available on your system path. 
 
+## Upgrading to ISAMBARD 2
+
+If you were already using ISAMBARD prior to the 2.0.0 release, [here's a handy
+guide](https://gist.github.com/ChrisWellsWood/578fcea671acbb68d4a130315874027b)
+on the differences between version 1 and 2.
+
 ## Quick Start
 
 > Note<br />
@@ -84,8 +90,10 @@ parameters = [
     Parameter.dynamic('Pitch', 200, 60),
     Parameter.dynamic('PhiCA', 283, 27),  # 283 is equivalent a g position
 ]
+
 def get_buff_total_energy(ampal_object):
     return budeff.get_internal_energy(ampal_object).total_energy
+
 opt_ga = ev_opts.GA(specification, sequences, parameters, get_buff_total_energy)
 opt_ga.run_opt(100, 5, cores=8)
 # OUT:

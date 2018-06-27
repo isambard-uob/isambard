@@ -7,6 +7,12 @@ download the notebook files, run them on your own computer and play around with
 the code. They also contain short problems that will help you to learn various
 aspects of ISAMBARD.
 
+Upgrading to ISAMBARD 2
+-----------------------
+
+`Overview of the changes to ISAMBARD between version 1 and 2
+<https://gist.github.com/ChrisWellsWood/578fcea671acbb68d4a130315874027b>`_
+
 Parametric Modelling
 --------------------
 
