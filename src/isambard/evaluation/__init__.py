@@ -2,6 +2,7 @@
 
 from .contact_order import calculate_contact_order
 from .hydrophobic_fitness import calculate_hydrophobic_fitness
+from .pacc import fit_heptad_register, PACCAnalysis
 
 del contact_order
 del hydrophobic_fitness
