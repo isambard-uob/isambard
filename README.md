@@ -114,3 +114,9 @@ is take a look at the [docs](https://isambard-uob.github.io/isambard/) from
 tutorials on the tools available, or just take a look through the code base and
 hack around. Feel free to contact us through email or the issues if you get
 stuck.
+
+# Release Notes
+
+### v2.2.0
+
+* **Adds pacc module for parametric analysis of coiled coils.**
