@@ -1,0 +1,49 @@
+"""Module for evaluating the packing density of a polymer or assembly. """
+
+import ampal
+import numpy as np
+
+
+def calculate_packing_density(structure, radius=7):
+    """
+    Calculates the packing density of each non-hydrogen atom in a polymer
+    or assembly.
+
+    An atom's packing density is a measure of the number of atoms within
+    its local environment. There are several different methods of
+    calculating packing density; we use atomic contact number [1], which
+    is the number of non-hydrogen atoms within a specified radius (default
+    7 A [1]).
+
+    References
+    ----------
+    .. [1] Weiss MS (2007) On the interrelationship between atomic
+       displacement parameters (ADPs) and coordinates in protein
+       structures. *Acta Cryst.* D**63**, 1235-1242.
+    """
+
+    if (
+        (not isinstance(structure, ampal.Polymer))
+        or
+        (not isinstance(structure, ampal.Assembly))
+    ):
+        raise ValueError(
+            'Contact order can only be calculated for a polymer or an assembly.'
+        )
+
+    atoms_list = [atom for atom in list(structure.get_atoms())
+                  if atom.element != 'H']
+    atom_coords_array = np.zeros([len(atoms_list), 3])
+
+    for index, atom in enumerate(atoms_list):
+        atom_coords_array[index, :] = np.array([atom.x, atom.y, atom.z])
+
+    for index, atom in enumerate(atom_list):
+        distances = np.sqrt(np.square(atom_coords_array[:, :] - atom_coords_array[index, :]).sum(axis=1))
+        # Subtract 1 to correct for the atom itself being counted
+        atom.tags['packing density'] = np.sum(distances < radius) - 1
+
+    return iter(atoms_list)
+
+
+__author__ = 'Kathryn L. Shelley'
