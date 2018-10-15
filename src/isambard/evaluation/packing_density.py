@@ -22,11 +22,7 @@ def calculate_packing_density(structure, radius=7):
        structures. *Acta Cryst.* D**63**, 1235-1242.
     """
 
-    if (
-        (not isinstance(structure, ampal.Polymer))
-        or
-        (not isinstance(structure, ampal.Assembly))
-    ):
+    if not type(structure).__name__ in ['Polymer', 'Assembly']:
         raise ValueError(
             'Contact order can only be calculated for a polymer or an assembly.'
         )
@@ -38,7 +34,7 @@ def calculate_packing_density(structure, radius=7):
     for index, atom in enumerate(atoms_list):
         atom_coords_array[index, :] = np.array([atom.x, atom.y, atom.z])
 
-    for index, atom in enumerate(atom_list):
+    for index, atom in enumerate(atoms_list):
         distances = np.sqrt(np.square(atom_coords_array[:, :] - atom_coords_array[index, :]).sum(axis=1))
         # Subtract 1 to correct for the atom itself being counted
         atom.tags['packing density'] = np.sum(distances < radius) - 1
