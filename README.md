@@ -33,7 +33,7 @@ pip install .
 ## External Programs
 
 If you want to add side chains to your designs, you need to have [Scwrl4](
-http://dunbrack.fccc.edu/scwrl4/) installed and available on your system path. 
+http://dunbrack.fccc.edu/scwrl4/) installed and available on your system path.
 
 ## Upgrading to ISAMBARD 2
 
@@ -61,7 +61,7 @@ dimer_sequences = [
 ]
 my_dimer = modelling.pack_side_chains_scwrl(my_dimer, dimer_sequences)
 print(my_dimer.pdb)
-# OUT: 
+# OUT:
 # HEADER ISAMBARD Model                                                                  
 # ATOM      1  N   GLU A   1      -5.364  -1.566  -0.689  1.00  0.00           N  
 # ATOM      2  CA  GLU A   1      -4.483  -2.220   0.308  1.00  0.00           C  
@@ -116,6 +116,10 @@ hack around. Feel free to contact us through email or the issues if you get
 stuck.
 
 # Release Notes
+
+### v2.3.0
+
+* **Introduces functionality to calculate the packing density (measured as the atomic contact number) of all non-hydrogen atoms in a Polymer / Assembly object.**
 
 ### v2.2.0
 

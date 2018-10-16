@@ -24,9 +24,9 @@ copyright = '2018, Woolfson Group, UoB'
 author = 'Woolfson Group, UoB'
 
 # The short X.Y version
-version = ''
+version = '2.3'
 # The full version, including alpha/beta/rc tags
-release = '2.0.0'
+release = '2.3.0'
 
 
 # -- General configuration ---------------------------------------------------
