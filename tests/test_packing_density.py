@@ -16,12 +16,12 @@ class PackingDensityTestCase(unittest.TestCase):
         self.ubq = ampal.load_pdb(str(TEST_FILES_PATH / '1ubq.pdb'))
         self.pdbs = [self.ht0, self.ubq]
 
-    def check_packing_density(self):
+    def test_packing_density(self):
         for pdb in self.pdbs:
             # Creates dictionary of packing density values from ISAMBARD function
-            atoms_list_func = list(packing_density.calculate_packing_density(pdb))
+            packing_density.tag_packing_density(pdb)
             pack_dens_func_val = {atom.id: atom.tags['packing density'] for
-                                  atom in atoms_list_func}
+                                  atom in list(pdb.get_atoms())}
             pack_dens_func_val = sorted(pack_dens_func_val.items())
 
             # Creates dictionary of packing density values from is_within AMPAL

@@ -4,7 +4,7 @@ import ampal
 import numpy as np
 
 
-def calculate_packing_density(structure, radius=7):
+def tag_packing_density(structure, radius=7):
     """
     Calculates the packing density of each non-hydrogen atom in a polymer
     or assembly.
@@ -29,17 +29,12 @@ def calculate_packing_density(structure, radius=7):
 
     atoms_list = [atom for atom in list(structure.get_atoms())
                   if atom.element != 'H']
-    atom_coords_array = np.zeros([len(atoms_list), 3])
-
-    for index, atom in enumerate(atoms_list):
-        atom_coords_array[index, :] = np.array([atom.x, atom.y, atom.z])
+    atom_coords_array = np.array([atom.array for atom in atoms_list])
 
     for index, atom in enumerate(atoms_list):
         distances = np.sqrt(np.square(atom_coords_array[:, :] - atom_coords_array[index, :]).sum(axis=1))
         # Subtract 1 to correct for the atom itself being counted
         atom.tags['packing density'] = np.sum(distances < radius) - 1
-
-    return iter(atoms_list)
 
 
 __author__ = 'Kathryn L. Shelley'
