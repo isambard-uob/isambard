@@ -117,6 +117,10 @@ stuck.
 
 # Release Notes
 
+### v2.3.1
+
+* Fixes a minor bug in the DSSP output parsing code
+
 ### v2.3.0
 
 * **Introduces functionality to calculate the packing density (measured as the atomic contact number) of all non-hydrogen atoms in a Polymer / Assembly object.**
