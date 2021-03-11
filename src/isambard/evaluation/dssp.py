@@ -17,13 +17,15 @@ def dssp_available():
     """True if mkdssp is available on the path."""
     available = False
     try:
-        subprocess.check_output(['mkdssp'], stderr=subprocess.DEVNULL)
+        subprocess.check_output(["mkdssp"], stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
         available = True
     except FileNotFoundError:
-        print("DSSP has not been found on your path. If you have already "
-              "installed DSSP but are unsure how to add it to your path, "
-              "check out this: https://stackoverflow.com/a/14638025")
+        print(
+            "DSSP has not been found on your path. If you have already "
+            "installed DSSP but are unsure how to add it to your path, "
+            "check out this: https://stackoverflow.com/a/14638025"
+        )
     return available
 
 
@@ -47,11 +49,9 @@ def run_dssp(pdb, path=True):
         with tempfile.NamedTemporaryFile() as temp_pdb:
             temp_pdb.write(pdb)
             temp_pdb.seek(0)
-            dssp_out = subprocess.check_output(
-                ['mkdssp', temp_pdb.name])
+            dssp_out = subprocess.check_output(["mkdssp", temp_pdb.name])
     else:
-        dssp_out = subprocess.check_output(
-            ['mkdssp', pdb])
+        dssp_out = subprocess.check_output(["mkdssp", pdb])
     dssp_out = dssp_out.decode()
     return dssp_out
 
@@ -80,7 +80,7 @@ def extract_all_ss_dssp(in_dssp, path=True):
     """
 
     if path:
-        with open(in_dssp, 'r') as inf:
+        with open(in_dssp, "r") as inf:
             dssp_out = inf.read()
     else:
         dssp_out = in_dssp[:]
@@ -90,18 +90,20 @@ def extract_all_ss_dssp(in_dssp, path=True):
         if active:
             try:
                 res_num = int(line[5:10].strip())
-                chain = line[10:12].strip()
+                insertion_code = line[10:11].strip()
+                chain = line[11:12].strip()
                 residue = line[13]
                 ss_type = line[16]
                 phi = float(line[103:109].strip())
                 psi = float(line[109:116].strip())
                 acc = int(line[35:38].strip())
                 dssp_residues.append(
-                    (res_num, ss_type, chain, residue, phi, psi, acc))
+                    (res_num, insertion_code, ss_type, chain, residue, phi, psi, acc)
+                )
             except ValueError:
                 pass
         else:
-            if line[2] == '#':
+            if line[2] == "#":
                 active = True
     return dssp_residues
 
@@ -134,7 +136,7 @@ def find_ss_regions(dssp_residues):
         Innermost list has the same format as above.
     """
 
-    loops = [' ', 'B', 'S', 'T']
+    loops = [" ", "B", "S", "T"]
     current_ele = None
     fragment = []
     fragments = []
@@ -177,12 +179,12 @@ def tag_dssp_data(assembly):
     dssp_out = run_dssp(assembly.pdb, path=False)
     dssp_data = extract_all_ss_dssp(dssp_out, path=False)
     for record in dssp_data:
-        rnum, sstype, chid, _, phi, psi, sacc = record
-        assembly[chid][str(rnum)].tags['dssp_data'] = {
-            'ss_definition': sstype,
-            'solvent_accessibility': sacc,
-            'phi': phi,
-            'psi': psi
+        rnum, _, sstype, chid, _, phi, psi, sacc = record
+        assembly[chid][str(rnum)].tags["dssp_data"] = {
+            "ss_definition": sstype,
+            "solvent_accessibility": sacc,
+            "phi": phi,
+            "psi": psi,
         }
     return
 
